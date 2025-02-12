@@ -1,2 +1,25 @@
-sdf
+Arduino Config and Setup
 
+ ~/git/microcontrollers/arduino/docs/arduino_config_and_setup.txt
+
+Arduino on Linux uses /dev/ttyACM0/
+   crw-rw----  root dialout ... /dev/ttyACM0
+
+Add user to dialout group:
+  sudo usermod -a -G dialout  art
+
+Install Arduino IDE
+
+Using Arduino UNO R3
+  select board: Arduino UNO  /dev/ttyACM0
+Verify IDE working:
+  File -> Examples -> 01.basic -> blink
+  Modify delay() times to allow recognizing
+  Press COMPILE button  (checkmark in circle, upper left of IDE)
+  Press UPLOAD button (right-arrow button, upper left of IDE)
+
+  Updated file has been saved as blink_updated.ino
+    ~/git/microcontrollers/arduino/sketches/arduino_starter_kit/blink_updated/
+
+
+### end ###
