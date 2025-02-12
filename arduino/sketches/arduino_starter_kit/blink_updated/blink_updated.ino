@@ -1,9 +1,14 @@
 /*
   blink_updated
 
-  Based on Examples -> 01.basic -> Blink
+  Turns an LED on, then off, repeatedly.
 
-  Turns an LED on for one second, then off for one second, repeatedly.
+  Outputs to serial monitor.
+  You need to press the SERIAL MONITOR button on IDE: magnifying glass, upper right corner of IDE.
+
+  -------
+
+  Based on Examples -> 01.basic -> Blink
 
   Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO
   it is attached to digital pin 13, on MKR1000 on pin 6. LED_BUILTIN is set to
@@ -28,12 +33,17 @@
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("--- end of SETUP ----");
 }
 
 // the loop function runs over and over again forever
 void loop() {
+
+  Serial.println("  ... top of the loop ...");
   digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-  delay(1500);                      // wait for a second
+  delay(300);                      // wait for a second
   digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
-  delay(200);                      // wait for a second
+  delay(100);                      // wait for a second
 }
