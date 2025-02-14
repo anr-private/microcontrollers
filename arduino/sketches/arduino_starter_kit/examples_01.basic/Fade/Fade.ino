@@ -49,7 +49,7 @@ void loop() {
   delay(30);
 
   if (brightness <=  0) {
-     delay(5000);
+     //delay(5000);
   }
   
 }
