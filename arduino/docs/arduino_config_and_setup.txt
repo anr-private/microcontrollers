@@ -2,13 +2,62 @@ Arduino Config and Setup
 
  ~/git/microcontrollers/arduino/docs/arduino_config_and_setup.txt
 
+===  LINUX install   =========================
+
+  See ~/sw_install_files/arduino_ide
+
+ Download ZIP from arduino.cc
+  Skipped the donation, sign up with email, ...
+   by choosing 'just download' on each page.
+
+ mkdir -p /home/art/sw/arduino_ide
+ cd       /home/art/sw/arduino_ide
+ unzip    /home/art/sw_install_files/arduino_ide/arduino_ideXXX_64bit.zip
+ # AS ROOT
+ cd       /home/art/sw/arduino_ide
+ chown root:root  chrome-sandbox
+ chmod 4755       chrome-sandbox
+ ls -l chrome-sandbox
+    # output:
+    -rwsr-xr-x 1 root root ... chrome-sandbox
+
+ cd /home/art/bin
+ ln -s /home/art/sw/arduino_ide/arduino_ide .
+
+Running the IDE  ---------------------
+  arduino_ide
+
 Arduino on Linux uses /dev/ttyACM0/
    crw-rw----  root dialout ... /dev/ttyACM0
 
 Add user to dialout group:
   sudo usermod -a -G dialout  art
 
-Install Arduino IDE
+=== RPi 5 Install  =====================
+
+Install Arduino IDE using Add Programs
+
+Run using main menu -> Programming -> Arduino IDE
+
+=== GIT repo  ====================================
+
+Linux, RPi-5
+  cd ~/git
+  git clone git@github.com:anr-private/microcontrollers.git
+
+
+=== PREFERENCES  =================================
+
+ File -> Preferences -> Settings
+    Sketchbook location   /home/art/git/microcontrollers/arduino/sketches
+    Show verbose output:  compilation and upload
+    Display line numbers  [Rpi-5]
+    Compiler warnings: default
+    Verify after upload
+    Autosave [Linux]
+    Save when verifying or uploading [Rpi-5]
+
+=== PROGRAMMING UNO R3  ===========================
 
 Using Arduino UNO R3
   select board: Arduino UNO  /dev/ttyACM0
