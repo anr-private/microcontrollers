@@ -37,6 +37,14 @@ const int PINS[] = {PIN_1, PIN_2, PIN_3};
 // sizeof() is always 'number of bytes'
 const int NUM_PINS = sizeof(PINS) / sizeof(int);
 
+const bool DBG_GRV = false;
+const bool DBG_TONL = false;
+
+
+// === GLOBAL VARS  ==============
+
+int raw_baseline = 0;
+
 float baselineTemp = 20.0;
 
 void setup() {
@@ -49,17 +57,20 @@ void setup() {
   }
   for (int i=0; i < NUM_PINS; i++) {
     int pnum = PINS[i];
-    Serial.print("  @@@ i="); Serial.print(i); Serial.print("  pin="); Serial.print(pnum); Serial.println();
+    //Serial.print("   i="); Serial.print(i); Serial.print("  pin="); Serial.print(pnum); Serial.println();
     pinMode(pnum, OUTPUT);
     digitalWrite(pnum, LOW);
   }
 
-  Serial.println("Begin sensing the baseline temp.  Curr rawValue="); Serial.println(analogRead(sensorPin));
+  //Serial.print("Begin sensing the baseline temp.  Curr rawValue="); Serial.println(analogRead(sensorPin));
 
-  while (1) {
-    setup__get_temp_baseline();
-break;//@@@@@@@
-  }
+//  while (1) {
+    raw_baseline = setup__get_temp_baseline();
+//break;//@@@@@@@
+//  }
+  Serial.print("Setup: rawBaseline="); Serial.println(raw_baseline);
+  blink_leds();
+
 
   
   if (1) {
@@ -70,16 +81,32 @@ break;//@@@@@@@
 int setup__get_temp_baseline()
 {
 
-  const int num_raw_values = 10;
+  const int num_raw_values = 6;
   int raw_values[num_raw_values]= {0};  // init the values
 
   setup__get_raw_values(raw_values, num_raw_values);
 
   dump_raw_values(raw_values, num_raw_values);
+
+  // average raw
+  int raw_sum = 0;
+  for (int val_num=0; val_num < num_raw_values; val_num++) {
+    raw_sum += raw_values[val_num];
+  }
+  int raw_avg = (raw_sum + num_raw_values -1) / num_raw_values;
+
+  Serial.print("  get_temp_baseline:  num_raw_values="); Serial.print(num_raw_values);
+  Serial.print("  total="); Serial.print(raw_sum); 
+  Serial.print("  avg="); Serial.print(raw_avg);
+  Serial.println();
+
+  return raw_avg;
 }
 
 bool setup__get_raw_values(int raw_values[], int num_raw_values)
 {
+  Serial.println("@@@@ get raw values");
+  
   int current_led = -999;
   for (int val_num=0; val_num < num_raw_values; val_num++) {
     
@@ -87,12 +114,13 @@ bool setup__get_raw_values(int raw_values[], int num_raw_values)
 
     raw_values[val_num] = analogRead(sensorPin);
 
-    if (1) {
-      Serial.print("  @@ loop  rawVal["); Serial.print(val_num); Serial.print("]="); 
+    if (DBG_GRV) {
+      Serial.print("  @@GET_RAW_VALUES  rawVal["); Serial.print(val_num); Serial.print("]="); 
       Serial.print(raw_values[val_num]); Serial.println();
     }
-    delay(1000);    
+    delay(700);    
   }
+  Serial.println("@@@@ EXIT from get raw values");
   return false;
 }
 
@@ -104,36 +132,153 @@ void dump_raw_values(int raw_values[], int num_raw_values)
     Serial.print(raw_values[vn]);
     Serial.println();
   }
+  Serial.println("  ------------------------------");
 }
 
 
 
 void loop() {
 
-  int rawVal = analogRead(sensorPin);
+  Serial.println(); Serial.println("LOOP begins Now -----");
   
-  Serial.print("  @@ loop  rawVal="); Serial.print(rawVal); Serial.println();
+  int raw_value = analogRead(sensorPin);
 
-  delay(3000);
+  int delta_raw = abs(raw_value - raw_baseline);
+
+  show_leds_for_raw(delta_raw);
+
+  float temp = raw_to_degrees_C(raw_value);
+  
+  Serial.print("  LOOP  rawValue="); Serial.print(raw_value);
+  Serial.print("  baseline="); Serial.print(raw_baseline);
+  Serial.print("  deltaRaw="); Serial.print(delta_raw);
+  Serial.println();
+
+  delay(4000);
   
 }
+
+// Turn on LEDs based on the difference between raw baseline
+// and current value ie the raw_delta;
+void show_leds_for_raw(int delta_raw)
+{
+  // Relative delta values for each pin
+  int LED_THRESHOLD[NUM_PINS] = {0, 0, 9};
+  
+  for (int i=0; i < NUM_PINS; i++) {
+    int thresh = LED_THRESHOLD[i];
+    bool turn_on = (delta_raw >= thresh);
+    if (1) {
+      Serial.print("  show_leds_for_raw  raw="); Serial.print(delta_raw);
+      Serial.print("  threshold for pin["); Serial.print(i); Serial.print("]="); Serial.print(thresh);
+      Serial.print(". Turn on=");Serial.print(turn_on);
+      Serial.println();
+    }
+    ///int pnum = PINS[i];
+    turn_led_on_if(i, turn_on);
+  }
+}
+
+// Convert raw value to volts, then to degrees Celsius
+ //  DATASHEET info for TMP36
+ //  Low voltage operation (Vcc range 2.7 V to 5.5 V)
+ //  Calibrated directly in °C
+ //  10 mV/°C scale factor (20 mV/°C on TMP37)
+ //  ±2°C accuracy over temperature (typ)
+ //  ±0.5°C linearity (typ)
+ //  Stable with large capacitive loads
+ //  Specified −40°C to +125°C, operation to +150°C
+ //  Less than 50 µA quiescent current
+ //  Shutdown current 0.5 µA max
+ //  Low self-heating
+ //  Qualified for automotive applications
+float raw_to_degrees_C(int raw_value)
+{
+  // Sensor is being fed Vcc of 5v, so output is 0..5v
+  // Sensor raw values are 0..1023  (10 bit)
+  // Scale the 10 bit raw to 0..5v
+  float volts = (raw_value / 1024.0) * 5.0;
+
+  // Sensor is 10mV per deg C
+  // Its low end is below 0 deg C, so need to subtract that bias
+  float temp = (volts - 0.5) * 100;
+
+  if (1) {
+    Serial.print("  Cvt to temp:  raw="); Serial.print(raw_value);
+    Serial.print("  volts="); Serial.print(volts);
+    Serial.print("  temp="); Serial.print(temp); Serial.print(" degs C");
+    Serial.println();
+  }
+  return temp;
+}
+
+
+// === LED functions  ==========================================
+
+// Set all LEDs on or off
+void set_all_leds(bool turn_on)
+{
+  for (int i=0; i < NUM_PINS; i++) {
+    turn_led_on_if(i, turn_on);
+    ////int pnum = PINS[i];
+    ////if (turn_on) {
+    ////  digitalWrite(i, HIGH);
+    ////} else {
+    ////  digitalWrite(i, LOW);
+    ////}
+  }
+}
+
+void blink_leds()
+{
+  for (int i=0; i < 3; i++) {
+    set_all_leds(true);
+    delay(250);
+    set_all_leds(false);
+    delay(200);
+  }
+}
+
+void turn_led_on_if(int led_num, bool turn_on)
+{
+  if (turn_on) {
+    turn_on_led(led_num);
+  } else {
+    turn_off_led(led_num);
+  }
+}
+
+// Given LED number (relative number, 0..N-1) - not the actual Arduino pin#
+void turn_on_led(int led_num)
+{
+    int pnum = PINS[led_num];
+    digitalWrite(pnum, HIGH);
+}
+// Given LED number (relative number, 0..N-1) - not the actual Arduino pin#
+void turn_off_led(int led_num)
+{
+    int pnum = PINS[led_num];
+    digitalWrite(pnum, LOW);
+}
+
 
 // Turns off the current LED and turns on the next one
 // Returns the new 'currently on' LED number 0..NUM_PINS-1
 int  turn_on_next_led(int currently_on)
 {
-  Serial.print(" @@TURNONNEXT  curr="); Serial.println(currently_on);
+  if (DBG_TONL) { Serial.print(" @@TURNONNEXT  curr="); Serial.println(currently_on);}
+  
   if (currently_on < 0 || currently_on >= NUM_PINS) {
       currently_on = 0;
   }
   // turn off current led
-  Serial.print(" @@TURNONNEXT OLD curr="); Serial.println(currently_on);
+  if (DBG_TONL) { Serial.print(" @@TURNONNEXT OLD curr="); Serial.println(currently_on); }
   digitalWrite(PINS[currently_on], LOW);
 
   // next led is ...
   currently_on += 1;
   if (currently_on >= NUM_PINS) currently_on = 0;
-  Serial.print(" @@TURNONNEXT NEW curr="); Serial.println(currently_on);
+  if (DBG_TONL) { Serial.print(" @@TURNONNEXT NEW curr="); Serial.println(currently_on); }
 
   // turn on the new one
   digitalWrite(PINS[currently_on], HIGH);
