@@ -24,15 +24,25 @@
 // LOOP:
 // The temp is sensed and its value is used to turn the LEDs on.
 // The warmer the sensor reports, the more LEDs are lit.
+//
+// ** NOTE **
+// The 'relative pin numbers' used in this program are 0..N-1.
+// The PINS[] array maps a relative pin number to the 
+// Arduino digital pin number to which the LED (and its resistor)
+// are connected.
+// The LED numbers correspond to the relative pin numbers:
+// LED zero is relative pin zero, etc.
 
-// Analog pin - connected to TMP36 
+// Arduino analog pin - connected to TMP36 
 const int sensorPin = A0;
 
-// Digital pins 9,10,11 are PWM-capable, but we are not using that herein
+// Arduino igital pins 9,10,11 are PWM-capable, but we are not using that herein
 const int PIN_1 = 9;
 const int PIN_2 = 10;
 const int PIN_3 = 11;
 
+// Maps relative pin number 0..N-1 to the Arduino digital pin number.
+// See note above: relative pin number and LED number corrrespond.
 const int PINS[] = {PIN_1, PIN_2, PIN_3};
 // sizeof() is always 'number of bytes'
 const int NUM_PINS = sizeof(PINS) / sizeof(int);
@@ -162,8 +172,8 @@ void loop() {
 // and current value ie the raw_delta;
 void show_leds_for_raw(int delta_raw)
 {
-  // Relative delta values for each pin
-  int LED_THRESHOLD[NUM_PINS] = {0, 0, 9};
+  // Relative delta values for each relative pin number
+  int LED_THRESHOLD[NUM_PINS] = {3, 6, 9};
   
   for (int i=0; i < NUM_PINS; i++) {
     int thresh = LED_THRESHOLD[i];
@@ -215,23 +225,18 @@ float raw_to_degrees_C(int raw_value)
 
 // === LED functions  ==========================================
 
+
 // Set all LEDs on or off
 void set_all_leds(bool turn_on)
 {
-  for (int i=0; i < NUM_PINS; i++) {
-    turn_led_on_if(i, turn_on);
-    ////int pnum = PINS[i];
-    ////if (turn_on) {
-    ////  digitalWrite(i, HIGH);
-    ////} else {
-    ////  digitalWrite(i, LOW);
-    ////}
+  for (int led_num=0; led_num < NUM_PINS; led_num++) {
+    turn_led_on_if(led_num, turn_on);
   }
 }
 
 void blink_leds()
 {
-  for (int i=0; i < 3; i++) {
+  for (int led_num=0; led_num < 3; led_num++) {
     set_all_leds(true);
     delay(250);
     set_all_leds(false);
