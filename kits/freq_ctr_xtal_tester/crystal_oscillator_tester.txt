@@ -20,7 +20,8 @@ SOURCES of info:
     Also includes a basic 'how it works' set of steps.
  There is source code on gitlab for the original freq ctr.
 
-PIC 16F628  - the PIC used
+PIC 16F628  Microchip Technology  $3.21 (Digitkey)
+  (Kit likely has a fake chip)
   https://www.qsl.net/dl4yhf/winpicpr.html  - pgmer by the original author.
   http://wxpic.free.fr/  WxPic pgmer freeware (newer pgmer, to replace winpic)
  Other PICs:  PIC12F675, PIC16F630 and PIC16F676. Also 12F629
