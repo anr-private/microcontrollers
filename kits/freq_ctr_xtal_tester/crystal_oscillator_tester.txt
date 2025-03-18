@@ -1,0 +1,47 @@
+crystal_oscillator_tester.txt
+
+ ~/git/microcontrollers/kits/freq_ctr_xtal_tester/crystal_oscillator_tester.txt
+
+Amazon listing (2025-04-17)
+2 Pack Crystal Oscillator Tester 1Hz-50MHz Frequency Counter Tester Meter Cymometer Measurement Tester Module LED DIY Kit
+Brand: HUABAN
+https://www.amazon.com/dp/B0793KF2RW?ref=ppx_yo2ov_dt_b_fed_asin_title
+Purchased: 3-12-2025  Amazon  $18.00 ($19.49)  2-pack kit
+Came with parts, no instructions.
+
+SOURCES of info:
+ Search for "DL4YHF frequency counter PIC"
+
+ https://groups.io/g/qrp-tech/topic/not_working_diy_digital_led/7325698
+ https://www.qsl.net/dl4yhf/freq_counter/freq_counter.html
+    Includes info about programming an offset freq that is added/subtracted
+    from the freq shown (to allow for using a variable freq oscillator
+    front end on a receiver whose freq is being measured by this kit.
+    Also includes a basic 'how it works' set of steps.
+ There is source code on gitlab for the original freq ctr.
+
+PIC 16F628  - the PIC used
+  https://www.qsl.net/dl4yhf/winpicpr.html  - pgmer by the original author.
+  http://wxpic.free.fr/  WxPic pgmer freeware (newer pgmer, to replace winpic)
+ Other PICs:  PIC12F675, PIC16F630 and PIC16F676. Also 12F629
+
+NOTE: the importance of the preamplifiers, which not only boosts the 
+input level but also limits the input voltage to a safe level for the PIC).
+
+The input level of any signal input to the PIC (microcontroller) may only 
+range from 0 Volts (= ground) to the supply voltage, i.e. 5 Volts. 
+But this is only true if the PIC is really supplied with 5 Volts 
+(I don't know, I never bought any of these kits). 
+If the supply voltage is only 3 or 4 Volts from a battery, 
+but 5 Volts are fed to the PIC's counter input: ZAP! 
+A body diode conducts, and if the current isn't limited, 
+it causes a Latch-up, in other words: R.I.P. my dear little chip). 
+Anything more negative than 0 Volt, and anything more positive than the 
+PIC's supply voltage can instantly kill the chip!
+Again, to clarify this: I (Wolfgang "Wolf" Büscher, amateur radio callsign 
+DL4YHF) am not the kit maker or -seller, but the developer of the 
+original circuit, and (more important for the entire project) 
+the firmware that makes the PIC act as an auto-ranging frequency meter.
+
+
+### end ###
