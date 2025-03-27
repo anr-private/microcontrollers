@@ -19,8 +19,10 @@ SOURCES of info:
     front end on a receiver whose freq is being measured by this kit.
     Also includes a basic 'how it works' set of steps.
  There is source code on gitlab for the original freq ctr.
+ Banggood info:
+    https://img.banggood.com/file/products/20160817023551SKU360318.pdf
 
-PIC 16F628  Microchip Technology  $3.21 (Digitkey)
+PIC 16F628  Microchip Technology  $3.21 (Digikey)
   (Kit likely has a fake chip)
   https://www.qsl.net/dl4yhf/winpicpr.html  - pgmer by the original author.
   http://wxpic.free.fr/  WxPic pgmer freeware (newer pgmer, to replace winpic)
@@ -44,5 +46,15 @@ DL4YHF) am not the kit maker or -seller, but the developer of the
 original circuit, and (more important for the entire project) 
 the firmware that makes the PIC act as an auto-ranging frequency meter.
 
+
+Arduino-based PIC programmer
+https://github.com/Ho-Ro/ArdPicProg
+
+
+Based on the DL4YHF design: https://www.qsl.net/dl4yhf/freq_counter/freq_counter.html
+A quite exact schematic can be found there: 
+https://ssbradiogeekonair.blogspot.com/2017/12/cheap-but-effective-frequency-counter.html
+Source code: https://github.com/Ho-Ro/DL4YHF-Source-Code
+Simple PIC programmer: https://github.com/Ho-Ro/ArdPicProg
 
 ### end ###
