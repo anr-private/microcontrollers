@@ -1,0 +1,31 @@
+HiLetgo 0-30V 2mA-3A Adjustable DC Regulated Power Supply
+
+hiletgo_0-30v_3A_power_supply_kit.txt
+
+HiLetgo 0-30V 2mA-3A Adjustable DC Regulated Power Supply DIY Kit Short with Protection
+$9.29
+
+Adjustable DC Regulated Power Supply DIY Kit
+Input Voltage: 24V AC
+Input Current: Max 3A
+Output Voltage: 0-30V (continuously adjustable)
+Output Current: 2mA-3A (continuously adjustable)
+
+Downloaded instructions:
+  https://img.banggood.com/file/products/201505080459530-30Vinstall.pdf
+
+YouTube
+  SymbolTech  2021
+  LahisTech  2019
+  Kristian_Laholm  2015
+  M2SVW Amateur Radio and Electronics Adventures  2023  (UK ham)
+
+https://www.paulvdiyblogs.net/2015/05/tuning-030v-dc-with-03a-psu-diy-kit.html  
+2015
+
+https://www.instructables.com/Compact-Regulated-PSU-Power-Supply-Unit/
+
+
+
+:wrap=soft:
+###
