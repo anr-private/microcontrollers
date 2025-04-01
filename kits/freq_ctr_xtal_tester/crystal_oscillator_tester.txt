@@ -12,6 +12,12 @@ Came with parts, no instructions.
 SOURCES of info:
  Search for "DL4YHF frequency counter PIC"
 
+TheHWcave  youtube
+  A PIC based frequency counter kit - part 1:building and modifying
+    Shows how to add the simple preamp im place of the xtal test section
+    on the board.
+  See ../hw_cave_youtube_shots
+
  https://groups.io/g/qrp-tech/topic/not_working_diy_digital_led/7325698
  https://www.qsl.net/dl4yhf/freq_counter/freq_counter.html
     Includes info about programming an offset freq that is added/subtracted
