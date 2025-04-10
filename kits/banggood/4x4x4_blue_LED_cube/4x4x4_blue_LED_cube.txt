@@ -1,0 +1,45 @@
+4X4X4 Blue LED Light Cube Kit 3D LED DIY Kit
+ For Arduino Smart Electronics Led Cube Kit
+
+ID: 1397655    SKU: A02336      $3.99
+
+https://www.banggood.com/4X4X4-Blue-LED-Light-Cube-Kit-3D-LED-DIY-Kit-For-Arduino-Smart-Electronics-Led-Cube-Kit-p-1397655.html?rmmds=myorder&cur_warehouse=CN
+
+https://www.banggood.com/qa-question-1397655-1.html
+
+https://www.icstation.com/icstation-4x4x4-light-cube-arduino-icsk059a-p-5312.html
+
+https://youtu.be/d8chl67KoRU
+
+
+See 4x4x4_board_2.png:
+ The 0~15 slot of Diagram  is used for inserting  LED anode; D16~D19 slot is used for inserting the LED cathode.
+ Expansion board and Arduino control pins
+ 74HC595 pin                      arduino
+        SH                           0
+        ST                           1
+        OE                           2
+        DS                           3
+
+        D16                          4
+        D17                          5
+        D18                          6
+        D19                          7
+
+COMPONENTS
+  [Qty]  Desc
+  -----  -----------------
+  [1] Round pin (span 2.54)
+  [1] Long foot pin (span 2.54)
+  [2] 16P IC Block
+  [2] 74HC595   U1，U2
+  [6] 500 ohm resistor  DIP-2 pkg   R1、R2、R3、R4
+  [70] Cuboid LED (3mm)
+
+
+
+
+
+
+### end ###
+
