@@ -1,0 +1,7 @@
+This is the URL from the QR code found on the instructions.
+Obtained using "zbarimg qr_*jpg"  After installing zbar-tools.
+
+https://mp.weixin.qq.com/s/tj0OtNA_krBT4gwZb9fyUQ
+
+###
+

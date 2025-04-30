@@ -1,0 +1,127 @@
+Thonny Install  Ubuntu 24.04    Apr 28 2025
+
+
+Install using:    Version 4.0.1
+  sudo apt install thonny
+
+Works ok.
+
+
+
+
+___________________________________________________________
+
+SNAP INSTALL FAILED - apparmor config for thonny disallows access to the Pico device
+
+# used snap to install thonny 4.1.7
+  sudo snap install thonny 
+Installs to /snap/bin/thonny
+
+# Setup:  start thonny, choose 'standard' setup, not 'Pi / Simplified'
+thonny
+
+Pinned to DASH
+
+
+_____________________________________________________________________
+
+SEARCH: 'ubuntu 24.04 how to fix udev to mount pi pico'
+
+Bus 001 Device 016: ID 2e8a:0003 Raspberry Pi RP2 Boot
+
+To ensure the Raspberry Pi Pico mounts consistently in Ubuntu 24.04, you need to create or modify a udev rule. This rule will assign a specific device name to the Pico when it's plugged in and in BOOTSEL mode. This prevents it from being assigned a random name each time. 
+Here's how to do it:
+1. Create or Edit the udev Rule:
+
+    Open a terminal and use a text editor (like nano) to create or edit a udev rule file. A common location for these files is /etc/udev/rules.d/. For example, you could create a file named 99-picotool.rules: 
+ sudo nano /etc/udev/rules.d/99-picotool.rules
+
+
+2. Add the Udev Rule:
+
+    Add a rule that identifies the Pico and assigns it a specific device name. The following is an example, adjust the vendor and product IDs as needed: 
+
+
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="1234", ATTRS{idProduct}=="5678", SYMLINK+="picopico", NAME="picopico"
+
+SUBSYSTEM=="usb": This indicates the rule applies to USB devices.
+ATTRS{idVendor}=="1234": Replace 1234 with the actual vendor ID of your Pico.
+ATTRS{idProduct}=="5678": Replace 5678 with the product ID of your Pico.
+SYMLINK+="picopico": Creates a symbolic link named picopico to the device.
+NAME="picopico": Assigns the device the name picopico.
+
+3. Reload udev Rules:
+
+    Save the file and reload the udev rules: 
+
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+
+
+4. Test the Rule:
+
+    Plug the Pico into your computer in BOOTSEL mode. You can do this by pressing and holding the BOOTSEL button while connecting the USB cable.
+    Verify that the Pico is recognized with the name you specified (in this case, picopico). You can check by looking at the output of lsblk or dmesg
+
+
+5. Optional: Create a Boot Script (if needed):
+
+    If you need to automate the mounting of the Pico, you can create a simple script that finds the device based on the udev rule and mounts it to a specific directory. 
+
+SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8f", ATTRS{idProduct}=="0001", SYMLINK+="pico", NAME="pico"
+
+
+Key Points:
+
+    Vendor and Product IDs:
+    You'll need to determine the correct vendor and product IDs for your Pico. You can find these by running lsusb and inspecting the output when the Pico is in BOOTSEL mode. 
+
+Device Names:
+Choose a descriptive name for the device that you can easily remember and use in scripts. 
+Permissions:
+Ensure that the user you're using has appropriate permissions to access the device. You may need to adjust the GROUP or MODE in the udev rule if necessary. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+======================== OLD  /  NOT USED  =========================
+
+=== TRIED TO DOWNLOAD  =====
+
+FAILED: THE FOLLOWING: CANNOT USE, IT REQUIRES Python 3.10
+
+THE FOLLOWING has hard-coded refs to 3.10 so cannot use
+as 24.04 uses Python 3.12
+
+https://thonny.org/
+
+Download  thonny-4.1.7.bash 
+To here:
+  ~/sw_install_files/thonny/
+
+INSTALL:
+ cd  ~/sw_install_files/thonny/
+ chmod +x thonny-4.1.7.bash 
+ ./thonny-4.1.7.bash 
+Creates 
+  /home/art/apps/thonny/bin/thonny
+
+LINK / SETUP:
+  cd ~/bin
+  ln -s ../apps/thonny/bin/thonny .
+
+FIX SCRIPT:  It has python 3.10 hard-coded
+  vi ~/apps/thonny/bin/thonny
+    -- fix 
+
+=== end of TRIED TO DOWNLOAD  ==========================
+:wrap=soft:
