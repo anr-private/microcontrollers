@@ -1,0 +1,35 @@
+PI PICO Notes
+
+See:
+  /home/art/git/microcontrollers/docs/thonny_install/thonny_install_ubuntu_24.04.txt
+
+That doc shows how to do these:
+  Thonny running on System76 Ubuntu 24.04
+  Plug in the Pico; ubunty finds the PI PICO at /dev/ttyACM0
+  Install MicroPython on the Pico (using Thonny, lower right margin
+    mouse-click, choose  Raspberry Pi Pico /dev/ttyACM0
+
+TUTORIAL
+
+  https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/4
+
+Clone the picozero pkg from github. 
+See
+   /home/art/git/microcontrollers/pi_pico/pkgs/picozero_github_repo/GRAB_PICOZERO.sh
+See file:
+   /home/art/git/microcontrollers/pi_pico/pkgs/picozero_github_repo/
+            picozero/picozero/picozero.py
+Upload this file to the Pico in dir '/':
+ - In Thonny, View -> Files  should be CHECKED to enable file browser at left.
+ - Under the 'This computer', navigate to picozero.py (path show above).
+ - Right-click on it; choose 'upload to /'
+The file should now appear in the Raspberry Pi Pico section of the FILES browser.
+
+Test picozero.py is installed:
+ - In the MicroPython shell (bottom half of Thonny):
+     from picozero import pico_led    # takes a couple seconds
+     pico_led.on()   # turns LED on the Pico board on
+     pico_led.off()  # turns LED on the Pico board off
+
+Test using this file:
+
