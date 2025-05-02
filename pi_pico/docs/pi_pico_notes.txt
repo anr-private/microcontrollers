@@ -1,13 +1,13 @@
 PI PICO Notes
 
-???????????????????????????
-   /etc/udev script - is it doin anything?
-????????????????????????????????
 
+UBUNTU  Install/Setup
 
-
-
-
+Created a udev file that contains:
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="0003", SYMLINK+="picopico", NAME="picopico"
+It installs in /etc/udev/rules.d/  (as root).
+Tried it with IDs from one of the 4 Pico W. It does not seem to matter.
+So removed it.  See file ./99-pi-pico.rules_NOT_USED.
 
 See:
   /home/art/git/microcontrollers/docs/thonny_install/thonny_install_ubuntu_24.04.txt
@@ -18,9 +18,43 @@ That doc shows how to do these:
   Install MicroPython on the Pico (using Thonny, lower right margin
     mouse-click, choose  Raspberry Pi Pico /dev/ttyACM0
 
-TUTORIAL
+PICO FIRMWARE and MICROPYTHON
 
-  https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/4
+The Raspberry Pi org tutorial shows how to install MicroPython 
+in tutorial step 3. See TUTORIAL (below).
+
+Latest firmware is v1.25.0  2025-04-15
+   import sys
+    print(sys.version)
+    # OUTPUT:  3.4.0; MicroPython v1.25.0 on 2025-04-15
+Install firmware using uf2 file; download from MicroPython page.
+Requires this process:
+   unplug pico
+   hold BOOTSEL on pico board, then plug Pico into USB 
+      Should mount the pico as a mass storage device
+   copy the uf2 file to the device
+   unplug / replug pico
+ Using Thonny makes this easier. 
+In Thonny, config the interpreter:
+  Tools -> Options -> Interpreter (tab)
+     Which kind of interpreter:
+        MicroPython (Raspberry Pi Pico)
+     Port:
+        Board in FS mode - Board CDC (/dev/ttyACM0)
+     Click link (lower right) 'Install or update MicroPython'
+
+
+INSTALLING A PYTHON PROGRAM on Pico
+
+Copy the program from host computer to the Pico, 
+It must be called 'main.py'.
+It will be run if you connect the Pico to a USB power source
+(unplugged from host computer).
+
+
+TUTORIAL w/ picozero  - Raspberry Pi org.
+
+  https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico
 
 Clone the picozero pkg from github. 
 See
