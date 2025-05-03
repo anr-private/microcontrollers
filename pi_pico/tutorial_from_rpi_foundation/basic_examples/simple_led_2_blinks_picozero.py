@@ -1,4 +1,7 @@
 # simple test for picozero
+# Does 2 slow blinks, 2 fast blinks, pause.
+# Uses onboard LED.
+
 from picozero import pico_led
 import time
 
