@@ -45,8 +45,23 @@ def fancy_blink():
         time.sleep(1.5)
 
 
-btn.when_pressed = green_led.toggle
+# Choose a callback to run when button is pressed
+# Odd: when you press button multiple times, it appears
+# that multiple instances of the callback are
+# registered at the same time(?).
+# This happens with the 'pulse' method (but not 'toggle')?
+# No - you eventually get this error:
+#   EventFailedScheduleQueueFull: Button (pin 13) - pulse not run due to the micropython schedule being full
+# So it looks like the pulse tries to schedule something on each button press,
+# but the pulse() method never terminates, so it stays as a active thread -
+# and eventually all thread slots seeme to fill up.
+# SEE: https://forums.raspberrypi.com/viewtopic.php?t=384683
+# This is apparently a problem with picozero (clashing with updated MicroPython)
 
-fancy_blink()
+###btn.when_pressed = green_led.toggle
+btn.when_pressed = green_led.pulse
+
+# Enables blinking while button still works
+#fancy_blink()
 
 ###
