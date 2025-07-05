@@ -55,7 +55,7 @@ It will be run if you connect the Pico to a USB power source
 CURRENT, VOLTAGE, POWER LIMITS
 
 LED's datasheet Vf: 2V.
-Trial showss that 2mA produces enough brightness
+Trial shows that 2mA produces enough brightness
 Use a series resistor to limit current.
 One end of the resistor is connects to 3.3V supply.
  3.3 - Vf = 1.3V  across the resister
@@ -103,6 +103,27 @@ Test picozero.py is installed:
 Test using this file:
    ~/git/microcontrollers/pi_pico/tutorial_from_rpi_foundation/
        basic_examples/simple_led_test_using_picozero.py
+
+PICOZERO exception:
+  Gets this exception if you push the button too quickly:
+    EventFailedScheduleQueueFull   picozero.py line 1641 in _pin_change
+      <...my-handler-function...> not run due to the micropython
+        schedule being full
+  This happens in the picozero.Button class if you assign a handler:
+     btn = Button(...some GPIO pin number ...)
+     btn.when_pressed = btn_pressed_handler  # assign handler function
+
+
+
+ASYNCIO   
+
+Grabbed it from github:   2025-06-26
+   ~/git/microcontrollers/pi_pico/pkgs/uasyncio_v3/micropython-async/v3
+Pkg name is uasyncio on older MicroPython firmware; new name is just asyncio.
+Tutorial is in v3/docs:
+   (Install okular using apt)
+   cd .../v3/docs
+   okular TUTORIAL.md &
 
 
 

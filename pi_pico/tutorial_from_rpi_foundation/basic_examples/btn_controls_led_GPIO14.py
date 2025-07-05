@@ -15,9 +15,15 @@
 #  resistor to LED anode (long lead)
 #  LED cathode (short lead) to gnd (negative)
 #  Button goes GPIO 13 to gnd
+#
+# Gets this exception if you push the button too quickly:
+#   EventFailedScheduleQueueFull   picozero.py line 1641 in _pin_change
+# This 
 
 import time
+import sys
 from picozero import LED, Button
+import uasyncio
 
 GPIO_15 = 15
 GPIO_14 = 14
@@ -29,14 +35,40 @@ btn = Button(GPIO_13)
 
 pico_led = red_led
 
+state = False
+
 def btn_pressed(*arg, **kwarg):
-    print("Button pressed")
+    ####print("btn_pressed EXIT EARLY @@@@@@@@@@@@@@@@"); return
+    global state
+    old_state = state
+    state = not state
+    print("Button pressed  oldState=%s  state=%s"% ( old_state, state))
+    
     
 btn.when_pressed = btn_pressed
 
 def run_loop():
+    ###sys.exit()
+    try:
+        do_run_loop()
+    #except EventFailedExecution as ex:
+    except EventFailedScheduleQueueFullException as ex:
+        print("run_loop got EventFailedScheduleQueueFullException ex: %s" % (ex, ))
+        sys.exit()
+    except Exception as ex:
+        print("run_loop got ex: %s" % (ex, ))
+        sys.exit()
+    sys.exit()
+        
+def do_run_loop():
     while True:
         print("RUN LOOP")
+        if state:
+            red_led.on()
+            green_led.off()
+        else:
+            red_led.off()
+            green_led.on()
         time.sleep(0.7)
 
 run_loop()
