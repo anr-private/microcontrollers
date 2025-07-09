@@ -2,36 +2,8 @@ Arduino Config and Setup
 
  ~/git/microcontrollers/arduino/docs/arduino_config_and_setup.txt
 
-===  LINUX install   =========================
+INSTALL: see below
 
-  See ~/sw_install_files/arduino_ide
-
- Download ZIP from arduino.cc
-  Skipped the donation, sign up with email, ...
-   by choosing 'just download' on each page.
-
- mkdir -p /home/art/sw/arduino_ide
- cd       /home/art/sw/arduino_ide
- unzip    /home/art/sw_install_files/arduino_ide/arduino_ideXXX_64bit.zip
- # AS ROOT
- cd       /home/art/sw/arduino_ide
- chown root:root  chrome-sandbox
- chmod 4755       chrome-sandbox
- ls -l chrome-sandbox
-    # output:
-    -rwsr-xr-x 1 root root ... chrome-sandbox
-
- cd /home/art/bin
- ln -s /home/art/sw/arduino_ide/arduino_ide .
-
-Running the IDE  ---------------------
-  arduino_ide
-
-Arduino on Linux uses /dev/ttyACM0/
-   crw-rw----  root dialout ... /dev/ttyACM0
-
-Add user to dialout group:
-  sudo usermod -a -G dialout  art
 
 === RPi 5 Install  =====================
 
@@ -70,5 +42,111 @@ Verify IDE working:
   Updated file has been saved as blink_updated.ino
     ~/git/microcontrollers/arduino/sketches/arduino_starter_kit/blink_updated/
 
+=================================================
+===  LINUX install 2.3.4  =========================
 
+  See ~/sw_install_files/arduino_ide
+
+ Download ZIP from arduino.cc
+  Skipped the donation, sign up with email, ...
+   by choosing 'just download' on each page.
+
+ mkdir -p /home/art/sw/arduino_ide
+ cd       /home/art/sw/arduino_ide
+ unzip    /home/art/sw_install_files/arduino_ide/arduino_ideXXX_64bit.zip
+ # AS ROOT
+ cd       /home/art/sw/arduino_ide
+ chown root:root  chrome-sandbox
+ chmod 4755       chrome-sandbox
+ ls -l chrome-sandbox
+    # output:
+    -rwsr-xr-x 1 root root ... chrome-sandbox
+
+ cd /home/art/bin
+ ln -s /home/art/sw/arduino_ide/arduino_ide .
+
+Running the IDE  ---------------------
+  arduino_ide
+
+Arduino on Linux uses /dev/ttyACM0/
+   crw-rw----  root dialout ... /dev/ttyACM0
+
+Add user to dialout group:
+  sudo usermod -a -G dialout  art
+
+
+=================================================
+===  LINUX install 2.3.6  =========================
+
+Download AppImage file to here:
+  DO NOT DO THIS
+   ~/sw/arduino_ide_2.3.6/arduino-ide_2.3.6_Linux_64bit.AppImage
+   cd ~/sw/arduino_2.3.6
+    chmod +x arduino-ide_2.3.6_Linux_64bit.AppImage
+
+  DO THIS INSTEAD
+   mkdir /home/art/sw/arduino_ide
+   cd    /home/art/sw/arduino_ide
+   mkdir ORIG_APPIMAGE/
+   # put the download AppImage file in this subdir
+   cp ORIG_APPIMAGE/*.AppImage   ./aduino-ide
+   chmod +x ./arduino-ide
+
+   cd ~/bin
+   # mv any existing arduino-ide to some other filename
+   ln -s ~/sw/arduino_ide/arduino-ide .
+
+
+NOTE the path and filename are hard coded in the apparmor config
+described in the next step  *******!!!!!!
+
+FIX: for the sandbox problem:
+  Running the appimage gets a sandbox error.
+ Create an apparmor config file for the executable and
+ insert the lines shown below as the file content
+sudo vi /etc/apparmor.d/home.art.sw.arduino_ide.arduino-ide 
+abi <abi/4.0>,
+include <tunables/global>
+profile arduino /home/art/sw/arduino_ide/arduino-ide flags=(unconfined) {
+  userns,
+  include if exists <local/arduino>
+}
+
+--- NOTES from online searches ---
+
+The issue is with the AppArmor configuration in Ubuntu 24.04, not the AppImage. The change in the configuration is explained in the release notes of Ubuntu 24.04 (security reasons).
+
+Because this problem is caused by the OS configuration, I'm not use what the Arduino IDE team can do, except for documenting the installation procedure.
+
+You can disable the sandboxing restriction for all program with:
+   sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
+ or by adding to /etc/sysctl.d/local.conf:
+    kernel.apparmor_restrict_unprivileged_userns=0
+
+But that defeats the purpose of the new AppArmor restriction in Ubuntu 24.04.
+
+You can also create a new AppArmor profile for the Arduino IDE (that allows a non-root user to use the sandboxing in a specific application). If you copy the AppImage file to /usr/local/bin/arduino (this is the new name of the AppImage file), you can create an AppArmor profile with a configuration file, for example, in /etc/apparmor.d/usr.local.bin.arduino, containing:
+
+abi <abi/4.0>,
+include <tunables/global>
+profile arduino /usr/local/bin/arduino flags=(unconfined) {
+  userns,
+  include if exists <local/arduino>
+}
+
+and reloading all AppArmor profiles with:
+
+sudo service apparmor reload
+
+Now you can run the Arduino IDE without the sandboxing error.
+
+You could also run the Arduino IDE with the --no-sandbox option, but that is, in my opinion, a potentially very bad idea.
+
+--- end of NOTES from online searches ---
+
+=== end of Linux Install for 2.3.6  ===========================================
+
+
+
+:wrap=soft:
 ### end ###
