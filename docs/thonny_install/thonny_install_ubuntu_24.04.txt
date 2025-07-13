@@ -1,7 +1,34 @@
 Thonny Install  Ubuntu 24.04    Apr 28 2025
 
-/home/art/git/microcontrollers/docs/thonny_install/thonny_install_ubuntu_24.04.txt
+ ~/git/microcontrollers/docs/thonny_install/thonny_install_ubuntu_24.04.txt
 
+
+=== Jul 12 2025  ========================================================
+
+Install using:    Version 4.0.1
+  sudo apt install thonny
+
+Works ok.
+
+Used microUsb to USB-A cable, plugged in, recognized Pi Pico as /dev/ttyACM0
+
+Add myself to 'dialout' group:
+   sudo usermod -a -G dialout art
+
+Use lower-right margin area: click on it to choose which Python interpreter to use. Choose MicroPython Raspberry Pi Pico  /dev/ttyACM0.
+
+ISSUE: Managing files on This Computer does not work.
+SOLUTION: Turn off 'Zenity', use Tk instead.
+   Tools -> Options -> General
+     Check 'Use Tk File dialogs instead of Zenity'
+
+Configuring using the INI file: see 
+  ~/git/art/linux_config/shadow_system76_24.04_2025-07-11/thonny_config/UPDATE_THONNY_CONFIG_FILE.sh
+ 
+==========================================================================
+==========================================================================
+====== Apr 28 2025   =====================================================
+ 
 Install using:    Version 4.0.1
   sudo apt install thonny
 
@@ -14,7 +41,9 @@ SOLUTION: Turn off 'Zenity', use Tk instead.
    Tools -> Options -> General
      Check 'Use Tk File dialogs instead of Zenity'
 
-
+Thonny config file:
+   ~/git/art/linux_config/shadow_system76_24.04_2025-07-11/thonny_config/
+See README file there.
 
 
 ___________________________________________________________
