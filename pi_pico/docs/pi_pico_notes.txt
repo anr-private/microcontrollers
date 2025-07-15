@@ -1,7 +1,13 @@
 PI PICO Notes
 
+=== GIT repo  ====================================
 
-UBUNTU  Install/Setup
+Linux, RPi-5
+  cd ~/git
+  git clone git@github.com:anr-private/microcontrollers.git
+
+
+===  UBUNTU  Install/Setup   ==============================
 
 Created a udev file that contains:
     SUBSYSTEM=="usb", ATTRS{idVendor}=="2e8a", ATTRS{idProduct}=="0003", SYMLINK+="picopico", NAME="picopico"
