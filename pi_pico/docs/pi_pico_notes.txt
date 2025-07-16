@@ -29,17 +29,21 @@ PICO FIRMWARE and MICROPYTHON
 The Raspberry Pi org tutorial shows how to install MicroPython 
 in tutorial step 3. See TUTORIAL (below).
 
+On the Pi Pico W boards I bought DVOZVO brand - had to reload the UF2 file
+a couple times. Also the internal LEDs on GPIO 25 do not work.
 Latest firmware is v1.25.0  2025-04-15
    import sys
     print(sys.version)
     # OUTPUT:  3.4.0; MicroPython v1.25.0 on 2025-04-15
 Install firmware using uf2 file; download from MicroPython page.
+  ~/sw_install_files/pi_pico/pi_pico_w/RPI...uf2
 Requires this process:
    unplug pico
    hold BOOTSEL on pico board, then plug Pico into USB 
       Should mount the pico as a mass storage device
-   copy the uf2 file to the device
-   unplug / replug pico
+   copy the uf2 file to the device using file-mgr gui
+   pico should reboot and be ready to use in Thonny
+   unplug / replug pico # optional(?)
  Using Thonny makes this easier. 
 In Thonny, config the interpreter:
   Tools -> Options -> Interpreter (tab)
