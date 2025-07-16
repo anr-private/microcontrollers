@@ -132,6 +132,20 @@ Tutorial is in v3/docs:
    okular TUTORIAL.md &
 
 
+MAKING THINGS WITH CHRIS DEHUT  YT
+
+  git/microcontrollers/pi_pico/making_stuff.../
+
+PICO_Interrupts
+interrupt_demo_ANR.py
+  - machine.Pin  - LED, button on GPIO pins
+  - uses button.irq = handler  to handle button presses
+     - IRQ_RISING | IRQ_FALLING modes
+  - debounces using a global variable
+  - main thread does 'work' while IRQ runs
+  - prints thread ID using import _thread; _thread.get_ident()
+
+
 
 
 

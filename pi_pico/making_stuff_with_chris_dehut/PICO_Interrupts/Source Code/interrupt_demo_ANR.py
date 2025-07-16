@@ -14,6 +14,9 @@ import machine
 import utime
 import _thread
 
+print(f"@@@ DIR machine is {dir(machine)}")
+print(f"Main Thread ID: {_thread.get_ident()}")
+
 ###  CONSTANTS  ##########################
 
 PUSHBUTTON_IRQ_TRIGGER = machine.Pin.IRQ_RISING | machine.Pin.IRQ_FALLING
@@ -49,6 +52,10 @@ def set_pushbutton_state(new_state=None):
 def pushbutton_handler(pin):
     """ interrupt handler  """
     global pushbutton_state
+    
+    if 1:
+        print(f" ++ HANDLER Thread ID: {_thread.get_ident()}")
+
     
     pushbutton.irq(handler=None)
     #r = pushbutton.irq(handler=None)
@@ -89,7 +96,20 @@ if 1:
     print(f"Thread ")
     
 while True:  #run an endless loop as the main loop
-    utime.sleep(.0001)
+    ###utime.sleep(.0001)
+    ###utime.sleep(.3)
+    ###print(f" ++ HANDLER Thread ID: {_thread.get_ident()}")
+    ###utime.sleep(10)
+    
+    # do some 'work' in main thread
+    for i in range(100000):
+        i = i / 10;
+        j = i * 1000
+        if i in (2500, 5000, 7500):
+            print(f"  i={i}  j={j}  Thread ID: {_thread.get_ident()}")
+            utime.sleep(0.25)
+    print(f"  Main thread calculating      Thread ID: {_thread.get_ident()}")
+    
     #Perform all other activites here
 
 ### end ###
