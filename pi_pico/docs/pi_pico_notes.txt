@@ -166,6 +166,8 @@ PICO-Timers
     blue_timer.deinit()
     utime.sleep(1)
     blue_led.value(0)
+ Timer-Many.py
+   Uses try/except to catch KeyboardInterrupt and do the cleanup.
  Timer-Pump.py
     Uses a one-shot combined with a periodic
      Blue_Timer = Timer(period=2000, mode=Timer.PERIODIC, callback=Blue_Blinker)
