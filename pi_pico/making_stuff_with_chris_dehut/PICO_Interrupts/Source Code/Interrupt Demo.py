@@ -1,5 +1,8 @@
 # Interrupt Handling - PB Switch Input
-
+# ANR
+# GPIO 16 LED to Resistor to gnd
+# GPIO 15 'button' to physical 36 '3V3'
+#
 # Wire according to Frizting diagram - down link in video description
 # Items needed:
 # Latching switch
