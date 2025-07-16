@@ -153,6 +153,8 @@ PICO_LEDs/
   Simple LED control
   PWM control of LED brightness  led.duty_u16(floating-value 0.0 to 100.0)
 PICO-Timers
+  All timers are software timers; in Pi Pico there is only 1 hardware timer;
+  all timers use this one timer, whose period is 1ms.
  Timer-Many.py
   Run several timers using callback handlers; they run independently of 
   main loop. 
@@ -172,6 +174,147 @@ PICO-Timers
     Uses a one-shot combined with a periodic
      Blue_Timer = Timer(period=2000, mode=Timer.PERIODIC, callback=Blue_Blinker)
      Pump_Timer = Timer(period=9000, mode=Timer.ONE_SHOT, callback=Pump_Off)
+
+
+=== INTERRUPT SERVICE ROUTINES   ===========================
+
+ https://docs.micropython.org/en/latest/reference/isr_rules.html#isr-rules
+
+See also: 
+  import pyb 
+  saved_state = pyb.disable_irq();
+     # critical section here
+  pyb.enable_irq(saved_state)
+
+An interrupt service routine cannot allocate memory - so not allowed:
+floating point operations, list.append, dict insert, object creation, etc.
+Use a bytearray or array.array as shared space.
+Consider disable/re-enable IRQ to protect critical section in main code.
+
+Exception in a ISR cannot allocate an exception obj.
+To provide space for doing so:
+  import micropython
+  micropython.alloc_emergency_exception_buf(100)
+
+# Example: 
+ import pyb, micropython
+ micropython.alloc_emergency_exception_buf(100)
+ class Foo(object):
+    def __init__(self, timer, led):
+        self.led = led
+        timer.callback(self.cb)
+    def cb(self, tim):
+    	""" allows sharing the led attribute """
+        self.led.toggle()
+ red   = Foo(pyb.Timer(4, freq=1), pyb.LED(1))
+ green = Foo(pyb.Timer(2, freq=0.8), pyb.LED(2))
+
+A means of creating an object without employing a class or globals is as follows:
+The compiler instantiates the default buf argument when the function is loaded 
+for the first time (usually when the module it’s in is imported).
+ def set_volume(t, buf=bytearray(3)):
+    buf[0] = 0xa5
+    buf[1] = t >> 4
+    buf[2] = 0x5a
+    return buf
+
+An instance of object creation occurs when a reference to a bound method is 
+created. This means that an ISR cannot pass a bound method to a function. 
+One solution is to create a reference to the bound method in the 
+class constructor and to pass that reference in the ISR. For example:
+ class Foo():
+    def __init__(self):
+        self.bar_ref = self.bar  # Allocation occurs here
+        self.x = 0.1
+        tim = pyb.Timer(4)
+        tim.init(freq=2)
+        tim.callback(self.cb)
+         #
+    def bar(self, _):
+        self.x *= 1.2
+        print(self.x)
+         #
+    def cb(self, t):
+        # Passing self.bar would cause allocation.
+        micropython.schedule(self.bar_ref, 0)
+         #
+Other techniques: define and instantiate the method in the constructor or
+to pass Foo.bar() with the argument self.
+
+Altering the contents of an array or bytearray is safe. This is because 
+bytes or words are written as a single machine code instruction which is 
+not interruptible: in the parlance of real time programming the write is 
+atomic. Also true for updating a dictionary item because items 
+are machine words, being integers or pointers to objects. 
+A user-defined object might instantiate an array or bytearray. 
+It is valid for both the main loop and the ISR to alter the 
+contents of these.
+
+===  micropython.schedule and ISR  ==================================
+
+
+Using micropython.schedule with an ISR.
+
+This function enables an ISR to schedule a callback for execution
+“very soon”. The callback is queued for execution which will take place
+at a time when the heap is not locked. Hence it can create Python objects
+and use floats. The callback is also guaranteed to run at a time when the
+main program has completed any update of Python objects, so the callback
+will not encounter partially updated objects.
+
+Typical usage is to handle sensor hardware. The ISR acquires data from 
+the hardware and enables it to issue a further interrupt. It then schedules
+a callback to process the data.
+
+Scheduled callbacks should comply with the principles of interrupt handler
+design outlined below. This is to avoid problems resulting from I/O activity
+and the modification of shared data which can arise in any code which 
+preempts the main program loop.
+
+Execution time needs to be considered in relation to the frequency with which
+interrupts can occur. If an interrupt occurs while the previous callback
+is executing, a further instance of the callback will be queued for execution;
+this will run after the current instance has completed. A sustained 
+high interrupt repetition rate therefore carries a risk of unconstrained 
+queue growth and eventual failure with a RuntimeError.
+
+If the callback to be passed to schedule() is a bound method, consider 
+creation of Python objects above.
+
+===  asyncio and ISR  ==================================
+
+When an ISR runs it can preempt the asyncio scheduler. If the ISR performs 
+a asyncio operation the scheduler’s operation can be disrupted. 
+This applies whether the interrupt is hard or soft and also applies if the 
+ISR has passed execution to another function via micropython.schedule. 
+In particular creating or cancelling tasks is invalid in an ISR context.
+The safe way to interact with asyncio is to implement a coroutine with 
+synchronisation performed by asyncio.ThreadSafeFlag. The following fragment 
+illustrates the creation of a task in response to an interrupt:
+
+  tsf = asyncio.ThreadSafeFlag()
+
+  def isr(_):  # Interrupt handler
+    tsf.set()
+
+  async def foo():
+    while True:
+        await tsf.wait()
+        asyncio.create_task(bar())
+
+In this example there will be a variable amount of latency between the 
+execution of the ISR and the execution of foo(). This is inherent to 
+cooperative scheduling. The maximum latency is application and platform 
+dependent but may typically be measured in tens of ms.
+
+
+
+
+
+
+
+
+===  PINS  ================================================
 
     pins = """
 This is the end with the USB connector:

@@ -7,7 +7,6 @@
 
 import machine
 import utime
-from machine import Timer
 
 Blue   = machine.Pin(12,machine.Pin.OUT)
 Red    = machine.Pin(13,machine.Pin.OUT)
@@ -34,10 +33,10 @@ def Yellow_Blinker(Source):
 #500 would be 1/2 second
 #1000 would be 1 second
 #10000 would be 10 seconds
-Blue_Timer = Timer(period=2000, mode=Timer.PERIODIC, callback=Blue_Blinker)
-Red_Timer = Timer(period=1000, mode=Timer.PERIODIC, callback=Red_Blinker)
-Green_Timer = Timer(period=500, mode=Timer.PERIODIC, callback=Green_Blinker)
-Yellow_Timer = Timer(period=250, mode=Timer.PERIODIC, callback=Yellow_Blinker)
+Blue_Timer   = machine.Timer(period=2000, mode=machine.Timer.PERIODIC, callback=Blue_Blinker)
+Red_Timer    = machine.Timer(period=1000, mode=machine.Timer.PERIODIC, callback=Red_Blinker)
+Green_Timer  = machine.Timer(period=500, mode=machine.Timer.PERIODIC, callback=Green_Blinker)
+Yellow_Timer = machine.Timer(period=250, mode=machine.Timer.PERIODIC, callback=Yellow_Blinker)
 
 #Create a main loop to keep the program running
 #in this loop you would do all your other work
@@ -61,10 +60,15 @@ except KeyboardInterrupt as ex:
     #utime.sleep(1) NOT NEEDED if you use the try/except(?!)
 
     #Turn off all the LEDs so keep things tidy
-    Blue.value(0)
-    Red.value(0)
-    Green.value(0)
-    Yellow.value(0)
+    #Blue.value(0)
+    #Red.value(0)
+    #Green.value(0)
+    #Yellow.value(0)
+    # A bit more obvious(!)
+    Blue.off()
+    Red.off()
+    Green.off()
+    Yellow.off()
 
 print("End of MAIN")
 
