@@ -1,17 +1,14 @@
-# Demonstration of multiple timers running at various speeds
+# Multiple timers running at timeouts; main loop runs independently  ANR
 # Main loop runs without interruption
 
-#ALSO REQUIRED!!!
-#220 ohm resistors
-#LEDs (not high power)
-#Wire according to information provided on associated video on YouTube
+# LEDs on GPIO 12,13,14,15  (board pins 16,17,19,20)
 
-#load libraries
+# See fritzing file for wiring
+
 import machine
 import utime
 from machine import Timer
 
-#Create outputs for each LED
 Blue   = machine.Pin(12,machine.Pin.OUT)
 Red    = machine.Pin(13,machine.Pin.OUT)
 Green  = machine.Pin(14,machine.Pin.OUT)
@@ -44,10 +41,10 @@ Yellow_Timer = Timer(period=250, mode=Timer.PERIODIC, callback=Yellow_Blinker)
 
 #Create a main loop to keep the program running
 #in this loop you would do all your other work
-Limit = 0
-while Limit <= 10:  #Main loop
-    print(Limit)
-    Limit += 1
+loop_ctr = 0
+while loop_ctr <= 10:  #Main loop
+    print(f"   main loop ctr={loop_ctr}")
+    loop_ctr += 1
     utime.sleep(1)
 
 
@@ -57,8 +54,17 @@ Red_Timer.deinit()
 Green_Timer.deinit()
 Yellow_Timer.deinit()
 
+# Give time for the timers to shut down
+# Else the LEDs may not turn off in the steps below
+utime.sleep(1)
+
 #Turn off all the LEDs so keep things tidy
 Blue.value(0)
 Red.value(0)
 Green.value(0)
 Yellow.value(0)
+
+print("End of MAIN")
+
+### end ###
+

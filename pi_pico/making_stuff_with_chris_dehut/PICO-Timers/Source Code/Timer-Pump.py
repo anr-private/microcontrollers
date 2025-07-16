@@ -1,10 +1,7 @@
-# Demonstration of using a timer to make "something" run for a period of time
-# Main loop runs without interruption
+# Use a one-shot timer to do a task for a specific period of time.  ANR
+# Main loop runs in parallel
 
-#ALSO REQUIRED!!!
-#220 ohm resistors
-#LEDs (not high power)
-#Wire according to information provided on associated video on YouTube
+# see fritzling/ for wiring - uses 2 LEDs  GPIO 12, 13
 
 #load libraries
 import machine

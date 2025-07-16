@@ -152,10 +152,24 @@ interrupt_demo_ANR.py
 PICO_LEDs/
   Simple LED control
   PWM control of LED brightness  led.duty_u16(floating-value 0.0 to 100.0)
-
-
-
-
+PICO-Timers
+ Timer-Many.py
+  Run several timers using callback handlers; they run independently of 
+  main loop. 
+    import machine
+    blue_led = machine.Pin(12,machine.Pin.OUT)
+    def blue_handler(source_obj):
+    	blue_led.toggle()
+    blue_timer = Timer(period=2000, mode=Timer.PERIODIC, callback=blue_handler)
+    # run main until done
+    # Do cleanup:
+    blue_timer.deinit()
+    utime.sleep(1)
+    blue_led.value(0)
+ Timer-Pump.py
+    Uses a one-shot combined with a periodic
+     Blue_Timer = Timer(period=2000, mode=Timer.PERIODIC, callback=Blue_Blinker)
+     Pump_Timer = Timer(period=9000, mode=Timer.ONE_SHOT, callback=Pump_Off)
 
     pins = """
 This is the end with the USB connector:
