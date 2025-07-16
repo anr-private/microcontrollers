@@ -1,11 +1,12 @@
 # Simple Single Color LED
-# FADE on and OFF using PWM control
+# Step brightness level of LED using PWM control    led.duty_u16(float)  ANR
+
+# pin 4/GP2 for LED output
 
 #ALSO REQUIRED!!!
 #120 ohm resistor
 #Red LED (not high power)
 #Wire according to information provided on associated video on YouTube
-#use pin 4/GP2 for LED output
 
 #load libraries
 import machine

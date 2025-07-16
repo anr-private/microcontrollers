@@ -136,7 +136,7 @@ MAKING THINGS WITH CHRIS DEHUT  YT
 
   git/microcontrollers/pi_pico/making_stuff.../
 
-PICO_Interrupts
+PICO_Interrupts/
 interrupt_demo_ANR.py
   - machine.Pin  - LED, button on GPIO pins
   - uses button.irq = handler  to handle button presses
@@ -145,6 +145,9 @@ interrupt_demo_ANR.py
   - main thread does 'work' while IRQ runs
   - prints thread ID using import _thread; _thread.get_ident()
 
+PICO_LEDs/
+  Simple LED control
+  PWM control of LED brightness  led.duty_u16(floating-value 0.0 to 100.0)
 
 
 

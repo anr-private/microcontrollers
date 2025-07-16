@@ -1,12 +1,13 @@
 # Simple Single Color LED
 # Turn on and off in a timed loop
 
+# pin 4/GP2 for LED output
+
 #ALSO REQUIRED!!!
 #120 ~ 330 ohm resistor
 #Red LED 
 #Wire according to information provided on associated video on YouTube
 
-#use pin 4/GP2 for LED output
 
 #load libraries
 import machine
