@@ -185,6 +185,15 @@ See also:
   saved_state = pyb.disable_irq();
      # critical section here
   pyb.enable_irq(saved_state)
+For Pi Pico:
+  # Disable interrupts and store the current IRQ state
+  old_irq_state = machine.disable_irq()
+    # Your critical section of code goes here
+    # (e.g., accessing shared data or performing time-sensitive operations)
+    # Re-enable interrupts using the saved state
+  machine.enable_irq(old_irq_state)
+NOTE that disable_irq can disable the hardware timer and so mess up the
+timing of utime.sleep() and other stuff that uses the timer(!)
 
 An interrupt service routine cannot allocate memory - so not allowed:
 floating point operations, list.append, dict insert, object creation, etc.

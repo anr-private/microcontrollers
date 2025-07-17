@@ -41,11 +41,25 @@ Yellow_Timer = machine.Timer(period=250, mode=machine.Timer.PERIODIC, callback=Y
 #Create a main loop to keep the program running
 #in this loop you would do all your other work
 loop_ctr = 0
+saved_irq_state = None
 try:
     while True:
         loop_ctr += 1
         print(f"   main: loop ctr={loop_ctr}")
+        
+        # Try disabling - it kills the hardware time, so also kills utime.sleep()!
+        # So it never recovers.
+        #if loop_ctr > 5:
+        #    print("*** DISABLING INTERRUPTS!  ***")
+        #    saved_irq_state = machine.disable_irq()
+        
         utime.sleep(1)
+        
+        #if saved_irq_state is not None:
+        #    machine.enable_irq(saved_irq_state)
+        #    saved_irq_state = None
+        #    print("+++ ENABLED interrupts!")
+        
 except KeyboardInterrupt as ex:
     print(f"MAIN: keyboard interrupt.  Do cleanup.")
 
