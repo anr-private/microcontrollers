@@ -82,6 +82,8 @@ A 1/4 W resistor is 0.25, so plenty of headroom on wattage.
 Even 0603 resistor is 0.1 W, so still plenty.
 
 
+====================================================================
+
 TUTORIAL w/ picozero  - Raspberry Pi org.
 
   https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico
@@ -125,7 +127,8 @@ PICOZERO exception:
 
 
 
-ASYNCIO   
+===  ASYNCIO   =============================================
+   
 
 Grabbed it from github:   2025-06-26
    ~/git/microcontrollers/pi_pico/pkgs/uasyncio_v3/micropython-async/v3
@@ -136,7 +139,7 @@ Tutorial is in v3/docs:
    okular TUTORIAL.md &
 
 
-MAKING THINGS WITH CHRIS DEHUT  YT
+===  MAKING THINGS WITH CHRIS DEHUT  Youtube   ========================
 
   git/microcontrollers/pi_pico/making_stuff.../
 
@@ -174,6 +177,27 @@ PICO-Timers
     Uses a one-shot combined with a periodic
      Blue_Timer = Timer(period=2000, mode=Timer.PERIODIC, callback=Blue_Blinker)
      Pump_Timer = Timer(period=9000, mode=Timer.ONE_SHOT, callback=Pump_Off)
+
+PWM Control LED Brightness
+  0030_PICO_PWM
+   PWM_B0.py - simple program that manually sets PWD to one duty cycle value
+   PWM-B1.py - 
+ Code:
+   PWM_led = machine.PWM(machine.Pin(2))  #use physical pin 4/GP2 for LED output
+   PWM_led.freq(1000)
+    # change duty cycle as desired
+    PWM_led.duty_u16(Duty_Cycle) # 0 - 65535
+    # CLEANUP on program exit
+    PWM_Sig.duty_u16(10)
+    utime.sleep(0.001) # not sure why, but this allows LED to go dark
+    PWM_Sig.deinit()
+Set the frequency as appropriate to the device. Too low causes flicker or
+causes a motor to be jumpy (hard on the motor and driver). Too high and
+whatever is being controlled may not be able to keep up, so poor action or
+reliability. Probably Pico cannot go much more than 500KHz.
+Duty cycle may not correspond exactly to brightness or motor speed - depends
+on circuit and devices.
+
 
 
 === INTERRUPT SERVICE ROUTINES   ===========================
