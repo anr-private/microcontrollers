@@ -126,6 +126,52 @@ PICOZERO exception:
      btn.when_pressed = btn_pressed_handler  # assign handler function
 
 
+=== THREADING   ===========================================
+
+  git/microcontrollers/pi_pico/examples/threading_multi_core/*.py
+
+   import _thread
+   ...
+   def main_thread(...args...):
+      """ runs in first core """
+      ...code...
+   def other_thread(arg1, arg2, kw1):
+      """ runs in second core """
+      ...code...
+   ...
+   # start the other thread; provide args to it
+   second_thread = _thread.start_new_thread(other_thread, (123,345), {kw1="val"})
+   # run the main thread
+   core0_thread()
+
+   # WITH LOCK OBJ
+	def core0_thread():
+		global lock
+		while True:
+			# try to acquire lock - wait if in use
+			lock.acquire()
+			... work ...
+			lock.release()
+			# let the other guy go - is this needed?
+			time.sleep(0.1)
+		...
+	def core1_thread():
+		global lock
+		while True:
+			# try to acquire lock - wait if in use
+			lock.acquire()
+			... work ...
+			lock.release()
+			# let the other guy go - is this needed?
+			time.sleep(0.1)
+	lock = _thread.allocate_lock()
+	second_thread = _thread.start_new_thread(core1_thread, ())
+	core0_thread()
+To check the lock:
+	lock.locked()   # returns True if locked
+
+
+
 
 ===  ASYNCIO   =============================================
    
