@@ -198,6 +198,14 @@ reliability. Probably Pico cannot go much more than 500KHz.
 Duty cycle may not correspond exactly to brightness or motor speed - depends
 on circuit and devices.
 
+PLOTTER for plotting data
+  Use view ->plotter  to show plotter window
+  Print the values to be plotted.
+  pi_pico/examples/plotter_demo.py
+
+
+
+
 
 
 === INTERRUPT SERVICE ROUTINES   ===========================
