@@ -2,7 +2,7 @@
 # Threads using the Flag class to communicate
 #  core0 controls core1
 
-from time import sleep
+from time import sleep # should use utime
 import _thread
 
 class Flag:

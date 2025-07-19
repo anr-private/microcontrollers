@@ -2,7 +2,7 @@
 #
 # 
 
-from time import sleep
+from time import sleep # should use utime
 import _thread
 
 
