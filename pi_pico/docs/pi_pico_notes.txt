@@ -1,5 +1,16 @@
 PI PICO Notes
 
+=== DOWNLOAD FILES   ===============================
+
+See ~/sw_install_files/pi_pico_family/README_AAA.txt
+
+The downloads are saved in ~/sw_install_files/pi_pico_family/
+They are not currently checked into any git repository.
+
+There are some symlinks to specific items, saved in GIT:
+  See ~/git/microcontrollers/pi_pico/UF2_files/pi_pico_family
+
+
 === GIT repo  ====================================
 
 Linux, RPi-5
