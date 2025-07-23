@@ -1,9 +1,18 @@
-BM730 3in1 Voltage Current Power Meter 4-digit Digital Voltmeter Multifunctional Ammeter with Buzzer Supports Voltage and Current Display Fine Adjustment with Low Voltage Overvoltage and Overcurrent Sound Alarm Function - Green
-US$9.99
+BM730 volts / amps / watts digital meter
 
-From banggood  7/21/2025
+BM730 3in1 Voltage Current Power Meter 4-digit Digital Voltmeter Multifunctional Ammeter with Buzzer Supports Voltage and Current Display Fine Adjustment with Low Voltage Overvoltage and Overcurrent Sound Alarm Function
 
+Purchased from Banggood    Received 7//20/2025:
+  https://usa.banggood.com/BM730-3in1-Voltage-Current-Power-Meter-4-digit-Digital-Voltmeter-Multifunctional-Ammeter-with-Buzzer-Supports-Voltage-and-Current-Display-Fine-Adjustment-with-Low-Voltage-Overvoltage-and-Overcurrent-Sound-Alarm-Function-p-2013387.html?rmmds=myorder&cur_warehouse=CN&ID=223
 
+Received 7/20/2025.
+The V/A/W values are displayed correctly.
+The M key does not work correctly. It just beeps when pressed (as do the up/down arrows)
+Pressing the M key is supposed to allow you to set limits on voltage and current; when the limits are exceeded, the unit is supposed to beep its buzzer.
 
-### end ###
+Also tried to do a 'factory reset' using the R button - which appeared to work but keys still do not function correctly.
+
+Left a 1-star review on banggood. No result so far. 
+
+###
 
