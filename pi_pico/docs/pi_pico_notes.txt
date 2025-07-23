@@ -6,6 +6,11 @@ Linux, RPi-5
   cd ~/git
   git clone git@github.com:anr-private/microcontrollers.git
 
+UF2 download files - see README_AAA.txt and sym-links here:
+   ~/git/microcontrollers/pi_pico/UF2_files/pi_pico_family
+ Actual files are here:
+   ~/sw_install_files/pi_pico_family/
+
 
 ===  UBUNTU  Install/Setup   ==============================
 
