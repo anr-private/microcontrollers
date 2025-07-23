@@ -13,7 +13,8 @@ https://datasheets.raspberrypi.com/soft/flash_nuke.uf2
 Saved in ~/sw_install_files/pi_pico/
 
 
-
+UF2 for pi pico, pico W, pico2, pico2 W
+https://www.raspberrypi.com/documentation/microcontrollers/micropython.html
 
 
 ###
