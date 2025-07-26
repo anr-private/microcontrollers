@@ -123,7 +123,7 @@ Even 0603 resistor is 0.1 W, so still plenty.
 === PINS   =====================================
 
 Pico:
-  - GPIO23 controls the DC-DC converter
+  - GPIO23 controls the DC-DC converter  (PSU mode)
   - GPIO24 can read the VBUS voltage
   - GPIO25 controls the on board LED
   Could use PIO do to PWM control of the builtin LED; cannot on PicoW.
