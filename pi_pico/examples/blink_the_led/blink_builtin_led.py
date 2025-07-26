@@ -2,6 +2,7 @@ from machine import Pin
 import utime
 import os
 
+print("=== DETERMINE THE SYSTEM TYPE =========")
 print(f"os.uname={os.uname()}  type={type(os.uname())}")
 os_uname = os.uname()
 for x in os_uname:
@@ -16,14 +17,18 @@ if "pi pico w" in machine_name_lc:
     print(f"Machine is a Pi Pico W    this-machine='{this_machine}'")
 else:
     print(f"Unknown system/hardware '{machine_name_lc}'")
+print()
+
 
 # Initialize the built-in LED pin
 # For Pico W, the built-in LED is accessed using the string "LED"
 if this_machine == "pi pico w":
+    # 'EXT_GPIO0'  GPIO zero on the wifi chip (not the Pico)
     led = Pin("LED", Pin.OUT)
 else:
     print(f"**ERROR**  unknown machine '{this_machine}'")
     raise RuntimeError(f"Unknown machine '{machine_name}'")
+print(f"Blink the built-in LED {led}")
     
 # Infinite loop to continuously blink the LED
 try:

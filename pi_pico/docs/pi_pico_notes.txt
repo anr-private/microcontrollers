@@ -120,7 +120,22 @@ A 1/4 W resistor is 0.25, so plenty of headroom on wattage.
 Even 0603 resistor is 0.1 W, so still plenty.
 
 
-LCD DISPLAYS
+=== PINS   =====================================
+
+Pico:
+  - GPIO23 controls the DC-DC converter
+  - GPIO24 can read the VBUS voltage
+  - GPIO25 controls the on board LED
+  Could use PIO do to PWM control of the builtin LED; cannot on PicoW.
+
+PicoW
+  Pins 23,24,25 are connected to Wifi chip.
+  Builtin LED is also; use "LED" as the pin name/number to access it:
+    led = Pin("LED", Pin.OUT)
+  It is called 'EXT_GPIO0' by the machine.Pin class.
+
+
+===  LCD DISPLAYS   =======================
 
 hd44780 
 Hitachi HD44780 LCD controller is raw display controller (does not do I2C).
@@ -145,7 +160,6 @@ Waveshare LCD1602 Display
        SN3193 backlight driver RGB backlight
        PCA9633 RGB  I2C and RGB backlight
   
-
 
 ====================================================================
 
