@@ -9,6 +9,7 @@ scl_pin = 5
 sda_pin = 4
 lcd = LCD(SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000))
 
+# Works with 2 line and 4 line by 16 chars LCDs
 NUM_ROWS = 2
 #NUM_ROWS = 4
 
@@ -19,7 +20,8 @@ try:
     print("Use ^C to terminate the program and perform cleanup on the LCD device.")
     while True:
         if NUM_ROWS == 2:
-            lcd.puts("Hello, World! ANR")
+            lcd.puts("Hello, World ANR")
+            lcd.puts("Hello World row2", x=0, y=1)
         elif NUM_ROWS == 4:
             lcd.puts("Hello World ANR", x=0, y=0)
             lcd.puts("Hello World ANR row2", x=0, y=1)

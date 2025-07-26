@@ -134,6 +134,34 @@ PicoW
     led = Pin("LED", Pin.OUT)
   It is called 'EXT_GPIO0' by the machine.Pin class.
 
+PICO   o VBUS     o VSYS           o 3V3OUT
+       |          |       .-----.  |
+ +V o--^--.--|>|--^--.----| REG |--^----o 3V3
+         .|.        .|.   `--.--'
+         |_|        |_|      `----------< GPIO23          Reg PWM
+          }          |
+          }----------|------------------> GPIO24          VBUS Present
+          |          |              __
+          |          }---.  .--|<|-|__|-< GPIO25          LED
+         .|.        .|.  |  |
+         |_|        |_|  `--|-----------> GPIO29 / ADC3   VSYS voltage
+          |          |      |
+ 0V o-----^----------^------^-----------o 0V/GND
+
+
+PICO W                  .---------------.
+      Reg PWM <--.  .---| WL_GPIO0  ON  |<---------------< GPIO23
+                 `--|---| WL_GPIO1  DIO |<>-------------<> GPIO24
+ VBUS Present >-----|-->| WL_GPIO2  CS  |<----.----------< GPIO25
+                    |   |           CLK |<----|------.--<> GPIO29 / ADC3
+          LED <-----'   `---------------'     |      |
+                             CYW43         .--^--.   |
+                                           |  \  |   |
+ VSYS Voltage >----------------------------|-O O-|---'
+                                           `-----'
+
+
+
 
 ===  LCD DISPLAYS   =======================
 

@@ -1,3 +1,9 @@
+# lib_lcd1602_2004_with_i2c.py
+#
+# ANR NOTES:
+#  For use with the QAPASS and other LCD1602/1604/etc that use the
+#  PCF 8754 T  chip  and I2C interface.
+
 '''
     mpy drive for I2C LCD1602
     Author: shaoziyang
