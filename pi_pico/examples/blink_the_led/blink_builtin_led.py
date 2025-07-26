@@ -33,6 +33,7 @@ try:
         led.value(0)  # Turn the LED off (set pin value to low)
         utime.sleep(0.5)  # Pause for another 0.5 seconds
 except (KeyboardInterrupt):
+    led.value(0)
     print("... end of BLINK program ...")
 
 ### end ###
