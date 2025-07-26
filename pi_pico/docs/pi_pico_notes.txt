@@ -120,6 +120,33 @@ A 1/4 W resistor is 0.25, so plenty of headroom on wattage.
 Even 0603 resistor is 0.1 W, so still plenty.
 
 
+LCD DISPLAYS
+
+hd44780 
+Hitachi HD44780 LCD controller is raw display controller (does not do I2C).
+Protocol and operation details here:
+  https://en.wikipedia.org/wiki/Hitachi_HD44780_LCD_controller
+
+Generally they need 5v. The waveshare seems to work with the 3.3V from
+pin 36 of Pi Pico.
+
+This is a driver for the LCD1604 (etc) that use PCF8754 I2C driver:
+  https://github.com/liyuanhe211/Micropython_LCD1602_LCD2004_I2C_Lib
+See
+  ~/git/microcontrollers/pi_pico/examples/lcd1602_drivers/
+     lcd1602_lcd2004_i2c_lib/Micropython_LCD1602_LCD2004_I2C_Lib
+
+QAPASS LCD1602 Display
+  uses PCF8754 I2C chip
+  not compatible with Waveshare driver
+
+Waveshare LCD1602 Display
+  uses AiP31068L LCD driver: display
+       SN3193 backlight driver RGB backlight
+       PCA9633 RGB  I2C and RGB backlight
+  
+
+
 ====================================================================
 
 TUTORIAL w/ picozero  - Raspberry Pi org.
