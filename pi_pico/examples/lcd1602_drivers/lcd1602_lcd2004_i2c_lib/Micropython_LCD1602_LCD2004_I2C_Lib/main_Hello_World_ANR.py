@@ -10,6 +10,7 @@ sda_pin = 4
 lcd = LCD(SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000))
 
 try:
+    print("Use ^C to terminate the program and perform cleanup on the LCD device.")
     while True:
         lcd.puts("Hello, World!")
         utime.sleep(1)
