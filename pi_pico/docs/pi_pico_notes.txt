@@ -161,8 +161,6 @@ PICO W                  .---------------.
                                            `-----'
 
 
-
-
 ===  LCD DISPLAYS   =======================
 
 hd44780 
@@ -187,7 +185,8 @@ Waveshare LCD1602 Display
   uses AiP31068L LCD driver: display
        SN3193 backlight driver RGB backlight
        PCA9633 RGB  I2C and RGB backlight
-  
+  ~/git/microcontrollers/pi_pico/examples/waveshare/LCD1602/...
+
 
 ====================================================================
 

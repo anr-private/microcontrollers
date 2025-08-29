@@ -1,3 +1,7 @@
+# test.py
+#
+# /home/art/git/microcontrollers/pi_pico/examples/waveshare/LCD1602/test.py
+
 import LCD1602
 import time
 
