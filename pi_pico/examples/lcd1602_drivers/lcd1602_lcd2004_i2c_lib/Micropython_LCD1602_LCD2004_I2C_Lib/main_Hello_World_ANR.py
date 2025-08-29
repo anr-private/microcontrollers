@@ -1,13 +1,27 @@
 # ANR version of hello world
-
+#
+# Works with PCF8754T LCD displays  ('non-waveshare')
+# The LCD is powered from a separate power supply - 5 Volts.
+# Various LCDs that were tried either do not work on much less than 4.5 v or
+# are unreliable / dim / etc esp at the 3.3v as used by the Pico.
+#
+# SETUP:
+#  Connect the LCD's I2C Clock and Data (SDA, SCL) lines to the pins specified in the code below.
+#  Connect the LCD's negative power input to 'external' 5V power supply and to the negative/GND
+#   of the Pico. The I2C lines use the GND as the return path for those signals.
+#  Connect positive of the external 5v supply to the positive pin of the LCD.
+#  
 import utime
 from machine import Pin, SoftI2C
 from lib_lcd1602_2004_with_i2c import LCD
+
+print(f"Hello World init: try to locate the LCD device...")
 #scl_pin = 26
 #sda_pin = 27
 scl_pin = 5
 sda_pin = 4
 lcd = LCD(SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000))
+print(f"Hello World init: ... located the LCD device...")
 
 # Works with 2 line and 4 line by 16 chars LCDs
 NUM_ROWS = 2
