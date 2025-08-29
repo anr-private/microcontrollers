@@ -1,0 +1,24 @@
+PLANT WATERING SYSTEM PROJECT
+
+plant_watering_system_project.txt
+  ~~/microcontrollers/my_projects/plant_watering_system/
+
+Automated plant watering for outdoor plants.
+For watering fruit tree.
+
+Need:
+  water system:
+    pump
+    filter
+    pickup / clunk
+    tank
+    hose
+
+
+
+Water pump:
+  shurflo 1 GPM RV water pump
+
+
+
+### end ###
