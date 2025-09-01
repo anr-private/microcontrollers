@@ -20,8 +20,10 @@ class GOB:
 
 	def __init__(self):
 		self.lock = None
-		self.core1_running = None
+		###self.core1_running = None
 		self.core2_running = None
+		self.core2_stop_requested = False
+
 
 	def create(self):
 		""" Create the globals """
@@ -32,10 +34,13 @@ class GOB:
 		utime.sleep(0.25) # delay so user can read the above
 
 	def __str__(self):
-		r1 = self.core1_running
+		lkd = self.lock.locked()
+		###r1 = self.core1_running
 		r2 = self.core2_running
+		r2sr = self.core2_stop_requested
 		return(
-		  f"GOB[r1={r1} r2={r2}]")
+		  f"GOB[lock={lkd} r2={r2} r2StopReq={r2sr}]")
+		  ###f"GOB[lock={lkd} r1={r1} r2={r2}]")
 
 
 def core1_run(gob):
@@ -43,10 +48,14 @@ def core1_run(gob):
 
 	D("CORE1: run started")
 	D(f"CORE2:   gob={gob}")
-	gob.core1_running = True
-	utime.sleep(2)
+	###gob.core1_running = True
+
+	while True:
+		D("  CORE1 running")
+		utime.sleep(1)
+
 	D("CORE1: run ended")
-	gob.core1_running = False
+	###gob.core1_running = False
 
 
 def core2_run(gob):
@@ -56,13 +65,28 @@ def core2_run(gob):
 	#D(f"CORE2:    gob={gob}")
 	gob.core2_running = True
 	#D(f"CORE2:    NOW gob={gob}")
-	utime.sleep(2)
-	D(f"CORE2: gob={gob}")
+
+	while True:
+		D("  CORE2 running")
+		utime.sleep(1)
+		if gob.core2_stop_requested:
+			print("CORE2 stop requested! So stopping!")
+			break
+
+	D(f"CORE2: ending.  gob={gob}")
 	D("CORE2: ended")
 	gob.core2_running = False
 
 
-
+def  wait_for_thread2(gob):
+	""" """
+	D("wait_for_thread2  gob={gob}")
+	D(f"wait_for_thread2  gob={gob}")
+	while True:
+		if gob.core2_running == False:
+			D(f"  wait_for_thread2  thread2 ENDED!  gob={gob}")
+			break
+		utime.sleep(0.5)
 
 def main():
 	main_thread_id = _thread.get_ident()
@@ -81,6 +105,18 @@ def main():
 	utime.sleep(0.5)
 	print(f"MAIN:  gob={gob} after sleep")
 	
+	print(f"MAIN: start thread 1")
+	try:
+		core1_run(gob)
+	except KeyboardInterrupt:
+		print(f"    KEYBOARD INTERRUPT! Core1 stopped as a result.  thread-id={main_thread_id}")
+		print()
+
+	print("MAIN: tell thread2 to stop")
+	gob.core2_stop_requested = True
+
+	wait_for_thread2(gob)
+
 	print(f"MAIN: terminating!")
 
 ##############

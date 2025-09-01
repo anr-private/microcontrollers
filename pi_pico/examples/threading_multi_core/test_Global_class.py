@@ -24,10 +24,11 @@ class GOB:
 		utime.sleep(0.25) # delay so user can read the above
 
 	def __str__(self):
+		lkd = self.lock.locked()
 		r1 = self.core1_running
 		r2 = self.core2_running
 		return(
-		  f"GOB[r1={r1} r2={r2}]")
+		  f"GOB[lock={lkd} r1={r1} r2={r2}]")
 
 
 
