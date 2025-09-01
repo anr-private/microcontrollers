@@ -22,7 +22,7 @@ class GOB:
 		self.lock = None
 		###self.core1_running = None
 		self.core2_running = None
-		self.core2_stop_requested = False
+		self.stop_requested = False
 
 
 	def create(self):
@@ -33,13 +33,18 @@ class GOB:
 		D(f"   dir(self.lock) {dir(self.lock)}")
 		utime.sleep(0.25) # delay so user can read the above
 
+	def request_stop(self, who):
+		""" Somebody wants to stop """
+		print(f"GOB: stop_requested by {who}")
+		self.stop_requested = True
+
 	def __str__(self):
 		lkd = self.lock.locked()
 		###r1 = self.core1_running
 		r2 = self.core2_running
-		r2sr = self.core2_stop_requested
+		sr = self.stop_requested
 		return(
-		  f"GOB[lock={lkd} r2={r2} r2StopReq={r2sr}]")
+		  f"GOB[lock={lkd} r2={r2} stopReqd={sr}]")
 		  ###f"GOB[lock={lkd} r1={r1} r2={r2}]")
 
 
@@ -52,7 +57,11 @@ def core1_run(gob):
 
 	while True:
 		D("  CORE1 running")
+		
 		utime.sleep(1)
+		if gob.stop_requested:
+			print("CORE1 stop requested! So stopping!")
+			break
 
 	D("CORE1: run ended")
 	###gob.core1_running = False
@@ -66,10 +75,15 @@ def core2_run(gob):
 	gob.core2_running = True
 	#D(f"CORE2:    NOW gob={gob}")
 
+	stop_ctr = 10
 	while True:
 		D("  CORE2 running")
+		D(f"      CORE2 stop_ctr={stop_ctr}")
 		utime.sleep(1)
-		if gob.core2_stop_requested:
+		stop_ctr -= 1
+		if stop_ctr <= 0:
+			gob.request_stop("Core2")
+		if gob.stop_requested:
 			print("CORE2 stop requested! So stopping!")
 			break
 
@@ -80,13 +94,14 @@ def core2_run(gob):
 
 def  wait_for_thread2(gob):
 	""" """
-	D("wait_for_thread2  gob={gob}")
-	D(f"wait_for_thread2  gob={gob}")
+	#D("wait_for_thread2")
+	#D(f"   wait_for_thread2  gob={gob}")
 	while True:
 		if gob.core2_running == False:
-			D(f"  wait_for_thread2  thread2 ENDED!  gob={gob}")
 			break
 		utime.sleep(0.5)
+		D("wait_for_thread2")
+	D(f"wait_for_thread2  thread2 ENDED!  gob={gob}")
 
 def main():
 	main_thread_id = _thread.get_ident()
@@ -113,7 +128,7 @@ def main():
 		print()
 
 	print("MAIN: tell thread2 to stop")
-	gob.core2_stop_requested = True
+	gob.stop_requested = True
 
 	wait_for_thread2(gob)
 
