@@ -15,7 +15,7 @@ def core0_thread():
 
 
 def core1_thread():
-    counter = 1
+    counter = 100
     while True:
         print(counter)
         counter += 2

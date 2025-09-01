@@ -239,6 +239,10 @@ PICOZERO exception:
    https://bytesnbits.co.uk/multi-thread-coding-on-the-raspberry-pi-pico-in-micropython/
    https://bytesnbits.co.uk/pi-pico-spi-lcd-frame-buffer/#google_vignette
 
+Source code: see
+  ~/git/micropython_local_copy/micropython/FIND_*.out
+
+
 *NOTE* CRASH due to memory / GC
     import gc  # import garbage collector library at top of code
      ...
