@@ -568,7 +568,7 @@ https://www.tomshardware.com/how-to/raspberry-pi-pico-micropython-mip
 
 DOC:
   https://docs.micropython.org/en/latest/reference/mpremote.html#mpremote
-
+  (on this page: https://docs.micropython.org/en/latest/reference/mpremote.html)
 
 Install:
   sudo apt install micropython-mpremote
@@ -583,6 +583,32 @@ BEST: use a virtual environment
     deactivate
   # now back outside the venv
 
+NOTE that mpremote cannot use the Pico if Thonny is already using it.
+That is, Thonny has control of /dev/ttyACM0.  Terminate Thonny.
+
+# Test: see if you can connect
+mpremote connect port:/dev/ttyACM0   # connect to pico
+
+# To use explicit device:
+  mpremote connect port:/dev/ACM0
+  mpremote resume
+  ... more commands??
+  ... then use 'disconnect' to release the pico(?)
+
+# Equiv to 'mpremote connect /dev/ttyACM0 fs ls'
+# 'fs' means run a file system sub-command; ls is 'list command' like Linux's ls
+  mpremote a0 fs ls
+
+# Connect to /dev/ttyACM0 and run the REPL
+# 'a0' is a shortcut
+mpremote a0
+
+###
+# By default it should find the right serial port:
+ mpremote ls   # should ls the root dir on the Pico
+ mpremote tree  # show tree of dirs
+
+mpremote eval 'print("hi")'  # prints, then prints the result 'None'
 
 
 ===  PINS  ================================================
