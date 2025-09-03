@@ -315,6 +315,19 @@ Tutorial is in v3/docs:
    okular TUTORIAL.md &
 
 
+=== UASYNCIO  Version by Peter Hinch  ====================================
+
+
+ https://github.com/peterhinch/micropython-async/blob/master/v3/primitives/queue.py 
+
+ Saved: ~/git/micropython_LIBRARIES/peterhinch_micropython-async
+   See README_AAA.txt in that subdir.
+ See 
+
+
+and copy the code (click Raw). Paste it into a new document in Thonny. Click File > Save As. Create a new folder on your Raspberry Pi named /lib. Save this file as queue.py in that /lib folder.
+
+
 ===  MAKING THINGS WITH CHRIS DEHUT  Youtube   ========================
 
   git/microcontrollers/pi_pico/making_stuff.../
@@ -525,9 +538,50 @@ cooperative scheduling. The maximum latency is application and platform
 dependent but may typically be measured in tens of ms.
 
 
+=== MIP INSTALLER   - MicroPython's version of PIP  =====
+
+Example using :
+  import mip
+  mip.install("github:peterhinch/micropython-async/v3/primitives")
+  mip.install("github:peterhinch/micropython-async/v3/threadsafe")
+  mip.install("http://example.com/x/y/foo.py")
+
+Using mpremote:
+   https://docs.micropython.org/en/latest/reference/packages.html#installing-packages-with-mpremote
+ mpremote mip install github:peterhinch/micropython-async/v3/primitives
+ mpremote mip install github:peterhinch/micropython-async/v3/threadsafe
+ mpremote mip install pkgname
+ mpremote mip install pkgname@x.y
+ mpremote mip install http://example.com/x/y/foo.py
+ mpremote mip install github:org/repo
+ mpremote mip install github:org/repo@branch-or-tag
+ mpremote mip install gitlab:org/repo
+ mpremote mip install gitlab:org/repo@branch-or-tag
 
 
+Installs on the pico in the /lib subdir.
 
+https://www.tomshardware.com/how-to/raspberry-pi-pico-micropython-mip
+
+
+=== MPREMOTE  Remote installer ===========================
+
+DOC:
+  https://docs.micropython.org/en/latest/reference/mpremote.html#mpremote
+
+
+Install:
+  sudo apt install micropython-mpremote
+  pip install mpremote
+BEST: use a virtual environment
+  mkdir ~/mpremote_env
+  python3 -m venv ~/mpremote_env
+  source ~/mpremote_env/bin/activate
+  # you're now inside the venv
+    pip install mpremote
+    mpremote --version
+    deactivate
+  # now back outside the venv
 
 
 
