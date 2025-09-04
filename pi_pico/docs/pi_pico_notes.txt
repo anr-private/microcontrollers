@@ -313,7 +313,9 @@ Tutorial is in v3/docs:
    (Install okular using apt)
    cd .../v3/docs
    okular TUTORIAL.md &
-
+ Ubuntu/shadow:
+   Installed mdview
+   mdview TUTORIAL.md  # creates a webpage in ~/mdview_temp/
 
 === UASYNCIO  Version by Peter Hinch  ====================================
 
@@ -322,10 +324,59 @@ Tutorial is in v3/docs:
 
  Saved: ~/git/micropython_LIBRARIES/peterhinch_micropython-async
    See README_AAA.txt in that subdir.
- See 
+   The code installed by mpremote (below) is found here:
+     ~/git/micropython_LIBRARIES/peterhinch_micropython-async/micropython-async/v3
+         subdirs primitives/ and threadsafe/
+
+To install the primitives and threadsafe packages, use mpremote.
+See:
+  ~/git/microcontrollers/pi_pico/VENVs/mpremote_installed_in_venv
+     README_MPREMOTE.txt
+     install_peter_hinch_async-v3.sh
+NOTE that Thonny must be stopped to allow mpremote access to the Pi Pico
+(ie to /dev/ttyACM0).
+
+mpremote tree  will show the filesystem on the Pico:
+       /
+       ├── lib
+       │   ├── primitives
+       │   │   ├── __init__.py
+       │   │   ├── aadc.py
+       │   │   ├── barrier.py
+       │   │   ├── broker.py
+       │   │   ├── condition.py
+       │   │   ├── delay_ms.py
+       │   │   ├── encoder.py
+       │   │   ├── events.py
+       │   │   ├── pushbutton.py
+       │   │   ├── queue.py
+       │   │   ├── ringbuf_queue.py
+       │   │   ├── semaphore.py
+       │   │   ├── sw_array.py
+       │   │   └── switch.py
+       │   └── threadsafe
+       │       ├── __init__.py
+       │       ├── context.py
+       │       ├── message.py
+       │       ├── threadsafe_event.py
+       │       └── threadsafe_queue.py
 
 
-and copy the code (click Raw). Paste it into a new document in Thonny. Click File > Save As. Create a new folder on your Raspberry Pi named /lib. Save this file as queue.py in that /lib folder.
+
+and copy the code (click Raw). 
+Paste it into a new document in Thonny. Click File > Save As.
+ Create a new folder on your Raspberry Pi named /lib.
+ Save this file as queue.py in that /lib folder.
+
+
+
+
+
+
+
+
+
+
 
 
 ===  MAKING THINGS WITH CHRIS DEHUT  Youtube   ========================
@@ -391,9 +442,6 @@ PLOTTER for plotting data
   Use view ->plotter  to show plotter window
   Print the values to be plotted.
   pi_pico/examples/plotter_demo.py
-
-
-
 
 
 
