@@ -13,7 +13,26 @@ async def main():
     start_time = utime.time()
     uasyncio.create_task(prt("A", 3, start_time))
     uasyncio.create_task(prt("B", 4, start_time))
-    await uasyncio.sleep_ms(24_000)
+    
+    target_end_time = start_time + 24
+    
+    curr_secs = start_time
+    
+    while True:
+        while True:
+            now = utime.time()
+            if now > curr_secs:
+                break
+            await uasyncio.sleep_ms(200)
+            
+            
+        curr_secs = utime.time()
+        
+        print(f"MAIN: {curr_secs-start_time}")
+        if curr_secs >= target_end_time:
+            break
+    
+    ###await uasyncio.sleep_ms(24_000)
     end_time = utime.time()
     elapsed_time = end_time - start_time
     print(f"MAIN:  elapsed time: {elapsed_time} secs.")
