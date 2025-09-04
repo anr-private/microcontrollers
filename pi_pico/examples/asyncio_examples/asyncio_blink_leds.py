@@ -1,3 +1,5 @@
+# asyncio_blink_leds.py
+
 import uasyncio
 
 async def blink(led, period_ms):
@@ -19,6 +21,6 @@ async def main(led1, led2):
 # Running on a generic board
 from machine import Pin
 ###uasyncio.run(main(Pin(1), Pin(2)))
-uasyncio.run(main(Pin(14), Pin(15)))
+uasyncio.run(main(Pin(14, Pin.OUT), Pin(15, Pin.OUT)))
 
 ### end ###
