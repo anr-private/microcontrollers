@@ -1,0 +1,51 @@
+Electonoobs.com and YT  Electronic Load - Analog Version (Simple project)
+
+https://www.youtube.com/watch?v=88xuhR30-dY
+
+Parts:
+
+    1 x IRFZ44N MOSFET : LINK eBay
+https://www.ebay.com/itm/10Pcs-IRFZ44N-IRFZ44-N-Channel-49A-55V-Transistor-MOSFET/381375026221?hash=item58cbb9142d:g:TdMAAOxyfCBSCC18
+  10pcs $3.58+4.88
+
+    1 x 5W 1R resistor: LINK eBay
+https://www.ebay.com/itm/10Pcs-Wirewound-Cement-Resistor-Ceramic-5W-10W-Values-in-Range-0-1-Ohm-100K-Ohm/223514439168?hash=item340a7fae00:m:mVI5E8whdZitfMb6bBe8GWw
+$8  10w R1
+
+
+    1 x LM324 OPAMP: LINK eBay
+https://www.ebay.com/itm/10PCS-IC-LM324N-LM324-DIP14-TI-Low-Power-Quad-Op-Amp-NEW-DATE-CODE-11/381374818352?hash=item58cbb5e830:g:htcAAOxylpNTV8aV
+
+    1 x 10 turns 5K potentiometer: LINK eBay
+
+
+    1 x ADS1115 ADC: LINK eBay
+
+
+    1 x 12V DC supply: LINK eBay
+
+
+    1 x Arduino NANO: LINK eBay
+
+
+    1 x 16x2 i2c LCD: LINK eBay
+
+https://www.ebay.com/itm/116678657570
+
+    2 x PCB connectors: LINK eBay
+
+
+    1 x prototyping PCB: LINK eBay
+
+
+    1 x Heat Dissipator: LINK eBay
+
+
+    2 x single row 20 female pins : LINK eBay
+
+
+    Wires: LINK eBay
+
+/home/art/git/microcontrollers/electronic_load_ELECTRONOOBS/electronic_load_analog_project.txt
+
+###
