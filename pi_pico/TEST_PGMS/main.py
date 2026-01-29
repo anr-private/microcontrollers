@@ -3,7 +3,7 @@
 # Test program to load onto new Pi Pico or Pico W
 # Blinks GPIO pin 2 (physical pin 4)
 # Connect an LED + resistor to physical pins 3 and 4
-#
+# Physical 3 is GND.  Physical 4 is GPIO 2.
 # Normally installed as 'main.py' so it boots when Pico is powered.
 
 import machine
@@ -23,3 +23,4 @@ while True:
     utime.sleep(.5) 
     LED.value(0) #Turn off LED
     utime.sleep(.25)
+

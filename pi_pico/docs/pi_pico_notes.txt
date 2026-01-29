@@ -1,5 +1,21 @@
 PI PICO Notes
 
+3.3_OUT  3v3 rail. 300 mA max.   (physical pin 36)
+
+GPIO pin: 12 mA max.  Total all pins: 50 mA
+        All pins have pull-down; uses 38uA)
+
+VBUS  up to 2 A  (provided directly and only from micro-USB socket)
+
+IN: 1.8 to 5.5 V
+    VSYS  (physical pin 39)
+    Draws 20 mA to 100mA typical.  If wireless: 150mA (for Pico-W)
+    Two AA alkaline batteries work. Three is better(?)  
+      At 1.5 - 1.8 V per battery:  2xAA = 3.0-3.6V  3xAA = 4.5-5.4 V
+      At end of life (1.2V)        2xAA = 2.4V      3xAA = 3.6 V
+    ? How about Lion?  and NiMH?
+
+
 === DOWNLOAD FILES   ===============================
 
 See ~/sw_install_files/pi_pico_family/README_AAA.txt
@@ -46,7 +62,8 @@ The Raspberry Pi org tutorial shows how to install MicroPython
 in tutorial step 3. See TUTORIAL (below).
 
 On the Pi Pico W boards I bought DVOZVO brand - had to reload the UF2 file
-a couple times. Also the internal LEDs on GPIO 25 do not work.
+a couple times.
+
 Latest firmware is
   v1.27.0 2025-12-09
 Previous:
@@ -76,8 +93,27 @@ In Thonny, config the interpreter:
         Board in FS mode - Board CDC (/dev/ttyACM0)
      Click link (lower right) 'Install or update MicroPython'
 
+=== DETERMINE THE SYSTEM / BOARD TYPE =====
 
-DETECTING WLAN 
+See git/microcontrollers/pi_pico/...
+       examples/system_type_determination/system_type_determination.py
+    ... snip ...
+    raw_machine_name = os_uname[4]
+    raw_machine_name_lc = raw_machine_name.lower()
+    if "pi pico w" in raw_machine_name_lc:
+        machine_name = "pi pico w"
+    else:
+        machine_name = "unknown"
+
+
+=== ONBOARD LED - how to control   ======
+
+On Pico, use GPIO pin 25.
+On Pico-W, use  machine.Pin("LED", machine.Pin.OUT)
+See git/microcontrollers/pi_pico/examples/blink_the_led/blink_builtin_led.py
+It detects the system (Pico or Pico-W) and configs the correct pin.
+
+=== DETECTING WLAN  =======
 
 There is no direct method for software written in MicroPython to discover 
 whether it is running on a Raspberry Pi Pico or a Pico W by looking at the 
@@ -99,7 +135,7 @@ If the 'Pico W' string is present and in sys.implementation._machine,
 your firmware was compiled for Pico W.
 
 
-INSTALLING A PYTHON PROGRAM on Pico
+=== INSTALLING A PYTHON PROGRAM on Pico so that it executes at Power-On  ====
 
 Copy the program from host computer to the Pico, 
 It must be called 'main.py'.
@@ -107,7 +143,7 @@ It will be run if you connect the Pico to a USB power source
 (unplugged from host computer).
 
 
-CURRENT, VOLTAGE, POWER LIMITS
+=== CURRENT, VOLTAGE, POWER LIMITS   =========
 
 LED's datasheet Vf: 2V.
 Trial shows that 2mA produces enough brightness
@@ -117,14 +153,21 @@ One end of the resistor is connects to 3.3V supply.
 Change the resistor value to change the current that will flow.
 Resistor: V = I * R. V=1.3, chosen current is 0.002 (2mA).
   R = 1.3 / 0.002 = 650 ohms   (680 or 560 are standard values)
-Choosing R = 560 ohms:
+--- R = 560 ohms:
   V = I * R   so I = V / R
   1.3v / 560 ohms  =  0.0023  (2.3 mA)
-Resistor wattage:
+ Resistor wattage:
   P = I**2  *  R
-      (0.0023 * 0.0023) * 560   = 0,003 W  (3 mW)
-A 1/4 W resistor is 0.25, so plenty of headroom on wattage.
-Even 0603 resistor is 0.1 W, so still plenty.
+      (0.0023 * 0.0023) * 560   = 0.003 W  (3 mW)
+ A 1/4 W resistor is 0.25 (250 mW), so plenty of headroom on wattage.
+--- R = 680 ohms:
+  V = I * R   so I = V / R
+  1.3v / 680 ohms  =  0.0019  (1.9 mA)
+ Resistor wattage:
+  P = I**2  *  R
+      (0.0019 * 0.0019) * 680   = 0.0025 W  (2.5 mW)
+ A 1/4 W resistor is 0.25 (250 mW), so plenty of headroom on wattage.
+
 
 
 === PINS   =====================================
