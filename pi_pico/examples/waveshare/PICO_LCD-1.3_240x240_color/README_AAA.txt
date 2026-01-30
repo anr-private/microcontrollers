@@ -34,6 +34,8 @@ Python Download
 
 https://www.instructables.com/WS-Pico-13-IPS-LCD-240x240-Display-Workout/
   See pi_pico_1.3in_LCD_240x240_PINS.png
+  See JPG_images_of_code/ for images of code snips from this site.
+
   GP15  A button       GP2  Joystick Up
   GP17  B button       GP18 Joystick Down
   GP19  X button       GP16 Joystick Left
@@ -42,6 +44,15 @@ https://www.instructables.com/WS-Pico-13-IPS-LCD-240x240-Display-Workout/
   GPIO available: 0, 1 ,4, 5 ,6, 7, 14, 22, 26, 27, 28.
    These include I2C pins for connecting sensors/actuators and the 
    3 ADC pins for voltages/potentiometers.
+
+  There are several screen captures (PNGs).
+  They don't quite match the actual code in PY files.
+  There is a printstring() method that is similar to LCD.text:
+     printstring("Halted", 80, 100,  2,0,0, colour(255,0,0))
+  The actual code has this instead:
+     LCD.text("Halted", 95, 115, colour(255,0,0))
+
+
 
 https://spotpear.com/index/study/detail/id/795.html
  A lot of this is duplicated from the waveshare.com site.
