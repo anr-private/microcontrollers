@@ -1,15 +1,23 @@
 # ANR version of hello world
 #
 # Works with PCF8754T LCD displays  ('non-waveshare')
+# such as QAPASS LCDs.
+# Works with 16x2 and 16x4  (2 or 4 line by 16 chars wide).
+#
 # The LCD is powered from a separate power supply - 5 Volts.
 # Various LCDs that were tried either do not work on much less than 4.5 v or
 # are unreliable / dim / etc esp at the 3.3v as used by the Pico.
 #
 # SETUP:
 #  Connect the LCD's I2C Clock and Data (SDA, SCL) lines to the pins specified in the code below.
-#  Connect the LCD's negative power input to 'external' 5V power supply and to the negative/GND
+#  Connect the LCD's negative power input (GND) to 'external' 5V power supply and to the negative/GND
 #   of the Pico. The I2C lines use the GND as the return path for those signals.
-#  Connect positive of the external 5v supply to the positive pin of the LCD.
+#  Connect positive of the external 5v supply to the positive pin of the LCD 
+#    aka VCC.
+#  LCD VCC  - to 5 volt supply positive terminal (separate from Pico's pins/supply)
+#  LCD GND  - to 5 volt supply negative terminal AND a GND pin on PICO
+#  LCD SCL  - to SCL GPIO pin on Pico (ex: pin 1  -- alternate is GPIO 5, etc).
+#  LCD SDA  - to SDA GPIO pin on Pico (ex: pin 0  -- alternate is GPIO 4, etc).
 #  
 import utime
 from machine import Pin, SoftI2C

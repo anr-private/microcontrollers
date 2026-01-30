@@ -74,3 +74,4 @@ Here is another [more practical example](https://github.com/liyuanhe211/ESP32_LC
 <img src="https://user-images.githubusercontent.com/18537705/155855075-88fdf70e-0384-4318-a08b-0ea94824b8ea.png" width="300">
 </p>.
 
+:wrap=soft:
