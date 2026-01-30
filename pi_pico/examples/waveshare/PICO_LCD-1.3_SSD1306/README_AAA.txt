@@ -20,3 +20,11 @@ Python Download
 https://www.instructables.com/WS-Pico-13-IPS-LCD-240x240-Display-Workout/
 
 
+2026-1-29  GAVE UP trying to get it to work
+ - tried 2 different ssd1306.py libraries
+ - does not look like the device is available any longer(?)
+ - tried i2_scan_tool.py - no I2C device found
+
+
+###
+
