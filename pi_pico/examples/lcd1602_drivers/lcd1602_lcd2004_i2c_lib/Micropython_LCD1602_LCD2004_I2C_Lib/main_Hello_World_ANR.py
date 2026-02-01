@@ -1,3 +1,5 @@
+# main_Hello_World_ANR.py
+#
 # ANR version of hello world
 #
 # Works with PCF8754T LCD displays  ('non-waveshare')
@@ -18,16 +20,22 @@
 #  LCD GND  - to 5 volt supply negative terminal AND a GND pin on PICO
 #  LCD SCL  - to SCL GPIO pin on Pico (ex: pin 1  -- alternate is GPIO 5, etc).
 #  LCD SDA  - to SDA GPIO pin on Pico (ex: pin 0  -- alternate is GPIO 4, etc).
-#  
+#  **** NOTE ****
+#  Powering the LCD using 5v likely means the LCD will run its I2C at 5v, which is too
+#  high for the Pico GPIO I2C (3.3v max). Seems to work but will probably damage the Pico.
+
 import utime
 from machine import Pin, SoftI2C
 from lib_lcd1602_2004_with_i2c import LCD
 
-print(f"Hello World init: try to locate the LCD device...")
+# these are  GPIO pin numbers  (NOT physical pins)
 #scl_pin = 26
 #sda_pin = 27
 scl_pin = 5
 sda_pin = 4
+print(f"Hello World ANR version.  SCLock=GPIO{scl_pin} SDAta=GPIO{sda_pin}")
+
+print(f"  init: try to locate the LCD device...")
 lcd = LCD(SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000))
 print(f"Hello World init: ... located the LCD device...")
 

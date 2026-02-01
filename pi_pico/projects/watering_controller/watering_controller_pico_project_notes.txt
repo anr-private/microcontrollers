@@ -1,0 +1,43 @@
+Pi Pico Plant Watering Project  NOTES
+
+ ~/git/microcontrollers/pi_pico/projects/watering_controller/watering_controller_pico_project_notes.txt
+
+
+POWER
+
+  LCD 1602 power:  1-2 mA for display. 30-40 mA if backlit; 100-120 mA possible.
+      QAPASS actual (with backlight):  3.3v 46mA   5.0v 80mA
+
+Pi Pico
+  20-50 mA when using wifi, peaking 100mA. Common avg 45 mA. 18-20 mA at idle.
+
+ VBUS  pin 40.  provides power direct from USB pin D1.
+                Monitor using GPIO 24 (no physical pin).
+
+ VSYS  pin 39. Main 'power in' feed.  1.8 - 5.5 V input. 
+               Whend USB provides power, VSYS is the input volts from VBUS
+               minus Schottky diode drop (usu. 5v - (0.15 to 0.45) or about 4.9v.
+               This loss can be eliminated by shorting VSYS - VBUS but ONLY IF
+               the power source is EXCLUSIVELY the USB / VBUS.
+               If an external voltage is applied to VSYS, it should be through
+               a Schottky diode to protect against backfeed of the USB.
+               This allows having voltage applied to both VSYS and VBUS -
+               the Pico has a diode to prevent backfeeding from VSYS,
+               and the external supply's Schottky protects against
+               backfeeding from VBUS into VSYS. Allows for redundant power.
+               A better way is to use a MOSFET ahead of VSYS.
+               See raspberrypi.com Pi Pico data sheet for details.
+               Also shows how to power using a battery and its charger.
+ 3v3(OUT) pin 36. Can provide 300mA max. 
+
+LCD POWER
+ - Separate power source
+   Powering an LCD from VBUS works but the LCD will run its I2C at 5 V, too
+   high for the 3.3v expected by Pico's GPIO pins (its I2C). So should use
+   a level shifter on the I2C pins.
+ - Using Pico 3v3 (physical pin 36). QAPASS works ok, a bit dim. Draws 45mA.
+   
+
+
+
+### end ###
