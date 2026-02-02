@@ -1,3 +1,10 @@
+# examples/blink_the_led/blink_builtin_led.py
+#
+# Blink the onboard LED, determining the correct way based
+# on the system type
+# (See also system_type_determination/)
+
+
 from machine import Pin
 import utime
 import os

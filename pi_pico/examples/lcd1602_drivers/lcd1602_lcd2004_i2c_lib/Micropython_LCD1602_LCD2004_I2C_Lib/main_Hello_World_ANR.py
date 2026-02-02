@@ -28,14 +28,19 @@ import utime
 from machine import Pin, SoftI2C
 from lib_lcd1602_2004_with_i2c import LCD
 
+# SoftI2C is software I2C - works on ANY GPIO pins(!)
 # these are  GPIO pin numbers  (NOT physical pins)
-#scl_pin = 26
-#sda_pin = 27
-scl_pin = 5
-sda_pin = 4
+##scl_pin = 26
+##sda_pin = 27
+###scl_pin = 5
+###sda_pin = 4
+sda_pin = 2
+scl_pin = 3
 print(f"Hello World ANR version.  SCLock=GPIO{scl_pin} SDAta=GPIO{sda_pin}")
 
 print(f"  init: try to locate the LCD device...")
+ # SoftI2C is software I2C - works on ANY GPIO pins(!)
+ # 100K is default freq.  Can go higher ex 400K
 lcd = LCD(SoftI2C(scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000))
 print(f"Hello World init: ... located the LCD device...")
 
