@@ -56,6 +56,7 @@ NUM_ROWS = 2
 
 def just_show_some_hello_lines(lcd, secs_total=9999999):
     secs_so_far = 0
+    start_time = utime.time()
     while secs_so_far < secs_total:
         if NUM_ROWS == 2:
             lcd.puts("Hello, World ANR")
@@ -82,29 +83,9 @@ def just_show_some_hello_lines(lcd, secs_total=9999999):
         else:
             print(f"***ERROR*** Unexpected NUM_ROWS={NUM_ROWS}")
         
-        utime.sleep(1); secs_so_far += 1
-    
-def OLD_show_star_running(lcd, secs_total=999999):
-    row = 0
-    col = 0
-    prev_row = row
-    prev_col = col
-    secs_so_far = 0
-    while secs_so_far < secs_total:
-        lcd.puts(" ", prev_row, prev_col)
-        lcd.puts("*", row, col)
+        utime.sleep(1)
+        secs_so_far = utime.time() - start_time
         
-        #utime.sleep(1) ###0.25)
-        utime.sleep(0.2); secs_so_far += 0.2
-
-        prev_row = row
-        prev_col = col
-        col += 1
-        if col >= 16:
-            col = 0
-            row += 1
-            if row >= 2:
-                row = 0
                 
 def show_star_running(lcd, secs_total=999999):
     row = 0
@@ -136,7 +117,7 @@ def show_alternating_rows_of_stars(lcd, secs_total=999999):
     lcd.puts(spaces, 1, 0)
 
     start_secs = utime.time()
-    print(f"  start secs {start_secs}")
+    #print(f"  start secs {start_secs}")
     secs_so_far = 0
     stars_row = 0
     while secs_so_far < secs_total:
@@ -153,30 +134,31 @@ def show_alternating_rows_of_stars(lcd, secs_total=999999):
         
         utime.sleep(0.05)
         secs_so_far = utime.time() - start_secs
-        print(f"  secs so far {secs_so_far}    secs total {secs_total}")
+        #print(f"  secs so far {secs_so_far}    secs total {secs_total}")
             
 
 def main():
-  print(f"Hello World ANR FANCY version.  SCLock=GPIO{scl_pin} SDAta=GPIO{sda_pin}")
+    print(f"Hello World ANR FANCY version.  SCLock=GPIO{scl_pin} SDAta=GPIO{sda_pin}")
 
-  print(f"HELLO WORLD TEST FOR PCF8754T style LCD displays.  num_rows={NUM_ROWS}")
-  print(f"   Pins:  DATA={sda_pin}  CLOCK={scl_pin}  I2C-addr={'see-the-driver-code'}")
+    print(f"HELLO WORLD TEST FOR PCF8754T style LCD displays.  num_rows={NUM_ROWS}")
+    print(f"   Pins:  DATA={sda_pin}  CLOCK={scl_pin}  I2C-addr={'see-the-driver-code'}")
 
-  lcd = locate_the_lcd()
-  
-  try:
-    print("Use ^C to terminate the program and perform cleanup on the LCD device.")
-    #just_show_some_hello_lines(lcd, 5)
-    show_star_running(lcd,6)
-    #show_alternating_rows_of_stars(lcd, 5)
-  except (KeyboardInterrupt):
-    lcd.clear()
-    del lcd
-  #         1234567890123456
-  lcd.puts("END hello FANCY!", 0,0)
-  lcd.puts("++_++__++__++_++", 1,0)
-  #         1234567890123456
-  print("... end of hello world ANR FANCY version ...")
+    lcd = locate_the_lcd()
+      
+    try:
+        print("Use ^C to terminate the program and perform cleanup on the LCD device.")
+        just_show_some_hello_lines(lcd, 5)
+        show_star_running(lcd,6)
+        show_alternating_rows_of_stars(lcd, 5)
+
+    except (KeyboardInterrupt):
+        lcd.clear()
+        del lcd
+    #         1234567890123456
+    lcd.puts("END hello FANCY!", 0,0)
+    lcd.puts("++_++__++__++_++", 1,0)
+    #         1234567890123456
+    print("... end of hello world ANR FANCY version ...")
 
 main()
 

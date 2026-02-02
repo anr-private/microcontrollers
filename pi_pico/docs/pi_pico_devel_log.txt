@@ -1,0 +1,11 @@
+PI PICO Development LOG
+
+
+2026-02-02  LCD 1602 sample program 'ANR fancy'
+Put Pi Pico #5 on Freenove breakout box. Put on a wood backing along with
+a QAPASS 1602 LCD. Put 'ANR fancy' demo on it as main.py
+
+
+
+
+###
