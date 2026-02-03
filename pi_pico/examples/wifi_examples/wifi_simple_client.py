@@ -1,9 +1,8 @@
-# wifi_connect_simple.py
+# wifi_simple_client.py
 #
 # DOES NOT CONNECT  9/3/2025
 #  Maybe the wifi (Ubiquity) is WPA3 only? If so Pico W firmware does not know how to do WPA3
 # So set the router to WPA2/WPA3 mode(?)
-# FIXED: Ubiquity was ok. This pgm was using incorrect SSID and PW.
 #
 #  0 (STAT_IDLE): No connection and no activity.
 #  1 (STAT_CONNECTING): Connection in progress.
