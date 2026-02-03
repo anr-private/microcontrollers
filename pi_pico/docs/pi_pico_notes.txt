@@ -113,6 +113,27 @@ On Pico-W, use  machine.Pin("LED", machine.Pin.OUT)
 See git/microcontrollers/pi_pico/examples/blink_the_led/blink_builtin_led.py
 It detects the system (Pico or Pico-W) and configs the correct pin.
 
+
+=== RESET/REBOOT  and RESET BUTTON - how to add one  ===============
+See micropython ref sections: 6. Reset and boot modes
+and 6.1 Safe Boot  and  6.2 Factory reset the file system.
+
+Connect a button from RUN (physical pin 30) to GND. Grounding the RUN
+pin resets the Pico.
+There are 2 sofware resets:
+   machine.soft_reset()       # resets the Python heap/VM
+   machine.reset()            # hard reset
+A hard reset is equivalent to a power cycle of the Pico. It also will likely
+cause a disconnection of anything using the USB for data such as Thonny.
+
+The standard python 'sys.exit()' also does a soft reset(?)
+
+This deletes/re-creates the file system, effectively deleting all files
+on the Pico:
+   import os
+   os.mkfs('/flash')
+
+
 === DETECTING WLAN  =======
 
 There is no direct method for software written in MicroPython to discover 
