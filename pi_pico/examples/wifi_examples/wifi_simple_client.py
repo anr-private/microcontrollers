@@ -39,6 +39,8 @@ def connect_to_wifi(show_details=True):
     Else raises exception
     """
     
+    dbg(f"CONNECT_TO_WIFI  ++++++++++++++++++++++++++++++")
+    
     # Connect to WLAN
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -80,10 +82,17 @@ def fetch_url(url):
         print("Content:")
         print(response.text)
         response.close() # Always close the response
+        return response
+    
     except Exception as e:
         print("Error fetching URL:", e)
+    except RuntimeError as e:
+        print("FETCH_URL: " + e)
+    except KeyboardInterrupt:
+        print("FETCH_URL: " + e)
+    print("FETCH_URL: returns NONE")
 
-
+def OLD___fetchurl(url):
     try:
         wlan = connect_to_wifi()
         if wlan.isconnected():
@@ -108,17 +117,25 @@ def fetch_url(url):
 
 def main():
     """ main pgm for web client """
-    dbg(f"MAIN: begin")
+    dbg(f"MAIN: begin  wifi_simple_client")
 
     try:
         wlan = connect_to_wifi()
-
-        while True:
+        dbg(f"MAIN connected to wlan!")
+        
+        #while True:
+        if 1:
+            url = "http://192.168.69.131:8000"
+            #url = "http://example.com"
+            dbg(f"MAIN  url='{url}'")    
             if not wlan.isconnected():
                 print(f"WiFi connection lost. Cannot fetch URL '{url}'")
-            url = "http://example.com"
+                
             result = fetch_url(url)
+            
+            print("="*60)
             print(f"@@@ RESULT {result}")
+            print("-"*60)
 
 
     except KeyboardInterrupt:
@@ -128,7 +145,7 @@ def main():
     except Exception as ex:
         print(f"UNKNOWN EXCEPTION: {ex}")
 
-    dbg(f"MAIN: exit")
+    dbg(f"MAIN: exit  wifi_simple_client")
     
     # This does a Soft Reset. Equiv to control-D
     #sys.exit()
