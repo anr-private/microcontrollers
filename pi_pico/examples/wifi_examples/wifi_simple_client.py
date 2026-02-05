@@ -125,7 +125,7 @@ def main():
         
         #while True:
         if 1:
-            url = "http://192.168.69.131:8000"
+            url = "http://192.168.1.215:8000"
             #url = "http://example.com"
             dbg(f"MAIN  url='{url}'")    
             if not wlan.isconnected():
