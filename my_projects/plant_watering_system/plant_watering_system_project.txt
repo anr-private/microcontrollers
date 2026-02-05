@@ -3,6 +3,11 @@ PLANT WATERING SYSTEM PROJECT
 plant_watering_system_project.txt
   ~~/microcontrollers/my_projects/plant_watering_system/
 
+SOURCES:
+ web server: Bytes N Bits Pi Pico webserver
+   "Build a web control panel for your project - HTML and JavaScript coding"
+   https://www.youtube.com/playlist?list=PLvOT6zBnJyYGLmvrJeYzRYwBFa44SVnLZ
+
 Automated plant watering for outdoor plants.
 For watering fruit tree.
 
