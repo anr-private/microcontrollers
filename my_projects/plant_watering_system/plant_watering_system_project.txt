@@ -7,6 +7,8 @@ SOURCES:
  web server: Bytes N Bits Pi Pico webserver
    "Build a web control panel for your project - HTML and JavaScript coding"
    https://www.youtube.com/playlist?list=PLvOT6zBnJyYGLmvrJeYzRYwBFa44SVnLZ
+   website: https://bytesnbits.co.uk/web-control-panel-web-page/
+
 
 Automated plant watering for outdoor plants.
 For watering fruit tree.
