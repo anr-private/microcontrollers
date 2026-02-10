@@ -1,6 +1,29 @@
 Pi Pico Plant Watering Project  NOTES
 
- ~/git/microcontrollers/pi_pico/projects/watering_controller/watering_controller_pico_project_notes.txt
+ ~/git/microcontrollers/pi_pico/projects/...
+    watering_controller/watering_controller_pico_project_notes.txt
+
+
+SOURCES:
+ web server: Bytes N Bits Pi Pico webserver
+   "Build a web control panel for your project - HTML and JavaScript coding"
+   https://www.youtube.com/playlist?list=PLvOT6zBnJyYGLmvrJeYzRYwBFa44SVnLZ
+   website: https://bytesnbits.co.uk/web-control-panel-web-page/
+
+
+Automated plant watering for outdoor plants.
+For watering fruit tree.
+
+Need:
+  water system:
+    pump
+    filter
+    pickup / clunk
+    tank
+    hose
+
+Water pump candidates:
+  shurflo 1 GPM RV water pump
 
 
 POWER
