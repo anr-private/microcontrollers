@@ -31,7 +31,11 @@ def join(path_a: str, path_b: str) -> str:
 def remove_file_by_path(fpath: str):
     prt(f"  REMOVE: {fpath}")
     if DO_REMOVALS:
-        os.remove(fpath)
+        try:
+            os.remove(fpath)
+        except Exception as ex:
+            print(f"*** FAILED TO REMOVE {fpath}")
+            print(f"    ex: {ex}")
     else:
         print(f"        dry run - file not removed")
 
@@ -59,8 +63,10 @@ def remove_the_files_from_listed_dirs():
             remove_file_by_path(fpath)
 
 def main():
+    print("=== REMOVE THE OLD FILES of the WATERING PROJECT ==================")
     remove_the_listed_files()
     remove_the_files_from_listed_dirs()
+    print("=== end of REMOVE THE OLD FILES of the WATERING PROJECT ==================")
 
 if __name__ == "__main__":
     main()
