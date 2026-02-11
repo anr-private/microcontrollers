@@ -1,16 +1,14 @@
-# anr_http_client.py
+# watering_project_main.py
 #
-# main program for the Client
+# main program for the watering project
+#
+# Gets install on the Pico as  /main.py
+# Runs when Pico powers up.
 
 import sys
 import platform
 
-
-sys.path.append("../anr_http")
-
-py_platform = "cpython"
-
-print(f"{platform.platform().lower()=}")
+###print(f"{platform.platform().lower()=}")
 
 if "micropython" in platform.platform().lower():
     py_platform = "micropython"
@@ -19,15 +17,16 @@ print(f"{py_platform=}")
 if py_platform == "micropython":
     sys.path.append("/anr_http")
 else:
+    py_platform = "cpython"
     sys.path.append("../anr_http")
 print(f"{sys.path=}")
     
 
 
-from AnrHttpClient import AnrHttpClient
+from AnrHttpServer import AnrHttpServer
 
-client = AnrHttpClient()
-client.run()
+server = AnrHttpServer()
+server.run()
 
 
 ### end ###

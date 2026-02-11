@@ -6,7 +6,7 @@ import os
 DO_REMOVALS = True
 
 files_to_remove = [
-    "anr_http_client.py",
+    "main.py",    # original file is: watering_project_main.py
     ]
 
 dirs_to_empty_out = [
