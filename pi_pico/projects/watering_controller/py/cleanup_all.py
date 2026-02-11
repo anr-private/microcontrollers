@@ -9,11 +9,11 @@ import os
 # values used with os.ilistdir
 # it returns tuples:
 #  (name, type, inode[, size])
-DIRECTORY_MARKER = 0x8000  # 32768
-FILE_MARKER      = 0x4000  # 16384
+FILE_MARKER = 0x8000  # 32768
+DIRECTORY_MARKER      = 0x4000  # 16384
 
 
-def notify(*args: str) -> None:
+def prt(*args: str) -> None:
     print(*args)  # noqa: T201
 
 
@@ -32,20 +32,21 @@ def list_directories(base: str) -> list:
 
 
 def cleanup(base: str = ".") -> None:
-    notify(f"CLEANUP: {base}")
+    prt(f"CLEANUP: {base}")
 
     for f in list_directories(base):
         file_to_remove = join(base, f)
-        notify(f"removing file: {file_to_remove}")
+        prt(f"removing file: {file_to_remove}")
         ###os.remove(file_to_remove)  # noqa:  PTH107 (micropython)
         print(f"os.remove(file_to_remove)")  # noqa:  PTH107 (micropython)
 
     for d in list_files(base):
         dir_to_remove = join(base, d)
-        notify(f"removing dir: {dir_to_remove}")
+        prt(f"removing dir: {dir_to_remove}")
         cleanup(dir_to_remove)
         ###os.rmdir(dir_to_remove)  # noqa:  PTH106 (micropython)
         print(f"os.rmdir(dir_to_remove) ")  # noqa:  PTH106 (micropython)
+        
 def xxx_show_dirs():
     print(f"dirs /")
     print(list_directories("/"))
@@ -58,26 +59,25 @@ def xxx_show_dirs():
     print(f"dirs .")
     print(list_directories("."))
     print()
-
-
-if __name__ == "__main__":
-    ###cleanup(".")
-
-    print("LISTDIR of slash:")
+def xxx_show_files_and_dirs():
+    print("FILES and DIRS in '/'  (slash, top-level dir):")
     for d in os.ilistdir("/"):
         print(f"  {d=}")
-
     print("FILES -----")
     dd = "/"
     files = [f for f in os.ilistdir(dd) if f[1] == FILE_MARKER]
     for f in files:
         print(f"  {f}")
-
     print("DIRs -----")
     dd = "/"
     dirs = [x for x in os.ilistdir(dd) if x[1] == DIRECTORY_MARKER]
     for x in dirs:
         print(f"  {x}")
+
+
+if __name__ == "__main__":
+    ###cleanup(".")
+    xxx_show_files_and_dirs()
 
 
 ### end ###
