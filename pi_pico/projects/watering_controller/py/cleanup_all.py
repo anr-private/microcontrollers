@@ -1,3 +1,10 @@
+print("*** THIS IS REPLACED BY remove_old_watering_files.py *****")
+import sys; sys.exit(9)
+
+
+
+
+
 # cleanup_all.py
 #
 # Run it on the pi pico to clean up all the old files.
@@ -77,7 +84,7 @@ def xxx_show_files_and_dirs():
 
 if __name__ == "__main__":
     ###cleanup(".")
-    xxx_show_files_and_dirs()
+    ###xxx_show_files_and_dirs()
 
 
 ### end ###
