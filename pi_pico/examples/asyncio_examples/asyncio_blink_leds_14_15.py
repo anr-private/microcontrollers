@@ -1,4 +1,8 @@
 # asyncio_blink_leds.py
+#
+# Blinks LEDs on pins 14,15
+# and main() does some busy work
+# So 3 async tasks running concurrently
 
 import uasyncio
 
@@ -12,7 +16,13 @@ async def blink(led, period_ms):
 async def main(led1, led2):
     uasyncio.create_task(blink(led1, 700))
     uasyncio.create_task(blink(led2, 400))
-    await uasyncio.sleep_ms(10_000)
+    
+    # just do some 'work' in main
+    ctr = 0
+    while 1:
+        print(f"Main: counted to {ctr}")
+        ctr += 1 
+        await uasyncio.sleep_ms(2_000)
 
 # Running on a pyboard
 ###from pyb import LED
@@ -21,6 +31,16 @@ async def main(led1, led2):
 # Running on a generic board
 from machine import Pin
 ###uasyncio.run(main(Pin(1), Pin(2)))
-uasyncio.run(main(Pin(14, Pin.OUT), Pin(15, Pin.OUT)))
+
+led14 = Pin(14, Pin.OUT)
+led15 = Pin(15, Pin.OUT)
+
+try:
+    uasyncio.run(main(led14, led15))
+except KeyboardInterrupt:
+    print(f"=== Interrupted by USER control-C")
+print(f"Turn off the LEDs")
+led14.off()
+led15.off()
 
 ### end ###
