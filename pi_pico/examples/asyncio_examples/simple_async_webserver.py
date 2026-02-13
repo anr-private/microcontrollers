@@ -46,12 +46,10 @@ SIMPLE_REPLY_PAGE_BODY = [
     "</html>"
     ]
 
-VERBOSE = True
-VV = VERBOSE    
 
 def dbg(stg=None):
     """ output a string to the debug output """
-    if not VERBOSE: return
+    ###return
     if stg is None: stg = ""
     print(f"DBG:{stg}")
 
@@ -63,55 +61,55 @@ def make_header_lines_from_template(template_mesg_lines, values={}):
     Each line of the template is processed like this:
         actual_line = template_line.format(**values)
     So the template lines can contain '{value-item-name}' items.
+    Returns the list of lines with substitions performed,
+    ready to send to browser (but no EOL chars added yet).
     """
-    ###print(f"make_mesg_stg_from_template templet is {type(template_mesg_lines)}   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$444")
-    ###for line in template_mesg_lines:
-    ###    print(f"MAKE MESG STG $$$$$$$$$$$$$ LINE is {line}")
     hdr_lines = []
     for line in template_mesg_lines:
         # ** unpacks the dict into kw params
         line = line.format(**values)
         hdr_lines.append(line) 
-    ##### add the end-of-line chars per HTTP spec
-    ####stg = "\r\n".join(actual_lines)
-    ##### add the terminator marker
-    ####stg = stg + "\r\n\r\n"
-    dbg(f"make_header_lines_from_template@79  num-hdr-lines={len(hdr_lines)}")
+    dbg(f"make_header_lines_from_template@71  num-hdr-lines={len(hdr_lines)}")
     return hdr_lines
 
 def make_body_lines_from_template(body_template_lines, values={}):
     """ Makes body lines from template lines, filling in the 
     string format items with actual values. 
-    Returns a list of body lines, ready to send to the browser.
+    Returns a list of body lines, ready to send to the browser  
+     (but no EOL chars added yet)
     """
     body_lines = []
     for tline in body_template_lines:
         # ** unpacks the dict into kw params
         body_line = tline.format(**values)
-        #dbg(f"ssssss@91 {body_line=}")
         body_lines.append(body_line)
     dbg(f"make_body_lines_from_template@93 num-body-lines={len(body_lines)}")
     return body_lines
 
 def determine_expected_body_length(body_lines):
     """ given body lines ready to send to browser, but without end-of-line
-    chars. Calculate the body length to include the chars in the body_lines
-    PLUS the (not yet present) EOL chars.
+    chars. Calculates the body length to include the chars in the body_lines
+    PLUS the EOL chars (which have not yet been added!).
     """
     total_length = 0
     for line in body_lines:
         # add 2 to account for the EOL chars
         total_length += len(line) + 2
-        #print(f"@@@@ adding {len(line)+2}  {total_length=}")
     return total_length
 
 def make_reply_lines(header_values, body_values):
+    """ Given the substition dicts containing values to be substituted 
+    into the header and the body.
+    Creates the header lines and body lines by substituting using the 
+    values dicts.
+    Inserts the body length into the header as well.
+    Returns a list of lines that includes the final header lines
+    and final body lines - except the lines DO NOT YET have EOL chars.
+    """
     if header_values is None: header_values = {}
     if body_values is None: body_values = {}
-    #####body_values = {"comment":"123456789."}
     body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, body_values)
     body_length = determine_expected_body_length(body_lines)
-    print(f"@126  response num-body-lines={len(body_lines)}  {body_length=}")
     
     # the header should have a line for content length like this:
     #   "Content-Length: {body_length}",
@@ -121,18 +119,16 @@ def make_reply_lines(header_values, body_values):
     all_lines = header_lines + body_lines
     return all_lines
 
-    ###mesg_bytes = make_message_bytes(header_lines, body_lines)
 
 def make_message_bytes(raw_mesg_lines):
     """ raw_mesg_lines is a list of the lines of the message,
     including header lines, header separator line,
     and body lines. 
-    These lines DO NOT HAVE and EOL char(s) on them (CR or LF)
+    These lines DO NOT HAVE any EOL char(s) on them (CR or LF)
     Adds the EOL chars per HTTP spec and then
     creates a byte-string from the lines, ready to send 
-    out the socket.
+    out the socket to the client
     """
-
     dbg(f"make_message_bytes raw_mesg_lines.len={len(raw_mesg_lines)}")
     mesg_lines = []
     for raw_line in raw_mesg_lines:
@@ -144,15 +140,14 @@ def make_message_bytes(raw_mesg_lines):
     return mesg_bytes
 
 
-
-
 def TEST_for_making_the_reply():
+    """ development test for creating the reply """
     header_values = {}
     header_values["body_length"] = 999
 
     if 0:
         header_lines = make_header_lines_from_template(SIMPLE_REPLY_PAGE_HDR, header_values)
-        print(f"@@@152 header lines len={len(header_lines)}")
+        print(f"@@@150 header lines len={len(header_lines)}")
         if 1:
             for line in header_lines:
                 print(f"  HDR {line}")
@@ -168,21 +163,14 @@ def TEST_for_making_the_reply():
 
     lines = make_reply_lines(header_values, body_values)
 
-    print(f"@@@175  all lines len = {len(lines)}")
+    print(f"@@@166  all lines len = {len(lines)}")
     if 1:
         print("@@@177 all lines:")
         for line in lines:
             print(f"  LINE: {line}")
 
     mesg_bytes = make_message_bytes(lines)
-    print(f"@@@182  mesg_bytes len = {len(mesg_bytes)}")
-    
-
-
-def OLD_TEST():
-    body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, values)
-    body_length = determine_expected_body_length(body_lines)
-    print(f"@@@  {body_length=}")
+    print(f"@@@173  mesg_bytes len = {len(mesg_bytes)}")
 
 
 def connect_to_wifi(show_details=True):
@@ -293,39 +281,6 @@ async def handle_client_by_lines(reader, writer):
 
             writer.write(mesg_bytes)
             await writer.drain() # Ensure the data is sent
-
-
-        if 0:
-            # Send the response back to the client
-            body_values = {"comment":"123456789."}
-            body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, body_values)
-            body_length = determine_expected_body_length(body_lines)
-            print(f"@212  response {body_length=}")
-            header_values = {"body_length":body_length}
-            header_lines = make_header_lines_from_template(SIMPLE_REPLY_PAGE_HDR, header_values)
-            all_mesg_lines = header_lines + body_lines
-           
-
-            ###message = make_mesg_stg_from_template(SIMPLE_REPLY_PAGE)
-            mesg_bytes = message.encode("utf-8")
-            print(f"@168 SEND RESPONSE. len(mesg_bytes) = {len(mesg_bytes)}")
-            writer.write(mesg_bytes)
-            await writer.drain() 
-
-        if 0:
-            if lines[0][0:3] == "GET":
-                print(f"  REPLACE GET with 200 OK")
-                lines[0] = "HTTP/1.1 200 OK\r\n"
-            message = "".join(lines)
-            ###message += "\r\n\r\n"
-            # Send the response back to the client
-            mesg_bytes = message.encode("utf-8")
-            print(f" Write the mesg.  len(mesg_bytes) = {len(mesg_bytes)}")
-            ###writer.write(f'Echo: {message}\n'.encode('utf8'))
-            writer.write(mesg_bytes)
-            # add trailing blank line
-            ####writer.write(f"\r\n".encode("utf-8"))  ### ANR
-            await writer.drain() # Ensure the data is sent
             
     except Exception as e:
         print(f'Error with client: {e}')
@@ -406,6 +361,7 @@ async def OLD__handle_client_all_bytes(reader, writer):
         writer.close()
         await writer.wait_closed() # Wait until the stream is fully closed
 
+
 async def run_server(host, port):
     """
     Starts the asynchronous server.
@@ -457,12 +413,6 @@ if __name__ == '__main__':
     main()
     
     #TEST_for_making_the_reply()
-
-
-    # v = {"bbb": "23"}
-    # print(f"{v=}")
-    # s = "THIS IS {bbb} BBB".format(**v)
-    # print(f"{s=}")
 
 ### end ###
         
