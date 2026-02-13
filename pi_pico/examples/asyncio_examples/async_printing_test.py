@@ -4,7 +4,7 @@
 #  checking 5 times a second (every 200 msecs) to see if
 #  clock has ticked to the next second.
 
-import uasyncio
+import asyncio
 import utime
 
 TOTAL_RUN_TIME_SECS = 28
@@ -13,14 +13,14 @@ async def prt(who, secs, start_time):
     while True:
         now = utime.time()
         print(f"This is {who}  {now-start_time}") 
-        await uasyncio.sleep_ms(secs*1000)
+        await asyncio.sleep_ms(secs*1000)
         
 async def main():
     start_time = utime.time()
-    uasyncio.create_task(prt("A-3", 3, start_time))
-    uasyncio.create_task(prt("B-4", 4, start_time))
-    uasyncio.create_task(prt("C-5", 5, start_time))
-    uasyncio.create_task(prt("D-7", 7, start_time))
+    asyncio.create_task(prt("A-3", 3, start_time))
+    asyncio.create_task(prt("B-4", 4, start_time))
+    asyncio.create_task(prt("C-5", 5, start_time))
+    asyncio.create_task(prt("D-7", 7, start_time))
     
     target_end_time = start_time + TOTAL_RUN_TIME_SECS
     
@@ -34,7 +34,7 @@ async def main():
             if now > curr_secs:
                 break
             ticks_waited += 1
-            await uasyncio.sleep_ms(200)
+            await asyncio.sleep_ms(200)
             
             
         curr_secs = utime.time()
@@ -44,16 +44,16 @@ async def main():
         if curr_secs >= target_end_time:
             break
     
-    ###await uasyncio.sleep_ms(24_000)
+    ###await asyncio.sleep_ms(24_000)
     end_time = utime.time()
     elapsed_time = end_time - start_time
     print(f"MAIN:  elapsed time: {elapsed_time} secs.")
     
 # Running on a generic board
 ###from machine import Pin
-###uasyncio.run(main(Pin(1), Pin(2)))
+###asyncio.run(main(Pin(1), Pin(2)))
 try:
-    uasyncio.run(main())
+    asyncio.run(main())
 except KeyboardInterrupt:
     print(f"=== Interrupted by USER control-C")
 
