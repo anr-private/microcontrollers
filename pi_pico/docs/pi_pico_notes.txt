@@ -313,6 +313,7 @@ PICOZERO exception:
 Source code: see
   ~/git/micropython_local_copy/micropython/FIND_*.out
 
+ALSO TRY: ThreadSafeQueue in Peter Hinch's repo.
 
 *NOTE* CRASH due to memory / GC
     import gc  # import garbage collector library at top of code
