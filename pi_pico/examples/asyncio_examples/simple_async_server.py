@@ -4,7 +4,7 @@
 # You may need to import network specific libraries (like 'network' for Wi-Fi)
 # and use them to get the board connected and obtain its IP address.
 
-
+import asyncio
 import machine
 import network
 import urequests
@@ -67,8 +67,6 @@ def connect_to_wifi(show_details=True):
     return wlan, ip_addr
 
 
-
-
 async def handle_client(reader, writer):
     """
     Coroutine to handle a single client connection.
@@ -106,12 +104,22 @@ async def run_server(host, port):
     # asyncio.start_server returns a Server object (or a generator in older MicroPython versions)
     server = await asyncio.start_server(handle_client, host, port)
     print(f'Listening on {host}:{port}...')
-
+    print(f"Server obj is {type(server)}")
+    print(f"server module {server.__module__}")
+    print(f"  dir(server)")
+    print(f"  {dir(server)}")
+    if 0:
+        # server.sockets does not exist
+        addr = server.sockets[0].getsockname()
+        print(f'Serving on {addr}')
     # Use 'async with' to manage the server's lifecycle automatically
     async with server:
-        await server.serve_forever() # Run the server indefinitely
-
-# --- Main entry point ---
+        ###ANR not needed, the start_server's task already is running
+        ###ANRawait server.serve_forever() # Run the server indefinitely
+        while 1:
+            print(f"run_server -- just waiting while server runs")
+            await asyncio.sleep(10)
+            
 if __name__ == '__main__':
 
     wlan, ip_addr = connect_to_wifi()
@@ -129,7 +137,7 @@ if __name__ == '__main__':
         # Start the event loop and run the main server coroutine
         asyncio.run(run_server(host, port))
     except KeyboardInterrupt:
-        print('Server stopped by user.')
+        print('Server stopped by user KeyboardInterrupt.')
     finally:
         # Clean up the event loop (optional, but good practice)
         asyncio.new_event_loop()
