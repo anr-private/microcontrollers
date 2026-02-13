@@ -139,7 +139,7 @@ def make_message_bytes(raw_mesg_lines):
         mesg_lines.append(raw_line + "\r\n")
     mesg_stg = "".join(mesg_lines)
     dbg(f"make_message_bytes {len(mesg_stg)=}")
-    mesg_bytes = mesg.stg.encode("utf-8")
+    mesg_bytes = mesg_stg.encode("utf-8")
     dbg(f"make_message_bytes {len(mesg_bytes)=}")
     return mesg_bytes
 
@@ -150,7 +150,7 @@ def TEST_for_making_the_reply():
     header_values = {}
     header_values["body_length"] = 999
 
-    if 1:
+    if 0:
         header_lines = make_header_lines_from_template(SIMPLE_REPLY_PAGE_HDR, header_values)
         print(f"@@@152 header lines len={len(header_lines)}")
         if 1:
@@ -159,25 +159,23 @@ def TEST_for_making_the_reply():
 
     body_values = {"comment":"12345comment6789."}
 
-    if 1:
+    if 0:
         body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, body_values)
         print(f"@@@160 body lines len={len(body_lines)}")
         if 1:
             for line in body_lines:
                 print(f"  BODY {line}")
 
-    #xxx = determine_expected_body_length(body_lines)
-    #print(f"@@@166 exp body len {xxx}")
-    print(f"@@@@@@@@@ 167 @@@@@@@")
-
     lines = make_reply_lines(header_values, body_values)
 
-    print(f"@@@  all lines len = {len(lines)}")
+    print(f"@@@175  all lines len = {len(lines)}")
     if 1:
-        print("@@@ 73 all lines:")
+        print("@@@177 all lines:")
         for line in lines:
             print(f"  LINE: {line}")
 
+    mesg_bytes = make_message_bytes(lines)
+    print(f"@@@182  mesg_bytes len = {len(mesg_bytes)}")
     
 
 
@@ -279,7 +277,24 @@ async def handle_client_by_lines(reader, writer):
                     print(f"  THIS IS THE LAST LINE!!!!!!!!!!! STOP READING!!!!!!!!!")
                 break
         if 1:
-            ...
+            header_values = {}
+            body_values = {"comment":"this is the comment!."}
+
+            lines = make_reply_lines(header_values, body_values)
+        
+            print(f"@@@285  all lines len = {len(lines)}")
+            if 1:
+                print("@@@287 all lines:")
+                for line in lines:
+                    print(f"  LINE: {line}")
+        
+            mesg_bytes = make_message_bytes(lines)
+            print(f"@@@292  mesg_bytes len = {len(mesg_bytes)}")
+
+            writer.write(mesg_bytes)
+            await writer.drain() # Ensure the data is sent
+
+
         if 0:
             # Send the response back to the client
             body_values = {"comment":"123456789."}
@@ -319,7 +334,8 @@ async def handle_client_by_lines(reader, writer):
         writer.close()
         await writer.wait_closed() # Wait until the stream is fully closed
 
-async def handle_client_as_bytes(reader, writer):
+
+async def OLD__handle_client_as_bytes(reader, writer):
     """
     Coroutine to handle a single client connection.
     Takes StreamReader and StreamWriter instances as arguments.
@@ -355,7 +371,7 @@ async def handle_client_as_bytes(reader, writer):
         writer.close()
         await writer.wait_closed() # Wait until the stream is fully closed
 
-async def handle_client_all_bytes(reader, writer):
+async def OLD__handle_client_all_bytes(reader, writer):
     """
     Coroutine to handle a single client connection.
     Takes StreamReader and StreamWriter instances as arguments.
@@ -438,8 +454,9 @@ def main():
 
 
 if __name__ == '__main__':
-    #main()
-    TEST_for_making_the_reply()
+    main()
+    
+    #TEST_for_making_the_reply()
 
 
     # v = {"bbb": "23"}
