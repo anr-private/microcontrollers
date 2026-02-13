@@ -1,13 +1,15 @@
-# simple_async_server.py
+# simple_async_webserver.py
 #
 # From google search AI.
-# Runs a simple server using asyncio.
+# Runs a simple web server using asyncio.
 # Connect to it using a browser (firefox,...) and request
 #  http://192.168.1.49:8080
 # Fix the IP to be the IP of the Pico's wifi connection, which it
 # prints when it connects.
 # This server always sends back the same thing, regardless of the request.
 # The response is the canned reply - see below.
+# This is self-contained. But it uses a couple of things from anr libraries
+# like dbg and make_mesg_stg_from_template (with some mods)
 
 ###ANR import uasyncio as asyncio
 import asyncio
@@ -22,14 +24,16 @@ from details import SSID, PW
 ssid = SSID
 password = PW
 
-SIMPLE_REPLY_PAGE = [
+SIMPLE_REPLY_PAGE_HDR = [
     "HTTP/1.1 200 OK",
     "Date: Wed, 23 Oct 2024 12:00:00 GMT",
     "Server: Apache/2.4.1 (Unix)",
     "Content-Type: text/html; charset=UTF-8",
-    "Content-Length: 104",
+    "Content-Length: {body_length}",
     "Connection: Closed",
-    "",
+    ""
+    ]
+SIMPLE_REPLY_PAGE_BODY = [
     "<!DOCTYPE html>",
     "<html>",
     "<head>",
@@ -37,7 +41,7 @@ SIMPLE_REPLY_PAGE = [
     "</head>",
     "<body>",
     "    <h1>Hello, World!</h1>",
-    "    <p>This is a simple HTML page.</p>",
+    "    <p>This is a simple HTML page. {comment}</p>",
     "</body>",
     "</html>"
     ]
@@ -52,28 +56,135 @@ def dbg(stg=None):
     print(f"DBG:{stg}")
 
 # from utils.py
-def make_mesg_stg_from_template(template_mesg_lines, values={}):
-    """ Create a string that contains an HTTP mesg using 
-    a list of lines (ie strings) as the input.
+def make_header_lines_from_template(template_mesg_lines, values={}):
+    """ Create a list of header lines that contain an HTTP header using 
+    a list of lines (ie strings, the template lines) as the input.
     The values arg is a dict of substition values.
     Each line of the template is processed like this:
-        actual_line = template_line % values
-    So the template lines can contain '%(value_name)s' items.
+        actual_line = template_line.format(**values)
+    So the template lines can contain '{value-item-name}' items.
     """
     ###print(f"make_mesg_stg_from_template templet is {type(template_mesg_lines)}   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$444")
     ###for line in template_mesg_lines:
     ###    print(f"MAKE MESG STG $$$$$$$$$$$$$ LINE is {line}")
-    actual_lines = []
+    hdr_lines = []
     for line in template_mesg_lines:
-        line = line % values
-        actual_lines.append(line) 
-    # add the HTTP separator
-    stg = "\r\n".join(actual_lines)
-    # add the terminator marker
+        # ** unpacks the dict into kw params
+        line = line.format(**values)
+        hdr_lines.append(line) 
+    ##### add the end-of-line chars per HTTP spec
+    ####stg = "\r\n".join(actual_lines)
+    ##### add the terminator marker
     ####stg = stg + "\r\n\r\n"
-    dbg(f"create_mesg_stg  mesg stg len={len(stg)}")
-    return stg
+    dbg(f"make_header_lines_from_template@79  num-hdr-lines={len(hdr_lines)}")
+    return hdr_lines
 
+def make_body_lines_from_template(body_template_lines, values={}):
+    """ Makes body lines from template lines, filling in the 
+    string format items with actual values. 
+    Returns a list of body lines, ready to send to the browser.
+    """
+    body_lines = []
+    for tline in body_template_lines:
+        # ** unpacks the dict into kw params
+        body_line = tline.format(**values)
+        #dbg(f"ssssss@91 {body_line=}")
+        body_lines.append(body_line)
+    dbg(f"make_body_lines_from_template@93 num-body-lines={len(body_lines)}")
+    return body_lines
+
+def determine_expected_body_length(body_lines):
+    """ given body lines ready to send to browser, but without end-of-line
+    chars. Calculate the body length to include the chars in the body_lines
+    PLUS the (not yet present) EOL chars.
+    """
+    total_length = 0
+    for line in body_lines:
+        # add 2 to account for the EOL chars
+        total_length += len(line) + 2
+        #print(f"@@@@ adding {len(line)+2}  {total_length=}")
+    return total_length
+
+def make_reply_lines(header_values, body_values):
+    if header_values is None: header_values = {}
+    if body_values is None: body_values = {}
+    #####body_values = {"comment":"123456789."}
+    body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, body_values)
+    body_length = determine_expected_body_length(body_lines)
+    print(f"@126  response num-body-lines={len(body_lines)}  {body_length=}")
+    
+    # the header should have a line for content length like this:
+    #   "Content-Length: {body_length}",
+    header_values["body_length"] = body_length
+    header_lines = make_header_lines_from_template(SIMPLE_REPLY_PAGE_HDR, header_values)
+
+    all_lines = header_lines + body_lines
+    return all_lines
+
+    ###mesg_bytes = make_message_bytes(header_lines, body_lines)
+
+def make_message_bytes(raw_mesg_lines):
+    """ raw_mesg_lines is a list of the lines of the message,
+    including header lines, header separator line,
+    and body lines. 
+    These lines DO NOT HAVE and EOL char(s) on them (CR or LF)
+    Adds the EOL chars per HTTP spec and then
+    creates a byte-string from the lines, ready to send 
+    out the socket.
+    """
+
+    dbg(f"make_message_bytes raw_mesg_lines.len={len(raw_mesg_lines)}")
+    mesg_lines = []
+    for raw_line in raw_mesg_lines:
+        mesg_lines.append(raw_line + "\r\n")
+    mesg_stg = "".join(mesg_lines)
+    dbg(f"make_message_bytes {len(mesg_stg)=}")
+    mesg_bytes = mesg.stg.encode("utf-8")
+    dbg(f"make_message_bytes {len(mesg_bytes)=}")
+    return mesg_bytes
+
+
+
+
+def TEST_for_making_the_reply():
+    header_values = {}
+    header_values["body_length"] = 999
+
+    if 1:
+        header_lines = make_header_lines_from_template(SIMPLE_REPLY_PAGE_HDR, header_values)
+        print(f"@@@152 header lines len={len(header_lines)}")
+        if 1:
+            for line in header_lines:
+                print(f"  HDR {line}")
+
+    body_values = {"comment":"12345comment6789."}
+
+    if 1:
+        body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, body_values)
+        print(f"@@@160 body lines len={len(body_lines)}")
+        if 1:
+            for line in body_lines:
+                print(f"  BODY {line}")
+
+    #xxx = determine_expected_body_length(body_lines)
+    #print(f"@@@166 exp body len {xxx}")
+    print(f"@@@@@@@@@ 167 @@@@@@@")
+
+    lines = make_reply_lines(header_values, body_values)
+
+    print(f"@@@  all lines len = {len(lines)}")
+    if 1:
+        print("@@@ 73 all lines:")
+        for line in lines:
+            print(f"  LINE: {line}")
+
+    
+
+
+def OLD_TEST():
+    body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, values)
+    body_length = determine_expected_body_length(body_lines)
+    print(f"@@@  {body_length=}")
 
 
 def connect_to_wifi(show_details=True):
@@ -168,8 +279,19 @@ async def handle_client_by_lines(reader, writer):
                     print(f"  THIS IS THE LAST LINE!!!!!!!!!!! STOP READING!!!!!!!!!")
                 break
         if 1:
+            ...
+        if 0:
             # Send the response back to the client
-            message = make_mesg_stg_from_template(SIMPLE_REPLY_PAGE)
+            body_values = {"comment":"123456789."}
+            body_lines = make_body_lines_from_template(SIMPLE_REPLY_PAGE_BODY, body_values)
+            body_length = determine_expected_body_length(body_lines)
+            print(f"@212  response {body_length=}")
+            header_values = {"body_length":body_length}
+            header_lines = make_header_lines_from_template(SIMPLE_REPLY_PAGE_HDR, header_values)
+            all_mesg_lines = header_lines + body_lines
+           
+
+            ###message = make_mesg_stg_from_template(SIMPLE_REPLY_PAGE)
             mesg_bytes = message.encode("utf-8")
             print(f"@168 SEND RESPONSE. len(mesg_bytes) = {len(mesg_bytes)}")
             writer.write(mesg_bytes)
@@ -293,8 +415,7 @@ async def run_server(host, port):
             print(f"run_server -- just waiting while server runs")
             await asyncio.sleep(10)
             
-if __name__ == '__main__':
-
+def main():
     wlan, ip_addr = connect_to_wifi()
 
     print(f"MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}")
@@ -315,6 +436,16 @@ if __name__ == '__main__':
         # Clean up the event loop (optional, but good practice)
         asyncio.new_event_loop()
 
+
+if __name__ == '__main__':
+    #main()
+    TEST_for_making_the_reply()
+
+
+    # v = {"bbb": "23"}
+    # print(f"{v=}")
+    # s = "THIS IS {bbb} BBB".format(**v)
+    # print(f"{s=}")
 
 ### end ###
         
