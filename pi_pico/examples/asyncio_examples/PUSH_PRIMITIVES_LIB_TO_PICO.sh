@@ -2,7 +2,7 @@
 #
 # PUSH_PRIMITIVES_LIB_TO_PICO.sh
 
-mpremote fs mkdir :/primitives
+###mpremote fs mkdir :/primitives
 
 mpremote fs cp -r primitives   :
 
