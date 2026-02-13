@@ -5,9 +5,10 @@
 # Producer loops, producing numbers
 
 import asyncio
-from primitives.queue import Queue  # Requires copying queue.py
+from primitives.queue import Queue, QueueEmpty
 
 async def producer(q):
+    """ puts a number in the Q once a second """
     ctr  = 100
     while 1:
         print(f"PRODUCER: put {ctr=}")
@@ -16,6 +17,23 @@ async def producer(q):
         ctr += 1
         
 async def consumer(q):
+    """ Consumes as much as it can, as fast as items appear in the Q
+    When the Q is emptied, it waits for a while.
+    NOTE it uses 'q.get_nowait() with no 'await' -- get_nowait() is NOT a coro.
+    NOTE the QueueEmpty evals to an empty string - you need to use repr(ex)!
+    """
+    while 1:
+        try:
+            item = q.get_nowait()  # Consume data
+            print(f"                  CONSUMER: got {item=}")
+        except QueueEmpty as ex:
+            print(f"                  CONSUMER got ex='{ex}'  s='{str(ex)}'  repr='{repr(ex)}' ")
+            await asyncio.sleep(3)
+        
+async def SIMPLER_consumer(q):
+    """ Consumes as much as it can, as fast as items appear in the Q
+    NOTE it uses 'await q.get()' - get() is a coro
+    """
     while 1:
         item = await q.get()  # Consume data
         print(f"CONSUMER: got {item=}")
@@ -27,7 +45,7 @@ async def main_loop(q):
     # just do some 'work' in main
     ctr = 0
     while 1:
-        print(f"Main: counted to {ctr}")
+        print(f"                                                                   Main: count={ctr}")
         ctr += 1 
         await asyncio.sleep_ms(2_000)
 
