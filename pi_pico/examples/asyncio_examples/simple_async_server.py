@@ -1,9 +1,15 @@
 # simple_async_server.py
 #
-###ANR import uasyncio as asyncio
-# You may need to import network specific libraries (like 'network' for Wi-Fi)
-# and use them to get the board connected and obtain its IP address.
+# From google search AI.
+# Runs a simple server using asyncio.
+# Connect to it using a browser (firefox,...) and request
+#  http://192.168.1.49:8080
+# Fix the IP to be the IP of the Pico's wifi connection, which it
+# prints when it connects.
+# This server always sends back the same thing, regardless of the request.
+# The response is the canned reply - see below.
 
+###ANR import uasyncio as asyncio
 import asyncio
 import machine
 import network
@@ -15,7 +21,27 @@ from details import SSID, PW
 
 ssid = SSID
 password = PW
-    
+
+SIMPLE_REPLY_PAGE = [
+    "HTTP/1.1 200 OK",
+    "Date: Wed, 23 Oct 2024 12:00:00 GMT",
+    "Server: Apache/2.4.1 (Unix)",
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Length: 104",
+    "Connection: Closed",
+    "",
+    "<!DOCTYPE html>",
+    "<html>",
+    "<head>",
+    "    <title>Example Page</title>",
+    "</head>",
+    "<body>",
+    "    <h1>Hello, World!</h1>",
+    "    <p>This is a simple HTML page.</p>",
+    "</body>",
+    "</html>"
+    ]
+
 VERBOSE = True
 VV = VERBOSE    
 
@@ -24,6 +50,30 @@ def dbg(stg=None):
     if not VERBOSE: return
     if stg is None: stg = ""
     print(f"DBG:{stg}")
+
+# from utils.py
+def make_mesg_stg_from_template(template_mesg_lines, values={}):
+    """ Create a string that contains an HTTP mesg using 
+    a list of lines (ie strings) as the input.
+    The values arg is a dict of substition values.
+    Each line of the template is processed like this:
+        actual_line = template_line % values
+    So the template lines can contain '%(value_name)s' items.
+    """
+    ###print(f"make_mesg_stg_from_template templet is {type(template_mesg_lines)}   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$444")
+    ###for line in template_mesg_lines:
+    ###    print(f"MAKE MESG STG $$$$$$$$$$$$$ LINE is {line}")
+    actual_lines = []
+    for line in template_mesg_lines:
+        line = line % values
+        actual_lines.append(line) 
+    # add the HTTP separator
+    stg = "\r\n".join(actual_lines)
+    # add the terminator marker
+    ####stg = stg + "\r\n\r\n"
+    dbg(f"create_mesg_stg  mesg stg len={len(stg)}")
+    return stg
+
 
 
 def connect_to_wifi(show_details=True):
@@ -118,6 +168,14 @@ async def handle_client_by_lines(reader, writer):
                     print(f"  THIS IS THE LAST LINE!!!!!!!!!!! STOP READING!!!!!!!!!")
                 break
         if 1:
+            # Send the response back to the client
+            message = make_mesg_stg_from_template(SIMPLE_REPLY_PAGE)
+            mesg_bytes = message.encode("utf-8")
+            print(f"@168 SEND RESPONSE. len(mesg_bytes) = {len(mesg_bytes)}")
+            writer.write(mesg_bytes)
+            await writer.drain() 
+
+        if 0:
             if lines[0][0:3] == "GET":
                 print(f"  REPLACE GET with 200 OK")
                 lines[0] = "HTTP/1.1 200 OK\r\n"
