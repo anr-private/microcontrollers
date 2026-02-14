@@ -264,23 +264,26 @@ async def handle_client_by_lines(reader, writer):
                 if int(new_bytes[0]) == 13 and int(new_bytes[1]) == 10:
                     print(f"  THIS IS THE LAST LINE!!!!!!!!!!! STOP READING!!!!!!!!!")
                 break
+        # After the above loop ends/breaks, the list 'lines' contains the
+        # client request up to the blank line that separates the 
+        # HTTP header from the body.
+
+        header_values = {}
+        body_values = {"comment":"this is the comment!."}
+
+        lines = make_reply_lines(header_values, body_values)
+    
+        print(f"@@@285  all lines len = {len(lines)}")
         if 1:
-            header_values = {}
-            body_values = {"comment":"this is the comment!."}
+            print("@@@287 all lines:")
+            for line in lines:
+                print(f"  LINE: {line}")
+    
+        mesg_bytes = make_message_bytes(lines)
+        print(f"@@@292  mesg_bytes len = {len(mesg_bytes)}")
 
-            lines = make_reply_lines(header_values, body_values)
-        
-            print(f"@@@285  all lines len = {len(lines)}")
-            if 1:
-                print("@@@287 all lines:")
-                for line in lines:
-                    print(f"  LINE: {line}")
-        
-            mesg_bytes = make_message_bytes(lines)
-            print(f"@@@292  mesg_bytes len = {len(mesg_bytes)}")
-
-            writer.write(mesg_bytes)
-            await writer.drain() # Ensure the data is sent
+        writer.write(mesg_bytes)
+        await writer.drain() # Ensure the data is sent
             
     except Exception as e:
         print(f'Error with client: {e}')
