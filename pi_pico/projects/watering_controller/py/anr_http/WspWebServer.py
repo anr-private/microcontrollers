@@ -1,13 +1,13 @@
-# AnrHttpServer.py
+# WspWebServer.py
 
-class AnrHttpServer:
+class WspWebServer:
     """ top-level Server class """
 
     def __init__(self, *args):
         ...
 
     def run(self):
-        print("AnrHttpServer.run RUNNING!")
+        print("WspWebServer.run RUNNING!")
 
 
 
