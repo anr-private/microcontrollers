@@ -118,7 +118,7 @@ def determine_machine_type():
 
     raw_machine_name_lc = os_uname[4].lower()
     if "pi pico w" in raw_machine_name_lc:
-        return = "pi pico w"
+        return "pi pico w"
     return "unknown"
 
 ### end ###

@@ -17,16 +17,49 @@ if determine_py_platform() == "micropython":
     sys.path.append("/anr_http")
 else:
     sys.path.append("../anr_http")
-#print(f"{sys.path=}")
 
+
+async def independent_task(name, duration):
+    print(f"Task {name} started and will run for {duration} seconds independently.")
+    await asyncio.sleep(duration)
+    print(f"+++  Task {name} finished.   +++")
+    return f"this is the result from independent_task {name=}"
 
 
 
 
 async def main_task(host, port):
+    webserver_task = asyncio.create_task(independent_task("webserver", 7))
+    sensors_task = asyncio.create_task(independent_task("sensors", 4))
+    displays_task = asyncio.create_task(independent_task("displays-update", 5))
+    #print(f"@@@@@@@@@@@ {dir(sensors_task)}")
+    #['__class__', '__next__', 'cancel', 'coro', 'data', 'done', 'ph_key', 'state']
+    
     while 1:
         print(f"MAIN TASK running    {host=}   {port=} ")
+        webserver_done = webserver_task.done()
+        sensors_done = sensors_task.done()
+        displays_done = displays_task.done()
+
+        print(f"  Who is done:  web={webserver_task.done()}  "+\
+               f"displays={displays_task.done()}  sensors={sensors_task.done()}")
+        #print(f"   state: {sensors_task.state}")  # bool
+        #print(f"   data: {sensors_task.data}")    # None
+        
+        # not impl in micropython
+        ###done, pending = await asyncio.wait(tasks, timeout=1)
+        ###print(f"MAIN_TASK  done={done}   pending={pending}")
+
+        if webserver_done and sensors_done and displays_done:
+            print("MAIN_TASK: all tasks are done!")
+            break
+        
         await asyncio.sleep(1)
+        
+    print(f"MAIN webserver result={webserver_task.result()}")
+    print(f"MAIN sensors   result={sensors_task.result()}")
+    print(f"MAIN displays  result={displays_task.result()}")
+    
 
 
 def main():
