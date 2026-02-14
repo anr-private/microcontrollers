@@ -369,7 +369,7 @@ async def run_server(host, port):
     """
     Starts the asynchronous server.
     """
-    # asyncio.start_server returns a Server object (or a generator in older MicroPython versions)
+    # asyncio.start_server returns a Server object 
     ###callbk = handle_client_all_bytes
     callbk = handle_client_by_lines
     server = await asyncio.start_server(callbk, host, port)
@@ -379,7 +379,7 @@ async def run_server(host, port):
     print(f"  dir(server)")
     print(f"  {dir(server)}")
     if 0:
-        # server.sockets does not exist
+        # server.sockets not available in micropython
         addr = server.sockets[0].getsockname()
         print(f'Serving on {addr}')
     # Use 'async with' to manage the server's lifecycle automatically
@@ -387,7 +387,7 @@ async def run_server(host, port):
         ###ANR not needed, the start_server's task already is running
         ###ANRawait server.serve_forever() # Run the server indefinitely
         while 1:
-            print(f"run_server -- just waiting while server runs")
+            print(f"run_server: waiting, keeping a ref to the server obj")
             await asyncio.sleep(10)
             
 def main():
