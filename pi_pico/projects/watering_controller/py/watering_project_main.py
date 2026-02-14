@@ -10,20 +10,17 @@ import sys
 import platform
 
 from lib import anr_wifi
+from utils import *
 
 
-###print(f"{platform.platform().lower()=}")
-
-if "micropython" in platform.platform().lower():
-    py_platform = "micropython"
-print(f"{py_platform=}")
-
-if py_platform == "micropython":
+if determine_py_platform() == "micropython":
     sys.path.append("/anr_http")
 else:
-    py_platform = "cpython"
     sys.path.append("../anr_http")
-print(f"{sys.path=}")
+#print(f"{sys.path=}")
+
+
+
 
 
 async def main_task(host, port):

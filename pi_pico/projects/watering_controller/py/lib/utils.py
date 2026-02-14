@@ -1,5 +1,7 @@
 # utils.py
 
+import os
+import platform
 import sys
 
 DEBUG = True
@@ -97,5 +99,26 @@ def dump_bytes(byte_vals, who=""):
         line = "".join(s)
         print(f" PARTIAL LINE: {line}")
     print(f"----------------------------------  {who} -------------")
+
+
+def determine_py_platform():
+    """ returns "micropython", "cpython" """
+    if "micropython" in platform.platform().lower():
+        return "micropython"
+    return "cpython"
+
+
+def determine_machine_type():
+    """ Returns one of these:
+    "pi pico w"   Pi PICO-W
+     "unknown"
+    """
+    
+    os_uname = os.uname()
+
+    raw_machine_name_lc = os_uname[4].lower()
+    if "pi pico w" in raw_machine_name_lc:
+        return = "pi pico w"
+    return "unknown"
 
 ### end ###
