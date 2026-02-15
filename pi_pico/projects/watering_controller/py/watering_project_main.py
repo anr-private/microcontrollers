@@ -9,15 +9,15 @@ import asyncio
 import sys
 import platform
 
-from anr_http import WspWebServer
-from lib import anr_wifi
+from wsp_http import WspWebServer
+from lib import wsp_wifi
 from utils import *
 
 
 if determine_py_platform() == "micropython":
-    sys.path.append("/anr_http")
+    sys.path.append("/wsp_http")
 else:
-    sys.path.append("../anr_http")
+    sys.path.append("../wsp_http")
 
 
 async def independent_task(name, duration):
@@ -64,7 +64,7 @@ async def main_task(host, port):
 
 
 def main():
-    wlan, ip_addr = anr_wifi.connect_to_wifi()
+    wlan, ip_addr = wsp_wifi.connect_to_wifi()
 
     print(f"MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}")
 

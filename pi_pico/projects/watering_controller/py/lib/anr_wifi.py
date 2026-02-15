@@ -1,4 +1,4 @@
-# anr_wifi.py
+# wsp_wifi.py
 #
 # handle connecting to Wifi
 
