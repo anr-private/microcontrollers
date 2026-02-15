@@ -19,7 +19,7 @@ copy_release_files_to_the_pico() {
     mpremote fs cp -r lib   :
     
     #echo 'Remove the client files we do not need'
-    #mpremote fs rm wsp_http/AnrHttpClient.py
+    #mpremote fs rm http/AnrHttpClient.py
 }
 
 list_pico_filesystem_contents() {

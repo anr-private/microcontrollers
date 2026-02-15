@@ -10,7 +10,7 @@ files_to_remove = [
     ]
 
 dirs_to_empty_out = [
-    "wsp_http",
+    "http",
     ]
 
 

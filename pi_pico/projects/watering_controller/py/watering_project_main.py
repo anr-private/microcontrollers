@@ -12,13 +12,13 @@ import platform
 from displays.WspDisplays import WspDisplays
 from lib import wsp_wifi
 from utils import *
-from wsp_http.WspWebServer import WspWebServer
+from http.WspWebServer import WspWebServer
 
 
 if determine_py_platform() == "micropython":
-    sys.path.append("/wsp_http")
+    sys.path.append("/http")
 else:
-    sys.path.append("../wsp_http")
+    sys.path.append("../http")
 
 
 async def independent_task(name, duration):

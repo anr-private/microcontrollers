@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# PUSH_WSP_HTTP_to_pico.sh
+# PUSH_HTTP_to_pico.sh
 #
 # displays/ -  push the repo files to the pico
 # 

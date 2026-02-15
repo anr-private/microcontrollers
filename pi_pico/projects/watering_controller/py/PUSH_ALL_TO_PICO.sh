@@ -2,7 +2,7 @@
 #
 # copy all files to the pico
 
-rm -rf wsp_http/__pycache__
+rm -rf http/__pycache__
 
 #--- get rid of the old stuff ---
 clean_up_old_dirs_and_files() {
@@ -19,7 +19,8 @@ copy_release_files_to_the_pico() {
 
     ./PUSH_LIB_FILES_to_pico.sh
     ./PUSH_PRIMITIVES_to_pico.sh
-    ./PUSH_WSP_HTTP_to_pico.sh
+    ./PUSH_HTTP_to_pico.sh
+    ./PUSH_DISPLAYS_to_pico.sh
 
     echo 'Copy the MAIN program'
     mpremote fs cp watering_project_main.py :/main.py
@@ -31,7 +32,8 @@ list_pico_filesystem_contents() {
     
     mpremote fs ls /lib
     mpremote fs ls /primitives
-    mpremote fs ls /wsp_http
+    mpremote fs ls /http
+    mpremote fs ls /displays
     mpremote fs ls 
 }
 
