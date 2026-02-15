@@ -57,9 +57,10 @@ async def main_task(host, port):
         
         await asyncio.sleep(1)
         
-    print(f"MAIN webserver result={webserver_task.result()}")
-    print(f"MAIN sensors   result={sensors_task.result()}")
-    print(f"MAIN displays  result={displays_task.result()}")
+    if 0:   # NOT IMPL
+        print(f"MAIN webserver result={webserver_task.result()}")
+        print(f"MAIN sensors   result={sensors_task.result()}")
+        print(f"MAIN displays  result={displays_task.result()}")
     
 
 
