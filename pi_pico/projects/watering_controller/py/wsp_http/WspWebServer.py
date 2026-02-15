@@ -2,6 +2,7 @@
 
 import asyncio
 
+from utils import *
 
 class WspWebServer:
     """ top-level Server class """
@@ -12,21 +13,56 @@ class WspWebServer:
 
     def start_the_task(self):
         """ creates,starts the coro. Returns task."""
-        print("WspWebServer.startup!")
+        print("WWS.startup!")
 
         task = asyncio.create_task(self.webserver_coro())
         return task
 
 
     async def webserver_coro(self):
+
+        callbk = self.handle_new_client
+        server = await asyncio.start_server(callbk, self.host, self.port)
+        print(f'WWS.webserver_coro: Listening on {self.host}:{self.port}...')
+        print(f"  Server obj is {type(server)}")
+        # print(f"  server module {server.__module__}")
+        # print(f"   dir(server)")
+        # print(f"   {dir(server)}")
+
+
+
         while 1:
-            print(f"WspWebServer.webserver_coro RUNNING!")
-            await asyncio.sleep(1)
+            print(f"WWS.webserver_coro RUNNING idle!")
+            await asyncio.sleep(5)
 
         ###result = "NO RESULT YET from webserver_coro"
         ###print(f"WspWebServer.webserver_coro COMPLETED.  {result=}")
         ###return result
 
+    async def handle_new_client(self, reader, writer):
+        dbg(f"WWS.handle_new_client  {reader=} {writer=}  ")
+
+        line_num = 0
+        try:
+            while 1:
+                print(f"WWS.handle_new_client@45  ======  READ A LINE  =================================")
+                new_bytes = await reader.readline()
+                if not new_bytes:
+                    # Client disconnected
+                    print(f"handle_client_by_lines@86 GOT NO MORE BYTES, client disconnected")
+                    break
+                line_num += 1
+                print(f"WWS.handle_new_client@52 {line_num=} got {len(new_bytes)} bytes. ")
+    
+                print(f"WWS.handle_new_client HANDLE THE LINE {line_num=}")
+            print(f"WWS.handle_new_client done with this client!")
+
+        except Exception as ex:
+            print(f'WWS.handle_new_client client {ex}')
+        finally:
+            print('WWS.handle_new_client Closing client connection')
+            writer.close()
+            await writer.wait_closed() # Wait until the stream is fully closed
 
 
 ###

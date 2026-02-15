@@ -61,7 +61,7 @@ async def main_task(host, port):
             print("MAIN_TASK: all tasks are done!")
             break
         
-        await asyncio.sleep(1)
+        await asyncio.sleep(11)
         
     if 0:   # NOT IMPL
         print(f"MAIN webserver result={webserver_task.result()}")
