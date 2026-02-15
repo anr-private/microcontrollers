@@ -4,8 +4,14 @@ import os
 import platform
 import sys
 
-DEBUG = True
+WSP_CONFIG = {
+    "lcd1602_sda_pin": 2,
+    "lcd1602_scl_pin": 3,
 
+    }
+
+
+DEBUG = True
 def dbg(stg=None):
     """ output a string to the debug output """
     if not DEBUG: return
