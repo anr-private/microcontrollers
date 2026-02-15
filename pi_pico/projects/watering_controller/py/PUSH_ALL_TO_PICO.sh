@@ -16,14 +16,16 @@ clean_up_old_dirs_and_files() {
 
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
-    echo 'Copy contents of dir  wsp_http'
-    mpremote fs cp -r wsp_http :
-    
-    echo 'Remove the client files we do not need'
-    mpremote fs rm wsp_http/AnrHttpClient.py
+    echo '****** NOT IMPL YET  *****************************'
 
-    echo 'Copy the MAIN program'
-    mpremote fs cp watering_project_main.py :/main.py
+    # echo 'Copy contents of dir  wsp_http'
+    # mpremote fs cp -r wsp_http :
+    # 
+    # echo 'Remove the client files we do not need'
+    # mpremote fs rm wsp_http/AnrHttpClient.py
+# 
+    # echo 'Copy the MAIN program'
+    # mpremote fs cp watering_project_main.py :/main.py
 }
 
 list_pico_filesystem_contents() {
