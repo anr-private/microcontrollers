@@ -61,6 +61,9 @@ LCD POWER
  - Using Pico 3v3 (physical pin 36). QAPASS works ok, a bit dim. Draws 45mA.
    
 
+=== HISTORY  =================================================
 
+2026-02-15  
+basic async framework: webserver, displays, sensors
 
 ### end ###

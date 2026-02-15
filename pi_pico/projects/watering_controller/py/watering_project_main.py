@@ -9,7 +9,8 @@ import asyncio
 import sys
 import platform
 
-from wsp_http import WspWebServer
+from wsp_http.WspWebServer import WspWebServer
+print(f"@@@@@@@@@@ {WspWebServer=}")
 from lib import wsp_wifi
 from utils import *
 
@@ -30,7 +31,12 @@ async def independent_task(name, duration):
 
 
 async def main_task(host, port):
-    webserver_task = asyncio.create_task(independent_task("webserver", 7))
+
+    webserver = WspWebServer(host, port) 
+    webserver_task = webserver.start_the_task()
+    print(f"@@@37 {webserver_task=}")
+    #webserver_task = asyncio.create_task(independent_task("webserver", 7))
+
     sensors_task = asyncio.create_task(independent_task("sensors", 4))
     displays_task = asyncio.create_task(independent_task("displays-update", 5))
     #print(f"@@@@@@@@@@@ {dir(sensors_task)}")
