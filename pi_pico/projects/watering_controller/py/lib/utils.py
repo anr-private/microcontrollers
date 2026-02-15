@@ -53,7 +53,7 @@ def FIXTHIS___make_mesg_stg_from_template(template_mesg_lines, values={}):
 
 
 
-_NOTYET_def dump_received_mesg(mesg_stg, who=""):
+def    _NOTYET_dump_received_mesg(mesg_stg, who=""):
     """ """
     if mesg_stg is None:
         print(f"--- RECEIVED MESG is NULL !!!  {who}  ---------------------")
@@ -80,7 +80,7 @@ _NOTYET_def dump_received_mesg(mesg_stg, who=""):
     print("------------------------------------------------------------")
 
 
-_NOTYET_def dump_bytes(byte_vals, who=""):
+def    _NOTYET_dump_bytes(byte_vals, who=""):
     """ """
     if byte_vals is None:
         print(f"___ dump bytes __ len is ZERO!!!   ___ {who} ______________________")
