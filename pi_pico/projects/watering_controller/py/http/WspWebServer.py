@@ -3,6 +3,7 @@
 import asyncio
 
 from utils import *
+from http.HdrAccum import HdrAccum
 
 class WspWebServer:
     """ top-level Server class """
@@ -43,6 +44,7 @@ class WspWebServer:
         dbg(f"WWS.handle_new_client  {reader=} {writer=}  ")
         log(f"WWS.handle_new_client  {reader=} {writer=}  ")
 
+        hdrAccum = HdrAccum()
         line_num = 0
         try:
             while 1:
@@ -60,8 +62,10 @@ class WspWebServer:
                 log(f"WWS.handle_new_client@52 {line_num=} got {len(line)} chars. ")
                 log(f"WWS.handle_new_client@52 {line_num=} {show_cc(line)}")
 
+                hdrAccum.accum_header_line(line)
+                if hdrAccum.found_end_of_header():
+                    print(f"WWS@67 found EOHdr   hdrlen={len(hdrAccum.get_header())}")
 
-                print(f"WWS.handle_new_client HANDLE THE LINE {line_num=}")
             print(f"WWS.handle_new_client done with this client!")
             log(f"WWS.handle_new_client done with this client!")
 

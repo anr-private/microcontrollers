@@ -3,7 +3,10 @@
 import os
 import platform
 import sys
-import utime as time
+try:
+    import time
+except ModuleNotFoundError:
+    import utime as time
 
 WSP_CONFIG = {
     "lcd1602_sda_pin": 2,
