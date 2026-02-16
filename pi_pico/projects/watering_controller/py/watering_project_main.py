@@ -11,6 +11,7 @@ import platform
 import utime
 
 from displays.WspDisplays import WspDisplays
+from sensors.WspSensors import WspSensors
 from lib import wsp_wifi
 from utils import *
 from http.WspWebServer import WspWebServer
@@ -25,15 +26,6 @@ else:
     sys.path.append("../http")
 
 
-async def independent_task(name, duration):
-    print(f"Task {name} started and will run for {duration} seconds independently.")
-    await asyncio.sleep(duration)
-    print(f"+++  Task {name} finished.   +++")
-    return f"this is the result from independent_task {name=}"
-
-
-
-
 async def main_task(host, port):
 
     webserver = WspWebServer(host, port) 
@@ -41,11 +33,14 @@ async def main_task(host, port):
     print(f"@@@37 {webserver_task=}")
     #webserver_task = asyncio.create_task(independent_task("webserver", 7))
 
-    sensors_task = asyncio.create_task(independent_task("sensors", 4))
-
+    ###sensors_task = asyncio.create_task(independent_task("sensors", 4))
+    sensors = WspSensors()
+    sensors_task = sensors.start_the_task()
+    print(f"@@@47 {sensors_task=}")
+    
     displays = WspDisplays()
     displays_task = displays.start_the_task()
-    print(f"@@@44 {displays_task=}")
+    print(f"@@@50 {displays_task=}")
     #displays_task = asyncio.create_task(independent_task("displays-update", 5))
     #print(f"@@@@@@@@@@@ {dir(sensors_task)}")
     #['__class__', '__next__', 'cancel', 'coro', 'data', 'done', 'ph_key', 'state']
