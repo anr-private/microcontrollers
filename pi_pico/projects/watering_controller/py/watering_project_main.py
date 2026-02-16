@@ -8,6 +8,7 @@
 import asyncio
 import sys
 import platform
+import utime
 
 from displays.WspDisplays import WspDisplays
 from lib import wsp_wifi
@@ -80,7 +81,15 @@ async def main_task(host, port):
 def main():
     wlan, ip_addr = wsp_wifi.connect_to_wifi()
 
-    print(f"MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}")
+    wsp_wifi.wifi_set_time_from_ntp(wlan)
+
+    date_stg, time_stg = get_formatted_local_time()
+    m = f"MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
+    print(m)
+    log(m)
+    m = f"MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
+    print(m)
+    log(m)
 
     # You will likely need to replace '0.0.0.0' with your device's actual IP address
     # after connecting it to a network.
@@ -93,7 +102,10 @@ def main():
         # Start the event loop and run the main server coroutine
         asyncio.run(main_task(host, port))
     except KeyboardInterrupt:
-        print('Server stopped by user KeyboardInterrupt.')
+        date_stg, time_stg = get_formatted_local_time()
+        m = f"{date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+        print(m)
+        log(m)
     finally:
         # Clean up the event loop (optional, but good practice)
         asyncio.new_event_loop()

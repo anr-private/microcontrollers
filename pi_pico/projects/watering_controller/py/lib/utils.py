@@ -3,6 +3,7 @@
 import os
 import platform
 import sys
+import utime as time
 
 WSP_CONFIG = {
     "lcd1602_sda_pin": 2,
@@ -139,6 +140,22 @@ def    _NOTYET_dump_bytes(byte_vals, who=""):
         print(f" PARTIAL LINE: {line}")
     print(f"----------------------------------  {who} -------------")
 
+
+def get_local_time():  # for our TZ
+    # Get UTC time from clock
+    #### RETURNS UTC  utc_time = time.localtime()
+    # Example: Apply offset for Central TZ: UTC-6 hrs
+    local_time = time.localtime(time.time() - (6 * 3600))
+    return local_time
+
+def get_formatted_local_time():
+    now = get_local_time()
+    # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
+    ###date_str = "Date: {}-{}-{}".format(now[0], now[1], now[2])
+    ###time_str = "Time: {}:{}:{}".format(now[3], now[4], now[5])
+    date_str = "{}-{}-{}".format(now[0], now[1], now[2])
+    time_str = "{}:{}:{}".format(now[3], now[4], now[5])
+    return (date_str, time_str)
 
 def determine_py_platform():
     """ returns "micropython", "cpython" """

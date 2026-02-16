@@ -4,6 +4,7 @@
 
 import network
 import utime
+import ntptime
 
 from details import SSID, PW
 from utils import *
@@ -51,5 +52,21 @@ def connect_to_wifi(show_details=True):
     
     return wlan, ip_addr
 
+
+def wifi_set_time_from_ntp(wlan):
+
+    ntptime.settime()
+
+    # verify the time
+    current_time = utime.localtime()
+
+    # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
+    # (year, month, mday, hour, minute, second, weekday, yearday)
+    # weekday is 0=Sun, etc
+    print(f"TIME FROM NTP: {current_time} ") # as tuple
+    year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
+    print(f"{year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
+    weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
+    print(f"  {weekday_stg=}")
 
 ###
