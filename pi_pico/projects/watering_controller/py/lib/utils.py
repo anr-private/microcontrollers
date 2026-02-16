@@ -10,6 +10,8 @@ WSP_CONFIG = {
 
     }
 
+LOG_FNAME = "wsp_log.txt"
+
 
 DEBUG = True
 def dbg(stg=None):
@@ -17,6 +19,22 @@ def dbg(stg=None):
     if not DEBUG: return
     if stg is None: stg = ""
     print(f"DBG:{stg}")
+
+def log_start():
+    try:
+        os.remove(LOG_FNAME)
+    except Exceptionn as ex:
+        print(f"log_start no log file exists {LOG_FNAME=}")
+def log(stg=None):
+    if stg is None: stg = ""
+    fname = LOG_FNAME
+    try:
+        with open(fname, "a") as f:
+            f.write(stg)
+            f.write("\n")
+    except Exception as ex:
+        print(f"log(): Error writing to file '{fname}': {ex}")
+
 
 def string_to_int(s):
     try:
@@ -27,6 +45,21 @@ def string_to_int(s):
     except Exception  as ex:
         dbg(f"string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
         return None
+
+def show_cc(line):
+    """ convert line to a new line, replacing all control chars with visible rep """
+    if line is None: line = ""
+    chars = []
+    for ch in line:
+        if ch == "\r":
+            chars.append("\\r")
+        elif ch == "\n":
+            chars.append("\\n")
+        elif ch == "\t":
+            chars.append("\\t")
+        else:
+            chars.append(ch)
+    return "".join(chars)
 
 #@@@@@@@@@@@@@ NEED TO FIX. SHOULD NOT ADD EOLs
 def FIXTHIS___make_mesg_stg_from_template(template_mesg_lines, values={}):

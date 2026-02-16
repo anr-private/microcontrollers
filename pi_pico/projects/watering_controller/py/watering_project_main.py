@@ -14,6 +14,9 @@ from lib import wsp_wifi
 from utils import *
 from http.WspWebServer import WspWebServer
 
+log_start()
+log("===  WATERING PROJECT -- BEGIN EXECUTION  =======================")
+
 
 if determine_py_platform() == "micropython":
     sys.path.append("/http")

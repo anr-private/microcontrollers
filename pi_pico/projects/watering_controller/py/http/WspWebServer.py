@@ -41,6 +41,7 @@ class WspWebServer:
 
     async def handle_new_client(self, reader, writer):
         dbg(f"WWS.handle_new_client  {reader=} {writer=}  ")
+        log(f"WWS.handle_new_client  {reader=} {writer=}  ")
 
         line_num = 0
         try:
@@ -53,9 +54,16 @@ class WspWebServer:
                     break
                 line_num += 1
                 print(f"WWS.handle_new_client@52 {line_num=} got {len(new_bytes)} bytes. ")
+                log(f"WWS.handle_new_client@52 {line_num=} got {len(new_bytes)} bytes. ")
     
+                line = new_bytes.decode("utf-8")
+                log(f"WWS.handle_new_client@52 {line_num=} got {len(line)} chars. ")
+                log(f"WWS.handle_new_client@52 {line_num=} {show_cc(line)}")
+
+
                 print(f"WWS.handle_new_client HANDLE THE LINE {line_num=}")
             print(f"WWS.handle_new_client done with this client!")
+            log(f"WWS.handle_new_client done with this client!")
 
         except Exception as ex:
             print(f'WWS.handle_new_client client {ex}')
