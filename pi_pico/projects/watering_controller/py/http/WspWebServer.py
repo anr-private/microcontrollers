@@ -4,6 +4,8 @@ import asyncio
 
 from utils import *
 from http.HdrAccum import HdrAccum
+from http.ParsedHttp import ParsedHttp
+from http.HttpParser import HttpParser
 
 class WspWebServer:
     """ top-level Server class """
@@ -64,7 +66,12 @@ class WspWebServer:
 
                 hdrAccum.accum_header_line(line)
                 if hdrAccum.found_end_of_header():
-                    print(f"WWS@67 found EOHdr   hdrlen={len(hdrAccum.get_header())}")
+                    print(f"WWS@67 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
+                    header = hdrAccum.get_header()
+                    mesg_tail = hdrAccum.get_tail()
+                    print(f"WWS@70 {header=}")
+                    print(f"WWS@70 {mesg_tail=}")
+                    self.handle_client_request(header)
 
             print(f"WWS.handle_new_client done with this client!")
             log(f"WWS.handle_new_client done with this client!")
@@ -75,6 +82,13 @@ class WspWebServer:
             print('WWS.handle_new_client Closing client connection')
             writer.close()
             await writer.wait_closed() # Wait until the stream is fully closed
+
+    def handle_client_request(self, header):
+        print(f"WWS.handle_client_request  {len(header)=}")
+        hp = HttpParser()
+        parsedHttp = hp.parse_header_data(header)
+        print(f"WWS.handle_client_request  {hp.latest_error()=}")
+        print(f"WWS.handle_client_request  {parsedHttp=}")
 
 
 ###
