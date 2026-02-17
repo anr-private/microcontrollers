@@ -89,11 +89,19 @@ class WspWebServer:
 
         parsedHttp = hp.parse_header_data(header)
 
+        if parsedHttp is None:
+            print(f"WS@93 REQUEST PARSE ERROR: {hp.latest_error()}")
+            #@@@@@ handle an error
+
         m1 = f"WWS@92 CLIENT REQUEST {hp.latest_error()=}"
         m2 = f"WWS@93 {parsedHttp.long_string()}"
         print(m1)
         print(m2)
         log(m1)
         log(m2)
+
+        if parsedHttp.
+
+
 
 ###
