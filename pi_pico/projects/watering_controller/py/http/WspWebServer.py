@@ -86,9 +86,14 @@ class WspWebServer:
     def handle_client_request(self, header):
         print(f"WWS.handle_client_request  {len(header)=}")
         hp = HttpParser()
-        parsedHttp = hp.parse_header_data(header)
-        print(f"WWS.handle_client_request  {hp.latest_error()=}")
-        print(f"WWS.handle_client_request  {parsedHttp=}")
 
+        parsedHttp = hp.parse_header_data(header)
+
+        m1 = f"WWS@92 CLIENT REQUEST {hp.latest_error()=}"
+        m2 = f"WWS@93 {parsedHttp.long_string()}"
+        print(m1)
+        print(m2)
+        log(m1)
+        log(m2)
 
 ###
