@@ -4,7 +4,7 @@
 ###@@@ os.name, sys.platform, or platform.system().
 
 import sys
-from http.ParsedHttp import ParsedHttp
+from http.ParsedHttp import ParsedHttp, METHOD_NAMES
 from utils import *
 
 class HttpParser:
@@ -18,7 +18,6 @@ class HttpParser:
 
     def latest_error(self):
         return self._latest_error
-        ###return self._latest_error
 
     def parse_header_data(self, hdr_data):
         """ Parse HTTP header.
@@ -30,7 +29,7 @@ class HttpParser:
 
         dbg(f"HP.parse_header_data  >>>>  {"NO-DATA" if hdr_data is None else len(hdr_data)}")
 
-        self._latest_error = ""
+        self.no_err()
 
         if hdr_data is None:
             ###self.err(l no(), f"Header Data is NONE")
@@ -102,15 +101,18 @@ class HttpParser:
         Returns True-y if ok, False-yNone if error.
         """
         ###dbg(f"parse_start_line@{lno()}  {start_line=}  ph={ph}")
-        dbg(f"parse_start_line@101  {start_line=}  ph={ph}")
+        dbg(f"parse_start_line@105  {start_line=}  ph={ph}")
+
+        self.no_err()
         if self.parse_request_start_line(ph, start_line):
-            pass # ok
-        elif self.parse_reply_start_line(ph, start_line):
-            pass # ok
-        else:
-            self.err(f"FAILED TO PARSE START LINE '{start_line}'")
-            return False
-        return True
+            return True
+
+        self.no_err()
+        if self.parse_reply_start_line(ph, start_line):
+            return True
+
+        self.err(114,f"FAILED TO PARSE START LINE '{start_line}'")
+        return False
 
 
     def parse_request_start_line(self, ph, start_line):
@@ -124,12 +126,16 @@ class HttpParser:
         dbg(f"HP@124 parts={parts}")
         if len(parts) < 3:
             self.err(126, f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
-            return None
+            return False
         
         action_stg = parts[0]
         request_url = parts[1]
         version_stg_val  = parts[2]
         dbg(f"hrp@132 {action_stg=}  {request_url=} {version_stg_val=}  ")
+
+        if action_stg not in METHOD_NAMES:
+            self.err(135, f"Action '{action_stg}' is not in {METHOD_NAMES}")
+            return False
 
         got_version = self.parse_http_version(version_stg_val)
 
@@ -182,7 +188,7 @@ class HttpParser:
         """
         parts = ver.split("/")
         if len(parts) != 2:
-            self.err("WRONG NUMBER OF PARTS: {len(parts)} in 'HTTP' version string: '{ver}'")
+            self.err(185,f"WRONG NUMBER OF PARTS: {len(parts)} in 'HTTP' version string: '{ver}'")
             return None
         http_part = parts[0]
         version = parts[1]
@@ -191,7 +197,7 @@ class HttpParser:
             self.err(177,f"UNKNOWN 'HTTP' part. version string: '{ver}'")
             return None
         if len(version) <= 0:
-            self.err(180,f"VERSION part missing. 'HTTP' version string: '{ver}'")
+            self.err(194,f"VERSION part missing. 'HTTP' version string: '{ver}'")
             return None
         return version
 
@@ -227,6 +233,9 @@ class HttpParser:
 
     # def err(self, err_stg):
         # self._latest_error = f"HttpParser.parse_element_line: {err_stg}"
+
+    def no_err(self):
+        self._latest_error = ""
 
     def err(self, line_no, err_stg=None):
         if err_stg is None:
