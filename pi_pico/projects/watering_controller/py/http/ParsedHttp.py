@@ -33,7 +33,13 @@ class ParsedHttp:
 
         # "1.1", etc
         self.http_version = None
-        # code is "200", "404", etc.  Reply error codes numbers, as STRING
+
+        # requested action 'GET', "POST', etc
+        self.action = None
+        # requested URL
+        self.request_url = None
+
+        # Reply code is "200", "404", etc.  Reply error codes numbers, as STRING
         self.reply_code = None
         # 'OK', etc.  Reply code as a string, per the reply header.
         self.reply_stg = None
@@ -52,9 +58,12 @@ class ParsedHttp:
         return meth_name in METHOD_NAMES
 
     #@@@@@@@@@@@
-    def set_as_request(self, XXX):
-        """ This is a REPLY mesg """
+    def set_as_request(self, action_stg, request_url, http_version):
+        """ This is a REQUEST mesg """
         self.request_flag = True
+        self.action = action_stg
+        self.request_url = request_url
+        self.http_version = http_version
 
     def set_as_reply(self, http_version, reply_code, reply_stg):
         """ This is a REPLY mesg """

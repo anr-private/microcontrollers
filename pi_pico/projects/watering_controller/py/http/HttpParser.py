@@ -28,7 +28,7 @@ class HttpParser:
         this-parser.latest_error().
         """
 
-        dbg(f"HP.parse_header_data  >>>>  {len(hdr_data)=}")
+        dbg(f"HP.parse_header_data  >>>>  {"NO-DATA" if hdr_data is None else len(hdr_data)}")
 
         self._latest_error = ""
 
@@ -71,7 +71,7 @@ class HttpParser:
         if len(second_to_last_line) != 0:
             self.err(f"Expected blank second-to-last line; got '{second_to_last_line}'")
             return None
-        print(f"@@@HP@74 round empty line")
+        print(f"@@@HP@74 found empty line end-of-hdr")
 
         start_line = lines[0]
         fields_lines = lines[1:-2]
@@ -79,7 +79,11 @@ class HttpParser:
         ph = ParsedHttp()
 
         ok = self.parse_start_line(ph, start_line)
-        if not ok: return None
+        dbg(f"HP@82 parse_start_line  {ok=}")
+        if not ok: 
+            if not self._latest_error:
+                err(84, "INTERNAL ERROR start-line parse failed but no _latest_error")
+            return None
 
         for line in fields_lines:
             err_stg = self.parse_element_line(ph, line)
@@ -98,13 +102,14 @@ class HttpParser:
         Returns True-y if ok, False-yNone if error.
         """
         ###dbg(f"parse_start_line@{lno()}  {start_line=}  ph={ph}")
-        dbg(f"parse_start_line@95  {start_line=}  ph={ph}")
-        ok = self.parse_request_start_line(ph, start_line)
-        if ok is None:
-            ok = self.parse_reply_start_line(ph, start_line)
-        if ok is None:
+        dbg(f"parse_start_line@101  {start_line=}  ph={ph}")
+        if self.parse_request_start_line(ph, start_line):
+            pass # ok
+        elif self.parse_reply_start_line(ph, start_line):
+            pass # ok
+        else:
             self.err(f"FAILED TO PARSE START LINE '{start_line}'")
-            return None
+            return False
         return True
 
 
@@ -113,20 +118,34 @@ class HttpParser:
             Request ex: GET / HTTP/1.1
                         POST /api/users HTTP/1.1
         """
-        dbg(f"HttpParser.parse_request_start_line {start_line=}")
+        dbg(f"HP@121 {start_line=}")
 
         parts = start_line.split()
+        dbg(f"HP@124 parts={parts}")
+        if len(parts) < 3:
+            self.err(126, f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
+            return None
+        
+        action_stg = parts[0]
+        request_url = parts[1]
+        version_stg_val  = parts[2]
+        dbg(f"hrp@132 {action_stg=}  {request_url=} {version_stg_val=}  ")
 
-        dbg(f"parse_request_start_line parts={parts}")
+        got_version = self.parse_http_version(version_stg_val)
 
-        return None #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        return ph
+        dbg(f"hrp@143  {got_version=}")
+        if not got_version:
+            return None
+
+        ph.set_as_request(action_stg, request_url, got_version)
+
+        return True
 
 
     def parse_reply_start_line(self, ph, start_line):
         """ Parse the start line of a Reply. ie the first line:
             Reply ex: HTTP/1.0 200 OK 
-            Returns the ParsedHttp if ok, None if not - so check last_error().
+            Returns the True-y if ok, None if not - so check latest_error().
         """
         parts = start_line.split()
         dbg(f"parse_reply_start_line parts={parts}")
@@ -137,7 +156,7 @@ class HttpParser:
         version_stg_val = parts[0]
         numeric_code_val = parts[1]
         reply_stg_val  = parts[2]
-        dbg(f"hrp@139 {version_stg_val=}  {numeric_code_val=}  {reply_stg_val=}  ")
+        dbg(f"hrp@171 {version_stg_val=}  {numeric_code_val=}  {reply_stg_val=}  ")
 
         got_version = self.parse_http_version(version_stg_val)
 
@@ -154,7 +173,7 @@ class HttpParser:
 
         ph.set_as_reply(got_version, got_num_code, reply_stg_val)
 
-        return ph
+        return True
 
 
     def parse_http_version(self, ver):
@@ -167,12 +186,12 @@ class HttpParser:
             return None
         http_part = parts[0]
         version = parts[1]
-        dbg(f"HTP.parse_http_version http_part {http_part}  version {version}")
+        dbg(f"HP.parse_http_version@175 http_part {http_part}  version {version}")
         if http_part not in ("HTTP", "http"):
-            self.err(f"UNKNOWN 'HTTP' part. version string: '{ver}'")
+            self.err(177,f"UNKNOWN 'HTTP' part. version string: '{ver}'")
             return None
         if len(version) <= 0:
-            self.err(f"VERSION part missing. 'HTTP' version string: '{ver}'")
+            self.err(180,f"VERSION part missing. 'HTTP' version string: '{ver}'")
             return None
         return version
 
@@ -206,16 +225,16 @@ class HttpParser:
             return f"HttpParser.parse_element_line Error in field {line}. ex={ex}"
         return ""
 
-    def err(self, err_stg):
-        self._latest_error = f"HttpParser.parse_element_line: {err_stg}"
+    # def err(self, err_stg):
+        # self._latest_error = f"HttpParser.parse_element_line: {err_stg}"
 
-    # def OLD__err(self, line_no, err_stg=None):
-        # if err_stg is None:
-            # err_stg = line_no
-            # line_no = ""
-        # else:
-            # line_no = "@" + str(line_no)
-        # self._latest_error = f"HttpParser.parse_element_line {line_no} {err_stg}"
+    def err(self, line_no, err_stg=None):
+        if err_stg is None:
+            err_stg = line_no
+            line_no = ""
+        else:
+            line_no = "@" + str(line_no)
+        self._latest_error = f"HP{line_no} {err_stg}"
 
 
 ### end ###
