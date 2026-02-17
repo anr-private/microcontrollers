@@ -96,7 +96,8 @@ class ParsedHttp:
     def __str__(self):
         s = []
         s.append("requestFlag=%s" % ("REQ" if self.request_flag else "REPLY"))
-        s.append("method=%s" % str(self.method))
+        if self.method: s.append("method=%s" % str(self.method))
+        if self.request_url: s.append("req-url=%s" % str(self.request_url))
         s.append("httpVersion=%s" % str(self.http_version))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
@@ -108,7 +109,8 @@ class ParsedHttp:
 
         s = []
         s.append("  requestFlag=%s" % ("REQ" if self.request_flag else "REPLY"))
-        s.append("method=%s" % str(self.method))
+        if self.method: s.append("method=%s" % str(self.method))
+        if self.request_url: s.append("req-url=%s" % str(self.request_url))
         s.append("httpVersion=%s" % str(self.http_version))
         lines.append(" ".join(s))
 
