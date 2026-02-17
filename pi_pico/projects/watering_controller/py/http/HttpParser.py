@@ -128,13 +128,13 @@ class HttpParser:
             self.err(126, f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
             return False
         
-        action_stg = parts[0]
+        method_stg = parts[0]
         request_url = parts[1]
         version_stg_val  = parts[2]
-        dbg(f"hrp@132 {action_stg=}  {request_url=} {version_stg_val=}  ")
+        dbg(f"hrp@132 {method_stg=}  {request_url=} {version_stg_val=}  ")
 
-        if action_stg not in METHOD_NAMES:
-            self.err(135, f"Action '{action_stg}' is not in {METHOD_NAMES}")
+        if method_stg not in METHOD_NAMES:
+            self.err(135, f"Action '{method_stg}' is not in {METHOD_NAMES}")
             return False
 
         got_version = self.parse_http_version(version_stg_val)
@@ -143,7 +143,7 @@ class HttpParser:
         if not got_version:
             return None
 
-        ph.set_as_request(action_stg, request_url, got_version)
+        ph.set_as_request(method_stg, request_url, got_version)
 
         return True
 

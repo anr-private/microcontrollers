@@ -27,15 +27,13 @@ class ParsedHttp:
         # None if not yet set; if so, accessing raises exception
         self.request_flag = None
 
-        # Method from start line. Allowable:
-        # GET  HEAD  POST  PUT  DELETE  CONNECT  OPTIONS  TRACE
-        self.method = None
-
         # "1.1", etc
         self.http_version = None
 
-        # requested action 'GET', "POST', etc
-        self.action = None
+
+        # Request method: GET  HEAD  POST  PUT  DELETE  CONNECT  OPTIONS  TRACE
+        self.method = None
+
         # requested URL
         self.request_url = None
 
@@ -57,11 +55,10 @@ class ParsedHttp:
         """ Returns True if the arg is a known method name """
         return meth_name in METHOD_NAMES
 
-    #@@@@@@@@@@@
-    def set_as_request(self, action_stg, request_url, http_version):
+    def set_as_request(self, method, request_url, http_version):
         """ This is a REQUEST mesg """
         self.request_flag = True
-        self.action = action_stg
+        self.method = method
         self.request_url = request_url
         self.http_version = http_version
 
