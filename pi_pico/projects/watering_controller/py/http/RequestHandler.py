@@ -36,6 +36,7 @@ class RequestHandler:
         if parsed_http.method == "GET":
             reply = self.handle_get_request(parsed_http)
             if reply:
+                print(f"RH@39  reply len={len(reply)}")
                 return reply
 
         print(f"@@@@@@@@ RequestHandler @ 34 CANNOT HANDLE REQ {parsed_http=}")
@@ -73,6 +74,9 @@ class RequestHandler:
         rb = ReplyBuilder()
 
         reply = rb.build_page_file_reply(file_content)
+
+        print(f"RequestHandler.handle_file_request REPLY is ...")
+        print(f"{reply}")
 
         return reply
 
