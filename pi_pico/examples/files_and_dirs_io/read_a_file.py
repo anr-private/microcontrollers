@@ -18,9 +18,10 @@ try:
         print("File content:")
         print(content)
 
-except OSError as e:
-    print(f"Error reading file: {e}")
-    print("Please ensure the 'data_folder' exists and 'config.txt' is inside it.")
+except OSError as ex:
+    print(f"Error reading file '{file_path}': exc={ex}")
+
+
 
 
 ###
