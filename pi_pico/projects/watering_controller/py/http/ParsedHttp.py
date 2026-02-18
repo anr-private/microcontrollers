@@ -4,18 +4,42 @@ from utils import *
 
 METHOD_NAMES = ("GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE")
 
+# Example ParsedHttp  long_string():
+#  requestFlag=REQ method=GET req-url=/ httpVersion=1.1
+#  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+#  Accept-Encoding: 'gzip, deflate'
+#  Accept-Language: 'en-US,en;q=0.9'
+#  Cache-Control: 'no-cache'
+#  Connection: 'keep-alive'
+#  Host: '192.168.1.49:8000'
+#  Pragma: 'no-cache'
+#  Priority: 'u=0, i'
+#  Upgrade-Insecure-Requests: '1'
+#  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0'
+
+
 class ParsedHttp:
     """ parsed HTTP mesg 
     Commonly:  ph = ParsedHttp(...)
+
+ ParsedHttp:
+  requestFlag=REQ method=GET req-url=/ httpVersion=1.1
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Cache-Control: 'no-cache'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Pragma: 'no-cache'
+  Priority: 'u=0, i'
+  Upgrade-Insecure-Requests: '1'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0'
     """
 
     def __init__(self):
         """ """
 
-        ###@@@self.latest_error = ""
-
         # first line of the mesg. It's either a request or reply.
-        
         # Ex:
         # Request GET / HTTP/1.1
         #         POST /api/users HTTP/1.1

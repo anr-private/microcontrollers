@@ -5,7 +5,7 @@ import asyncio
 from utils import *
 from http.HdrAccum import HdrAccum
 from http.ParsedHttp import ParsedHttp
-from http.HttpParser import HttpParser
+from http.RequestHandler import RequestHandler
 
 class WspWebServer:
     """ top-level Server class """
@@ -71,36 +71,42 @@ class WspWebServer:
                     mesg_tail = hdrAccum.get_tail()
                     print(f"WWS@70 {header=}")
                     print(f"WWS@70 {mesg_tail=}")
-                    self.handle_client_request(header)
+                    self.handle_the_request(header)
 
             print(f"WWS.handle_new_client done with this client!")
             log(f"WWS.handle_new_client done with this client!")
 
         except Exception as ex:
-            print(f'WWS.handle_new_client client {ex}')
+            print(f'WWS.handle_new_client@80 **FAILED**  {ex=}')
         finally:
             print('WWS.handle_new_client Closing client connection')
             writer.close()
             await writer.wait_closed() # Wait until the stream is fully closed
 
-    def handle_client_request(self, header):
+    def handle_the_request(self, header):
         print(f"WWS.handle_client_request  {len(header)=}")
-        hp = HttpParser()
 
-        parsedHttp = hp.parse_header_data(header)
+        reqHandler = RequestHandler()
+        reqHandler.handle_client_request(header)
 
-        if parsedHttp is None:
-            print(f"WS@93 REQUEST PARSE ERROR: {hp.latest_error()}")
-            #@@@@@ handle an error
 
-        m1 = f"WWS@92 CLIENT REQUEST {hp.latest_error()=}"
-        m2 = f"WWS@93 {parsedHttp.long_string()}"
-        print(m1)
-        print(m2)
-        log(m1)
-        log(m2)
+    # def SAVEDFORNOW(self, header):
+        # hp = HttpParser()
+# 
+        # parsedHttp = hp.parse_header_data(header)
+# 
+        # if parsedHttp is None:
+            # print(f"WS@93 REQUEST PARSE ERROR: {hp.latest_error()}")
+            # #@@@@@ handle an error
+# 
+        # m1 = f"WWS@92 CLIENT REQUEST {hp.latest_error()=}"
+        # m2 = f"WWS@93 {parsedHttp.long_string()}"
+        # print(m1)
+        # print(m2)
+        # log(m1)
+        # log(m2)
 
-        if parsedHttp.
+        
 
 
 
