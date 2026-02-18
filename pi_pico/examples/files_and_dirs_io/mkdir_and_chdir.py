@@ -29,8 +29,8 @@ def change_current_dir(new_dir):
         print(f"*** mkdir ***** got exc={e}")
         #print(f"DIR(e) {dir(e)}")
         print(f" {e.errno=}")
-        if e.errno == 17:
-            print(f"Error 17: EEXISTS  the dir already exists")
+        if e.errno == 2:
+            print(f"Error 17: ENOENT  dir '{new_dir}' is not found")
         else:
             print(f"Error {e.errno} unknown meaning")
 
@@ -84,9 +84,12 @@ def test_chdir():
     # this also changes the chdir seen in the file mgr in Thonny
     dir_path = "lib"
     change_current_dir(dir_path)
-    @@@ what happens if you try it again? ie 'lib'
-    #dir_path = "/lib"
-    #change_current_dir(dir_path)
+    
+    # this gets a errno 2 NOENT because there is no lib/ subdir in lib/ (which is our current dir)
+    change_current_dir(dir_path)
+
+    dir_path = "/lib"
+    change_current_dir(dir_path)
     
 
 def main():
@@ -97,5 +100,3 @@ if __name__ == "__main__":
     main()
     
 ###
-#os.getcwd(): Returns the current working directory, which helps in debugging path issues.
-#os.chdir(path): Changes the current working directory.

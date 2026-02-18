@@ -1,5 +1,7 @@
-# Example: Reading 'config.txt' inside the 'data_folder' subdirectory
-
+# read_a_file.py
+#
+# Example: Reading a file
+#
 # All of these work:
 #  assumes the files exist:
 #    /wsp_log.txt
@@ -22,6 +24,3 @@ except OSError as e:
 
 
 ###
-#os.mkdir(path): Creates a new directory.
-#os.getcwd(): Returns the current working directory, which helps in debugging path issues.
-#os.chdir(path): Changes the current working directory.
