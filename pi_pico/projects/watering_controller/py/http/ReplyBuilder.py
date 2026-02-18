@@ -5,15 +5,35 @@ from utils import *
 HTTP_PROTOCOL = "HTTP/1.1"
 SERVER_ID = "Pico Watering System"
 
+STATUS_OK = 200
+
+CONTENT_HTML = "text/html"
+
+
 class ReplyBuilder:
 
     def __init__(self, *args):
-        self.status_value = 200
-        self.content_type = "text/html"
+        self.status_value = STATUS_OK
+        self.content_type = CONTENT_HTML
         self.body = ""
         self._reply = None
 
-    def build_reply(self):
+
+    def build_page_file_reply(self, file_content):
+        # build a reply that contains a /pages/xxx.html etc file body
+        self.status_value = STATUS_OK
+        self.content_type = CONTENT_HTML
+        # a string containing the file content
+        self.body = file_content
+
+        reply = self._build_reply()
+
+        print(f"RB.build_page_file_reply:")
+        print(f" {reply}")
+        return reply
+
+
+    def _build_reply(self):
         status_stg = status_string_from_value(self.status_value)
         lines = []
         lines.append(f"{HTTP_PROTOCOL} {self.status_value} {status_stg}")  
