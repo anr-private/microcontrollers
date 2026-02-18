@@ -125,7 +125,7 @@ class HttpParser:
         parts = start_line.split()
         dbg(f"HP@124 parts={parts}")
         if len(parts) < 3:
-            self.err(126, f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
+            self.err(128, f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
             return False
         
         method_stg = parts[0]
@@ -134,7 +134,7 @@ class HttpParser:
         dbg(f"hrp@132 {method_stg=}  {request_url=} {version_stg_val=}  ")
 
         if method_stg not in METHOD_NAMES:
-            self.err(135, f"Action '{method_stg}' is not in {METHOD_NAMES}")
+            self.err(137, f"Action '{method_stg}' is not in {METHOD_NAMES}")
             return False
 
         got_version = self.parse_http_version(version_stg_val)
@@ -143,8 +143,16 @@ class HttpParser:
         if not got_version:
             return None
 
-        ph.set_as_request(method_stg, request_url, got_version)
+        parsed_url = self.parse_url(request_url)
+        dbg(f"hp@147  {parsed_url}")
+        if not parsed_url:
+            self.err(148, f"Failed to parse url '{request_url}'")
+            return False
+        url_path, url_query_params, url_bookmark = parsed_url
 
+        ph.set_as_request(method_stg, request_url, 
+                          url_path, url_query_params, url_bookmark, 
+                          got_version)
         return True
 
 
@@ -230,6 +238,72 @@ class HttpParser:
         except ValueError as ex:
             return f"HttpParser.parse_element_line Error in field {line}. ex={ex}"
         return ""
+
+    def parse_url(self, full_url):
+        """ https://blog.example.com:443/page.html?id=10#section
+        Scheme: https  Subdomain: blog  Domain: example.com  Port: :443
+        Path: /page.html  Query: ?id=10  Fragment: #section 
+        """
+        # assumes we have just the 'page.html?...#...' part
+        url_stg = full_url
+
+        parts = url_stg.rsplit("#")
+        dbg(f"@@243 parts[#]  {parts}")
+        frag = ""
+        if len(parts) > 1:
+            frag = parts[1]
+            url_stg = parts[0]
+        dbg(f"@@@250  {frag=}  {url_stg=}")
+
+        parts = url_stg.rsplit("?", 1)
+        dbg(f"@@253 parts[?]  {parts}")
+        
+        if len(parts) > 1:
+            path = parts[0]
+            query = parts[1]
+        else:
+            path = url_stg
+            query = ""
+        dbg(f"@@@261  {path=}  {query=}")
+
+        query_parts = query.split("&")
+        dbg(f"@@253 parts-of-query  {query_parts}")
+
+        query_params = {}
+        for qitem in query_parts:
+            dbg(f"@@ 267 {qitem=}")
+            parts = qitem.split("=",1)
+            dbg(f"@@@270 Qparts {parts}")
+            qkey = parts[0]
+            qval = ""
+            if len(parts) > 1:
+                qval = parts[1]
+            query_params[qkey] = qval
+        dbg(f"@@@276  {query_params}")
+    
+        return (path, query_params, frag)
+
+    def unquote_url(self, url):
+        # replace %20 or plus-sign with space
+        # %0A with newline, etc
+        url = url.replace(r'%20', ' ')
+        url = url.replace(r'+',   ' ')
+        url = url.replace(r'%0A', '\n')
+        url = url.replace(r'%25', '%')
+        url = url.replace(r'%23', '#')
+        url = url.replace(r'%26', '&')
+        url = url.replace(r'%2F', '/')
+        url = url.replace(r'%3F', '?')
+        url = url.replace(r'%3D', '=')
+        url = url.replace(r'%3A', ':')
+        url = url.replace(r'%2B', '+')
+        url = url.replace(r'%2C', ',')
+        url = url.replace(r'%22', '"')
+        url = url.replace(r'%3C', '<')
+        url = url.replace(r'%3E', '>')
+        url = url.replace(r'%5B', '[')
+        url = url.replace(r'%5D', ']')
+        return url
 
     # def err(self, err_stg):
         # self._latest_error = f"HttpParser.parse_element_line: {err_stg}"

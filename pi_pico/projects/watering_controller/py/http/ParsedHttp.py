@@ -61,6 +61,14 @@ class ParsedHttp:
         # requested URL
         self.request_url = None
 
+        # url parsed into its parts: path, params, '#'-bookmark
+        # ex: /some-file.html
+        self.url_path = ""
+        # ex: {'a': '123', 'bbb': 'xyz'}
+        self.url_parameters = {}
+        # ex: bookmark (from '#' in url)
+        self.url_bookmark = ""
+
         # Reply code is "200", "404", etc.  Reply error codes numbers, as STRING
         self.reply_code = None
         # 'OK', etc.  Reply code as a string, per the reply header.
@@ -79,11 +87,16 @@ class ParsedHttp:
         """ Returns True if the arg is a known method name """
         return meth_name in METHOD_NAMES
 
-    def set_as_request(self, method, request_url, http_version):
+    def set_as_request(self, method, request_url, 
+                       url_path, url_query_params, url_bookmark,
+                       http_version):
         """ This is a REQUEST mesg """
         self.request_flag = True
         self.method = method
         self.request_url = request_url
+        self.url_path = url_path
+        self.url_query_params = url_query_params
+        self.url_bookmark = url_bookmark
         self.http_version = http_version
 
     def set_as_reply(self, http_version, reply_code, reply_stg):
