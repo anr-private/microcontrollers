@@ -6,8 +6,22 @@ HTTP_PROTOCOL = "HTTP/1.1"
 SERVER_ID = "Pico Watering System"
 
 STATUS_OK = 200
+STATUS_NO_SUCH_RESOURCE = 404
 
 CONTENT_HTML = "text/html"
+
+NOT_FOUND_HTML_LINES = [
+    "<html>",
+    "<head>",
+    "<title>Resource Not Found</title>",
+    "</head>",
+    " <body>",
+    "  <p>The resource you requested has not been found at the specified address.",
+    "  Please check the spelling of the address.",
+    "  </p>",
+    " </body>",
+    "</html>"
+    ]
 
 
 class ReplyBuilder:
@@ -32,6 +46,19 @@ class ReplyBuilder:
         print(f" {reply}")
         return reply
 
+
+    def build_reply_404(self):
+        self.status_value = STATUS_NO_SUCH_RESOURCE
+        self.content_type = CONTENT_HTML
+        # provide text - is this needed? esp for favicon.ico  @@@@@@@@@@@@@@@@@@@@@@@@@@@
+        lines = add_eol_to_lines(NOT_FOUND_HTML_LINES)
+        self.body = "".join(lines)
+
+        reply = self._build_reply()
+
+        print(f"RB.build_reply_404:")
+        print(f" {reply}")
+        return reply
 
     def _build_reply(self):
         status_stg = status_string_from_value(self.status_value)
