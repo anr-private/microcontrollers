@@ -48,12 +48,35 @@ class RequestHandler:
 
         if req_url == "/data":#@@@@@@@@@@@@@@@@@@
             pass
-        elif req_url== "/":
+        else:
             reply = self.handle_file_request(parsed_http)
             if reply:
                 return reply
-        print(f"@@@@@@@@ RequestHandler @ 40 CANNOT HANDLE GET-REQ {parsed_http=}")
+        print(f"@@@@@@@@ RequestHandler @ 56 SENDING 404 -- CANNOT HANDLE GET-REQ {parsed_http=}")
+        rb = ReplyBuilder()
+        reply = rb.build_reply_404()
+        dbg(f"RH@58 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        return reply
+            
 
+    def OLD___handle_get_request(self, parsed_http): #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        req_url = parsed_http.request_url
+
+        if req_url == "/data":#@@@@@@@@@@@@@@@@@@
+            pass
+        elif req_url == "/":
+            reply = self.handle_file_request(parsed_http)
+            if reply:
+                return reply
+        else:
+            print(f"@@@@@@@@ RequestHandler @ 56 SENDING 404 -- CANNOT HANDLE GET-REQ {parsed_http=}")
+        if file_content is None:
+            rb = ReplyBuilder()
+            reply = rb.build_reply_404()
+            dbg(f"RH@73 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            ###print(f"@@@@@@@@@@@ RH@65  ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
+            return reply
+            
 
     def handle_file_request(self, parsed_http):
         """ """
@@ -68,7 +91,11 @@ class RequestHandler:
         file_content = self.read_a_page_file(file_path)
 
         if file_content is None:
-            print(f"@@@@@@@@@@@ RH@65  ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
+            rb = ReplyBuilder()
+            reply = rb.build_reply_404()
+            dbg(f"RH@73 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            ###print(f"@@@@@@@@@@@ RH@65  ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
+            return reply
 
         # Build a reply that provides the file
         rb = ReplyBuilder()
