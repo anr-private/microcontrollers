@@ -11,6 +11,7 @@ class RequestHandler:
 
     def __init__(self):
         self.default_file = "/pages/index.html"
+        self.default_subdir = "pages"
         # True if we are running under Py3/Linux vs Micropython/Pico
         self._py3sim = False
 
@@ -88,7 +89,7 @@ class RequestHandler:
         
         dbg(f"RH@58 {file_path=}")
 
-        file_content = self.read_a_page_file(file_path)
+        file_content = self.read_the_page_file(file_path)
 
         if file_content is None:
             rb = ReplyBuilder()
@@ -106,6 +107,21 @@ class RequestHandler:
         print(f"{reply}")
 
         return reply
+
+
+    def read_the_page_file(self, file_path):
+        if not file_path:
+            file_path = "/"
+        if file_path[0] != '/':
+            file_path = "/" + file_path
+
+        file_content = self.read_a_page_file(file_path)
+
+        if file_content is None:
+            dbg(f"RH@118 did not find file {file_path=}; adding the pages dir")
+            file_path = "/pages" + file_path
+            file_content = self.read_a_page_file(file_path)
+        return file_content
 
 
     def read_a_page_file(self, file_path):
