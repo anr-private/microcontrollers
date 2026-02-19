@@ -96,7 +96,7 @@ class WspWebServer:
             log(f"WWS.handle_new_client done with this client!")
 
         except Exception as ex:
-            print(f'WWS.handle_new_client@99 **FAILED**  {ex=}')
+            print(f"WWS.handle_new_client@99 **FAILED**  ex={repr(ex)}  ex='{str(ex)}')
         ###finally:
         print('WWS.handle_new_client@101 Closing client writer connection')
         writer.close()

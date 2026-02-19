@@ -60,44 +60,38 @@ class RequestHandler:
         return reply
             
 
-    # def OLD___handle_get_request(self, parsed_http): #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        # req_url = parsed_http.request_url
-# 
-        # if req_url == "/data":#@@@@@@@@@@@@@@@@@@
-            # pass
-        # elif req_url == "/":
-            # reply = self.handle_file_request(parsed_http)
-            # if reply:
-                # return reply
-        # else:
-            # print(f"@@@@@@@@ RequestHandler @ 56 SENDING 404 -- CANNOT HANDLE GET-REQ {parsed_http=}")
-        # if file_content is None:
-            # rb = ReplyBuilder()
-            # reply = rb.build_reply_404()
-            # dbg(f"RH@73 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            # ###print(f"@@@@@@@@@@@ RH@65  ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
-            # return reply
-            
-
     def handle_file_request(self, parsed_http):
         """ """
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@52 Default file requested") 
+            log(f"RH@62 Default file requested") 
             file_path = self.default_file
         
-        dbg(f"RH@58 {file_path=}")
+        dbg(f"RH@71 {file_path=}")
 
         file_content = self.read_the_page_file(file_path)
+        
+        if not file_content:
+            dbg(f"RH@76 First try,cannot find {file_path=}")
+            sep = ""
+            if file_path[0] != "/":
+                # add / between /pages and filepath
+                sep = "/"            
+            new_file_path = "/" + self.default_subdir + sep + file_path
+            dbg(f"RH@82 Second try, added default path: {new_file_path} ")
+            file_content = self.read_the_page_file(new_file_path)
+            dbg(f"RH@84 File {new_file_path=}  len={show_len(file_content)}")
 
         if file_content is None:
             rb = ReplyBuilder()
             reply = rb.build_reply_404(file_path)
-            dbg(f"RH@73 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            dbg(f"RH@89 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
             ###print(f"@@@@@@@@@@@ RH@65  ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
+        dbg(f"RH@93 file {file_path}  len={show_len(file_content)}")
+        
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
@@ -118,14 +112,14 @@ class RequestHandler:
         file_content = self.read_a_page_file(file_path)
 
         if file_content is None:
-            dbg(f"RH@118 did not find file {file_path=}; adding the pages dir")
+            dbg(f"RH@115 did not find file {file_path=}; adding the pages dir")
             file_path = "/pages" + file_path
             file_content = self.read_a_page_file(file_path)
         return file_content
 
 
     def read_a_page_file(self, file_path):
-        dbg(f"RH@66  read_a_page_file  {file_path=}")
+        dbg(f"RH@122  read_a_page_file  {file_path=}")
 
         if self._py3sim:
             print(f"@@@ RequestHandler.read_a_page_file  **** SIMULATING THIS PAGE FILE '{file_path}'")
@@ -143,7 +137,7 @@ class RequestHandler:
                 return content
     
         except OSError as ex:
-            print(f"RH@78 Error reading page file '{file_path}'  exc={ex}")
+            print(f"RH@140 Error reading page file '{file_path}'  exc={ex}")
         return None
 
 ###
