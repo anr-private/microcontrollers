@@ -1,38 +1,49 @@
 ===  WATERING PROJECT -- BEGIN EXECUTION  =======================
-WWS.handle_new_client  reader=<Stream object at 20018e60> writer=<Stream object at 20018e60>  
-WWS.handle_new_client@52 line_num=1 got 16 bytes. 
+MAIN  CONNECTED TO WIFI.  local date,time: 2026-2-18  19:7:32 
+MAIN  CONNECTED TO WIFI.  ip_addr=192.168.1.49  wlan=<CYW43 STA up 192.168.1.49>
+WWS.handle_new_client@46  reader=<Stream object at 20020530> writer=<Stream object at 20020530>  
+WWS.handle_new_client@61 line_num=1 got 16 bytes. 
 WWS.handle_new_client@52 line_num=1 got 16 chars. 
 WWS.handle_new_client@52 line_num=1 GET / HTTP/1.1\r\n
-WWS.handle_new_client@52 line_num=2 got 25 bytes. 
+WWS.handle_new_client@61 line_num=2 got 25 bytes. 
 WWS.handle_new_client@52 line_num=2 got 25 chars. 
 WWS.handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
-WWS.handle_new_client@52 line_num=3 got 92 bytes. 
+WWS.handle_new_client@61 line_num=3 got 92 bytes. 
 WWS.handle_new_client@52 line_num=3 got 92 chars. 
 WWS.handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0\r\n
-WWS.handle_new_client@52 line_num=4 got 73 bytes. 
+WWS.handle_new_client@61 line_num=4 got 73 bytes. 
 WWS.handle_new_client@52 line_num=4 got 73 chars. 
 WWS.handle_new_client@52 line_num=4 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n
-WWS.handle_new_client@52 line_num=5 got 33 bytes. 
+WWS.handle_new_client@61 line_num=5 got 33 bytes. 
 WWS.handle_new_client@52 line_num=5 got 33 chars. 
 WWS.handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
-WWS.handle_new_client@52 line_num=6 got 32 bytes. 
+WWS.handle_new_client@61 line_num=6 got 32 bytes. 
 WWS.handle_new_client@52 line_num=6 got 32 chars. 
 WWS.handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
-WWS.handle_new_client@52 line_num=7 got 24 bytes. 
+WWS.handle_new_client@61 line_num=7 got 24 bytes. 
 WWS.handle_new_client@52 line_num=7 got 24 chars. 
 WWS.handle_new_client@52 line_num=7 Connection: keep-alive\r\n
-WWS.handle_new_client@52 line_num=8 got 30 bytes. 
+WWS.handle_new_client@61 line_num=8 got 30 bytes. 
 WWS.handle_new_client@52 line_num=8 got 30 chars. 
 WWS.handle_new_client@52 line_num=8 Upgrade-Insecure-Requests: 1\r\n
-WWS.handle_new_client@52 line_num=9 got 18 bytes. 
+WWS.handle_new_client@61 line_num=9 got 18 bytes. 
 WWS.handle_new_client@52 line_num=9 got 18 chars. 
 WWS.handle_new_client@52 line_num=9 Priority: u=0, i\r\n
-WWS.handle_new_client@52 line_num=10 got 18 bytes. 
-WWS.handle_new_client@52 line_num=10 got 18 chars. 
-WWS.handle_new_client@52 line_num=10 Pragma: no-cache\r\n
-WWS.handle_new_client@52 line_num=11 got 25 bytes. 
-WWS.handle_new_client@52 line_num=11 got 25 chars. 
-WWS.handle_new_client@52 line_num=11 Cache-Control: no-cache\r\n
-WWS.handle_new_client@52 line_num=12 got 2 bytes. 
-WWS.handle_new_client@52 line_num=12 got 2 chars. 
-WWS.handle_new_client@52 line_num=12 \r\n
+WWS.handle_new_client@61 line_num=10 got 2 bytes. 
+WWS.handle_new_client@52 line_num=10 got 2 chars. 
+WWS.handle_new_client@52 line_num=10 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/ httpVersion=1.1
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=0, i'
+  Upgrade-Insecure-Requests: '1'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0'
+RH@52 Default file requested
+WWS@83  ------------------ end of REPLY   274  -------------------
+WWS.handle_new_client done with this client!
+2026-2-18 19:8:8  Server stopped by user KeyboardInterrupt.
