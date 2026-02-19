@@ -65,6 +65,14 @@ def show_cc(line):
             chars.append(ch)
     return "".join(chars)
 
+def show_len(item):
+    """ show the length of an object like a string or list """
+    try:
+        return len(item)
+    except Exception as ex:
+        return f"ITEM-HAS-NO-LEN {item=} {ex=}"
+
+
 #@@@@@@@@@@@@@ NEED TO FIX. SHOULD NOT ADD EOLs
 def FIXTHIS___make_mesg_stg_from_template(template_mesg_lines, values={}):
     """ Create a string that contains an HTTP mesg using 
