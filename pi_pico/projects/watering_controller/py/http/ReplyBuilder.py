@@ -16,7 +16,7 @@ NOT_FOUND_HTML_LINES = [
     "<title>Resource Not Found</title>",
     "</head>",
     " <body>",
-    "  <p>The resource you requested has not been found at the specified address.",
+    "  <p>The resource {RESOURCE} you requested has not been found at the specified address.",
     "  Please check the spelling of the address.",
     "  </p>",
     " </body>",
@@ -47,12 +47,18 @@ class ReplyBuilder:
         return reply
 
 
-    def build_reply_404(self):
+    def build_reply_404(self, resource_not_found):
         self.status_value = STATUS_NO_SUCH_RESOURCE
         self.content_type = CONTENT_HTML
         # provide text - is this needed? esp for favicon.ico  @@@@@@@@@@@@@@@@@@@@@@@@@@@
-        lines = add_eol_to_lines(NOT_FOUND_HTML_LINES)
-        self.body = "".join(lines)
+        valsdict = {"RESOURCE" : resource_not_found}
+        fmt_lines = []
+        for line in NOT_FOUND_HTML_LINES:
+            print(f"@@@RB@57  {line=}  {valsdict=}")
+            line.format_map(valsdict)
+            fmt_lines.append(line)
+        body_lines = add_eol_to_lines(fmt_lines)
+        self.body = "".join(body_lines)
 
         reply = self._build_reply()
 
