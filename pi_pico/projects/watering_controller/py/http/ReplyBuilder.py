@@ -16,8 +16,8 @@ NOT_FOUND_HTML_LINES = [
     "<title>Resource Not Found</title>",
     "</head>",
     " <body>",
-    "  <p>The resource {RESOURCE} you requested has not been found at the specified address.",
-    "  Please check the spelling of the address.",
+    "  <p>The requested resource {RESOURCE} cannot be not found.",
+    "  Please check the URL.",
     "  </p>",
     " </body>",
     "</html>"
@@ -55,8 +55,9 @@ class ReplyBuilder:
         fmt_lines = []
         for line in NOT_FOUND_HTML_LINES:
             print(f"@@@RB@57  {line=}  {valsdict=}")
-            line.format_map(valsdict)
-            fmt_lines.append(line)
+            fmt_line = line.format(**valsdict)
+            print(f"@@@RB@59  {fmt_line=}  {valsdict=}")
+            fmt_lines.append(fmt_line)
         body_lines = add_eol_to_lines(fmt_lines)
         self.body = "".join(body_lines)
 

@@ -71,8 +71,16 @@ async def main_task(host, port):
         print(f"MAIN sensors   result={sensors_task.result()}")
         print(f"MAIN displays  result={displays_task.result()}")
     
-
-
+# def mainOLDSTUFF():
+#     lines = ["line 1", "line {RESOURCE} 2", "lin33"]
+#     valsdict = {"RESOURCE" : "NOTFOUND!!++"}
+#     fmt_lines = []
+#     for line in lines:
+#         print(f"@@@RB@57  {line=}  {valsdict=}")
+#         new_line = line.format(**valsdict)
+#         fmt_lines.append(new_line)
+#     print(f"{fmt_lines}")
+     
 def main():
     wlan, ip_addr = wsp_wifi.connect_to_wifi()
 
