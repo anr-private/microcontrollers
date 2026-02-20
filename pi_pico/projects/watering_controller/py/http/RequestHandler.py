@@ -71,8 +71,8 @@ class RequestHandler:
         dbg(f"RH@71 {file_path=}")
 
         file_content = self.read_the_page_file(file_path)
-        
-        if not file_content:
+
+        if 0: ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@not file_content:
             dbg(f"RH@76 First try,cannot find {file_path=}")
             sep = ""
             if file_path[0] != "/":
@@ -113,7 +113,13 @@ class RequestHandler:
 
         if file_content is None:
             dbg(f"RH@115 did not find file {file_path=}; adding the pages dir")
-            file_path = "/pages" + file_path
+            sep = ""
+            if file_path[0] != "/":
+                # add / between /pages and filepath
+                sep = "/"            
+            new_file_path = "/" + self.default_subdir + sep + file_path
+            file_path = new_file_path
+            dbg(f"RH@120 2nd try filename: {file_path}")
             file_content = self.read_a_page_file(file_path)
         return file_content
 
@@ -125,15 +131,15 @@ class RequestHandler:
             print(f"@@@ RequestHandler.read_a_page_file  **** SIMULATING THIS PAGE FILE '{file_path}'")
             if file_path.startswith("/"):
                 file_path = file_path[1:]
-            print(f"@@@ RequestHandler.read_a_page_file  **** USING SIMULATED PAGE FILE '{file_path}'")
+            print(f"@@@ RequestHandler.read_a_page_file  **** USING SIMULATED PAGE FILE  '{file_path}'")
 
         try:
             # Open the file in read mode ('r' is the default)
             with open(file_path, 'r') as file:
                 # Read the entire content of the file
+                dbg(f"RH@140 Opened file '{file_path}' ")
                 content = file.read()
-                print(f"Page-file '{file_path}'  len={len(content)}")
-                ###print(content)
+                dbg(f"RH@141  file='{file_path}' len={show_len(content)}")
                 return content
     
         except OSError as ex:
