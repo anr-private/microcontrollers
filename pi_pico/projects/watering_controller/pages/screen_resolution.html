@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Screen Resolution Display</title>
+</head>
+<body>
+
+    <h1>Your Total Screen Resolution:</h1>
+    <p id="screen-resolution">Loading...</p>
+    <p><a href="index.html"> BACK </a>
+    </p>
+
+    <script>
+        function displayScreenResolution() {
+            // Get the total width and height of the user's screen in pixels
+            var width = screen.width;
+            var height = screen.height;
+
+            // Display the resolution in the HTML element
+            document.getElementById("screen-resolution").innerHTML = width + "px (width) x " + height + "px (height)";
+        }
+
+        // Call the function when the page loads
+        displayScreenResolution();
+    </script>
+
+</body>
+</html>
+

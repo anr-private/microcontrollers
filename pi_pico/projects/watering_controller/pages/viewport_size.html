@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Viewport Size Display</title>
+</head>
+<body>
+
+    <h1>Your Browser Viewport Size:</h1>
+    <p id="viewport-size">Loading...</p>
+    <p><a href="index.html"> BACK </a>
+    </p>
+
+    <script>
+        function displayViewportSize() {
+            // Get the width and height of the browser window's layout viewport in pixels
+            var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+
+            // Display the size in the HTML element
+            document.getElementById("viewport-size").innerHTML = width + "px (width) x " + height + "px (height)";
+        }
+
+        // Call the function when the page loads
+        displayViewportSize();
+
+        // Update the size if the window is resized
+        window.addEventListener('resize', displayViewportSize);
+    </script>
+
+</body>
+</html>
+
+
