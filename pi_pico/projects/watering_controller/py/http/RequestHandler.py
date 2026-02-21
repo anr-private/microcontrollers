@@ -99,7 +99,7 @@ class RequestHandler:
         # handle the file depending on its Content-Type
         if content_type in ["text/html","text/css", "text/javascript" ]:
             reply = self._handle_textual_file_request(file_path, content_type)
-        elif content_type in ["image/x-icon",]:
+        elif content_type in ["image/x-icon","image/png", "image/gif", "image/jpeg"]:
             reply = self._handle_binary_file_request(file_path, content_type)
         else:
             rb = ReplyBuilder()
@@ -244,12 +244,18 @@ class RequestHandler:
         if ext in ["html", "htm"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
-        elif ext in ["ico",]:
-            t = "image/x-icon"
         elif ext in ["js",]:
             t = "text/javascript"
         elif ext in ["css",]:
             t = "text/css"
+        elif ext in ["ico",]:
+            t = "image/x-icon"
+        elif ext in ["png",]:
+            t = "image/png"
+        elif ext in ["jpeg", "jpg"]:
+            t = "image/jpeg"
+        elif ext in ["gif",]:
+            t = "image/gif"
         else:
             log(r"RH@254 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
@@ -258,3 +264,4 @@ class RequestHandler:
 
 
 ###
+

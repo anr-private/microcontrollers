@@ -1,0 +1,15 @@
+/* styles.css */
+    body {
+      font-size: 1.125rem; /* ~18px for better mobile readability */
+      background-color: #e0e0ff   /* lightblue=#ADD8E6  #f0f0f0 */
+    }
+    h1 {
+      font-size: 1.6rem;  /*  WAS 2rem; ~32px */
+    }
+    /* iphone specific */
+    @supports (font: -apple-system-body) {
+    html {
+        font: -apple-system-body !important;
+    }
+
+/* ### */
