@@ -2,6 +2,8 @@
 
 from utils import *
 
+from http.HttpReply import HttpReply
+
 HTTP_PROTOCOL = "HTTP/1.1"
 SERVER_ID = "Pico Watering System"
 
@@ -16,7 +18,7 @@ NOT_FOUND_HTML_LINES = [
     "<title>Resource Not Found</title>",
     "</head>",
     " <body>",
-    "  <p>The requested resource {RESOURCE} cannot be not found.",
+    "  <p>The requested resource {RESOURCE} Resource cannot be found.",
     "  Please check the URL.",
     "  </p>",
     " </body>",
@@ -30,20 +32,34 @@ class ReplyBuilder:
         self.status_value = STATUS_OK
         self.content_type = CONTENT_HTML
         self.body = ""
-        self._reply = None
+        #@@@@@@@@@@@self._reply = None
 
 
-    def build_page_file_reply(self, file_content):
-        # build a reply that contains a /pages/xxx.html etc file body
+    def build_textual_file_reply(self, content_type, body_string):
+        # build a reply that contains a textual body (ie not binary)
+        # Ex: /pages/xxx.html,css,js, etc. The body is a str.
         self.status_value = STATUS_OK
-        self.content_type = CONTENT_HTML
+        self.content_type = content_type
         # a string containing the file content
-        self.body = file_content
+        self.body = body_string
 
         reply = self._build_reply()
 
-        print(f"RB.build_page_file_reply:")
-        print(f" {reply}")
+        dbg(f"RB@48 build_textual_file_reply: {str(reply)}")
+        return reply
+
+
+    def build_binary_file_reply(self, content_type, body_bytes):
+        # build a reply that contains a textual body (ie not binary)
+        # Ex: /pages/xxx.html,css,js, etc. The body is a str.
+        self.status_value = STATUS_OK
+        self.content_type = content_type
+        # a string containing the file content
+        self.body = body_bytes
+
+        reply = self._build_reply()
+
+        dbg(f"RB@62.build_binary_file_reply: {str(reply)}")
         return reply
 
 
@@ -54,20 +70,20 @@ class ReplyBuilder:
         valsdict = {"RESOURCE" : resource_not_found}
         fmt_lines = []
         for line in NOT_FOUND_HTML_LINES:
-            print(f"@@@RB@57  {line=}  {valsdict=}")
+            dbg(f"RB@73  {line=}  {valsdict=}")
             fmt_line = line.format(**valsdict)
-            print(f"@@@RB@59  {fmt_line=}  {valsdict=}")
+            dbg(f"RB@75  {fmt_line=}  {valsdict=}")
             fmt_lines.append(fmt_line)
         body_lines = add_eol_to_lines(fmt_lines)
         self.body = "".join(body_lines)
 
         reply = self._build_reply()
 
-        print(f"RB.build_reply_404:")
-        print(f" {reply}")
+        dbg(f"RB@82.build_reply_404: {str(reply)}")
         return reply
 
     def _build_reply(self):
+        # returns HttpReply
         status_stg = status_string_from_value(self.status_value)
         lines = []
         lines.append(f"{HTTP_PROTOCOL} {self.status_value} {status_stg}")  
@@ -78,13 +94,13 @@ class ReplyBuilder:
             lines.append(f"Content-Length: {len(self.body)}")
         lines.append("") # end-of-header
         lines = add_eol_to_lines(lines)
-        reply = "".join(lines)
+        header_stg = "".join(lines)
         #for line in lines:
-        #    print(f"RB@23@ {show_cc(line)}")
-        #print(f"RB@23 {show_cc(reply)}")
+        #    dbg(f"RB@99 {show_cc(line)}")
+        #dbg(f"RB@100 {show_cc(reply)}")
 
-        if self.body:
-            reply += self.body
+        reply = HttpReply()
+        reply.set_reply(header_stg, self.body)
         self._reply = reply
         return self._reply
 
@@ -94,8 +110,8 @@ class ReplyBuilder:
         s.append(",content=%s" % str(self.content_type))
         if self._body:
             s.append("body.len={len(self._body)}")
-        if self._reply:
-            s.append("reply.len={len(self._reply)}")
+        #if self._reply:
+        #    s.append("reply.len={len(self._reply)}")
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 

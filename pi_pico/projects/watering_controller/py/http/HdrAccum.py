@@ -13,7 +13,7 @@ class HdrAccum:
         self._end_of_hdr_pos = -1
 
     def accum_header_line(self, line):
-        print(f"ACCUMLINE '{show_cc(line)}'")
+        dbg(f"ACCUMLINE@16 '{show_cc(line)}'")
         ###self._lines.append(line)
         ###print(f"  Lines: {self._lines}")
         self._mesg += line

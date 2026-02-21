@@ -111,8 +111,9 @@ class ParsedHttp:
             e = "ParsedHttp.is_request called but flag has not been set yet."
             #raise RuntimeError(e)
             #@@@@ temp: later, convert back to RuntimeError
-
-            print("*********INTERNAL-ERROR**** "+e)
+            m = f"PH@115 *********INTERNAL-ERROR**** "+e
+            print(m)
+            log(m)
         return self.request_flag
 
     def is_reply(self):
