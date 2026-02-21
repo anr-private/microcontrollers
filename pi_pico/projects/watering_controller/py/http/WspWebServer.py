@@ -76,7 +76,7 @@ class WspWebServer:
                         log(mesg)
                         break
                     m1 = f"WWS@78 HTTP-REPY is {str(httpReply)} "
-                    m2 = f"WWS@79 ... reply header: ----------------------------")
+                    m2 = f"WWS@79 ... reply header... ----------------------------"
                     m3 = f"{httpReply.get_header()}"
                     m4 = f"WWS@85  ------------------ end of REPLY HEADER   {len(httpReply.get_header())}  -------------------"
                     print(m1); print(m2); print(m3); print(m4)
@@ -115,7 +115,7 @@ class WspWebServer:
         httpReply = reqHandler.handle_client_request(header)
 
         dbg(f"WWS@118 httpReply: {str(httpReply)}")
-        return reply
+        return httpReply
 
         
 
