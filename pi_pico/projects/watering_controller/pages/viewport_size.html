@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Viewport Size Display</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-size: 1.125rem; /* ~18px for better mobile readability */
+    }
+    h1 {
+      font-size: 2rem; /* ~32px */
+    }
+    /* iphone specific */
+    @supports (font: -apple-system-body) {
+    html {
+        font: -apple-system-body !important;
+    }
+  </style>
+  <title>Viewport Size Display</title>
 </head>
+
 <body>
 
     <h1>Your Browser Viewport Size:</h1>
     <p id="viewport-size">Loading...</p>
+    <p id="window-inner">Loading...</p>
+    <p id="doc-element">Loading...</p>
+    <p id="doc-body">Loading...</p>
     <p><a href="index.html"> BACK </a>
     </p>
 
@@ -15,9 +33,25 @@
             // Get the width and height of the browser window's layout viewport in pixels
             var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            var width_hgt_stg = width + "px (width) x " + height + "px (height)";
 
-            // Display the size in the HTML element
-            document.getElementById("viewport-size").innerHTML = width + "px (width) x " + height + "px (height)";
+            var win_width = window.innerWidth;
+            var win_height = window.innerHeight;
+            var win_stg = "window-inner: " + win_width + "px  x  " + win_height + "px";
+
+            var de_width = document.documentElement.clientWidth;
+            var de_height = document.documentElement.clientHeight;
+            var de_stg = "docElt : " + de_width + "px  x  " + de_height + "px";
+
+            var db_width = document.body.clientWidth;
+            var db_height = document.body.clientHeight;
+            var db_stg  = "doc.body: " + db_width + "px  x  " + db_height + "px";
+
+            // Display the size in the HTML elements
+            document.getElementById("viewport-size").innerHTML = width_hgt_stg;
+            document.getElementById("window-inner").innerHTML = win_stg;
+            document.getElementById("doc-element").innerHTML = de_stg;
+            document.getElementById("doc-body").innerHTML = db_stg;
         }
 
         // Call the function when the page loads
