@@ -53,35 +53,39 @@ class WspWebServer:
                     dbg(f"WWS@53 handle_client_by_lines GOT NO MORE BYTES, client disconnected")
                     break
                 line_num += 1
-                m = f"WWS@61 handle_new_client@61 {line_num=} got {len(new_bytes)} bytes. "
+                m = f"WWS@56 handle_new_client@61 {line_num=} got {len(new_bytes)} bytes. "
                 print(m); log(m)
     
                 line = new_bytes.decode("utf-8")
-                log(f"WWS@65handle_new_client@52 {line_num=} got {len(line)} chars. ")
-                log(f"WWS@66handle_new_client@52 {line_num=} {show_cc(line)}")
+                log(f"WWS@60 handle_new_client@52 {line_num=} got {len(line)} chars. ")
+                log(f"WWS@61 handle_new_client@52 {line_num=} {show_cc(line)}")
 
                 hdrAccum.accum_header_line(line)
                 if hdrAccum.found_end_of_header():
-                    dbg(f"WWS@69 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
+                    dbg(f"WWS@65 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
                     header = hdrAccum.get_header()
                     mesg_tail = hdrAccum.get_tail()
-                    dbg(f"WWS@72 {header if header else 'NULL'}")
-                    dbg(f"WWS@73 {mesg_tail if mesg_tail else 'NULL'}")
+                    dbg(f"WWS@68 {header if header else 'NULL'}")
+                    dbg(f"WWS@69 {mesg_tail if mesg_tail else 'NULL'}")
                     
-                    reply = self.handle_the_request(header)
+                    httpReply = self.handle_the_request(header)
                     
-                    if reply is None:
-                        mesg = f"WWS@79  FAILED TO HANDLE REQUEST!"
+                    if httpReply is None:
+                        mesg = f"WWS@74  FAILED TO HANDLE REQUEST!"
                         print(mesg)
                         log(mesg)
                         break
-                    m1 = f"WWS@83  ------------------ REPLY IS  {len(reply)}  -------------------"
-                    m2 = f"{reply}"
-                    m3 = f"WWS@85  ------------------ end of REPLY   {len(reply)}  -------------------"
-                    print(m1); print(m2); print(m3)
-                    log(m1); log(m2); log(m3)
+                    m1 = f"WWS@78 HTTP-REPY is {str(httpReply)} "
+                    m2 = f"WWS@79 ... reply header: ----------------------------")
+                    m3 = f"{httpReply.get_header()}"
+                    m4 = f"WWS@85  ------------------ end of REPLY HEADER   {len(httpReply.get_header())}  -------------------"
+                    print(m1); print(m2); print(m3); print(m4)
+                    log(m1); log(m2); log(m3); log(m4)
                     
-                    writer.write(reply)
+                    writer.write(httpReply.get_header())
+                    body = httpReply.get_body()
+                    if body:
+                        writer.write(body)
                     await writer.drain()
                     ###await writer.wait_closed()
 
@@ -108,9 +112,9 @@ class WspWebServer:
         dbg(f"WWS@113 handle_client_request  {len(header)=}")
 
         reqHandler = RequestHandler()
-        reply = reqHandler.handle_client_request(header)
+        httpReply = reqHandler.handle_client_request(header)
 
-        dbg(f"WWS@118 reply.len={len(reply) if reply else 'no-reply!'}")
+        dbg(f"WWS@118 httpReply: {str(httpReply)}")
         return reply
 
         
