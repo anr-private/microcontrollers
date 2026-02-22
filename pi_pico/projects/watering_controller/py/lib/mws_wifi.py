@@ -55,7 +55,13 @@ def connect_to_wifi(show_details=True):
 
 def wifi_set_time_from_ntp(wlan):
 
-    ntptime.settime()
+    try:
+        ntptime.settime()
+    except Exception as ex:
+        m = f"WIFI@61 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
+        dbg(m)
+        log(m)
+        return False
 
     # verify the time
     current_time = utime.localtime()
@@ -68,5 +74,7 @@ def wifi_set_time_from_ntp(wlan):
     print(f"{year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
     weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
     print(f"  {weekday_stg=}")
+
+    return True
 
 ###
