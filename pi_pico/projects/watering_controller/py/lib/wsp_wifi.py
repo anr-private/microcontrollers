@@ -1,4 +1,4 @@
-# wsp_wifi.py
+# mws_wifi.py
 #
 # handle connecting to Wifi
 

@@ -12,7 +12,7 @@ import utime
 
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
-from lib import wsp_wifi
+from lib import mws_wifi
 from utils import *
 from http.MwsWebServer import MwsWebServer
 
@@ -83,9 +83,9 @@ async def main_task(host, port):
 #     print(f"{fmt_lines}")
      
 def main():
-    wlan, ip_addr = wsp_wifi.connect_to_wifi()
+    wlan, ip_addr = mws_wifi.connect_to_wifi()
 
-    wsp_wifi.wifi_set_time_from_ntp(wlan)
+    mws_wifi.wifi_set_time_from_ntp(wlan)
 
     date_stg, time_stg = get_formatted_local_time()
     m = f"MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "

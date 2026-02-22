@@ -14,7 +14,7 @@ WSP_CONFIG = {
 
     }
 
-LOG_FNAME = "wsp_log.txt"
+LOG_FNAME = "mws_log.txt"
 
 
 DEBUG = True
