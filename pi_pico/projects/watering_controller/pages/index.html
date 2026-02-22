@@ -3,13 +3,48 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .logo-container {
+        display: flex;
+        align-items: center; /* This vertically centers the image and text */
+        gap: 20px; /* Adds space between the image and the text column */
+    }
+    
+    .logo-image {
+        max-width: 100px; /* Adjust the image width as needed */
+        height: auto;
+    }
+    
+    .logo-text-column {
+        /* The text will fill the remaining space */
+        flex: 1; 
+    }
+    /* format the H2 next to the image - 'correctly' */
+    h2 span {
+      display: block; /* Forces each span onto a new line */
+    }
+    h2 span.major {
+      font-size: 50px;
+      font-weight: bold;
+    }
+    h2 span.minor {
+      font-size: 30px;
+      font-style: italic;
+    }
+  </style>
   <title>Watering System</title>
 </head>
-<body>
-    <p><img src="maranr_logo.png"></p>
 
-    <!-- h1>Hello, World!</h1 -->
-    <!-- p>From the MARANR Watering System</p -->
+<body>
+    <div class="logo-container">
+        <img src="maranr_logo.png" alt="logo" class="logo-image">
+        <div class="logo-text-column">
+            <h2>
+              <span class="major">MARANR</span>
+              <span class="minor">&nbsp; &nbsp;Watering System</span>
+            </h2>
+        </div>
+    </div>
     <p>
       <a href="viewport_size.html">Viewport size</a>
       &nbsp; &nbsp; 
