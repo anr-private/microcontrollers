@@ -1,4 +1,4 @@
-# WspDisplays.py
+# MwsDisplays.py
 
 import asyncio
 import utime as time
@@ -12,7 +12,7 @@ NUM_ROWS = 2
 #NUM_ROWS = 4
 
 
-class WspDisplays:
+class MwsDisplays:
     """ top-level Server class """
 
     def __init__(self, *args):
@@ -45,7 +45,7 @@ class WspDisplays:
             ctr += 1
 
         ###result = "NO RESULT YET from displays_coro"
-        ###print(f"WspDisplays.displays_coro COMPLETED.  {result=}")
+        ###print(f"MwsDisplays.displays_coro COMPLETED.  {result=}")
         ###return result
 
     def locate_the_lcd(self):

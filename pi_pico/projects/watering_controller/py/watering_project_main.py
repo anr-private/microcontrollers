@@ -10,11 +10,11 @@ import sys
 import platform
 import utime
 
-from displays.WspDisplays import WspDisplays
-from sensors.WspSensors import WspSensors
+from displays.MwsDisplays import MwsDisplays
+from sensors.MwsSensors import MwsSensors
 from lib import wsp_wifi
 from utils import *
-from http.WspWebServer import WspWebServer
+from http.MwsWebServer import MwsWebServer
 
 log_start()
 
@@ -29,17 +29,17 @@ else:
 
 async def main_task(host, port):
 
-    webserver = WspWebServer(host, port) 
+    webserver = MwsWebServer(host, port) 
     webserver_task = webserver.start_the_task()
     print(f"@@@37 {webserver_task=}")
     #webserver_task = asyncio.create_task(independent_task("webserver", 7))
 
     ###sensors_task = asyncio.create_task(independent_task("sensors", 4))
-    sensors = WspSensors()
+    sensors = MwsSensors()
     sensors_task = sensors.start_the_task()
     print(f"@@@47 {sensors_task=}")
     
-    displays = WspDisplays()
+    displays = MwsDisplays()
     displays_task = displays.start_the_task()
     print(f"@@@50 {displays_task=}")
     #displays_task = asyncio.create_task(independent_task("displays-update", 5))

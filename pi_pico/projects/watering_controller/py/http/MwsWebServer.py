@@ -1,4 +1,4 @@
-# WspWebServer.py
+# MwsWebServer.py
 
 import asyncio
 
@@ -7,7 +7,7 @@ from http.HdrAccum import HdrAccum
 from http.ParsedHttp import ParsedHttp
 from http.RequestHandler import RequestHandler
 
-class WspWebServer:
+class MwsWebServer:
     """ top-level Server class """
 
     def __init__(self, host, port):

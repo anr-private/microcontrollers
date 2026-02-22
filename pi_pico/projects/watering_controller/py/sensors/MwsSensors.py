@@ -1,4 +1,4 @@
-# WspSensors.py
+# MwsSensors.py
 
 import asyncio
 import utime as time
@@ -6,7 +6,7 @@ import utime as time
 from utils import *
 
 
-class WspSensors:
+class MwsSensors:
     """ sensors and effectors """
 
     def __init__(self, *args):
