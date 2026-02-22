@@ -85,7 +85,18 @@ async def main_task(host, port):
 def main():
     wlan, ip_addr = mws_wifi.connect_to_wifi()
 
-    mws_wifi.wifi_set_time_from_ntp(wlan)
+
+    MAX_RETRIES = 10
+    num_retries = 0
+    while num_retries < MAX_RETRIES:
+        ok = mws_wifi.wifi_set_time_from_ntp(wlan)
+        if ok:
+            m = "MWSMAIN@94  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
+            dbg(m)
+            log(m)
+            break
+        m = "MWSMAIN@94  **ERROR** FAILED TO UPDATE SYSTEM TIME from NTP. {num_retries=}")
+        time.sleep(1)
 
     date_stg, time_stg = get_formatted_local_time()
     m = f"MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
