@@ -66,7 +66,7 @@ async def main_task(host, port):
         dbg(f"MWSMAIN@72 sensors   result={sensors_task.result()}")
         dbg(f"MWSMAIN@73 displays  result={displays_task.result()}")
     
-     
+
 def main():
 
     wlan, ip_addr = mws_wifi.connect_to_wifi()
@@ -111,15 +111,8 @@ def main():
         # Clean up the event loop (optional, but good practice)
         asyncio.new_event_loop()
 
-### OLD code
-# from AnrHttpServer import AnrHttpServer
-# server = AnrHttpServer()
-# server.run()
-
 if __name__ == '__main__':
     main()
     
-    #TEST_for_making_the_reply()
-
 ### end ###
 
