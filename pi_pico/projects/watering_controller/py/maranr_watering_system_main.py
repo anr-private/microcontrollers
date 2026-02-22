@@ -31,58 +31,44 @@ async def main_task(host, port):
 
     webserver = MwsWebServer(host, port) 
     webserver_task = webserver.start_the_task()
-    print(f"@@@37 {webserver_task=}")
-    #webserver_task = asyncio.create_task(independent_task("webserver", 7))
+    dbg(f"MWSMAIN@37 {webserver_task=}")
 
-    ###sensors_task = asyncio.create_task(independent_task("sensors", 4))
     sensors = MwsSensors()
     sensors_task = sensors.start_the_task()
-    print(f"@@@47 {sensors_task=}")
+    dbg(f"MWSMAIN@47 {sensors_task=}")
     
     displays = MwsDisplays()
     displays_task = displays.start_the_task()
-    print(f"@@@50 {displays_task=}")
-    #displays_task = asyncio.create_task(independent_task("displays-update", 5))
-    #print(f"@@@@@@@@@@@ {dir(sensors_task)}")
-    #['__class__', '__next__', 'cancel', 'coro', 'data', 'done', 'ph_key', 'state']
+    dbg(f"MWSMAIN@50 {displays_task=}")
     
     while 1:
-        print(f"MAIN TASK running    {host=}   {port=} ")
+        dbg(f"MWSMAIN@50  MAIN TASK running    {host=}   {port=} ")
         webserver_done = webserver_task.done()
         sensors_done = sensors_task.done()
         displays_done = displays_task.done()
 
-        print(f"  Who is done:  web={webserver_task.done()}  "+\
+        dbg(f"  Who is done:  web={webserver_task.done()}  "+\
                f"displays={displays_task.done()}  sensors={sensors_task.done()}")
-        #print(f"   state: {sensors_task.state}")  # bool
-        #print(f"   data: {sensors_task.data}")    # None
+        #dbg(f"   state: {sensors_task.state}")  # bool
+        #dbg(f"   data: {sensors_task.data}")    # None
         
         # not impl in micropython
         ###done, pending = await asyncio.wait(tasks, timeout=1)
-        ###print(f"MAIN_TASK  done={done}   pending={pending}")
 
         if webserver_done and sensors_done and displays_done:
-            print("MAIN_TASK: all tasks are done!")
+            dbg("MWSMAIN@65  MAIN_TASK: all tasks are done!")
             break
         
         await asyncio.sleep(11)
         
     if 0:   # NOT IMPL
-        print(f"MAIN webserver result={webserver_task.result()}")
-        print(f"MAIN sensors   result={sensors_task.result()}")
-        print(f"MAIN displays  result={displays_task.result()}")
+        dbg(f"MWSMAIN@71 webserver result={webserver_task.result()}")
+        dbg(f"MWSMAIN@72 sensors   result={sensors_task.result()}")
+        dbg(f"MWSMAIN@73 displays  result={displays_task.result()}")
     
-# def mainOLDSTUFF():
-#     lines = ["line 1", "line {RESOURCE} 2", "lin33"]
-#     valsdict = {"RESOURCE" : "NOTFOUND!!++"}
-#     fmt_lines = []
-#     for line in lines:
-#         print(f"@@@RB@57  {line=}  {valsdict=}")
-#         new_line = line.format(**valsdict)
-#         fmt_lines.append(new_line)
-#     print(f"{fmt_lines}")
      
 def main():
+
     wlan, ip_addr = mws_wifi.connect_to_wifi()
 
 
@@ -99,11 +85,11 @@ def main():
         time.sleep(1)
 
     date_stg, time_stg = get_formatted_local_time()
-    m = f"MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
-    print(m)
+    m = f"MWSMAIN@88 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
+    dbg(m)
     log(m)
-    m = f"MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
-    print(m)
+    m = f"MWSMAIN@88 MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
+    dbg(m)
     log(m)
 
     # You will likely need to replace '0.0.0.0' with your device's actual IP address
@@ -118,8 +104,8 @@ def main():
         asyncio.run(main_task(host, port))
     except KeyboardInterrupt:
         date_stg, time_stg = get_formatted_local_time()
-        m = f"{date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
-        print(m)
+        m = f"MWSMAIN@107 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+        dbg(m)
         log(m)
     finally:
         # Clean up the event loop (optional, but good practice)
