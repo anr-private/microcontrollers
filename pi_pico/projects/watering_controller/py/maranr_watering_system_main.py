@@ -76,12 +76,14 @@ def main():
     num_retries = 0
     while num_retries < MAX_RETRIES:
         ok = mws_wifi.wifi_set_time_from_ntp(wlan)
+        print(f"@@@@@@@@@ MAIN  set time returnned {ok=}")
         if ok:
             m = "MWSMAIN@94  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
             dbg(m)
             log(m)
             break
-        m = "MWSMAIN@94  **ERROR** FAILED TO UPDATE SYSTEM TIME from NTP. {num_retries=}")
+        num_retries += 1
+        m = "MWSMAIN@94  **ERROR** FAILED TO UPDATE SYSTEM TIME from NTP. {num_retries=}"
         time.sleep(1)
 
     date_stg, time_stg = get_formatted_local_time()
