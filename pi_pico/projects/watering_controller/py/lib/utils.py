@@ -27,7 +27,7 @@ def dbg(stg=None):
 def log_start():
     try:
         os.remove(LOG_FNAME)
-    except Exceptionn as ex:
+    except Exception as ex:
         print(f"log_start no log file exists {LOG_FNAME=}")
 def log(stg=None):
     if stg is None: stg = ""

@@ -23,7 +23,7 @@ copy_release_files_to_the_pico() {
     ./PUSH_DISPLAYS_to_pico.sh
 
     echo 'Copy the MAIN program'
-    mpremote fs cp watering_project_main.py :/main.py
+    ./PUSH_MAIN_to_pico.sh
 }
 
 list_pico_filesystem_contents() {
