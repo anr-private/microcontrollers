@@ -1,4 +1,5 @@
-# ClassA.py
+# ClassT6.py
+# USED ONLY BY TEST 6 - for testing RuntimeError
 
 import sys
 
@@ -9,7 +10,7 @@ log_name_ = "None"
 
 logrt = None
 
-class ClassA(LoggerABC):
+class ClassT6(LoggerABC):
     def __init__(self):
         super().__init__()
         # NOTE this is a call to a class-method, so you only need
@@ -31,7 +32,7 @@ class ClassA(LoggerABC):
 
 
     def do_logging(self, mesg):
-        s = "classA"
+        s = "classT6"
         print(f"{s}.do_logging  log is currently {log}")
         log(f"{s}.do_logging wants to log '{mesg}'")
 

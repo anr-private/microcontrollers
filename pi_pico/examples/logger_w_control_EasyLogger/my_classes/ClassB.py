@@ -7,6 +7,7 @@ from logger.LoggerABC import LoggerABC
 log = None
 log_name_ = "None"
 
+logrt = None
 
 class ClassB(LoggerABC):
     def __init__(self):
@@ -22,12 +23,17 @@ class ClassB(LoggerABC):
     @classmethod
     def _get_logger_name(cls): global log_name_; return log_name_
     @classmethod
-    def _set_logger(cls, newlog, new_name): 
+    def _set_logger(cls, newlog, new_name):
         global log, log_name_; log = newlog; log_name_ = new_name
+    @classmethod
+    def _set_logger_rt(cls, newlog_rt):
+        global logrt; logrt = newlog_rt
 
 
     def do_logging(self, mesg):
-        log(f"classB.do_logging wants to log '{mesg}")
+        s = "classB"
+        print(f"{s}.do_logging  log is currently {log}")
+        log(f"{s}.do_logging wants to log '{mesg}'")
 
 
 ###

@@ -6,6 +6,7 @@ import sys
 
 from my_classes.ClassA import ClassA
 from my_classes.ClassB import ClassB
+from my_classes.ClassT6 import ClassT6
 from logger.LoggerABC import LoggerABC
 from logger.EasyLogger import EasyLogger
 
@@ -13,10 +14,9 @@ def test1():
     print(f"===  TEST 1  ++++++++++++++++++++++++++++++++++++")
     print(f"@@T1@14 This is test 1")
 
-    if 0:
-        print(f"@@T1@17  enable logger in ClassA")
-        r = ClassA.enable_logger(True)
-        assert r is True
+    print(f"@@T1@17  enable logger in ClassA")
+    r = ClassA.enable_logger(True)
+    assert r is True
 
     # This sets up the log() in ClassA; by default it is enabled
     print(f"@@T1@22  Get the logger status; expect True: {ClassA.get_logger_status()}")
@@ -235,11 +235,11 @@ def test5():
 def test6():
     print(f"===  TEST 6  ++++++++++++++++++++++++++++++++++++")
 
-    b = ClassB()
+    obj = ClassT6()
 
     got_ex_stg = ""
     try:
-        b.get_logger_status()
+        obj.get_logger_status()
     except Exception as ex:
         got_ex_stg = str(ex)
         print(f"@@T6@244  Got expected exception: ex.repr={repr(ex)}")
@@ -250,8 +250,6 @@ def test6():
 
 
 def main(args):
-    test6()
-def SAVED():
     if len(args) > 0:
         print(f"MAIN: {args=}")
         tests = list(args)
