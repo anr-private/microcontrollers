@@ -15,6 +15,9 @@ clean_up_old_dirs_and_files() {
 
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
+    echo 'Make subdir :pages/ on pico'
+    mpremote fs mkdir :pages
+
     echo 'Copy contents of pages/ '
     mpremote fs cp -r pages   :
     

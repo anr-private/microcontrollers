@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# PUSH_PAGES_to_pico.sh
+# PUSH_BIG_PAGES_FILES_to_pico.sh
 
 
 clean_up_old_dirs_and_files() {
@@ -15,6 +15,10 @@ clean_up_old_dirs_and_files() {
 
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
+    echo 'Make subdir :pages/ on pico'
+    mpremote fs mkdir :pages
+
+
     echo 'Copy contents of pages_big_files/ '
     ### CANNOT USE DESTINATION DIR!
     ###  mpremote fs cp -r pages_big_files   :pages
