@@ -171,16 +171,30 @@ def test3():
 
 
 def test4():
-    # First, notice/check that logging is not enabled for ClassB
-    # (see notes above: a previous test may have already initialized
-    # the logging state of ClassB)
-
+    # Ensure both ClassA and ClassB have their logging initialized.
     print(f"===  TEST 4  ++++++++++++++++++++++++++++++++++++")
 
-    r = ClassB.get_logger_status()
-    print(f"@@T4@181  Get the logger status; expect True: {ClassA.get_logger_status()}")
+    print(f"@@T4@177 Create instances of ClassA,ClassB")
+    a = ClassA()
+    b = ClassB()
+
+    print(f"@@T4@177  Assert logging is enable for both classes")
     assert ClassA.get_logger_status() is True
-    print()
+    assert ClassB.get_logger_status() is True
+
+    print(f"@@T4@177")
+    #@@@@@@@@@@@@@ why does test 7 fail why is logrt not initialized
+
+    print(f"@@T4@188 Create MORE instances of ClassA,ClassB")
+    aa = ClassA()
+    bb = ClassB()
+
+
+    # r = ClassB.get_logger_status()
+    # print(f"@@T4@181  Get the logger status; expect True: {r}")
+    # assert r is True
+    # assert ClassB.get_logger_status() is True
+    #print()
 
     print(f"===  end of TEST 4  ++++++++++++++++++++++++++++++++++++\n")
 
@@ -235,11 +249,11 @@ def test5():
 def test6():
     print(f"===  TEST 6  ++++++++++++++++++++++++++++++++++++")
 
-    obj = ClassT6()
+    ###obj = ClassT6()
 
     got_ex_stg = ""
     try:
-        obj.get_logger_status()
+        ClassT6.get_logger_status()
     except Exception as ex:
         got_ex_stg = str(ex)
         print(f"@@T6@244  Got expected exception: ex.repr={repr(ex)}")
@@ -247,6 +261,23 @@ def test6():
     print(f"@@T6@247  Got exception: {got_ex_stg=}")
     assert "SHOULD NEVER BE CALLED BEFORE LOGGING IS INITIALIZED" in got_ex_stg
     print(f"===  end of TEST 6  ++++++++++++++++++++++++++++++++++++\n")
+
+
+def test7():
+    print(f"===  TEST 7  ++++++++++++++++++++++++++++++++++++")
+
+    obj = ClassA()
+
+    mesg = "EXPECT THIS IN THE RuntimeError"
+    got_ex_stg = ""
+    try:
+        print(f"@@T7@260  Try to log a runtime error using log_tr_")
+        obj.log_runtime_error(mesg)
+    except RuntimeError as ex:
+        got_ex_stg = str(ex)
+    print(f"@@T7@263  RuntimeError string is '{got_ex_stg}'")
+    assert mesg in got_ex_stg
+    print(f"===  end of TEST 7  ++++++++++++++++++++++++++++++++++++\n")
 
 
 def main(args):
@@ -262,6 +293,7 @@ def main(args):
     if '4' in tests: test4()
     if '5' in tests: test5()
     if '6' in tests: test6()
+    if '7' in tests: test7()
 
 if __name__ == "__main__":
     main(sys.argv[1:])

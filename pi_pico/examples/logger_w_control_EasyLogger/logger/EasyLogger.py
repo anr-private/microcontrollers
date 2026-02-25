@@ -25,6 +25,8 @@ class EasyLogger:
         self._latest_muted_mesg_ = None
 
 
+    # === LOGGING METHODS ==================
+
     def log_log_(self, s):
         print(f"EasyLogger.log_log_ MESG IS {s}")
         self._latest_logged_mesg_ = s
@@ -35,13 +37,19 @@ class EasyLogger:
         self._latest_muted_mesg_ = s
         self._latest_mesg_ = s
     
+    def log_rt_(self, s):
+        print(f"EasyLogger.log_rt_ *ERROR* {s}")
+        raise RuntimeError(s)
+
+    # === SUPPORT  =================================
+
     def register_class(self, cls):
-        print(f"@@@ EasyLogger.register_class  {cls=}")
+        print(f"@@@ EasyLogger@47.register_class  {cls=}")
         self.classes[str(cls)] = cls
         self.dump_the_registered_classes()
 
     def dump_the_registered_classes(self):
-        print(f"@@@ EASYlogger   Registered classes: ")
+        print(f"@@@ EasyLogger@52  DUMP Registered classes: ")
         for k,v in self.classes.items():
             print(f"  {k=}  v={v}")
 

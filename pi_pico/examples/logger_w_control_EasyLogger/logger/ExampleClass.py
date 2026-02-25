@@ -1,5 +1,4 @@
-# ClassT6.py
-# USED ONLY BY TEST 6 - for testing RuntimeError
+# ExampleClass.py
 
 import sys
 
@@ -10,20 +9,9 @@ log_name_ = "None"
 
 logrt = None
 
-# We need this class for Test 6.
-# It's not used anywhere else.
-# That ensures that it does not get initialized in some other test;
-# the test checks to see if method(s) are called before the
-# class has init_logger()'d
-# Otherwise it is nothing special,just another user class.
-
-class ClassT6(LoggerABC):
+class ExampleClass(LoggerABC):
     def __init__(self):
         super().__init__()
-        # NOTE this is a call to a class-method, so you only need
-        # to provide the ClassB obj, not an instance of ClassB.
-        # But this is convenient - accessing a class-method via
-        # an instance works file.
         self.init_logger()
 
     @classmethod
@@ -39,7 +27,7 @@ class ClassT6(LoggerABC):
 
 
     def do_logging(self, mesg):
-        s = "classT6"
+        s = "classA"
         print(f"{s}.do_logging  log is currently {log}")
         log(f"{s}.do_logging wants to log '{mesg}'")
 

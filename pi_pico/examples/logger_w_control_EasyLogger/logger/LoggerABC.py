@@ -17,27 +17,25 @@ class LoggerABC:
         # EXCEPT for the first instance of the user class; when that
         # first instance is create, ONLY THEN and ONLY ONCE we do
         # the logging setup.
-        print(f"EasyLogger@84.initlogger  arg 'enable' has value {enable}")
+        print(f"LoggerABC@20.initlogger  arg 'enable' has value {enable}")
 
         # See if logger is set up yet.
         curr_log = cls._get_logger()
         if curr_log is None:
             print(f"@@@@ LoggerABC@23.initlogger CLASS {cls} is not set up yet!!!!!!!!!!!!!!!")
             cls._set_up_logging()
-        print(f"@@@@@ initlogger has FINISHED.........")
+        print(f"@@@@@ LoggerABC@27.initlogger has FINISHED.........")
 
 
     @classmethod
     def _set_up_logging(cls):
         # this is done just once, during program startup
         print("LoggerABC@33 _set_up_logging - one-time initialization!")
-        return
 
-        cls._enable_the_logger(True)
-
-        # register the class
         easyLogger = EasyLogger.get_instance()
         easyLogger.register_class(cls)
+
+        cls._enable_the_logger(True)
         
 
     @classmethod
@@ -48,9 +46,9 @@ class LoggerABC:
         #   True if logging is enable, False if not.
         # FIRST: is this class set up for logging?
         got_log = cls._get_logger()
-        print(f"LoggerABC@39 (cls={cls}) get_logger_status.  got_log = {got_log}")
+        print(f"LoggerABC@53 (cls={cls}) get_logger_status.  got_log = {got_log}")
         if got_log is None:
-            print(f"LoggerABC@41 (cls={cls}) LOGGER HAS NOT YET BEEN SET UP! DO IT NOW!")
+            print(f"LoggerABC@55 (cls={cls}) LOGGER HAS NOT YET BEEN SET UP!")
             raise RuntimeError("@@@@@@@@@@@@ LoggerABC@54.get_logger_status SHOULD NEVER BE CALLED BEFORE LOGGING IS INITIALIZED!")
             #### WAS...
             ####  cls._enable_the_logger(True)
@@ -97,11 +95,6 @@ class LoggerABC:
 
         cls._enable_the_logger(enable)
 
-        #@@@@ HEY it no longer returns a status
-        #xxx = cls._enable_the_logger(enable)
-        #zzz =  cls._get_the_status()
-        #print(f"@@@@>>>>>>>>>>>>>>>> enable_logger  {xxx=}  {zzz=}")
-
         print(f"LoggerABC.enable_logger status: {cls._get_the_status()}")
 
         return cls._get_the_status()
@@ -135,16 +128,20 @@ class LoggerABC:
         print(f"LoggerABC._enable_the_logger newlogger: {str(new_logger)}  {new_logger_name=} ")
         cls._set_logger(new_logger, new_logger_name)
 
-        if 0:
-            xxx = cls._get_logger()
-            print(f"@@@@ 147 _enable_the_logger  xxx is {xxx}")
-            xxx("ZZZXCXX")
-        if 0:
-            # @@@ NO CALLER needs this - they do it explicitly
-            #@@@@@result = new_logger is easyLogger.log_log_
-            result = cls._get_the_status()
-            print(f"LoggerABC._enable_the_logger@164  .............. _enable_the_logger returns {result}")
-            return result
+        cls._set_logger_rt(easyLogger.log_rt_)
+
+        # return nothing
+ 
+        # if 0:
+            # xxx = cls._get_logger()
+            # print(f"@@@@ 147 _enable_the_logger  xxx is {xxx}")
+            # xxx("ZZZXCXX")
+        # if 0:
+            # # @@@ NO CALLER needs this - they do it explicitly
+            # #@@@@@result = new_logger is easyLogger.log_log_
+            # result = cls._get_the_status()
+            # print(f"LoggerABC._enable_the_logger@164  .............. _enable_the_logger returns {result}")
+            # return result
 
     @classmethod
     def _is_bound_method_loglog(cls, bound_method):
