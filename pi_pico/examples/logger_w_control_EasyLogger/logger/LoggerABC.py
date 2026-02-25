@@ -12,21 +12,33 @@ class LoggerABC:
 
     @classmethod
     def init_logger(cls, enable=True):
-        print(f"@@@@@ initlogger@84  arg 'enable' has value {enable}")
-        if 0:
-            print(f"@@@@@ initlogger @ 87  cls is {type(cls)}")
-            print(f"@@@@@ initlogger @ 87  cls is {str(cls)}")
-            print(f"@@@@@ initlogger @ 87  cls is {cls}")
+        # This is called every time a new user class object is created.
+        # So it cannot be allowed to alter the current state of logging
+        # EXCEPT for the first instance of the user class; when that
+        # first instance is create, ONLY THEN and ONLY ONCE we do
+        # the logging setup.
+        print(f"EasyLogger@84.initlogger  arg 'enable' has value {enable}")
+
         # See if logger is set up yet.
         curr_log = cls._get_logger()
         if curr_log is None:
             print(f"@@@@ LoggerABC@23.initlogger CLASS {cls} is not set up yet!!!!!!!!!!!!!!!")
-            cls._enable_the_logger(True)
-        #@@@@@@@@ this is redundant - remove it?????
+            cls._set_up_logging()
+        print(f"@@@@@ initlogger has FINISHED.........")
+
+
+    @classmethod
+    def _set_up_logging(cls):
+        # this is done just once, during program startup
+        print("LoggerABC@33 _set_up_logging - one-time initialization!")
+        return
+
+        cls._enable_the_logger(True)
+
         # register the class
         easyLogger = EasyLogger.get_instance()
         easyLogger.register_class(cls)
-        print(f"@@@@@ initlogger has FINISHED.........")
+        
 
     @classmethod
     def get_logger_status(cls):
@@ -39,7 +51,9 @@ class LoggerABC:
         print(f"LoggerABC@39 (cls={cls}) get_logger_status.  got_log = {got_log}")
         if got_log is None:
             print(f"LoggerABC@41 (cls={cls}) LOGGER HAS NOT YET BEEN SET UP! DO IT NOW!")
-            cls._enable_the_logger(True)
+            raise RuntimeError("@@@@@@@@@@@@ LoggerABC@54.get_logger_status SHOULD NEVER BE CALLED BEFORE LOGGING IS INITIALIZED!")
+            #### WAS...
+            ####  cls._enable_the_logger(True)
         return cls._get_the_status()
 
     @classmethod
@@ -65,6 +79,32 @@ class LoggerABC:
         status = got_log_name == "log" # else "mute"
         print(f"LoggerABC._get_the_status  RETURNS {status=} ")
         return status
+
+
+    @classmethod
+    def enable_logger(cls, enable):
+        # Arg enable must be True/False
+        print(f"ABC.enable_logger Requested: {enable=}")
+        #print(f"ABC.enable_logger    cls is {type(cls)}")
+        #print(f"ABC.enable_logger    cls is {cls}")
+
+        ###easyLogger = EasyLogger.get_instance()
+
+        if not (enable is True or enable is False):
+            m = f"LoggerAbc[cls{cls}].enable_logger  'enable' arg is not True/False:  {enable}"
+            print(m)
+            raise RuntimeError(m)
+
+        cls._enable_the_logger(enable)
+
+        #@@@@ HEY it no longer returns a status
+        #xxx = cls._enable_the_logger(enable)
+        #zzz =  cls._get_the_status()
+        #print(f"@@@@>>>>>>>>>>>>>>>> enable_logger  {xxx=}  {zzz=}")
+
+        print(f"LoggerABC.enable_logger status: {cls._get_the_status()}")
+
+        return cls._get_the_status()
 
 
     @classmethod
@@ -114,50 +154,5 @@ class LoggerABC:
         is_loglog = "log_log_" in bound_method_stg
         #print(f"@@@ ___ _is_bound_method_loglog returns {is_loglog}")
         return is_loglog
-
-    @classmethod
-    def enable_logger(cls, enable):
-        # Arg enable must be True/False
-        print(f"ABC.enable_logger Requested: {enable=}")
-        #print(f"ABC.enable_logger    cls is {type(cls)}")
-        #print(f"ABC.enable_logger    cls is {cls}")
-
-        ###easyLogger = EasyLogger.get_instance()
-
-        if not (enable is True or enable is False):
-            m = f"LoggerAbc[cls{cls}].enable_logger  'enable' arg is not True/False:  {enable}"
-            print(m)
-            raise RuntimeError(m)
-
-        cls._enable_the_logger(enable)
-
-        #@@@@ HEY it no longer returns a status
-        #xxx = cls._enable_the_logger(enable)
-        #zzz =  cls._get_the_status()
-        #print(f"@@@@>>>>>>>>>>>>>>>> enable_logger  {xxx=}  {zzz=}")
-
-        print(f"LoggerABC.enable_logger status: {cls._get_the_status()}")
-
-        return cls._get_the_status()
-
-            # curr_log = cls._get_logger() 
-            # # logging is not set up yet
-            # if curr_log is None: return None
-            # return curr_log is easyLogger.log_log_
-# 
-        # if enable is not None:
-            # if enable:
-                # new_logger = easyLogger.log_log_
-            # else:
-                # new_logger = easyLogger.log_mute_
-# 
-            # cls._set_logger(new_logger)
-        # return new_logger is easyLogger.log_log_
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-        
-
-
 
 ###

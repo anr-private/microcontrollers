@@ -232,8 +232,26 @@ def test5():
     print(f"===  end of TEST 5  ++++++++++++++++++++++++++++++++++++\n")
 
 
+def test6():
+    print(f"===  TEST 6  ++++++++++++++++++++++++++++++++++++")
+
+    b = ClassB()
+
+    got_ex_stg = ""
+    try:
+        b.get_logger_status()
+    except Exception as ex:
+        got_ex_stg = str(ex)
+        print(f"@@T6@244  Got expected exception: ex.repr={repr(ex)}")
+        print(f"@@T6@245  Got expected exception: ex.str ={repr(ex)}")
+    print(f"@@T6@247  Got exception: {got_ex_stg=}")
+    assert "SHOULD NEVER BE CALLED BEFORE LOGGING IS INITIALIZED" in got_ex_stg
+    print(f"===  end of TEST 6  ++++++++++++++++++++++++++++++++++++\n")
+
+
 def main(args):
-    print(f"MAIN: {args=}")
+    test6()
+def SAVED():
     if len(args) > 0:
         print(f"MAIN: {args=}")
         tests = list(args)
@@ -245,10 +263,9 @@ def main(args):
     if '3' in tests: test3()
     if '4' in tests: test4()
     if '5' in tests: test5()
-    #if '6' in tests: test6()
+    if '6' in tests: test6()
 
 if __name__ == "__main__":
-    # NOTE that Thonny does not support sys.argv even tho it has Program Arguments capability.
     main(sys.argv[1:])
 
 ###
