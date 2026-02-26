@@ -60,6 +60,17 @@ That doc shows how to do these:
   Install MicroPython on the Pico (using Thonny, lower right margin
     mouse-click, choose  Raspberry Pi Pico /dev/ttyACM0
 
+=== MPREMOTE  - getting/using the latest version =====
+
+Create a venv in which to install and run the latest mpremote.
+The one installed by default in Ubuntu 24.04 is very out of date.
+ See ~/git/art/src/python3/misc/virtualenv_venv_SAMPLE
+An example venv setup:
+  See ~/git/microcontrollers/pi_pico/projects/maranr_watering_system
+Check the version:
+  mpremote --version
+
+
 === PICO FIRMWARE and MICROPYTHON   ===========
 
 The Raspberry Pi org tutorial shows how to install MicroPython 
