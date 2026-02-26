@@ -18,7 +18,7 @@ class HttpReply:
         if len(header) < 10:
             raise RuntimeError(f"HttpReply.set_reply header is too short: len={len(header)} hdr='{header}'")
         if header[-4:] != "\r\n\r\n":
-            raise RuntimeError(f"HttpReply.set_reply header does not end with CR/LF/CR/LF: {show_cc(header)}")
+            raise RuntimeError(f"HttpReply.set_reply header does not end with CR/LF/CR/LF: {utils.show_cc(header)}")
             
 
         self._header = header

@@ -13,11 +13,11 @@ class HdrAccum:
         self._end_of_hdr_pos = -1
 
     def accum_header_line(self, line):
-        dbg(f"ACCUMLINE@16 '{show_cc(line)}'")
+        dbg(f"ACCUMLINE@16 '{utils.show_cc(line)}'")
         ###self._lines.append(line)
         ###print(f"  Lines: {self._lines}")
         self._mesg += line
-        #print(f" mesg: '{show_cc(self._mesg)} ")
+        #print(f" mesg: '{utils.show_cc(self._mesg)} ")
         # found the end of the header?  
         pos = self._mesg.find("\r\n\r\n")
         if pos >= 0:

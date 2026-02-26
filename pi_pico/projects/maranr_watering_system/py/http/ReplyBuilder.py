@@ -96,8 +96,8 @@ class ReplyBuilder:
         lines = add_eol_to_lines(lines)
         header_stg = "".join(lines)
         #for line in lines:
-        #    dbg(f"RB@99 {show_cc(line)}")
-        #dbg(f"RB@100 {show_cc(reply)}")
+        #    dbg(f"RB@99 {utils.show_cc(line)}")
+        #dbg(f"RB@100 {utils.show_cc(reply)}")
 
         reply = HttpReply()
         reply.set_reply(header_stg, self.body)

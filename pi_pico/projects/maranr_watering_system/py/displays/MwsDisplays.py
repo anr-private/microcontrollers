@@ -5,8 +5,13 @@ try:
     import utime as time
 except Exception:
     import time
-from lib import *
 from machine import Pin, SoftI2C
+
+###@@@from lib import *
+from lib import utils
+from lib.utils import loggg
+from lib.utils import dbg
+
 from displays.lib_lcd1602_2004_with_i2c import LCD
 
 # Works with 2 line and 4 line by 16 chars LCDs
@@ -18,8 +23,8 @@ class MwsDisplays:
     """ top-level Server class """
 
     def __init__(self, *args):
-        self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
-        self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
+        self.lcd1602_sda_pin = utils.MWS_CONFIG.get("lcd1602_sda_pin")
+        self.lcd1602_scl_pin = utils.MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
         ...
 

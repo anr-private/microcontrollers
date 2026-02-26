@@ -2,7 +2,10 @@
 
 import asyncio
 
-from utils import *
+###@@@@from utils import *
+from lib import utils
+from lib.utils import loggg
+from lib.utils import dbg
 from http.HdrAccum import HdrAccum
 from http.ParsedHttp import ParsedHttp
 from http.RequestHandler import RequestHandler
@@ -39,7 +42,7 @@ class MwsWebServer:
 
     async def handle_new_client(self, reader, writer):
         m = f"MWS@46 handle_new_client  {reader=} {writer=}  "
-        print();print(m); log(m)
+        print();print(m); loggg(m)
         
         hdrAccum = HdrAccum()
         line_num = 0
@@ -54,11 +57,11 @@ class MwsWebServer:
                     break
                 line_num += 1
                 m = f"MWS@56 handle_new_client@61 {line_num=} got {len(new_bytes)} bytes. "
-                print(m); log(m)
+                print(m); loggg(m)
     
                 line = new_bytes.decode("utf-8")
-                log(f"MWS@60 handle_new_client@52 {line_num=} got {len(line)} chars. ")
-                log(f"MWS@61 handle_new_client@52 {line_num=} {show_cc(line)}")
+                loggg(f"MWS@60 handle_new_client@52 {line_num=} got {len(line)} chars. ")
+                loggg(f"MWS@61 handle_new_client@52 {line_num=} {utils.show_cc(line)}")
 
                 hdrAccum.accum_header_line(line)
                 if hdrAccum.found_end_of_header():
@@ -73,14 +76,14 @@ class MwsWebServer:
                     if httpReply is None:
                         mesg = f"MWS@74  FAILED TO HANDLE REQUEST!"
                         print(mesg)
-                        log(mesg)
+                        loggg(mesg)
                         break
                     m1 = f"MWS@78 HTTP-REPY is {str(httpReply)} "
                     m2 = f"MWS@79 ... reply header... ----------------------------"
                     m3 = f"{httpReply.get_header()}"
                     m4 = f"MWS@85  ------------------ end of REPLY HEADER   {len(httpReply.get_header())}  -------------------"
                     print(m1); print(m2); print(m3); print(m4)
-                    log(m1); log(m2); log(m3); log(m4)
+                    loggg(m1); loggg(m2); loggg(m3); loggg(m4)
                     
                     writer.write(httpReply.get_header())
                     body = httpReply.get_body()
@@ -92,7 +95,7 @@ class MwsWebServer:
                     break
 
             dbg(f"MWS@95 handle_new_client done with this client!")
-            log(f"MWS@95 handle_new_client done with this client!")
+            loggg(f"MWS@95 handle_new_client done with this client!")
 
         except Exception as ex:
             dbg(f"MWS@99 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' ")

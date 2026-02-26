@@ -17,7 +17,10 @@ from logger.LoggerABC import LoggerABC
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from lib import mws_wifi
-from lib.utils import *
+from lib import utils
+from lib.utils import loggg
+from lib.utils import dbg
+###from lib.utils import *
 from http.MwsWebServer import MwsWebServer
 
 #if determine_py_platform() == "micropython":
@@ -25,7 +28,7 @@ from http.MwsWebServer import MwsWebServer
 #else:
 #    sys.path.append("../http")
 
-print(f"@@@MAIN@28  {MWS_CONFIG=}")
+print(f"@@@MAIN@28  {utils.MWS_CONFIG=}")
 
 
 class MaranrWateringSystem:
@@ -93,7 +96,7 @@ class MaranrWateringSystem:
             m = "MWSMAIN@86  **ERROR** FAILED TO UPDATE SYSTEM TIME from NTP. {num_retries=}"
             time.sleep(1)
     
-        date_stg, time_stg = get_formatted_local_time()
+        date_stg, time_stg = utils.get_formatted_local_time()
         m = f"MWSMAIN@90 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
         dbg(m)
         loggg(m)
@@ -112,7 +115,7 @@ class MaranrWateringSystem:
 
     def run_mws(self):
 
-        log_start()
+        utils.log_start()
 
         loggg("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
