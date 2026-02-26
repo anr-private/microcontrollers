@@ -20,6 +20,7 @@ copy_release_files_to_the_pico() {
     ./PUSH_DISPLAYS_to_pico.sh
     ./PUSH_HTTP_to_pico.sh
     ./PUSH_LIB_FILES_to_pico.sh
+    ./PUSH_LOGGER_FILES_to_pico.sh
     ./PUSH_PRIMITIVES_to_pico.sh
     ./PUSH_SENSORS_to_pico.sh
 
@@ -34,6 +35,7 @@ list_pico_filesystem_contents() {
     mpremote fs ls /displays
     mpremote fs ls /http
     mpremote fs ls /lib
+    mpremote fs ls /logger
     mpremote fs ls /primitives
     mpremote fs ls /sensors
     mpremote fs ls 

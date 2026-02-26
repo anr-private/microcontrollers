@@ -1,9 +1,11 @@
 # MwsDisplays.py
 
 import asyncio
-import utime as time
-
-from utils import *
+try:
+    import utime as time
+except Exception:
+    import time
+from lib import *
 from machine import Pin, SoftI2C
 from displays.lib_lcd1602_2004_with_i2c import LCD
 
