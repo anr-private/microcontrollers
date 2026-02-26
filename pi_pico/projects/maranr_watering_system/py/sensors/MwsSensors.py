@@ -10,7 +10,7 @@ class MwsSensors:
     """ sensors and effectors """
 
     def __init__(self, *args):
-        #self.SOME_THING = WSP_CONFIG.get("config-param-name-here")
+        #self.SOME_THING = MWS_CONFIG.get("config-param-name-here")
         ...
 
 

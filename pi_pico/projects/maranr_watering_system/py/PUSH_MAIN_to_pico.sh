@@ -21,7 +21,7 @@ clean_up_old_dirs_and_files() {
 copy_release_files_to_the_pico() {
 
     echo 'Copy contents of MAIN-PGM'
-    mpremote fs cp watering_project_main.py :/main.py
+    mpremote fs cp maranr_watering_system_main.py :/main.py
     
     #echo 'Remove the files we do not need'
     #mpremote fs rm xxxx/XXXX.py

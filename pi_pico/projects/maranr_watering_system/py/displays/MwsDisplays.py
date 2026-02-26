@@ -18,8 +18,8 @@ class MwsDisplays:
     """ top-level Server class """
 
     def __init__(self, *args):
-        self.lcd1602_sda_pin = WSP_CONFIG.get("lcd1602_sda_pin")
-        self.lcd1602_scl_pin = WSP_CONFIG.get("lcd1602_scl_pin")
+        self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
+        self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
         ...
 

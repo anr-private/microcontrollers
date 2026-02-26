@@ -17,14 +17,15 @@ from logger.LoggerABC import LoggerABC
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from lib import mws_wifi
-from utils import *
+from lib.utils import *
 from http.MwsWebServer import MwsWebServer
 
-if determine_py_platform() == "micropython":
-    sys.path.append("/http")
-else:
-    sys.path.append("../http")
+#if determine_py_platform() == "micropython":
+#    sys.path.append("/http")
+#else:
+#    sys.path.append("../http")
 
+print(f"@@@MAIN@28  {MWS_CONFIG=}")
 
 
 class MaranrWateringSystem:
@@ -33,7 +34,7 @@ class MaranrWateringSystem:
         pass
 
 
-    async def main_task(host, port):
+    async def main_task(self, host, port):
     
         webserver = MwsWebServer(host, port) 
         webserver_task = webserver.start_the_task()
@@ -86,7 +87,7 @@ class MaranrWateringSystem:
             if ok:
                 m = "MWSMAIN@81  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
                 dbg(m)
-                log(m)
+                loggg(m)
                 break
             num_retries += 1
             m = "MWSMAIN@86  **ERROR** FAILED TO UPDATE SYSTEM TIME from NTP. {num_retries=}"
@@ -95,10 +96,10 @@ class MaranrWateringSystem:
         date_stg, time_stg = get_formatted_local_time()
         m = f"MWSMAIN@90 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
         dbg(m)
-        log(m)
+        loggg(m)
         m = f"MWSMAIN@93 MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
         dbg(m)
-        log(m)
+        loggg(m)
     
         # You will likely need to replace '0.0.0.0' with your device's actual IP address
         # after connecting it to a network.
@@ -113,7 +114,7 @@ class MaranrWateringSystem:
 
         log_start()
 
-        log("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
+        loggg("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
         host,port = self.connect_to_wifi()
 
@@ -124,7 +125,7 @@ class MaranrWateringSystem:
             date_stg, time_stg = get_formatted_local_time()
             m = f"MWSMAIN@109 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             dbg(m)
-            log(m)
+            loggg(m)
         finally:
             # Clean up the event loop (optional, but good practice)
             asyncio.new_event_loop()

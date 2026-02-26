@@ -8,7 +8,7 @@ try:
 except ModuleNotFoundError:
     import utime as time
 
-WSP_CONFIG = {
+MWS_CONFIG = {
     "lcd1602_sda_pin": 2,
     "lcd1602_scl_pin": 3,
 
