@@ -1,0 +1,6 @@
+# DEACTIVATE_VENV    - 'SOURCE' this - do not execute
+
+# This is created as a shell-script function by 'activate'
+deactivate
+
+### end ###
