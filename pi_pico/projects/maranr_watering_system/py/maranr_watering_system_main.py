@@ -1,6 +1,6 @@
-# watering_project_main.py
+# maranr_watering_system_main.py
 #
-# main program for the watering project
+# main program for the MARANR watering system (MWS) project
 #
 # Gets install on the Pico as  /main.py
 # Runs when Pico powers up.
