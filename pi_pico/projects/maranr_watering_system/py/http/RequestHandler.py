@@ -2,10 +2,12 @@
 
 import asyncio
 
-from utils import *
 from lib.FileUtils import FileUtils
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
+import lib.utils as utils
+dbg = utils.dbg
+loggg = utils.loggg
 
 # Content-Type values
 # application/x-www-form-urlencoded  - posting a FORM(?)
@@ -81,7 +83,7 @@ class RequestHandler:
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            dbg(f"RH@84 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            dbg(f"RH@84 REPLY WITH 404. '{m}' {file_path=}  len={utils.show_len(reply)}")
             ###print(f"RH@85  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
@@ -93,7 +95,7 @@ class RequestHandler:
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            dbg(f"RH@96 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            dbg(f"RH@96 REPLY WITH 404. '{m}' {file_path=}  len={utils.show_len(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -125,12 +127,12 @@ class RequestHandler:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            dbg(f"RH@128 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            dbg(f"RH@128 REPLY WITH 404.  {file_path=}  len={utils.show_len(reply)}")
             dbg(f"RH@129 {m=}")
             ###print(f"RH@130  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
-        dbg(f"RH@133  {file_path=} {content_type=}  len={show_len(file_content)}")
+        dbg(f"RH@133  {file_path=} {content_type=}  len={utils.show_len(file_content)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
@@ -155,12 +157,12 @@ class RequestHandler:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            dbg(f"RH@158 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            dbg(f"RH@158 REPLY WITH 404.  {file_path=}  len={utils.show_len(reply)}")
             dbg(f"RH@159 {m=}")
             ###print(f"RH@160  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
-        dbg(f"RH@163  {file_path=} {content_type=}  len={show_len(file_content)}")
+        dbg(f"RH@163  {file_path=} {content_type=}  len={utils.show_len(file_content)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
@@ -202,7 +204,7 @@ class RequestHandler:
                 # Read the entire content of the file
                 dbg(f"RH@203 Opened text file '{file_path}' ")
                 content = file.read()
-                dbg(f"RH@205  text-file='{file_path}' len={show_len(content)}")
+                dbg(f"RH@205  text-file='{file_path}' len={utils.show_len(content)}")
                 return content
     
         except OSError as ex:
@@ -221,7 +223,7 @@ class RequestHandler:
                 # Read the entire content of the file
                 dbg(f"RH@222 Opened binary file '{file_path}' ")
                 content = file.read()
-                dbg(f"RH@224  binary-file='{file_path}' len={show_len(content)}")
+                dbg(f"RH@224  binary-file='{file_path}' len={utils.show_len(content)}")
                 return content
     
         except OSError as ex:

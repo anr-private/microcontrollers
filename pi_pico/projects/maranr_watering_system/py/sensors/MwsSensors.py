@@ -3,7 +3,10 @@
 import asyncio
 import utime as time
 
-from utils import *
+#from utils import *
+import lib.utils as utils
+dbg = utils.dbg
+loggg = utils.loggg
 
 
 class MwsSensors:

@@ -1,11 +1,11 @@
 # HttpParser.py
 
-###@@@ how to tell if you are on a Pico or something else
-###@@@ os.name, sys.platform, or platform.system().
-
 import sys
+
 from .ParsedHttp import ParsedHttp, METHOD_NAMES
-from utils import *
+import lib.utils as utils
+dbg = utils.dbg
+loggg = utils.loggg
 
 class HttpParser:
     """ parses HTTP replies
@@ -178,7 +178,7 @@ class HttpParser:
         if not got_version:
             return None
 
-        num_code_as_int = string_to_int(numeric_code_val)
+        num_code_as_int = utils.string_to_int(numeric_code_val)
         dbg(f"HP@182 {num_code_as_int=}")
         if num_code_as_int <= 0:
             self.error(lno(), f"Reply numeric_code is not an int or is less than zero: {numeric_code_val}")

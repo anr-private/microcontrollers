@@ -1,6 +1,8 @@
 # ParsedHttp.py
 
-from utils import *
+import lib.utils as utils
+dbg = utils.dbg
+loggg = utils.loggg
 
 METHOD_NAMES = ("GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE")
 

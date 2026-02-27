@@ -1,8 +1,12 @@
 # ReplyBuilder.py
 
-from utils import *
+import sys
 
 from .HttpReply import HttpReply
+import lib.utils as utils
+dbg = utils.dbg
+loggg = utils.loggg
+
 
 HTTP_PROTOCOL = "HTTP/1.1"
 SERVER_ID = "Pico Watering System"
