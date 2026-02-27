@@ -2,7 +2,7 @@
 
 from utils import *
 
-from http.HttpReply import HttpReply
+from .HttpReply import HttpReply
 
 HTTP_PROTOCOL = "HTTP/1.1"
 SERVER_ID = "Pico Watering System"

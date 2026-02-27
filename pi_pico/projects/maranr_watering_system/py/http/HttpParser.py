@@ -4,7 +4,7 @@
 ###@@@ os.name, sys.platform, or platform.system().
 
 import sys
-from http.ParsedHttp import ParsedHttp, METHOD_NAMES
+from .ParsedHttp import ParsedHttp, METHOD_NAMES
 from utils import *
 
 class HttpParser:

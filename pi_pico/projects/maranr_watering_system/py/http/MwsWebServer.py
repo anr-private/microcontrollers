@@ -6,9 +6,9 @@ import asyncio
 from lib import utils
 from lib.utils import loggg
 from lib.utils import dbg
-from http.HdrAccum import HdrAccum
-from http.ParsedHttp import ParsedHttp
-from http.RequestHandler import RequestHandler
+from .HdrAccum import HdrAccum
+from .ParsedHttp import ParsedHttp
+from .RequestHandler import RequestHandler
 
 class MwsWebServer:
     """ top-level Server class """

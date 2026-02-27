@@ -4,8 +4,8 @@ import asyncio
 
 from utils import *
 from lib.FileUtils import FileUtils
-from http.HttpParser import HttpParser
-from http.ReplyBuilder import ReplyBuilder
+from .HttpParser import HttpParser
+from .ReplyBuilder import ReplyBuilder
 
 # Content-Type values
 # application/x-www-form-urlencoded  - posting a FORM(?)
