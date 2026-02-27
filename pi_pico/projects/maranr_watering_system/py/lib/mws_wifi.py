@@ -7,7 +7,10 @@ import utime
 import ntptime
 
 from details import SSID, PW
-from utils import *
+#from utils import *
+import lib.utils as utils
+dbg = utils.dbg
+loggg = utils.loggg
 
 ssid = SSID
 password = PW
@@ -60,7 +63,7 @@ def wifi_set_time_from_ntp(wlan):
     except Exception as ex:
         m = f"WIFI@61 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
         dbg(m)
-        log(m)
+        loggg(m)
         return False
 
     # verify the time

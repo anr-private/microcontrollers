@@ -10,9 +10,10 @@ import sys
 import platform
 
 try:
-    import utime          #uPy
+    import utime as time        #uPy
 except Exception:
-    import time as utime  # Py3 simulate 'utime' uPy pkg
+    import time                 #Py3 unit tests
+
 
 from logger.LoggerABC import LoggerABC
 from displays.MwsDisplays import MwsDisplays
