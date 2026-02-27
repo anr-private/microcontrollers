@@ -34,8 +34,8 @@ class RequestHandler:
         m2 = f"RHS@24 {parsed_http.long_string()}"
         print(m1)
         print(m2)
-        log(m1)
-        log(m2)
+        loggg(m1)
+        loggg(m2)
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)
@@ -68,7 +68,7 @@ class RequestHandler:
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@71 Default file requested") 
+            loggg(f"RH@71 Default file requested") 
             file_path = self.default_file
         
         dbg(f"RH@74 {file_path=}")
@@ -257,7 +257,7 @@ class RequestHandler:
         elif ext in ["gif",]:
             t = "image/gif"
         else:
-            log(r"RH@254 **ERROR** Unknow Content-Type for file '{file_path}'")
+            loggg(r"RH@254 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
         dbg(f"RH@256 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t

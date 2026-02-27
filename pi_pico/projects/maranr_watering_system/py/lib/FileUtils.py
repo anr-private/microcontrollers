@@ -1,7 +1,7 @@
 # FileUtils.py
 
 import os
-from utils import *
+from lib.utils import *
 
 class FileUtils:
 

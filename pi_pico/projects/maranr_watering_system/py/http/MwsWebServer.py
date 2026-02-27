@@ -94,11 +94,12 @@ class MwsWebServer:
 
                     break
 
-            dbg(f"MWS@95 handle_new_client done with this client!")
-            loggg(f"MWS@95 handle_new_client done with this client!")
+            dbg(f"MWS@97 handle_new_client done with this client!")
+            loggg(f"MWS@98 handle_new_client done with this client!")
 
         except Exception as ex:
-            dbg(f"MWS@99 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' ")
+            dbg(f"MWS@101 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' ")
+            raise
         ###finally:
         dbg("MWS@101 handle_new_client Closing client writer connection")
         writer.close()

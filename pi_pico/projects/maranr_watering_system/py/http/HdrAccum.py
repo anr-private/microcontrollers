@@ -1,6 +1,8 @@
 # HdrAccum.py
 
-from utils import *
+#from utils import *
+import lib.utils as utils
+dbg = utils.dbg
 
 # unit tests:
 #  /home/art/git/art/src/python3/pico_support_tests/watering_controller/http/unit_tests/TestHdrAccum.py
