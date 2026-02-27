@@ -17,7 +17,8 @@ MWS_CONFIG = {
 LOG_FNAME = "mws_log.txt"
 
 
-DEBUG = True
+DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is DISABLED @@@@@@@@@@@@@@@@@@")
 def dbg(stg=None):
     """ output a string to the debug output """
     if not DEBUG: return
@@ -29,6 +30,8 @@ def log_start():
         os.remove(LOG_FNAME)
     except Exception as ex:
         print(f"log_start no log file exists {LOG_FNAME=}")
+
+print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is DISABLED")
 def loggg(stg=None):
     if stg is None: stg = ""
     fname = LOG_FNAME
