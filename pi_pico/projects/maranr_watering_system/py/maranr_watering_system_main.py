@@ -8,6 +8,7 @@
 import asyncio
 import sys
 import platform
+
 try:
     import utime          #uPy
 except Exception:
@@ -125,7 +126,7 @@ class MaranrWateringSystem:
             # Start the event loop and run the main server coroutine
             asyncio.run(self.main_task(host, port))
         except KeyboardInterrupt:
-            date_stg, time_stg = get_formatted_local_time()
+            date_stg, time_stg = utils.get_formatted_local_time()
             m = f"MWSMAIN@109 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             dbg(m)
             loggg(m)
