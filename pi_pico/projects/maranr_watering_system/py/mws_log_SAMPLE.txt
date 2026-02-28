@@ -1,0 +1,400 @@
+===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================
+MWSMAIN@81  SUCCESSFULLY UPDATED SYSTEM TIME from NTP
+MWSMAIN@90 MAIN  CONNECTED TO WIFI.  local date,time: 2026-2-27  14:40:22 
+MWSMAIN@93 MAIN  CONNECTED TO WIFI.  ip_addr=192.168.1.49  wlan=<CYW43 STA up 192.168.1.49>
+MWS@46 handle_new_client  reader=<Stream object at 2002a3d0> writer=<Stream object at 2002a3d0>  
+MWS@56 handle_new_client@61 line_num=1 got 16 bytes. 
+MWS@60 handle_new_client@52 line_num=1 got 16 chars. 
+MWS@61 handle_new_client@52 line_num=1 GET / HTTP/1.1\r\n
+MWS@56 handle_new_client@61 line_num=2 got 25 bytes. 
+MWS@60 handle_new_client@52 line_num=2 got 25 chars. 
+MWS@61 handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
+MWS@56 handle_new_client@61 line_num=3 got 92 bytes. 
+MWS@60 handle_new_client@52 line_num=3 got 92 chars. 
+MWS@61 handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0\r\n
+MWS@56 handle_new_client@61 line_num=4 got 73 bytes. 
+MWS@60 handle_new_client@52 line_num=4 got 73 chars. 
+MWS@61 handle_new_client@52 line_num=4 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n
+MWS@56 handle_new_client@61 line_num=5 got 33 bytes. 
+MWS@60 handle_new_client@52 line_num=5 got 33 chars. 
+MWS@61 handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
+MWS@56 handle_new_client@61 line_num=6 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=6 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
+MWS@56 handle_new_client@61 line_num=7 got 24 bytes. 
+MWS@60 handle_new_client@52 line_num=7 got 24 chars. 
+MWS@61 handle_new_client@52 line_num=7 Connection: keep-alive\r\n
+MWS@56 handle_new_client@61 line_num=8 got 30 bytes. 
+MWS@60 handle_new_client@52 line_num=8 got 30 chars. 
+MWS@61 handle_new_client@52 line_num=8 Upgrade-Insecure-Requests: 1\r\n
+MWS@56 handle_new_client@61 line_num=9 got 18 bytes. 
+MWS@60 handle_new_client@52 line_num=9 got 18 chars. 
+MWS@61 handle_new_client@52 line_num=9 Priority: u=0, i\r\n
+MWS@56 handle_new_client@61 line_num=10 got 2 bytes. 
+MWS@60 handle_new_client@52 line_num=10 got 2 chars. 
+MWS@61 handle_new_client@52 line_num=10 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/ httpVersion=1.1
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=0, i'
+  Upgrade-Insecure-Requests: '1'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0'
+RH@71 Default file requested
+FU@91:RH@80 Try accessing actual_path=/pages/index.html  mode=rb 
+FU@99:RH@80 opened/closed actual_path=/pages/index.html ok; return True
+FU@58:RH@80 SUCCESS  accessed fpath=/pages/index.html  actual_path=/pages/index.html  binary=True  mode=rb  read_contents=False  prefix_dir=pages
+FU@60:RH@80 ...  return TRUE - just checked for file exists, did not read contents.
+FU@91:RH@122 Try accessing actual_path=/pages/index.html  mode=r 
+FU@95:RH@122  read actual_path=/pages/index.html contents.
+FU@97:RH@122 from actual_path=/pages/index.html len(contents)=1601
+FU@58:RH@122 SUCCESS  accessed fpath=/pages/index.html  actual_path=/pages/index.html  binary=False  mode=r  read_contents=True  prefix_dir=pages
+FU@62:RH@122 ...  return file contents  LEN=1601
+MWS@78 HTTP-REPY is HttpReply[hdr.len=116,body.len=1601-chars] 
+MWS@79 ... reply header... ----------------------------
+HTTP/1.1 200 OK
+Server: Pico Watering System
+Content-Type: text/html
+Connection: Closed
+Content-Length: 1601
+
+
+MWS@85  ------------------ end of REPLY HEADER   116  -------------------
+MWS@98 handle_new_client done with this client!
+MWS@46 handle_new_client  reader=<Stream object at 20011c90> writer=<Stream object at 20011c90>  
+MWS@56 handle_new_client@61 line_num=1 got 26 bytes. 
+MWS@60 handle_new_client@52 line_num=1 got 26 chars. 
+MWS@61 handle_new_client@52 line_num=1 GET /styles.css HTTP/1.1\r\n
+MWS@56 handle_new_client@61 line_num=2 got 25 bytes. 
+MWS@60 handle_new_client@52 line_num=2 got 25 chars. 
+MWS@61 handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
+MWS@56 handle_new_client@61 line_num=3 got 92 bytes. 
+MWS@60 handle_new_client@52 line_num=3 got 92 chars. 
+MWS@61 handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0\r\n
+MWS@56 handle_new_client@61 line_num=4 got 28 bytes. 
+MWS@60 handle_new_client@52 line_num=4 got 28 chars. 
+MWS@61 handle_new_client@52 line_num=4 Accept: text/css,*/*;q=0.1\r\n
+MWS@56 handle_new_client@61 line_num=5 got 33 bytes. 
+MWS@60 handle_new_client@52 line_num=5 got 33 chars. 
+MWS@61 handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
+MWS@56 handle_new_client@61 line_num=6 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=6 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
+MWS@56 handle_new_client@61 line_num=7 got 24 bytes. 
+MWS@60 handle_new_client@52 line_num=7 got 24 chars. 
+MWS@61 handle_new_client@52 line_num=7 Connection: keep-alive\r\n
+MWS@56 handle_new_client@61 line_num=8 got 36 bytes. 
+MWS@60 handle_new_client@52 line_num=8 got 36 chars. 
+MWS@61 handle_new_client@52 line_num=8 Referer: http://192.168.1.49:8000/\r\n
+MWS@56 handle_new_client@61 line_num=9 got 15 bytes. 
+MWS@60 handle_new_client@52 line_num=9 got 15 chars. 
+MWS@61 handle_new_client@52 line_num=9 Priority: u=2\r\n
+MWS@56 handle_new_client@61 line_num=10 got 2 bytes. 
+MWS@60 handle_new_client@52 line_num=10 got 2 chars. 
+MWS@61 handle_new_client@52 line_num=10 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/styles.css httpVersion=1.1
+  Accept: 'text/css,*/*;q=0.1'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=2'
+  Referer: 'http://192.168.1.49:8000/'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0'
+FU@91:RH@80 Try accessing actual_path=/styles.css  mode=rb 
+FU@102:RH@80  Reading actual_path=/styles.css got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@80  Add prefix_dir=pages to actual_path=/styles.css and try again
+FU@108:RH@80 Add prefix_dir=pages to fpath=/styles.css
+FU@118:RH@80 new_fpath=/pages/styles.css -- Added prefix_dir=pages to fpath=/styles.css
+FU@91:RH@80 Try accessing actual_path=/pages/styles.css  mode=rb 
+FU@99:RH@80 opened/closed actual_path=/pages/styles.css ok; return True
+FU@77:RH@80 SUCCESS  accessed fpath=/styles.css  actual_path=/pages/styles.css  binary=True  mode=rb  read_contents=False  prefix_dir=pages
+FU@79:RH@80 ...  return TRUE - just checked for file exists, did not read contents.
+FU@91:RH@122 Try accessing actual_path=/styles.css  mode=r 
+FU@102:RH@122  Reading actual_path=/styles.css got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@122  Add prefix_dir=pages to actual_path=/styles.css and try again
+FU@108:RH@122 Add prefix_dir=pages to fpath=/styles.css
+FU@118:RH@122 new_fpath=/pages/styles.css -- Added prefix_dir=pages to fpath=/styles.css
+FU@91:RH@122 Try accessing actual_path=/pages/styles.css  mode=r 
+FU@95:RH@122  read actual_path=/pages/styles.css contents.
+FU@97:RH@122 from actual_path=/pages/styles.css len(contents)=376
+FU@77:RH@122 SUCCESS  accessed fpath=/styles.css  actual_path=/pages/styles.css  binary=False  mode=r  read_contents=True  prefix_dir=pages
+FU@81:RH@122 ...  return file contents  LEN=376
+MWS@78 HTTP-REPY is HttpReply[hdr.len=114,body.len=376-chars] 
+MWS@79 ... reply header... ----------------------------
+HTTP/1.1 200 OK
+Server: Pico Watering System
+Content-Type: text/css
+Connection: Closed
+Content-Length: 376
+
+
+MWS@85  ------------------ end of REPLY HEADER   114  -------------------
+MWS@98 handle_new_client done with this client!
+MWS@46 handle_new_client  reader=<Stream object at 200385b0> writer=<Stream object at 200385b0>  
+MWS@46 handle_new_client  reader=<Stream object at 200389e0> writer=<Stream object at 200389e0>  
+MWS@56 handle_new_client@61 line_num=1 got 31 bytes. 
+MWS@60 handle_new_client@52 line_num=1 got 31 chars. 
+MWS@61 handle_new_client@52 line_num=1 GET /maranr_logo.png HTTP/1.1\r\n
+MWS@56 handle_new_client@61 line_num=1 got 26 bytes. 
+MWS@60 handle_new_client@52 line_num=1 got 26 chars. 
+MWS@61 handle_new_client@52 line_num=1 GET /styles.css HTTP/1.1\r\n
+MWS@56 handle_new_client@61 line_num=2 got 25 bytes. 
+MWS@60 handle_new_client@52 line_num=2 got 25 chars. 
+MWS@61 handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
+MWS@56 handle_new_client@61 line_num=2 got 25 bytes. 
+MWS@60 handle_new_client@52 line_num=2 got 25 chars. 
+MWS@61 handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
+MWS@56 handle_new_client@61 line_num=3 got 92 bytes. 
+MWS@60 handle_new_client@52 line_num=3 got 92 chars. 
+MWS@61 handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0\r\n
+MWS@56 handle_new_client@61 line_num=3 got 92 bytes. 
+MWS@60 handle_new_client@52 line_num=3 got 92 chars. 
+MWS@61 handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0\r\n
+MWS@56 handle_new_client@61 line_num=4 got 79 bytes. 
+MWS@60 handle_new_client@52 line_num=4 got 79 chars. 
+MWS@61 handle_new_client@52 line_num=4 Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5\r\n
+MWS@56 handle_new_client@61 line_num=4 got 28 bytes. 
+MWS@60 handle_new_client@52 line_num=4 got 28 chars. 
+MWS@61 handle_new_client@52 line_num=4 Accept: text/css,*/*;q=0.1\r\n
+MWS@56 handle_new_client@61 line_num=5 got 33 bytes. 
+MWS@60 handle_new_client@52 line_num=5 got 33 chars. 
+MWS@61 handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
+MWS@56 handle_new_client@61 line_num=5 got 33 bytes. 
+MWS@60 handle_new_client@52 line_num=5 got 33 chars. 
+MWS@61 handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
+MWS@56 handle_new_client@61 line_num=6 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=6 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
+MWS@56 handle_new_client@61 line_num=6 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=6 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
+MWS@56 handle_new_client@61 line_num=7 got 24 bytes. 
+MWS@60 handle_new_client@52 line_num=7 got 24 chars. 
+MWS@61 handle_new_client@52 line_num=7 Connection: keep-alive\r\n
+MWS@56 handle_new_client@61 line_num=7 got 24 bytes. 
+MWS@60 handle_new_client@52 line_num=7 got 24 chars. 
+MWS@61 handle_new_client@52 line_num=7 Connection: keep-alive\r\n
+MWS@56 handle_new_client@61 line_num=8 got 36 bytes. 
+MWS@60 handle_new_client@52 line_num=8 got 36 chars. 
+MWS@61 handle_new_client@52 line_num=8 Referer: http://192.168.1.49:8000/\r\n
+MWS@56 handle_new_client@61 line_num=8 got 36 bytes. 
+MWS@60 handle_new_client@52 line_num=8 got 36 chars. 
+MWS@61 handle_new_client@52 line_num=8 Referer: http://192.168.1.49:8000/\r\n
+MWS@56 handle_new_client@61 line_num=9 got 15 bytes. 
+MWS@60 handle_new_client@52 line_num=9 got 15 chars. 
+MWS@61 handle_new_client@52 line_num=9 Priority: u=5\r\n
+MWS@56 handle_new_client@61 line_num=9 got 15 bytes. 
+MWS@60 handle_new_client@52 line_num=9 got 15 chars. 
+MWS@61 handle_new_client@52 line_num=9 Priority: u=2\r\n
+MWS@56 handle_new_client@61 line_num=10 got 2 bytes. 
+MWS@60 handle_new_client@52 line_num=10 got 2 chars. 
+MWS@61 handle_new_client@52 line_num=10 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/maranr_logo.png httpVersion=1.1
+  Accept: 'image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=5'
+  Referer: 'http://192.168.1.49:8000/'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0'
+FU@91:RH@80 Try accessing actual_path=/maranr_logo.png  mode=rb 
+FU@102:RH@80  Reading actual_path=/maranr_logo.png got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@80  Add prefix_dir=pages to actual_path=/maranr_logo.png and try again
+FU@108:RH@80 Add prefix_dir=pages to fpath=/maranr_logo.png
+FU@118:RH@80 new_fpath=/pages/maranr_logo.png -- Added prefix_dir=pages to fpath=/maranr_logo.png
+FU@91:RH@80 Try accessing actual_path=/pages/maranr_logo.png  mode=rb 
+FU@99:RH@80 opened/closed actual_path=/pages/maranr_logo.png ok; return True
+FU@77:RH@80 SUCCESS  accessed fpath=/maranr_logo.png  actual_path=/pages/maranr_logo.png  binary=True  mode=rb  read_contents=False  prefix_dir=pages
+FU@79:RH@80 ...  return TRUE - just checked for file exists, did not read contents.
+FU@91:RH@152 Try accessing actual_path=/maranr_logo.png  mode=rb 
+FU@102:RH@152  Reading actual_path=/maranr_logo.png got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@152  Add prefix_dir=pages to actual_path=/maranr_logo.png and try again
+FU@108:RH@152 Add prefix_dir=pages to fpath=/maranr_logo.png
+FU@118:RH@152 new_fpath=/pages/maranr_logo.png -- Added prefix_dir=pages to fpath=/maranr_logo.png
+FU@91:RH@152 Try accessing actual_path=/pages/maranr_logo.png  mode=rb 
+FU@95:RH@152  read actual_path=/pages/maranr_logo.png contents.
+FU@97:RH@152 from actual_path=/pages/maranr_logo.png len(contents)=17076
+FU@77:RH@152 SUCCESS  accessed fpath=/maranr_logo.png  actual_path=/pages/maranr_logo.png  binary=True  mode=rb  read_contents=True  prefix_dir=pages
+FU@81:RH@152 ...  return file contents  LEN=17076
+MWS@78 HTTP-REPY is HttpReply[hdr.len=117,body.len=17076-bytes] 
+MWS@79 ... reply header... ----------------------------
+HTTP/1.1 200 OK
+Server: Pico Watering System
+Content-Type: image/png
+Connection: Closed
+Content-Length: 17076
+
+
+MWS@85  ------------------ end of REPLY HEADER   117  -------------------
+MWS@56 handle_new_client@61 line_num=10 got 2 bytes. 
+MWS@60 handle_new_client@52 line_num=10 got 2 chars. 
+MWS@61 handle_new_client@52 line_num=10 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/styles.css httpVersion=1.1
+  Accept: 'text/css,*/*;q=0.1'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=2'
+  Referer: 'http://192.168.1.49:8000/'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0'
+FU@91:RH@80 Try accessing actual_path=/styles.css  mode=rb 
+FU@102:RH@80  Reading actual_path=/styles.css got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@80  Add prefix_dir=pages to actual_path=/styles.css and try again
+FU@108:RH@80 Add prefix_dir=pages to fpath=/styles.css
+FU@118:RH@80 new_fpath=/pages/styles.css -- Added prefix_dir=pages to fpath=/styles.css
+FU@91:RH@80 Try accessing actual_path=/pages/styles.css  mode=rb 
+FU@99:RH@80 opened/closed actual_path=/pages/styles.css ok; return True
+FU@77:RH@80 SUCCESS  accessed fpath=/styles.css  actual_path=/pages/styles.css  binary=True  mode=rb  read_contents=False  prefix_dir=pages
+FU@79:RH@80 ...  return TRUE - just checked for file exists, did not read contents.
+FU@91:RH@122 Try accessing actual_path=/styles.css  mode=r 
+FU@102:RH@122  Reading actual_path=/styles.css got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@122  Add prefix_dir=pages to actual_path=/styles.css and try again
+FU@108:RH@122 Add prefix_dir=pages to fpath=/styles.css
+FU@118:RH@122 new_fpath=/pages/styles.css -- Added prefix_dir=pages to fpath=/styles.css
+FU@91:RH@122 Try accessing actual_path=/pages/styles.css  mode=r 
+FU@95:RH@122  read actual_path=/pages/styles.css contents.
+FU@97:RH@122 from actual_path=/pages/styles.css len(contents)=376
+FU@77:RH@122 SUCCESS  accessed fpath=/styles.css  actual_path=/pages/styles.css  binary=False  mode=r  read_contents=True  prefix_dir=pages
+FU@81:RH@122 ...  return file contents  LEN=376
+MWS@78 HTTP-REPY is HttpReply[hdr.len=114,body.len=376-chars] 
+MWS@79 ... reply header... ----------------------------
+HTTP/1.1 200 OK
+Server: Pico Watering System
+Content-Type: text/css
+Connection: Closed
+Content-Length: 376
+
+
+MWS@85  ------------------ end of REPLY HEADER   114  -------------------
+MWS@98 handle_new_client done with this client!
+MWS@98 handle_new_client done with this client!
+MWS@46 handle_new_client  reader=<Stream object at 20019cc0> writer=<Stream object at 20019cc0>  
+MWS@56 handle_new_client@61 line_num=1 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=1 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=1 GET /squares_red.html HTTP/1.1\r\n
+MWS@56 handle_new_client@61 line_num=2 got 25 bytes. 
+MWS@60 handle_new_client@52 line_num=2 got 25 chars. 
+MWS@61 handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
+MWS@56 handle_new_client@61 line_num=3 got 92 bytes. 
+MWS@60 handle_new_client@52 line_num=3 got 92 chars. 
+MWS@61 handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0\r\n
+MWS@56 handle_new_client@61 line_num=4 got 73 bytes. 
+MWS@60 handle_new_client@52 line_num=4 got 73 chars. 
+MWS@61 handle_new_client@52 line_num=4 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n
+MWS@56 handle_new_client@61 line_num=5 got 33 bytes. 
+MWS@60 handle_new_client@52 line_num=5 got 33 chars. 
+MWS@61 handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
+MWS@56 handle_new_client@61 line_num=6 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=6 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
+MWS@56 handle_new_client@61 line_num=7 got 24 bytes. 
+MWS@60 handle_new_client@52 line_num=7 got 24 chars. 
+MWS@61 handle_new_client@52 line_num=7 Connection: keep-alive\r\n
+MWS@56 handle_new_client@61 line_num=8 got 36 bytes. 
+MWS@60 handle_new_client@52 line_num=8 got 36 chars. 
+MWS@61 handle_new_client@52 line_num=8 Referer: http://192.168.1.49:8000/\r\n
+MWS@56 handle_new_client@61 line_num=9 got 30 bytes. 
+MWS@60 handle_new_client@52 line_num=9 got 30 chars. 
+MWS@61 handle_new_client@52 line_num=9 Upgrade-Insecure-Requests: 1\r\n
+MWS@56 handle_new_client@61 line_num=10 got 18 bytes. 
+MWS@60 handle_new_client@52 line_num=10 got 18 chars. 
+MWS@61 handle_new_client@52 line_num=10 Priority: u=0, i\r\n
+MWS@56 handle_new_client@61 line_num=11 got 2 bytes. 
+MWS@60 handle_new_client@52 line_num=11 got 2 chars. 
+MWS@61 handle_new_client@52 line_num=11 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/squares_red.html httpVersion=1.1
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=0, i'
+  Referer: 'http://192.168.1.49:8000/'
+  Upgrade-Insecure-Requests: '1'
+  User-Agent: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0'
+FU@91:RH@80 Try accessing actual_path=/squares_red.html  mode=rb 
+FU@102:RH@80  Reading actual_path=/squares_red.html got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@80  Add prefix_dir=pages to actual_path=/squares_red.html and try again
+FU@108:RH@80 Add prefix_dir=pages to fpath=/squares_red.html
+FU@118:RH@80 new_fpath=/pages/squares_red.html -- Added prefix_dir=pages to fpath=/squares_red.html
+FU@91:RH@80 Try accessing actual_path=/pages/squares_red.html  mode=rb 
+FU@99:RH@80 opened/closed actual_path=/pages/squares_red.html ok; return True
+FU@77:RH@80 SUCCESS  accessed fpath=/squares_red.html  actual_path=/pages/squares_red.html  binary=True  mode=rb  read_contents=False  prefix_dir=pages
+FU@79:RH@80 ...  return TRUE - just checked for file exists, did not read contents.
+FU@91:RH@122 Try accessing actual_path=/squares_red.html  mode=r 
+FU@102:RH@122  Reading actual_path=/squares_red.html got EX=OSError(2,)  EX='[Errno 2] ENOENT' 
+FU@67:RH@122  Add prefix_dir=pages to actual_path=/squares_red.html and try again
+FU@108:RH@122 Add prefix_dir=pages to fpath=/squares_red.html
+FU@118:RH@122 new_fpath=/pages/squares_red.html -- Added prefix_dir=pages to fpath=/squares_red.html
+FU@91:RH@122 Try accessing actual_path=/pages/squares_red.html  mode=r 
+FU@95:RH@122  read actual_path=/pages/squares_red.html contents.
+FU@97:RH@122 from actual_path=/pages/squares_red.html len(contents)=550
+FU@77:RH@122 SUCCESS  accessed fpath=/squares_red.html  actual_path=/pages/squares_red.html  binary=False  mode=r  read_contents=True  prefix_dir=pages
+FU@81:RH@122 ...  return file contents  LEN=550
+MWS@78 HTTP-REPY is HttpReply[hdr.len=115,body.len=550-chars] 
+MWS@79 ... reply header... ----------------------------
+HTTP/1.1 200 OK
+Server: Pico Watering System
+Content-Type: text/html
+Connection: Closed
+Content-Length: 550
+
+
+MWS@85  ------------------ end of REPLY HEADER   115  -------------------
+MWS@98 handle_new_client done with this client!
+MWS@46 handle_new_client  reader=<Stream object at 2003f710> writer=<Stream object at 2003f710>  
+MWS@56 handle_new_client@61 line_num=1 got 26 bytes. 
+MWS@60 handle_new_client@52 line_num=1 got 26 chars. 
+MWS@61 handle_new_client@52 line_num=1 GET /styles.css HTTP/1.1\r\n
+MWS@56 handle_new_client@61 line_num=2 got 25 bytes. 
+MWS@60 handle_new_client@52 line_num=2 got 25 chars. 
+MWS@61 handle_new_client@52 line_num=2 Host: 192.168.1.49:8000\r\n
+MWS@56 handle_new_client@61 line_num=3 got 92 bytes. 
+MWS@60 handle_new_client@52 line_num=3 got 92 chars. 
+MWS@61 handle_new_client@52 line_num=3 User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:148.0) Gecko/20100101 Firefox/148.0\r\n
+MWS@56 handle_new_client@61 line_num=4 got 28 bytes. 
+MWS@60 handle_new_client@52 line_num=4 got 28 chars. 
+MWS@61 handle_new_client@52 line_num=4 Accept: text/css,*/*;q=0.1\r\n
+MWS@56 handle_new_client@61 line_num=5 got 33 bytes. 
+MWS@60 handle_new_client@52 line_num=5 got 33 chars. 
+MWS@61 handle_new_client@52 line_num=5 Accept-Language: en-US,en;q=0.9\r\n
+MWS@56 handle_new_client@61 line_num=6 got 32 bytes. 
+MWS@60 handle_new_client@52 line_num=6 got 32 chars. 
+MWS@61 handle_new_client@52 line_num=6 Accept-Encoding: gzip, deflate\r\n
+MWS@56 handle_new_client@61 line_num=7 got 24 bytes. 
+MWS@60 handle_new_client@52 line_num=7 got 24 chars. 
+MWS@61 handle_new_client@52 line_num=7 Connection: keep-alive\r\n
+MWS@56 handle_new_client@61 line_num=8 got 52 bytes. 
+MWS@60 handle_new_client@52 line_num=8 got 52 chars. 
+MWS@61 handle_new_client@52 line_num=8 Referer: http://192.168.1.49:8000/squares_red.html\r\n
+MWS@56 handle_new_client@61 line_num=9 got 15 bytes. 
+MWS@60 handle_new_client@52 line_num=9 got 15 chars. 
+MWS@61 handle_new_client@52 line_num=9 Priority: u=2\r\n
+MWS@56 handle_new_client@61 line_num=10 got 2 bytes. 
+MWS@60 handle_new_client@52 line_num=10 got 2 chars. 
+MWS@61 handle_new_client@52 line_num=10 \r\n
+RHS@23 CLIENT REQUEST httpParser.latest_error()=
+RHS@24 ParsedHttp:
+  requestFlag=REQ method=GET req-url=/styles.css httpVersion=1.1
+  Accept: 'text/css,*/*;q=0.1'
+  Accept-Encoding: 'gzip, deflate'
+  Accept-Language: 'en-US,en;q=0.9'
+  Connection: 'keep-alive'
+  Host: '192.168.1.49:8000'
+  Priority: 'u=2'
+  Referer: 'http://192.168.1.49:8000/squares_red.html'

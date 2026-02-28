@@ -20,7 +20,7 @@ LOG_FNAME = "mws_log.txt"
 DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is DISABLED @@@@@@@@@@@@@@@@@@")
 def dbg(stg=None):
-    """ output a string to the debug output """
+    # output a string to the debug output 
     if not DEBUG: return
     if stg is None: stg = ""
     print(f"DBG:{stg}")
@@ -54,7 +54,7 @@ def string_to_int(s):
         return None
 
 def show_cc(line):
-    """ convert line to a new line, replacing all control chars with visible rep """
+    # convert line to a new line, replacing all control chars with visible rep 
     if line is None: line = ""
     chars = []
     for ch in line:
@@ -69,22 +69,44 @@ def show_cc(line):
     return "".join(chars)
 
 def show_len(item):
-    """ show the length of an object like a string or list """
+    # show the length of an object like a string or list 
     try:
         return len(item)
     except Exception as ex:
         return f"ITEM-HAS-NO-LEN {item=} {ex=}"
 
+def get_flash_space():
+    # Get filesystem statistics for the root directory ("/")
+    stat = os.statvfs("/")
+    
+    # Block size
+    block_size = stat[0]
+    # Total number of blocks
+    total_blocks = stat[2]
+    # Number of free blocks available to unprivileged user
+    free_blocks = stat[3]
 
+    # Calculate total and free space in bytes
+    total_space = block_size * total_blocks
+    free_space = block_size * free_blocks
+
+    # Convert to KB and MB for easier reading
+    KB = 1024
+    MB = 1024 * KB
+
+    print(f"Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
+    print(f"Free space: {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
+
+_="""
 #@@@@@@@@@@@@@ NEED TO FIX. SHOULD NOT ADD EOLs
 def FIXTHIS___make_mesg_stg_from_template(template_mesg_lines, values={}):
-    """ Create a string that contains an HTTP mesg using 
+    " " " Create a string that contains an HTTP mesg using 
     a list of lines (ie strings) as the input.
     The values arg is a dict of substition values.
     Each line of the template is processed like this:
         actual_line = template_line % values
     So the template lines can contain '%(value_name)s' items.
-    """
+    " "  "
     ###print(f"make_mesg_stg_from_template templet is {type(template_mesg_lines)}   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$444")
     ###for line in template_mesg_lines:
     ###    print(f"MAKE MESG STG $$$$$$$$$$$$$ LINE is {line}")
@@ -102,7 +124,6 @@ def FIXTHIS___make_mesg_stg_from_template(template_mesg_lines, values={}):
 
 
 def    _NOTYET_dump_received_mesg(mesg_stg, who=""):
-    """ """
     if mesg_stg is None:
         print(f"--- RECEIVED MESG is NULL !!!  {who}  ---------------------")
         return
@@ -129,7 +150,6 @@ def    _NOTYET_dump_received_mesg(mesg_stg, who=""):
 
 
 def    _NOTYET_dump_bytes(byte_vals, who=""):
-    """ """
     if byte_vals is None:
         print(f"___ dump bytes __ len is ZERO!!!   ___ {who} ______________________")
         return
@@ -153,6 +173,8 @@ def    _NOTYET_dump_bytes(byte_vals, who=""):
         line = "".join(s)
         print(f" PARTIAL LINE: {line}")
     print(f"----------------------------------  {who} -------------")
+"""
+_=None #####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 def get_local_time():  # for our TZ
@@ -172,17 +194,17 @@ def get_formatted_local_time():
     return (date_str, time_str)
 
 def determine_py_platform():
-    """ returns "micropython", "cpython" """
+    # returns "micropython", "cpython" 
     if "micropython" in platform.platform().lower():
         return "micropython"
     return "cpython"
 
 
 def determine_machine_type():
-    """ Returns one of these:
-    "pi pico w"   Pi PICO-W
-     "unknown"
-    """
+    # Returns::
+    # "pi pico w" for Pi PICO-W
+    # Else "unknown"
+
     os_uname = os.uname()
 
     raw_machine_name_lc = os_uname[4].lower()
