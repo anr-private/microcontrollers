@@ -90,12 +90,55 @@ def get_flash_space():
     total_space = block_size * total_blocks
     free_space = block_size * free_blocks
 
+
+def convert_fs_space_to_string(fs_space, which):
     # Convert to KB and MB for easier reading
     KB = 1024
     MB = 1024 * KB
 
-    print(f"Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
-    print(f"Free space: {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
+    #print(f"Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
+    #print(f"Free space:  {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
+    space_stg = f"{fs_space:,} bytes, {fs_space / KB:,.2f} KB, {fs_space / MB:.2f} MB"
+    return space_stg
+
+
+def get_local_time():  # for our TZ
+    # Get UTC time from clock
+    #### RETURNS UTC  utc_time = time.localtime()
+    # Example: Apply offset for Central TZ: UTC-6 hrs
+    local_time = time.localtime(time.time() - (6 * 3600))
+    return local_time
+
+def get_formatted_local_time():
+    now = get_local_time()
+    # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
+    ###date_str = "Date: {}-{}-{}".format(now[0], now[1], now[2])
+    ###time_str = "Time: {}:{}:{}".format(now[3], now[4], now[5])
+    date_str = "{}-{}-{}".format(now[0], now[1], now[2])
+    time_str = "{}:{}:{}".format(now[3], now[4], now[5])
+    return (date_str, time_str)
+
+def determine_py_platform():
+    # returns "micropython", "cpython" 
+    if "micropython" in platform.platform().lower():
+        return "micropython"
+    return "cpython"
+
+
+def determine_machine_type():
+    # Returns::
+    # "pi pico w" for Pi PICO-W
+    # Else "unknown"
+
+    os_uname = os.uname()
+
+    raw_machine_name_lc = os_uname[4].lower()
+    if "pi pico w" in raw_machine_name_lc:
+        return "pi pico w"
+    return "unknown"
+
+
+
 
 _="""
 #@@@@@@@@@@@@@ NEED TO FIX. SHOULD NOT ADD EOLs
@@ -176,40 +219,5 @@ def    _NOTYET_dump_bytes(byte_vals, who=""):
 """
 _=None #####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-
-def get_local_time():  # for our TZ
-    # Get UTC time from clock
-    #### RETURNS UTC  utc_time = time.localtime()
-    # Example: Apply offset for Central TZ: UTC-6 hrs
-    local_time = time.localtime(time.time() - (6 * 3600))
-    return local_time
-
-def get_formatted_local_time():
-    now = get_local_time()
-    # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
-    ###date_str = "Date: {}-{}-{}".format(now[0], now[1], now[2])
-    ###time_str = "Time: {}:{}:{}".format(now[3], now[4], now[5])
-    date_str = "{}-{}-{}".format(now[0], now[1], now[2])
-    time_str = "{}:{}:{}".format(now[3], now[4], now[5])
-    return (date_str, time_str)
-
-def determine_py_platform():
-    # returns "micropython", "cpython" 
-    if "micropython" in platform.platform().lower():
-        return "micropython"
-    return "cpython"
-
-
-def determine_machine_type():
-    # Returns::
-    # "pi pico w" for Pi PICO-W
-    # Else "unknown"
-
-    os_uname = os.uname()
-
-    raw_machine_name_lc = os_uname[4].lower()
-    if "pi pico w" in raw_machine_name_lc:
-        return "pi pico w"
-    return "unknown"
 
 ### end ###
