@@ -11,7 +11,6 @@ except ModuleNotFoundError:
 MWS_CONFIG = {
     "lcd1602_sda_pin": 2,
     "lcd1602_scl_pin": 3,
-
     }
 
 LOG_FNAME = "mws_log.txt"
