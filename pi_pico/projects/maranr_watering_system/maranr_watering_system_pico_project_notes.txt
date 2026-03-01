@@ -3,6 +3,7 @@ Pi Pico Plant Watering Project  NOTES
  ~/git/microcontrollers/pi_pico/projects/...
     watering_controller/watering_controller_pico_project_notes.txt
 
+See /tmp/LIB, /tmp/MAIN/, etc for use with UPLOAD/DOWNLOAD/COMPARE.sh scripts
 
 SOURCES:
  web server: Bytes N Bits Pi Pico webserver
