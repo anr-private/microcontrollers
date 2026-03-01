@@ -20,8 +20,8 @@ for fp in http/* ; do
     if [ "$result" == 1 ] ; then
         if $DBG ; then echo "NOT matches  http/$fn  /tmp/HTTP/$fn" ; fi
         echo \
-        "cp -p tmp/HTTP/$fn  http/$fn  "
-        cp  -p tmp/HTTP/$fn  http/$fn
+        "cp -p /tmp/HTTP/$fn  http/$fn  "
+        cp  -p /tmp/HTTP/$fn  http/$fn
     fi
 
 done

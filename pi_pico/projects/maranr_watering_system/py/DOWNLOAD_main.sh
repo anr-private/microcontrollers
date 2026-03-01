@@ -24,8 +24,8 @@ for fp in $FILES ; do
     if [ "$result" == 1 ] ; then
         if $DBG ; then echo "NOT matches  $fn  /tmp/MAIN/$fn" ; fi
         echo \
-        "  cp -p tmp/MAIN/$fn  $fn  "
-           cp -p tmp/MAIN/$fn  $fn
+        "  cp -p /tmp/MAIN/$fn  $fn  "
+           cp -p /tmp/MAIN/$fn  $fn
     fi
 
 done

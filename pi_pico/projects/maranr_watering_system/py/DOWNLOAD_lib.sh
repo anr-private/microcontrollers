@@ -20,8 +20,8 @@ for fp in lib/* ; do
     if [ "$result" == 1 ] ; then
         if $DBG ; then echo "NOT matches  lib/$fn  /tmp/LIB/$fn" ; fi
         echo \
-        "  cp -p tmp/LIB/$fn  lib/$fn  "
-           cp -p tmp/LIB/$fn  lib/$fn
+        "  cp -p /tmp/LIB/$fn  lib/$fn  "
+           cp -p /tmp/LIB/$fn  lib/$fn
     fi
 
 done
