@@ -8,6 +8,7 @@ log = None
 log_name_ = "None"
 
 logrt = None
+logi = None
 
 class ExampleClass(LoggerABC):
     def __init__(self):
@@ -24,6 +25,9 @@ class ExampleClass(LoggerABC):
     @classmethod
     def _set_logger_rt(cls, newlog_rt):
         global logrt; logrt = newlog_rt
+    @classmethod
+    def _set_logger_important(cls, newlog_important):
+        global logi; logi = newlog_important
 
 
     def do_logging(self, mesg):

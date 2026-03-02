@@ -129,6 +129,7 @@ class LoggerABC:
         cls._set_logger(new_logger, new_logger_name)
 
         cls._set_logger_rt(easyLogger.log_rt_)
+        cls._set_logger_important(easyLogger.log_i_)
 
         # return nothing
  

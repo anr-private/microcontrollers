@@ -18,7 +18,7 @@ except Exception:
 from logger.LoggerABC import LoggerABC
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
-from lib import mws_wifi
+from MwsWifi import MwsWifi
 from lib import utils
 from lib.utils import loggg
 from lib.utils import dbg
@@ -80,6 +80,8 @@ class MaranrWateringSystem:
         
     
     def connect_to_wifi(self):
+
+        mws_wifi = MwsWifi.get_instance()
 
         wlan, ip_addr = mws_wifi.connect_to_wifi()
     

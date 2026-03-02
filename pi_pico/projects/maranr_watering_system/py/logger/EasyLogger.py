@@ -10,13 +10,16 @@ class EasyLogger:
     def get_instance(cls):
         ###print(f"@@@ EasyLogger.get_instance CALLED")
         if EasyLogger._logger is None:
-            EasyLogger._logger = EasyLogger()
+            EasyLogger._logger = EasyLogger(123456)
             #print(f"          @@@ EasyLogger.get_instance CREATED NEW INSTANCE {EasyLogger._logger}")
         #print(f"          @@@ EasyLogger.get_instance returns {EasyLogger._logger}")
         return EasyLogger._logger
 
 
-    def __init__(self):
+    def __init__(self, do_not_call_directly):
+        if do_not_call_directly != 123456:
+            raise RuntimeError("EasyLogger.init DO NOT CALL")
+
         self.classes = {}
 
         # primarily for testing
@@ -57,6 +60,10 @@ class EasyLogger:
     def log_rt_(self, s):
         print(f"EasyLogger.log_rt_ *ERROR* {s}")
         raise RuntimeError(s)
+
+    def log_i_(self, s): # important log info - never muted
+        print(f"EasyLogger.log_i_ {s}")
+
 
     # === SUPPORT for logger base class  LoggerABC  ===================
 

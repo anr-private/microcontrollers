@@ -17,7 +17,7 @@ LOG_FNAME = "mws_log.txt"
 
 
 DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is DISABLED @@@@@@@@@@@@@@@@@@")
+print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is MUTED @@@@@@@@@@@@@@@@@@")
 def dbg(stg=None):
     # output a string to the debug output 
     if not DEBUG: return
@@ -30,7 +30,7 @@ def log_start():
     except Exception as ex:
         print(f"log_start no log file exists {LOG_FNAME=}")
 
-print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is DISABLED")
+print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is MUTED")
 def loggg(stg=None):
     if stg is None: stg = ""
     fname = LOG_FNAME
@@ -46,10 +46,10 @@ def string_to_int(s):
     try:
         return int(s)
     except (ValueError,TypeError) as ex:
-        dbg(f"string_to_int  NOT AN INT: '{s}'  ex={ex}")
+        print(f"string_to_int  NOT AN INT: '{s}'  ex={ex}")
         return None
     except Exception  as ex:
-        dbg(f"string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
+        print(f"string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
         return None
 
 def show_cc(line):
@@ -174,7 +174,7 @@ def FIXTHIS___make_mesg_stg_from_template(template_mesg_lines, values={}):
     stg = "\r\n".join(actual_lines)
     # add the terminator marker
     stg = stg + "\r\n\r\n"
-    dbg(f"create_mesg_stg  mesg stg len={len(stg)}")
+    d b g(f"create_mesg_stg  mesg stg len={len(stg)}")
     return stg
 
 
