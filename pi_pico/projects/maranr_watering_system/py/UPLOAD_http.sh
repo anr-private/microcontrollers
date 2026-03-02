@@ -10,6 +10,11 @@ for fp in http/* ; do
     fn=$(basename $fp)
     if $DBG ; then echo fn is $fn ; fi
 
+    # ignore
+    if [ "$fn" = "__pycache__" ] ; then
+        continue
+    fi
+
     if $DBG ; then echo \
     "diff -q http/$fn  /tmp/HTTP/$fn" ; fi
     diff -q http/$fn  /tmp/HTTP/$fn

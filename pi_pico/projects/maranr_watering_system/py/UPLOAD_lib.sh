@@ -10,6 +10,11 @@ for fp in lib/* ; do
     fn=$(basename $fp)
     if $DBG ; then echo fn is $fn ; fi
 
+    # ignore
+    if [ "$fn" = "__pycache__" ] ; then
+        continue
+    fi
+
     if $DBG ; then echo \
     "diff -q lib/$fn  /tmp/LIB/$fn" ; fi
     diff -q lib/$fn  /tmp/LIB/$fn

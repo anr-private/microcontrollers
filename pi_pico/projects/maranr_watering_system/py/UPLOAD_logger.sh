@@ -2,13 +2,18 @@
 #
 # UPLOAD_logger.sh
 
-DBG=false
+DBG=true
 
 for fp in logger/* ; do
 
     if $DBG ; then  echo ff is $fp ; fi
     fn=$(basename $fp)
     if $DBG ; then echo fn is $fn ; fi
+
+    # ignore
+    if [ "$fn" = "__pycache__" ] ; then
+        continue
+    fi
 
     if $DBG ; then echo \
     "diff -q logger/$fn  /tmp/LOGGER/$fn" ; fi
