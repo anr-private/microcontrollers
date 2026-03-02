@@ -2,7 +2,7 @@
 #
 # UPLOAD_logger.sh
 
-DBG=true
+DBG=false
 
 for fp in logger/* ; do
 
