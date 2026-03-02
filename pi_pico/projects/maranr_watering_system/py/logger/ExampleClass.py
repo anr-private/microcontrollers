@@ -27,7 +27,7 @@ class ExampleClass(LoggerABC):
 
 
     def do_logging(self, mesg):
-        s = "classA"
+        s = "ExampleClass"
         print(f"{s}.do_logging  log is currently {log}")
         log(f"{s}.do_logging wants to log '{mesg}'")
 

@@ -76,6 +76,7 @@ def show_len(item):
 
 def extract_simplified_classname(class_stg):
     # given a full class name string like "abc.def.MyClass"; return "MyClass"
+    # Obtain the string using  str(obj.__class__)
     #print(f"   {class_stg=}")
     parts = class_stg.rsplit(".", 1)
     #print(f"  {parts=}")

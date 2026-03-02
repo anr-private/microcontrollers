@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# UPLD_http.sh
+# UPLOAD_http.sh
 
 DBG=false
 

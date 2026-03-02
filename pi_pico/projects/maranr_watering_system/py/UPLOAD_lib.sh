@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# UPLD_lib.sh
+# UPLOAD_lib.sh
 
 DBG=false
 
