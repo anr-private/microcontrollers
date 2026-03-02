@@ -74,6 +74,17 @@ def show_len(item):
     except Exception as ex:
         return f"ITEM-HAS-NO-LEN {item=} {ex=}"
 
+def extract_simplified_classname(class_stg):
+    # given a full class name string like "abc.def.MyClass"; return "MyClass"
+    #print(f"   {class_stg=}")
+    parts = class_stg.rsplit(".", 1)
+    #print(f"  {parts=}")
+    base_name = parts[-1]
+    base_name = base_name.replace(">", "")
+    base_name = base_name.replace("'", "")
+    return base_name
+
+
 def get_flash_space():
     # Get filesystem statistics for the root directory ("/")
     stat = os.statvfs("/")
@@ -89,8 +100,10 @@ def get_flash_space():
     total_space = block_size * total_blocks
     free_space = block_size * free_blocks
 
+    return total_space, free_space
 
-def convert_fs_space_to_string(fs_space, which):
+
+def convert_fs_space_to_string(fs_space):
     # Convert to KB and MB for easier reading
     KB = 1024
     MB = 1024 * KB
