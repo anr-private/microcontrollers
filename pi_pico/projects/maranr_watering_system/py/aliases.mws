@@ -1,0 +1,30 @@
+alias COMPARE_ALL=./COMPARE_ALL.sh
+alias COMPARE_http=./COMPARE_http.sh
+alias COMPARE_lib=./COMPARE_lib.sh
+alias COMPARE_logger=./COMPARE_logger.sh
+alias COMPARE_main=./COMPARE_main.sh
+alias UPLOAD_http=./UPLOAD_http.sh
+alias UPLOAD_lib=./UPLOAD_lib.sh
+alias UPLOAD_logger=./UPLOAD_logger.sh
+alias UPLOAD_main=./UPLOAD_main.sh
+alias DOWNLOAD_http=./DOWNLOAD_http.sh
+alias DOWNLOAD_lib=./DOWNLOAD_lib.sh
+alias DOWNLOAD_logger=./DOWNLOAD_logger.sh
+alias DOWNLOAD_main=./DOWNLOAD_main.sh
+
+
+JUNK='                          
+alias COMPARE_ALL=
+alias COMPARE_http=
+alias COMPARE_lib=                           
+alias COMPARE_logger=
+alias COMPARE_main=
+alias UPLOAD_http=
+alias UPLOAD_lib=
+alias UPLOAD_logger=
+alias UPLOAD_main=
+alias DOWNLOAD_http=
+alias DOWNLOAD_lib=
+alias DOWNLOAD_logger=
+alias DOWNLOAD_main=
+'
