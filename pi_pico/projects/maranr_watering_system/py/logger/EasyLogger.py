@@ -20,12 +20,21 @@ class EasyLogger:
         if do_not_call_directly != 123456:
             raise RuntimeError("EasyLogger.init DO NOT CALL")
 
+        self.log_file_path = "mws_log.txt"
+
         self.classes = {}
 
         # primarily for testing
         self._latest_mesg_ = None
         self._latest_logged_mesg_ = None
         self._latest_muted_mesg_ = None
+
+        try:
+            os.remove(self.log_file_path)
+        except Exception as ex:
+            print(f"EasyLogger.init No log file exists: '{self.log_file_path}' ")
+
+
 
     # === METHODS for Querying and Controlling the logging in registered classes
     #             IE for use by GUI/webpage/etc
@@ -63,6 +72,16 @@ class EasyLogger:
 
     def log_i_(self, s): # important log info - never muted
         print(f"EasyLogger.log_i_ {s}")
+
+    def _write_to_file(stg):
+        if stg is None: stg = ""
+        fname = LOG_FNAME
+        try:
+            with open(fname, "a") as f:
+                f.write(stg)
+                f.write("\n")
+        except Exception as ex:
+            print(f"log(): Error writing to file '{fname}': {ex}")
 
 
     # === SUPPORT for logger base class  LoggerABC  ===================

@@ -12,8 +12,7 @@ import utime
 import ntptime
 
 from details import SSID, PW
-#from utils import *
-import lib.utils as utils
+#from utils import XXX
 from logger.LoggerABC import LoggerABC
 
 log = None

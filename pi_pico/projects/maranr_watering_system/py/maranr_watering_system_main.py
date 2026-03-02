@@ -19,64 +19,84 @@ from logger.LoggerABC import LoggerABC
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from MwsWifi import MwsWifi
-from lib import utils
-from lib.utils import loggg
-from lib.utils import dbg
-###from lib.utils import *
 from http.MwsWebServer import MwsWebServer
+from utils import MWS_CONFIG
+from utils import get_formatted_local_time
 
 #if determine_py_platform() == "micropython":
 #    sys.path.append("/http")
 #else:
 #    sys.path.append("../http")
 
-print(f"@@@MAIN@28  {utils.MWS_CONFIG=}")
+
+log = None
+log_name_ = "None"
+logrt = None
+logi = None
 
 
-class MaranrWateringSystem:
+print(f"@@@MAIN@28  {MWS_CONFIG=}")
+
+
+class MaranrWateringSystem(LoggerABC):
 
     def __init__(self):
-        pass
+        super().__init__()
+        self.init_logger()
+
+    @classmethod
+    def _get_logger(cls): global log; return log
+    @classmethod
+    def _get_logger_name(cls): global log_name_; return log_name_
+    @classmethod
+    def _set_logger(cls, newlog, new_name):
+        global log, log_name_; log = newlog; log_name_ = new_name
+    @classmethod
+    def _set_logger_rt(cls, newlog_rt):
+        global logrt; logrt = newlog_rt
+    @classmethod
+    def _set_logger_important(cls, newlog_important):
+        global logi; logi = newlog_important
 
 
     async def main_task(self, host, port):
     
         webserver = MwsWebServer(host, port) 
         webserver_task = webserver.start_the_task()
-        dbg(f"MWSMAIN@34 {webserver_task=}")
+        log(f"MWSMAIN@34 {webserver_task=}")
     
         sensors = MwsSensors()
         sensors_task = sensors.start_the_task()
-        dbg(f"MWSMAIN@38 {sensors_task=}")
+        log(f"MWSMAIN@38 {sensors_task=}")
         
         displays = MwsDisplays()
         displays_task = displays.start_the_task()
-        dbg(f"MWSMAIN@42 {displays_task=}")
+        log(f"MWSMAIN@42 {displays_task=}")
         
         while 1:
-            dbg(f"MWSMAIN@45  MAIN TASK running    {host=}   {port=} ")
+            log(f"MWSMAIN@45  MAIN TASK running    {host=}   {port=} ")
             webserver_done = webserver_task.done()
             sensors_done = sensors_task.done()
             displays_done = displays_task.done()
     
-            dbg(f"  Who is done:  web={webserver_task.done()}  "+\
+            log(f"  Who is done:  web={webserver_task.done()}  "+\
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
-            #dbg(f"   state: {sensors_task.state}")  # bool
-            #dbg(f"   data: {sensors_task.data}")    # None
+            #log(f"   state: {sensors_task.state}")  # bool
+            #log(f"   data: {sensors_task.data}")    # None
             
             # not impl in micropython
             ###done, pending = await asyncio.wait(tasks, timeout=1)
     
             if webserver_done and sensors_done and displays_done:
-                dbg("MWSMAIN@59  MAIN_TASK: all tasks are done!")
+                log("MWSMAIN@59  MAIN_TASK: all tasks are done!")
                 break
             
             await asyncio.sleep(11)
             
         if 0:   # NOT IMPL
-            dbg(f"MWSMAIN@65 webserver result={webserver_task.result()}")
-            dbg(f"MWSMAIN@66 sensors   result={sensors_task.result()}")
-            dbg(f"MWSMAIN@67 displays  result={displays_task.result()}")
+            log(f"MWSMAIN@65 webserver result={webserver_task.result()}")
+            log(f"MWSMAIN@66 sensors   result={sensors_task.result()}")
+            log(f"MWSMAIN@67 displays  result={displays_task.result()}")
         
     
     def connect_to_wifi(self):
@@ -93,20 +113,20 @@ class MaranrWateringSystem:
             print(f"@@@@@@@@@ MAIN  set time returnned {ok=}")
             if ok:
                 m = "MWSMAIN@81  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
-                dbg(m)
-                loggg(m)
+                log(m)
+                logi(m)
                 break
             num_retries += 1
             m = "MWSMAIN@86  **ERROR** FAILED TO UPDATE SYSTEM TIME from NTP. {num_retries=}"
             time.sleep(1)
     
-        date_stg, time_stg = utils.get_formatted_local_time()
+        date_stg, time_stg = get_formatted_local_time()
         m = f"MWSMAIN@90 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
-        dbg(m)
-        loggg(m)
+        log(m)
+        logi(m)
         m = f"MWSMAIN@93 MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
-        dbg(m)
-        loggg(m)
+        log(m)
+        logi(m)
     
         # You will likely need to replace '0.0.0.0' with your device's actual IP address
         # after connecting it to a network.
@@ -119,9 +139,9 @@ class MaranrWateringSystem:
 
     def run_mws(self):
 
-        utils.log_start()
+        #@@@@@_log_start()
 
-        loggg("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
+        logi("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
         host,port = self.connect_to_wifi()
 
@@ -131,11 +151,22 @@ class MaranrWateringSystem:
         except KeyboardInterrupt:
             date_stg, time_stg = utils.get_formatted_local_time()
             m = f"MWSMAIN@109 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
-            dbg(m)
-            loggg(m)
+            log(m)
+            logi(m)
         finally:
             # Clean up the event loop (optional, but good practice)
             asyncio.new_event_loop()
+
+
+#@@@@@@@@@@@@@@@ REMOVE - move to logging
+#def _log_start():
+#    try:
+#        os.remove(LOG_FNAME)
+#    except Exception as ex:
+#        print(f"log_start no log file exists {LOG_FNAME=}")
+
+
+
 
 if __name__ == '__main__':
     mws = MaranrWateringSystem()

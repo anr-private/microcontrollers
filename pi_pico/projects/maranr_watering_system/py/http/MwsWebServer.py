@@ -56,8 +56,9 @@ class MwsWebServer:
                     dbg(f"MWS@53 handle_client_by_lines GOT NO MORE BYTES, client disconnected")
                     break
                 line_num += 1
-                m = f"MWS@56 handle_new_client@61 {line_num=} got {len(new_bytes)} bytes. "
-                print(m); loggg(m)
+                #@@@@m = f"MWS@56 handle_new_client@61 {line_num=} got {len(new_bytes)} bytes. "
+                #@@@@print(m);
+                #@@@@@loggg(m)
     
                 line = new_bytes.decode("utf-8")
                 loggg(f"MWS@60 handle_new_client@52 {line_num=} got {len(line)} chars. ")

@@ -13,7 +13,7 @@ MWS_CONFIG = {
     "lcd1602_scl_pin": 3,
     }
 
-LOG_FNAME = "mws_log.txt"
+###@@@@@LOG_FNAME = "mws_log.txt"
 
 
 DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -24,15 +24,10 @@ def dbg(stg=None):
     if stg is None: stg = ""
     print(f"DBG:{stg}")
 
-def log_start():
-    try:
-        os.remove(LOG_FNAME)
-    except Exception as ex:
-        print(f"log_start no log file exists {LOG_FNAME=}")
-
 print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is MUTED")
 def loggg(stg=None):
     if stg is None: stg = ""
+    LOG_FNAME = "mws_log.txt"
     fname = LOG_FNAME
     try:
         with open(fname, "a") as f:
