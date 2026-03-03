@@ -22,6 +22,8 @@ class EasyLogger:
 
         self.log_file_path = "mws_log.txt"
 
+        # key:   str   "<class 'test_classes.ClassA.ClassA'>"  NOTE embedded quotes
+        # value: class  <class 'test_classes.ClassA.ClassA'>
         self.classes = {}
 
         # primarily for testing
