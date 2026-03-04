@@ -5,27 +5,27 @@
 rm -rf http/__pycache__
 
 #--- get rid of the old stuff ---
-###clean_up_old_dirs_and_files() {
-###    echo 'CLEANUP: copy the cleanup program and run it'
-###    mpremote fs cp remove_old_watering_files.py  :/
-###    echo '   Run the cleanup'
-###    mpremote run remove_old_watering_files.py
-###    echo 'CLEANUP is done'
-###    echo '----------------'
-###}
+clean_up_old_dirs_and_files() {
+    echo 'CLEANUP: copy the cleanup program and run it'
+    mpremote fs cp remove_old_watering_files.py  :/
+    echo '   Run the cleanup'
+    mpremote run remove_old_watering_files.py
+    echo 'CLEANUP is done'
+    echo '----------------'
+}
 
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
 
-    ./PUSH_DISPLAYS_to_pico.sh
-    ./PUSH_HTTP_to_pico.sh
-    ./PUSH_LIB_FILES_to_pico.sh
-    ./PUSH_LOGGER_FILES_to_pico.sh
-    ./PUSH_PRIMITIVES_to_pico.sh
-    ./PUSH_SENSORS_to_pico.sh
+    ./PUSH_displays_to_pico.sh.sh
+    ./PUSH_http_to_pico.sh.sh
+    ./PUSH_lib_to_pico.sh.sh
+    ./PUSH_primitives_to_pico.sh.sh
+    ./PUSH_sensors_to_pico.sh.sh
+    ./PUSH_trivlog_to_pico.sh
 
     echo 'Copy the MAIN program'
-    ./PUSH_MAIN_to_pico.sh
+    ./PUSH_sensors_to_pico.sh.sh
 }
 
 list_pico_filesystem_contents() {
@@ -35,17 +35,17 @@ list_pico_filesystem_contents() {
     mpremote fs ls /displays
     mpremote fs ls /http
     mpremote fs ls /lib
-    mpremote fs ls /logger
     mpremote fs ls /primitives
     mpremote fs ls /sensors
+    mpremote fs ls /trivlog
     mpremote fs ls 
 }
 
 main() {
     echo "MAIN"
-    ###clean_up_old_dirs_and_files
-    copy_release_files_to_the_pico
-    list_pico_filesystem_contents
+    clean_up_old_dirs_and_files
+#    copy_release_files_to_the_pico
+#    list_pico_filesystem_contents
 }
 
 main $*

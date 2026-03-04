@@ -10,7 +10,13 @@ files_to_remove = [
     ]
 
 dirs_to_empty_out = [
+    "displays",
+    "lib",
     "http",
+    "primitives",
+    "sensors",
+    "trivlog",
+    "pages",
     ]
 
 
@@ -40,8 +46,12 @@ def remove_file_by_path(fpath: str):
         print(f"        dry run - file not removed")
 
 def get_files_in_directory(dir_path: str) -> list:
-    return [ff[0] for ff in os.ilistdir(dir_path) if ff[1] == FILE_MARKER]  # type: ignore[attr-defined]
-
+    try:
+        return [ff[0] for ff in os.ilistdir(dir_path) if ff[1] == FILE_MARKER]  # type: ignore[attr-defined]
+    except Exception as ex:
+        print(f"*** FAILED to find anything in directory {dir_path}")
+        print(f"      ex={repr(ex)}  ex.str={str(ex)}")
+        return list()
 
 def remove_the_listed_files():
     """ remove the files in the explicit files_to_remove list """
