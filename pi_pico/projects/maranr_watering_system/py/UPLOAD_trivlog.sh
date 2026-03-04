@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# UPLOAD_logger.sh
+# UPLOAD_trivlog.sh
 
 DBG=false
 
-for fp in logger/* ; do
+for fp in trivlog/* ; do
 
     if $DBG ; then  echo ff is $fp ; fi
     fn=$(basename $fp)
@@ -16,22 +16,22 @@ for fp in logger/* ; do
     fi
 
     if $DBG ; then echo \
-    "diff -q logger/$fn  /tmp/LOGGER/$fn" ; fi
-    diff -q logger/$fn  /tmp/LOGGER/$fn
+    "diff -q trivlog/$fn  /tmp/TRIVLOG/$fn" ; fi
+    diff -q trivlog/$fn  /tmp/TRIVLOG/$fn
     result="$?"
     if [ "$result" == 0 ] ; then
         if $DBG ; then echo matches ; fi
     fi
     if [ "$result" == 1 ] ; then
-        if $DBG ; then echo "NOT matches  logger/$fn  /tmp/LOGGER/$fn" ; fi
+        if $DBG ; then echo "NOT matches  trivlog/$fn  /tmp/TRIVLOG/$fn" ; fi
         echo \
-        "  cp -p logger/$fn  /tmp/LOGGER/$fn"
-           cp -p logger/$fn  /tmp/LOGGER/$fn
+        "  cp -p trivlog/$fn  /tmp/TRIVLOG/$fn"
+           cp -p trivlog/$fn  /tmp/TRIVLOG/$fn
     fi
 
 done
 
 
-#cp -p logger/* /tmp/LOGGER/
+#cp -p trivlog/* /tmp/TRIVLOG/
 
 ###

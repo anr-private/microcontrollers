@@ -2,7 +2,8 @@
 #
 ./UPLOAD_main.sh
 ./UPLOAD_lib.sh
-./UPLOAD_logger.sh
+##./UPLOAD_logger.sh
 ./UPLOAD_http.sh
+./UPLOAD_trivlog.sh
 
 ###
