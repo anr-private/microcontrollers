@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# UPLOAD_http.sh
+# UPLOAD_weblib.sh
 
 DBG=false
 
-for fp in http/* ; do
+for fp in weblib/* ; do
 
     if $DBG ; then  echo ff is $fp ; fi
     fn=$(basename $fp)
@@ -16,22 +16,22 @@ for fp in http/* ; do
     fi
 
     if $DBG ; then echo \
-    "diff -q http/$fn  /tmp/HTTP/$fn" ; fi
-    diff -q http/$fn  /tmp/HTTP/$fn
+    "diff -q weblib/$fn  /tmp/WEBLIB/$fn" ; fi
+    diff -q weblib/$fn  /tmp/WEBLIB/$fn
     result="$?"
     if [ "$result" == 0 ] ; then
         if $DBG ; then echo matches ; fi
     fi
     if [ "$result" == 1 ] ; then
-        if $DBG ; then echo "NOT matches  http/$fn  /tmp/HTTP/$fn" ; fi
+        if $DBG ; then echo "NOT matches  weblib/$fn  /tmp/WEBLIB/$fn" ; fi
         echo \
-        "  cp -p http/$fn  /tmp/HTTP/$fn"
-           cp -p http/$fn  /tmp/HTTP/$fn
+        "  cp -p weblib/$fn  /tmp/WEBLIB/$fn"
+           cp -p weblib/$fn  /tmp/WEBLIB/$fn
     fi
 
 done
 
 
-#cp -p http/* /tmp/HTTP/
+#cp -p weblib/* /tmp/WEBLIB/
 
 ###

@@ -5,7 +5,7 @@
 ./COMPARE_main.sh
 ./COMPARE_lib.sh
 ###./COMPARE_logger.sh
-./COMPARE_http.sh
+./COMPARE_weblib.sh
 ./COMPARE_trivlog.sh
 
 
