@@ -15,7 +15,11 @@ def prt(s):
 class TrivlogABC:
 
     def __init__(self):
-        prt(f"TrivlogABC@19.init  self is {self}")
+        try:
+            prt(f"TrivlogABC@19.init  self is {self}")
+        except Exception as ex:
+            prt(f"TrivlogABC@21.init  'str(self)' failed. Ctor not completed(?)  ex={repr(ex)}  {str(ex)}")
+
         self._trivlog = Trivlog.get_instance()
         prt(f"TrivlogABC@21.init trivlog obj is {self._trivlog}")
         logs = self._trivlog.register_user_class(self)

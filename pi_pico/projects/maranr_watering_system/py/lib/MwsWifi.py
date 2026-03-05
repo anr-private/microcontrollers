@@ -13,34 +13,21 @@ import ntptime
 
 from details import SSID, PW
 #from utils import XXX
-from logger.LoggerABC import LoggerABC
+from trivlog.TrivlogABC import TrivlogABC
 
+# Logging functions; provided by our parent class using set_log_functions()
 log = None
-log_name_ = "None"
-
 logrt = None
 logi = None
+
 
 ssid = SSID
 password = PW
 
-class MwsWifi(LoggerABC):
+class MwsWifi(TrivlogABC):
     
     _instance = None
 
-    @classmethod
-    def _get_logger(cls): global log; return log
-    @classmethod
-    def _get_logger_name(cls): global log_name_; return log_name_
-    @classmethod
-    def _set_logger(cls, newlog, new_name):
-        global log, log_name_; log = newlog; log_name_ = new_name
-    @classmethod
-    def _set_logger_rt(cls, newlog_rt):
-        global logrt; logrt = newlog_rt
-    @classmethod
-    def _set_logger_important(cls, newlog_important):
-        global logi; logi = newlog_important
 
     @classmethod
     def get_instance(cls):
@@ -53,7 +40,16 @@ class MwsWifi(LoggerABC):
         if do_not_call_directly != 1234567:
             raise RuntimeError("EasyLogger.init DO NOT CALL")
         super().__init__()
-        self.init_logger()
+
+
+    def _get_log_functions(self): 
+        return (log, logrt, logi)
+    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+        global log, logrt, logi
+        print(f"MwsWifi@49.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
+        log = log_arg
+        logrt = logrt_arg
+        logi = logi_arg
 
 
     def connect_to_wifi(self, show_details=True):

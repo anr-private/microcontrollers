@@ -2,18 +2,24 @@
 
 import os
 
-import lib.utils as utils
-dbg = utils.dbg
-loggg = utils.loggg
+import utils 
+from trivlog.TrivlogABC import TrivlogABC
 
-class FileUtils:
+# Logging functions; provided by our parent class using set_log_functions()
+log = None
+logrt = None
+logi = None
+
+
+class FileUtils(TrivlogABC):
 
     _SIM_USING_PY3 = False
 
     @classmethod
     def _SET_SIM_USING_PY3(cls):
+        # unit testing only
         cls._SIM_USING_PY3 = True
-        loggg(f"************ USING PY3 compatible FILE NAMING: strip the leading slash ************")
+        print(f"************ USING PY3 compatible FILE NAMING: strip the leading slash ************")
 
 
 
@@ -21,7 +27,17 @@ class FileUtils:
         # if True, this class is being tested using Py3 / Linux
         # so leading '/' are stripped:  '/pages/a.html' -> 'pages/a.html'
         #@@@@@@@@@@@@@@@@@@self._use_py3_sim = False
-        pass
+        super().__init__()
+
+    def _get_log_functions(self): 
+        return (log, logrt, logi)
+    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+        global log, logrt, logi
+        #print(f"TrivlogExample@30.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
+        log = log_arg
+        logrt = logrt_arg
+        logi = logi_arg
+
 
     def _GET_THE_SIM_USING_PY3_FLAG(self):
         return self._SIM_USING_PY3
@@ -31,7 +47,7 @@ class FileUtils:
             fpath, *, 
             binary=False, read_contents=False, prefix_dir=None,
             w="?WHO?"):
-        dbg(f"FU@31 obtain_input_file {fpath=}  {binary=}  {read_contents=}  {prefix_dir=}")
+        log(f"FU@31 obtain_input_file {fpath=}  {binary=}  {read_contents=}  {prefix_dir=}")
 
         # path is the path. On pico you typically see "/pages/some.html", starts with ./.
         # binary - if True, read as binary else read as text
@@ -51,64 +67,64 @@ class FileUtils:
         actual_path = fpath
         if self._SIM_USING_PY3:
             actual_path = self._adjust_actual_path(actual_path)
-            loggg(f"FU@51:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
+            log(f"FU@51:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
     
         mode = "rb" if binary else "r"
     
         result = self._try_accessing_file(actual_path, mode, read_contents, w)
 
         if result is not None:
-            loggg(f"FU@58:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
+            log(f"FU@58:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
             if result is True:
-                loggg(f"FU@60:{w} ...  return TRUE - just checked for file exists, did not read contents.")
+                log(f"FU@60:{w} ...  return TRUE - just checked for file exists, did not read contents.")
             else:
-                loggg(f"FU@62:{w} ...  return file contents  LEN={len(result)}")
+                log(f"FU@62:{w} ...  return file contents  LEN={len(result)}")
             return result
 
         # Failed with simple fpath - try adding prefix_dir
         if prefix_dir is not None:
-            loggg(f"FU@67:{w}  Add {prefix_dir=} to {actual_path=} and try again")
+            log(f"FU@67:{w}  Add {prefix_dir=} to {actual_path=} and try again")
             actual_path = self._add_prefix_dir(fpath, prefix_dir, w)
             if self._SIM_USING_PY3:
                 old_actual = actual_path
                 actual_path = self._adjust_actual_path(actual_path)
-                loggg(f"FU@72:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
+                log(f"FU@72:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
 
             result = self._try_accessing_file(actual_path, mode, read_contents, w)
     
             if result is not None:
-                loggg(f"FU@77:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
+                log(f"FU@77:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
                 if result is True:
-                    loggg(f"FU@79:{w} ...  return TRUE - just checked for file exists, did not read contents.")
+                    log(f"FU@79:{w} ...  return TRUE - just checked for file exists, did not read contents.")
                 else:
-                    loggg(f"FU@81:{w} ...  return file contents  LEN={len(result)}")
+                    log(f"FU@81:{w} ...  return file contents  LEN={len(result)}")
                 return result
     
         # FAILED!
-        loggg(f"FU@85:{w}  obtain_input_file **FAILED** Return None!   {fpath=} {actual_path=}")
-        loggg(f"FU@86:{w}    ... {binary=}  {read_contents=}  {prefix_dir=}  who='{w}' ")
+        log(f"FU@85:{w}  obtain_input_file **FAILED** Return None!   {fpath=} {actual_path=}")
+        log(f"FU@86:{w}    ... {binary=}  {read_contents=}  {prefix_dir=}  who='{w}' ")
         return None
 
 
     def _try_accessing_file(self, actual_path, mode, read_contents, w):
-        loggg(f"FU@91:{w} Try accessing {actual_path=}  {mode=} ")
+        log(f"FU@91:{w} Try accessing {actual_path=}  {mode=} ")
         try:
             with open(actual_path, mode) as inf:
                 if read_contents:
-                    loggg(f"FU@95:{w}  read {actual_path=} contents.")
+                    log(f"FU@95:{w}  read {actual_path=} contents.")
                     contents = inf.read()
-                    loggg(f"FU@97:{w} from {actual_path=} len(contents)={len(contents)}")
+                    log(f"FU@97:{w} from {actual_path=} len(contents)={len(contents)}")
                     return contents
-                loggg(f"FU@99:{w} opened/closed {actual_path=} ok; return True")
+                log(f"FU@99:{w} opened/closed {actual_path=} ok; return True")
                 return True
         except OSError as ex:
-            loggg(f"FU@102:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
+            log(f"FU@102:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
         except Exception as ex:
-            loggg(f"FU@104:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
+            log(f"FU@104:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
     
 
     def _add_prefix_dir(self, fpath, prefix_dir, w):
-        loggg(f"FU@108:{w} Add {prefix_dir=} to {fpath=}")
+        log(f"FU@108:{w} Add {prefix_dir=} to {fpath=}")
         if not fpath or not prefix_dir: return fpath
 
         sep1 = ""
@@ -118,7 +134,7 @@ class FileUtils:
         if fpath[0] != '/':
             sep2 = '/'
         new_fpath = sep1 + prefix_dir + sep2 + fpath
-        loggg(f"FU@118:{w} {new_fpath=} -- Added {prefix_dir=} to {fpath=}")
+        log(f"FU@118:{w} {new_fpath=} -- Added {prefix_dir=} to {fpath=}")
         return new_fpath
 
 
