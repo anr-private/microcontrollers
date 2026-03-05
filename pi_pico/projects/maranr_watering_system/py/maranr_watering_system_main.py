@@ -13,9 +13,10 @@ try:
     import utime as time        #uPy
 except Exception:
     import time                 #Py3 unit tests
+import utils  #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
 
+from trivlog.TrivlogABC import TrivlogABC
 
-from logger.LoggerABC import LoggerABC
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from MwsWifi import MwsWifi
@@ -29,8 +30,8 @@ from utils import get_formatted_local_time
 #    sys.path.append("../http")
 
 
+# Logging functions; provided by our parent class using set_log_functions()
 log = None
-log_name_ = "None"
 logrt = None
 logi = None
 
@@ -38,11 +39,10 @@ logi = None
 print(f"@@@MAIN@28  {MWS_CONFIG=}")
 
 
-class MaranrWateringSystem(LoggerABC):
+class MaranrWateringSystem(TrivlogABC):
 
     def __init__(self):
         super().__init__()
-        self.init_logger()
 
     @classmethod
     def _get_logger(cls): global log; return log
@@ -57,6 +57,15 @@ class MaranrWateringSystem(LoggerABC):
     @classmethod
     def _set_logger_important(cls, newlog_important):
         global logi; logi = newlog_important
+
+    def _get_log_functions(self): 
+        return (log, logrt, logi)
+    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+        global log, logrt, logi
+        print(f"MaranrWateringSystem@65.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
+        log = log_arg
+        logrt = logrt_arg
+        logi = logi_arg
 
 
     async def main_task(self, host, port):

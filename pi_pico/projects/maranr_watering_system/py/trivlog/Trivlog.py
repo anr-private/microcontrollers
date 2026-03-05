@@ -58,8 +58,12 @@ class Trivlog:
         # obj is a user obj that subclasses TrivlogABC
         # Returns a tuple of the log functions the caller should use
 
-        prt(f"Trivlog@43   {obj_instance=}")
-
+        prt(f"Trivlog@61   {repr(obj_instance)=}")
+        try:
+            prt(f"Trivlog@63   {str(obj_instance)=}")
+        except  Exception as ex:
+            prt(f"Trivlog@65 register_user_class  str(obj_instance) FAILED. Probably still in ctor.  ex={repr(ex)}  ex={str(ex)} ")
+    
         # get the Class of the obj_instance
         cls_obj = type(obj_instance)
         prt(f"Trivlog@31  register {cls_obj=}  type={type(cls_obj)}")        

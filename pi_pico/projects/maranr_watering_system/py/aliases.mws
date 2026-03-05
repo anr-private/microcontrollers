@@ -1,20 +1,17 @@
 alias COMPARE_ALL=./COMPARE_ALL.sh
 alias COMPARE_lib=./COMPARE_lib.sh
-alias COMPARE_logger=./COMPARE_logger.sh
 alias COMPARE_main=./COMPARE_main.sh
 alias COMPARE_trivlog=./COMPARE_trivlog.sh
 alias COMPARE_weblib=./COMPARE_weblib.sh
 
 alias UPLOAD_ALL=./UPLOAD_ALL.sh
 alias UPLOAD_lib=./UPLOAD_lib.sh
-alias UPLOAD_logger=./UPLOAD_logger.sh
 alias UPLOAD_main=./UPLOAD_main.sh
 alias UPLOAD_trivlog=./UPLOAD_trivlog.sh
 alias UPLOAD_weblib=./UPLOAD_weblib.sh
 
 alias DOWNLOAD_ALL=./DOWNLOAD_ALL.sh
 alias DOWNLOAD_lib=./DOWNLOAD_lib.sh
-alias DOWNLOAD_logger=./DOWNLOAD_logger.sh
 alias DOWNLOAD_main=./DOWNLOAD_main.sh
 alias DOWNLOAD_trivlog=./DOWNLOAD_trivlog.sh
 alias DOWNLOAD_weblib=./DOWNLOAD_weblib.sh
@@ -22,10 +19,10 @@ alias DOWNLOAD_weblib=./DOWNLOAD_weblib.sh
 alias PUSH_ALL_TO_PICO=./PUSH_ALL_TO_PICO.sh    
 alias PUSH_displays_to_pico=./PUSH_displays_to_pico.sh
 alias PUSH_lib_to_pico=./PUSH_lib_to_pico.sh
-alias PUSH_logger_to_pico=./PUSH_logger_to_pico.sh
 alias PUSH_main_to_pico=./PUSH_main_to_pico.sh
 alias PUSH_primitives_to_pico=./PUSH_primitives_to_pico.sh
 alias PUSH_sensors_to_pico=./PUSH_sensors_to_pico.sh
+alias PUSH_trivlog_to_pico=./PUSH_trivlog_to_pico.sh
 alias PUSH_weblib_to_pico=./PUSH_weblib_to_pico.sh
 
 ###
