@@ -1,4 +1,6 @@
-# remove_old_watering_files.py
+# remove_MWS_files.py
+#
+# Remove the MWS files from the Pico.
 
 import os
 
@@ -12,9 +14,10 @@ files_to_remove = [
 dirs_to_empty_out = [
     "displays",
     "lib",
+    "logger_elem",
     "primitives",
     "sensors",
-    "trivlog",
+    #"trivlog",
     "weblib",
     "pages",
     ]
