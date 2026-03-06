@@ -81,8 +81,21 @@ class Trivlog:
             self._classes_to_instances[cls_obj] = instances_of_cls
         else:
             instances_of_cls.append(obj_instance)
-        prt(f"Trivlog@62  number of registered classes:  {len(self._classes_to_instances)}")
-        if _show_log_muted_mesg:
+        if 0:
+            # THIS FIXES THE MEMORY LEAK - objects were being GC'd but
+            # not removed from the _classes_to_instances dict.
+            # Need to use weak refs to the objects.
+            # But trying a new approach: logger_elem.
+            prt(f"Trivlog@62  number of registered classes:  {len(self._classes_to_instances)}")
+            print("TRIVLOG 85  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"*2)
+            print("TRIVLOG 85  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"*2)
+            print(f" ... clearing ithe instances dict   size is {len(self._classes_to_instances)} ")
+            self._classes_to_instances = {}
+            print("TRIVLOG 85  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"*2)
+            print("TRIVLOG 85  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"*2)
+            print("TRIVLOG 85  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"*2)
+        
+        if self._show_log_muted_mesg:
             _show_log_muted_mesg = False
             print("@@@@@@@@@@@@@@ Trivlog@82  LOG IS MUTED !!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------")
             print("@@@@@@@@@@@@@@ Trivlog@82  LOG IS MUTED !!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------")
