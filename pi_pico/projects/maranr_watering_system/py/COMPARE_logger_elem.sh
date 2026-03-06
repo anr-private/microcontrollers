@@ -2,7 +2,7 @@
 #
 # COMPARE_logger_elem.sh
 
-diff -q logger_elem /tmp/TRIVLOG |grep -v 'Only in logger_elem:'
+diff -q logger_elem /tmp/LOGELEM |grep -v 'Only in logger_elem:'
 
 
 ###
