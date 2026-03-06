@@ -1,7 +1,7 @@
 # ClassA.py
 
 
-from log_elem.ElemLoggerABC import ElemLoggerABC
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 
 PRT=True
 def prt(s):

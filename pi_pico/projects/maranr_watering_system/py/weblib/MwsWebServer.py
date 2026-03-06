@@ -2,8 +2,8 @@
 
 import asyncio
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 from utils import show_cc
-from trivlog.TrivlogABC import TrivlogABC
 
 from .HdrAccum import HdrAccum
 from .ParsedHttp import ParsedHttp
@@ -15,23 +15,21 @@ logrt = None
 logi = None
 
 
-class MwsWebServer(TrivlogABC):
+class MwsWebServer(ElemLoggerABC):
     #  top-level Server class 
 
     def __init__(self, host, port):
-        super().__init__()
         self.host = host
         self.port = port
+        super().__init__()
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"MwsWebServer@31.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def start_the_task(self):

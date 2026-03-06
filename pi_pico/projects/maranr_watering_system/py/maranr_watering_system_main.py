@@ -14,9 +14,8 @@ try:
     import utime as time        #uPy
 except Exception:
     import time                 #Py3 unit tests
-import utils  #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
 
-from trivlog.TrivlogABC import TrivlogABC
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
@@ -26,6 +25,7 @@ from utils import MWS_CONFIG
 from utils import get_formatted_local_time
 from utils import get_fs_space_string
 from utils import get_memory_status_string
+from utils import get_formatted_local_time
 
 #if determine_py_platform() == "micropython":
 #    sys.path.append("/http")
@@ -42,33 +42,19 @@ logi = None
 print(f"@@@MAIN@42  {MWS_CONFIG=}")
 
 
-class MaranrWateringSystem(TrivlogABC):
+class MaranrWateringSystem(ElemLoggerABC):
 
     def __init__(self):
         super().__init__()
 
-    @classmethod
-    def _get_logger(cls): global log; return log
-    @classmethod
-    def _get_logger_name(cls): global log_name_; return log_name_
-    @classmethod
-    def _set_logger(cls, newlog, new_name):
-        global log, log_name_; log = newlog; log_name_ = new_name
-    @classmethod
-    def _set_logger_rt(cls, newlog_rt):
-        global logrt; logrt = newlog_rt
-    @classmethod
-    def _set_logger_important(cls, newlog_important):
-        global logi; logi = newlog_important
-
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        print(f"MAIN@68.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        print(f"MAIN@52 _set_logger: {repr(logger)}")
+        print(f"MAIN@53 _set_logger: {str(logger)}")
+        ###raise RuntimeError(f"MAIN@53 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ RUNT in set logger _____________________:")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     async def main_task(self, host, port):
@@ -172,7 +158,7 @@ class MaranrWateringSystem(TrivlogABC):
             # Start the event loop and run the main server coroutine
             asyncio.run(self.main_task(host, port))
         except KeyboardInterrupt:
-            date_stg, time_stg = utils.get_formatted_local_time()
+            date_stg, time_stg = get_formatted_local_time()
             m = f"MWSMAIN@176 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             log(m)
             logi(m)

@@ -11,7 +11,7 @@ from machine import Pin, SoftI2C
 #from lib import utils
 #from lib.utils import loggg
 from lib.utils import MWS_CONFIG
-from trivlog.TrivlogABC import TrivlogABC
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 
 from displays.lib_lcd1602_2004_with_i2c import LCD
 
@@ -25,7 +25,7 @@ NUM_ROWS = 2
 #NUM_ROWS = 4
 
 
-class MwsDisplays(TrivlogABC):
+class MwsDisplays(ElemLoggerABC):
     # top-level Server class
     def __init__(self):
         super().__init__()
@@ -35,14 +35,12 @@ class MwsDisplays(TrivlogABC):
         self.lcd = None
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"MwsDisplays@42.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"MwsDisplays@40 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def start_the_task(self):

@@ -2,8 +2,9 @@
 
 import sys
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 from utils import string_to_int
-from trivlog.TrivlogABC import TrivlogABC
+
 from .ParsedHttp import ParsedHttp, METHOD_NAMES
 
 
@@ -13,21 +14,19 @@ logrt = None
 logi = None
 
 
-class HttpParser(TrivlogABC):
+class HttpParser(ElemLoggerABC):
 
     def __init__(self):
-        super().__init__()
         self._latest_error = ""
+        super().__init__()
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"HttpParser@27.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def latest_error(self):

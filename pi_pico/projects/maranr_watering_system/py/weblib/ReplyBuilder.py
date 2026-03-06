@@ -2,8 +2,8 @@
 
 import sys
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 from utils import show_cc
-from trivlog.TrivlogABC import TrivlogABC
 
 from .HttpReply import HttpReply
 
@@ -35,22 +35,21 @@ log = None
 logrt = None
 logi = None
 
-class ReplyBuilder(TrivlogABC):
+
+class ReplyBuilder(ElemLoggerABC):
     def __init__(self):
-        super().__init__()
         self.status_value = STATUS_OK
         self.content_type = CONTENT_HTML
         self.body = ""
+        super().__init__()
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"ReplyBuilder@50.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def build_textual_file_reply(self, content_type, body_string):

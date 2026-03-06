@@ -2,8 +2,8 @@
 
 import os
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 import utils 
-from trivlog.TrivlogABC import TrivlogABC
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -11,7 +11,7 @@ logrt = None
 logi = None
 
 
-class FileUtils(TrivlogABC):
+class FileUtils(ElemLoggerABC):
 
     _SIM_USING_PY3 = False
 
@@ -26,14 +26,13 @@ class FileUtils(TrivlogABC):
     def __init__(self):
         super().__init__()
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"TrivlogExample@30.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def _GET_THE_SIM_USING_PY3_FLAG(self):

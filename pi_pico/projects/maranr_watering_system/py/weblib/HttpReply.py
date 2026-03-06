@@ -1,7 +1,7 @@
 # HttpReply.py
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 from utils import show_cc
-from trivlog.TrivlogABC import TrivlogABC
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -9,24 +9,21 @@ logrt = None
 logi = None
 
 
-class HttpReply(TrivlogABC):
+class HttpReply(ElemLoggerABC):
 
     def __init__(self):
-        super().__init__()
-
         # header should be a str and should end with \r\n\r\n
         self._header = None
         self._body = None
+        super().__init__()
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"HttpReply@24.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"HttpReply@23 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
     def set_reply(self, header, body):
 

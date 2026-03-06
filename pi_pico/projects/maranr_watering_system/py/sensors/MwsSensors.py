@@ -4,19 +4,28 @@ import asyncio
 import gc
 import utime as time
 
-#from utils import *
-###import lib.utils as utils
-#from utils import get_flash_space
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 from utils import get_fs_space_string
 from utils import get_memory_status_string
 
+log = None
+logrt = None
+logi = None
 
-class MwsSensors:
+
+class MwsSensors(ElemLoggerABC):
     """ sensors and effectors """
 
     def __init__(self, *args):
-        #self.SOME_THING = MWS_CONFIG.get("config-param-name-here")
-        ...
+        super().__init__()
+
+
+    def _set_logger(self, logger):
+        global log, logrt, logi
+        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def start_the_task(self):

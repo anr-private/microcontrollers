@@ -7,8 +7,8 @@ from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib.FileUtils import FileUtils
-from trivlog.TrivlogABC import TrivlogABC
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
@@ -24,21 +24,19 @@ logrt = None
 logi = None
 
 
-class RequestHandler(TrivlogABC):
+class RequestHandler(ElemLoggerABC):
     def __init__(self):
-        super().__init__()
         self.default_file = "/pages/index.html"
         self.default_subdir = "pages"
+        super().__init__()
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"RequestHandler@32.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
     def handle_client_request(self, header):
