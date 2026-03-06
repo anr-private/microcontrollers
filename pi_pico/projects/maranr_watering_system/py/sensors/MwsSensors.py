@@ -33,12 +33,24 @@ class MwsSensors:
             if 0:
                 fss = get_fs_space_string()
                 print(f"WS.sensors_coro RUNNING: {fss}")
-            if 1:
+            if 0:
                 mss = get_memory_status_string(do_garbage_collect=False)
                 print(f"WS.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
                 gc.collect()
                 mss = get_memory_status_string(do_garbage_collect=False)
                 print(f"WS.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+            if 1:
+                ma_before = gc.mem_alloc()
+                mf_before = gc.mem_free()
+                gc.collect()
+                ma_after = gc.mem_alloc()
+                mf_after = gc.mem_free()
+                ma_diff = ma_after - ma_before
+                mf_diff = mf_after - mf_before
+                print(f"SENSOR@52  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++")
+                print(f"SENSOR@52  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++")
+
+
 
             await asyncio.sleep(4)
 

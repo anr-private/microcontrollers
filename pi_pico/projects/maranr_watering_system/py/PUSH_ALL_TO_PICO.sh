@@ -4,12 +4,7 @@
 #
 # copy all files to the pico
 
-rm -rf displays/__pycache__
-rm -rf weblib/__pycache__
-rm -rf lib/__pycache__
-rm -rf primitives/__pycache__
-rm -rf sensors/__pycache__
-rm -rf trivlog/__pycache__
+rm -rf */__pycache__
 
 # USE  'REMOVE_ALL_from_pico.sh'
 ###
@@ -28,11 +23,11 @@ rm -rf trivlog/__pycache__
 copy_release_files_to_the_pico() {
 
     ./PUSH_displays_to_pico.sh
-    ./PUSH_weblib_to_pico.sh
     ./PUSH_lib_to_pico.sh
+    ./PUSH_logger_elem_to_pico.sh
     ./PUSH_primitives_to_pico.sh
     ./PUSH_sensors_to_pico.sh
-    ./PUSH_trivlog_to_pico.sh
+    ./PUSH_weblib_to_pico.sh
 
     echo 'Copy the MAIN program'
     ./PUSH_sensors_to_pico.sh
@@ -43,11 +38,11 @@ list_pico_filesystem_contents() {
     echo 'LIST THE PICO CONTENTS:'
     
     mpremote fs ls /displays
-    mpremote fs ls /weblib
     mpremote fs ls /lib
+    mpremote fs ls /logger_elem
     mpremote fs ls /primitives
     mpremote fs ls /sensors
-    mpremote fs ls /trivlog
+    mpremote fs ls /weblib
     mpremote fs ls 
 }
 

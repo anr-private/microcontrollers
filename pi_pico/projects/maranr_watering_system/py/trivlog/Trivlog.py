@@ -18,6 +18,8 @@ class Trivlog:
     _latest_logi_mesg = None
     _latest_log_mute_mesg = None
 
+    _show_log_muted_mesg = True
+
     @classmethod
     def get_instance(cls):
         if cls._instance is not None: return cls._instance
@@ -57,6 +59,7 @@ class Trivlog:
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses TrivlogABC
         # Returns a tuple of the log functions the caller should use
+        global _show_log_muted_mesg #@@@@@@@@@@@@@@@@@@@@@@@@
 
         prt(f"Trivlog@61   {repr(obj_instance)=}")
         try:
@@ -79,7 +82,14 @@ class Trivlog:
         else:
             instances_of_cls.append(obj_instance)
         prt(f"Trivlog@62  number of registered classes:  {len(self._classes_to_instances)}")
-        return self._log, self._logrt, self._logi
+        if _show_log_muted_mesg:
+            _show_log_muted_mesg = False
+            print("@@@@@@@@@@@@@@ Trivlog@82  LOG IS MUTED !!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------")
+            print("@@@@@@@@@@@@@@ Trivlog@82  LOG IS MUTED !!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------")
+            print("@@@@@@@@@@@@@@ Trivlog@82  LOG IS MUTED !!!!!!!!!!!!!!!!!!!!!!!!!!-----------------------------------")
+        ### TEMP TURNED OFF: MUTE the log() function 
+        ###    return self._log, self._logrt, self._logi
+        return self._log_mute, self._logrt, self._logi
 
 
     # === METHODS for Querying and Controlling the logging in registered classes
@@ -135,7 +145,7 @@ class Trivlog:
         Trivlog._latest_logi_mesg = mesg
 
     def _log_mute(self, mesg):
-        prt(f"Trivlog._log_mute _MUTED_ mesg='{mesg}'")
+        #@@@@@@@@@@@@@@@@@@@@@@@@@prt(f"Trivlog._log_mute _MUTED_ mesg='{mesg}'")
         Trivlog._latest_log_mute_mesg = mesg
 
 
