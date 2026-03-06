@@ -118,8 +118,11 @@ class ReplyBuilder(TrivlogABC):
 
         reply = HttpReply()
         reply.set_reply(header_stg, self.body)
-        self._reply = reply
-        return self._reply
+        return reply
+        #self._reply = reply
+        #return self._reply
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ remove the above?
+
 
     def __str__(self):
         s = []

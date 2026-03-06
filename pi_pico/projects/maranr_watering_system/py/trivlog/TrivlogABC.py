@@ -18,7 +18,9 @@ class TrivlogABC:
         try:
             prt(f"TrivlogABC@19.init  self is {self}")
         except Exception as ex:
-            prt(f"TrivlogABC@21.init  'str(self)' failed. Ctor not completed(?)  ex={repr(ex)}  {str(ex)}")
+            pass
+            # Exception probably caused by ctor not finished so obj is lacking propertie(s)
+            #prt(f"TrivlogABC@21.init  'str(self)' failed. Ctor not completed(?)  ex={repr(ex)}  {str(ex)}")
 
         self._trivlog = Trivlog.get_instance()
         prt(f"TrivlogABC@21.init trivlog obj is {self._trivlog}")

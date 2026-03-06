@@ -8,25 +8,42 @@ except Exception:
 from machine import Pin, SoftI2C
 
 ###@@@from lib import *
-from lib import utils
-from lib.utils import loggg
-from lib.utils import dbg
+#from lib import utils
+#from lib.utils import loggg
+from lib.utils import MWS_CONFIG
+from trivlog.TrivlogABC import TrivlogABC
 
 from displays.lib_lcd1602_2004_with_i2c import LCD
+
+# Logging functions; provided by our parent class using set_log_functions()
+log = None
+logrt = None
+logi = None
 
 # Works with 2 line and 4 line by 16 chars LCDs
 NUM_ROWS = 2
 #NUM_ROWS = 4
 
 
-class MwsDisplays:
-    """ top-level Server class """
+class MwsDisplays(TrivlogABC):
+    # top-level Server class
+    def __init__(self):
+        super().__init__()
 
-    def __init__(self, *args):
-        self.lcd1602_sda_pin = utils.MWS_CONFIG.get("lcd1602_sda_pin")
-        self.lcd1602_scl_pin = utils.MWS_CONFIG.get("lcd1602_scl_pin")
+        self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
+        self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
-        ...
+
+
+    def _get_log_functions(self): 
+        return (log, logrt, logi)
+    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+        global log, logrt, logi
+        #print(f"MwsDisplays@42.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
+        log = log_arg
+        logrt = logrt_arg
+        logi = logi_arg
+
 
     def start_the_task(self):
         """ creates,starts the coro. Returns task."""

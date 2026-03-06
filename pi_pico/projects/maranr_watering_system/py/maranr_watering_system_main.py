@@ -8,6 +8,7 @@
 import asyncio
 import sys
 import platform
+import gc
 
 try:
     import utime as time        #uPy
@@ -23,6 +24,8 @@ from MwsWifi import MwsWifi
 from weblib.MwsWebServer import MwsWebServer
 from utils import MWS_CONFIG
 from utils import get_formatted_local_time
+from utils import get_fs_space_string
+from utils import get_memory_status_string
 
 #if determine_py_platform() == "micropython":
 #    sys.path.append("/http")
@@ -36,7 +39,7 @@ logrt = None
 logi = None
 
 
-print(f"@@@MAIN@28  {MWS_CONFIG=}")
+print(f"@@@MAIN@42  {MWS_CONFIG=}")
 
 
 class MaranrWateringSystem(TrivlogABC):
@@ -62,7 +65,7 @@ class MaranrWateringSystem(TrivlogABC):
         return (log, logrt, logi)
     def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
         global log, logrt, logi
-        print(f"MaranrWateringSystem@65.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
+        print(f"MAIN@68.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
         log = log_arg
         logrt = logrt_arg
         logi = logi_arg
@@ -72,24 +75,29 @@ class MaranrWateringSystem(TrivlogABC):
     
         webserver = MwsWebServer(host, port) 
         webserver_task = webserver.start_the_task()
-        log(f"MWSMAIN@34 {webserver_task=}")
+        log(f"MWSMAIN@78 {webserver_task=}")
     
         sensors = MwsSensors()
         sensors_task = sensors.start_the_task()
-        log(f"MWSMAIN@38 {sensors_task=}")
+        log(f"MWSMAIN@82 {sensors_task=}")
         
         displays = MwsDisplays()
         displays_task = displays.start_the_task()
-        log(f"MWSMAIN@42 {displays_task=}")
+        log(f"MWSMAIN@86 {displays_task=}")
         
         while 1:
-            log(f"MWSMAIN@45  MAIN TASK running    {host=}   {port=} ")
+            log(f"MWSMAIN@89  MAIN TASK running    {host=}   {port=} ")
             webserver_done = webserver_task.done()
             sensors_done = sensors_task.done()
             displays_done = displays_task.done()
     
             log(f"  Who is done:  web={webserver_task.done()}  "+\
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
+            print(f"MAIN@96 FS: {get_fs_space_string()}")
+            print(f"MAIN@97 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+            gc.collect()
+            print(f"MAIN@99 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+
             #log(f"   state: {sensors_task.state}")  # bool
             #log(f"   data: {sensors_task.data}")    # None
             
@@ -103,9 +111,9 @@ class MaranrWateringSystem(TrivlogABC):
             await asyncio.sleep(11)
             
         if 0:   # NOT IMPL
-            log(f"MWSMAIN@65 webserver result={webserver_task.result()}")
-            log(f"MWSMAIN@66 sensors   result={sensors_task.result()}")
-            log(f"MWSMAIN@67 displays  result={displays_task.result()}")
+            log(f"MWSMAIN@114 webserver result={webserver_task.result()}")
+            log(f"MWSMAIN@115 sensors   result={sensors_task.result()}")
+            log(f"MWSMAIN@116 displays  result={displays_task.result()}")
         
     
     def connect_to_wifi(self):
@@ -119,9 +127,9 @@ class MaranrWateringSystem(TrivlogABC):
         num_retries = 0
         while num_retries < MAX_RETRIES:
             ok = mws_wifi.wifi_set_time_from_ntp(wlan)
-            print(f"@@@@@@@@@ MAIN  set time returnned {ok=}")
+            print(f"@@@@@@@@@ MAIN@130  set time returnned {ok=}")
             if ok:
-                m = "MWSMAIN@81  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
+                m = "MWSMAIN@132  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
                 log(m)
                 logi(m)
                 break
@@ -130,10 +138,10 @@ class MaranrWateringSystem(TrivlogABC):
             time.sleep(1)
     
         date_stg, time_stg = get_formatted_local_time()
-        m = f"MWSMAIN@90 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
+        m = f"MWSMAIN@141 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
         log(m)
         logi(m)
-        m = f"MWSMAIN@93 MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
+        m = f"MWSMAIN@144 MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
         log(m)
         logi(m)
     
@@ -152,6 +160,12 @@ class MaranrWateringSystem(TrivlogABC):
 
         logi("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
+        print(f"MAIN@163 FS: {get_fs_space_string()}")
+        print(f"MAIN@164 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+        print(f"MAIN@165  +++++ DO GC COLLECT   ++++++++++++++++++")
+        gc.collect()
+        print(f"MAIN@167 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+
         host,port = self.connect_to_wifi()
 
         try:
@@ -159,7 +173,7 @@ class MaranrWateringSystem(TrivlogABC):
             asyncio.run(self.main_task(host, port))
         except KeyboardInterrupt:
             date_stg, time_stg = utils.get_formatted_local_time()
-            m = f"MWSMAIN@109 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+            m = f"MWSMAIN@176 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             log(m)
             logi(m)
         finally:

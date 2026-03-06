@@ -58,7 +58,7 @@ class MwsWebServer(TrivlogABC):
         ###return result
 
     async def handle_new_client(self, reader, writer):
-        m = f"MWS@46 handle_new_client  {reader=} {writer=}  "
+        m = f"MWS@61 handle_new_client  {reader=} {writer=}  "
         print();print(m); log(m)
         
         hdrAccum = HdrAccum()
@@ -116,18 +116,19 @@ class MwsWebServer(TrivlogABC):
             log(f"MWS@98 handle_new_client done with this client!")
 
         except Exception as ex:
+            print("$*$"*35);print("$*$"*35);print("$*$"*35);print("$*$"*35);
             log(f"MWS@101 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' ")
-            raise
-        ###finally:
-        log("MWS@101 handle_new_client Closing client writer connection")
-        writer.close()
-        await writer.wait_closed() # Wait until the stream is fully closed
-        log("MWS@104 handle_new_client CLIENT WRITER is CLOSED")
-        
-        log(f"MWS@106 handle_new_client CLOSING THE CLIENT reader")
-        reader.close()
-        await reader.wait_closed()
-        log("MWS@109 handle_new_client CLIENT READER is CLOSED")
+            ###raise
+        finally:
+            log("MWS@101 handle_new_client Closing client writer connection")
+            writer.close()
+            await writer.wait_closed() # Wait until the stream is fully closed
+            log("MWS@104 handle_new_client CLIENT WRITER is CLOSED")
+            
+            log(f"MWS@106 handle_new_client CLOSING THE CLIENT reader")
+            reader.close()
+            await reader.wait_closed()
+            log("MWS@109 handle_new_client CLIENT READER is CLOSED")
 
 
     def handle_the_request(self, header):

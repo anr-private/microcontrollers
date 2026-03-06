@@ -24,9 +24,6 @@ class FileUtils(TrivlogABC):
 
 
     def __init__(self):
-        # if True, this class is being tested using Py3 / Linux
-        # so leading '/' are stripped:  '/pages/a.html' -> 'pages/a.html'
-        #@@@@@@@@@@@@@@@@@@self._use_py3_sim = False
         super().__init__()
 
     def _get_log_functions(self): 

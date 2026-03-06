@@ -1,5 +1,7 @@
 # utils.py
 
+import gc
+import micropython
 import os
 import platform
 import sys
@@ -16,26 +18,26 @@ MWS_CONFIG = {
 ###@@@@@LOG_FNAME = "mws_log.txt"
 
 
-DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is MUTED @@@@@@@@@@@@@@@@@@")
-def dbg(stg=None):
-    # output a string to the debug output 
-    if not DEBUG: return
-    if stg is None: stg = ""
-    print(f"DBG:{stg}")
-
-print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is MUTED")
-def loggg(stg=None):
-    if stg is None: stg = ""
-    LOG_FNAME = "mws_log.txt"
-    fname = LOG_FNAME
-    try:
-        with open(fname, "a") as f:
-            f.write(stg)
-            f.write("\n")
-    except Exception as ex:
-        print(f"log(): Error writing to file '{fname}': {ex}")
-
+#DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is MUTED @@@@@@@@@@@@@@@@@@")
+#def dbg(stg=None):
+#    # output a string to the debug output 
+#    if not DEBUG: return
+#    if stg is None: stg = ""
+#    print(f"DBG:{stg}")
+#
+#print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is MUTED")
+#def loggg(stg=None):
+#    if stg is None: stg = ""
+#    LOG_FNAME = "mws_log.txt"
+#    fname = LOG_FNAME
+#    try:
+#        with open(fname, "a") as f:
+#            f.write(stg)
+#            f.write("\n")
+#    except Exception as ex:
+#        print(f"log(): Error writing to file '{fname}': {ex}")
+#
 
 def string_to_int(s):
     try:
@@ -81,6 +83,12 @@ def extract_simplified_classname(class_stg):
     return base_name
 
 
+def get_memory_status_string(do_garbage_collect=False):
+    ### # prints memory map of block usage
+    ###micropython.mem_info(1)
+    if do_garbage_collect: gc.collect()
+    return f" {gc.mem_alloc()=}   {gc.mem_free()=}"
+
 def get_flash_space():
     # Get filesystem statistics for the root directory ("/")
     stat = os.statvfs("/")
@@ -108,6 +116,14 @@ def convert_fs_space_to_string(fs_space):
     #print(f"Free space:  {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
     space_stg = f"{fs_space:,} bytes, {fs_space / KB:,.2f} KB, {fs_space / MB:.2f} MB"
     return space_stg
+
+def get_fs_space_string():
+    # 
+    ts, fs = get_flash_space()
+    tss = convert_fs_space_to_string(ts)
+    fss = convert_fs_space_to_string(fs)
+    
+    return f"TOTAL SPACE {tss}   FREE SPACE {fss}"
 
 
 def get_local_time():  # for our TZ
@@ -227,5 +243,12 @@ def    _NOTYET_dump_bytes(byte_vals, who=""):
 """
 _=None #####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
+def main():
+    print(f"FS SPACE: {get_fs_space_string()}")
+    print(f"MEMORY: {get_memory_status_string()} ")
+
+if __name__ == "__main__":
+    main()
 
 ### end ###

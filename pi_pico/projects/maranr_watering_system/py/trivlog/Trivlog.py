@@ -62,7 +62,9 @@ class Trivlog:
         try:
             prt(f"Trivlog@63   {str(obj_instance)=}")
         except  Exception as ex:
-            prt(f"Trivlog@65 register_user_class  str(obj_instance) FAILED. Probably still in ctor.  ex={repr(ex)}  ex={str(ex)} ")
+            pass
+            # exception if ctor has not finished yet.
+            ###prt(f"Trivlog@65 register_user_class  str(obj_instance) FAILED. Probably still in ctor.  ex={repr(ex)}  ex={str(ex)} ")
     
         # get the Class of the obj_instance
         cls_obj = type(obj_instance)
@@ -119,7 +121,8 @@ class Trivlog:
     # === LOGGING METHODS for use by 'user' classes ==================
 
     def _log(self, mesg):
-        prt(f"Trivlog._log mesg='{mesg}'")
+        ###prt(f"Trivlog._log mesg='{mesg}'")
+        prt(mesg)
         Trivlog._latest_log_mesg = mesg
 
 

@@ -1,8 +1,12 @@
 # RequestHandler.py
 
 import asyncio
+import gc
 
 from utils import show_len
+from utils import get_fs_space_string
+from utils import get_memory_status_string
+
 from lib.FileUtils import FileUtils
 from trivlog.TrivlogABC import TrivlogABC
 
@@ -44,7 +48,7 @@ class RequestHandler(TrivlogABC):
         httpParser = HttpParser()
 
         parsed_http = httpParser.parse_header_data(header)
-
+        do_gc("RH@49.after-parser-header")
         if parsed_http is None:
             print(f"RH@30 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error
@@ -58,6 +62,7 @@ class RequestHandler(TrivlogABC):
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)
+            do_gc("RH@70.after-handle-get-req")
             if reply:
                 print(f"RH@43 {str(reply)=}")
                 return reply
@@ -281,6 +286,13 @@ class RequestHandler(TrivlogABC):
         log(f"RH@256 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
+def do_gc(where):
+    if 1:
+        mss = get_memory_status_string(do_garbage_collect=False)
+        print(f"{where} MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+        gc.collect()
+        mss = get_memory_status_string(do_garbage_collect=False)
+        print(f"{where} MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 
 ###
 
