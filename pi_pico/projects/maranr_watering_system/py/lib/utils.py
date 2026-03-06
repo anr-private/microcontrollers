@@ -1,6 +1,5 @@
 # utils.py
 
-import gc
 import micropython
 import os
 import platform
@@ -9,6 +8,15 @@ try:
     import time
 except ModuleNotFoundError:
     import utime as time
+try:
+    import gc
+    _ = gc.mem_free
+except Exception as ex:
+    print(f"utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
+    del gc
+    import gc_FAKE as gc
+    print(f"utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
 
 MWS_CONFIG = {
     "lcd1602_sda_pin": 2,

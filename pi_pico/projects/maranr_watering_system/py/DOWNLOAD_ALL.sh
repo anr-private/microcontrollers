@@ -3,6 +3,7 @@
 # DOWNLOAD_ALL.sh
 
 ./DOWNLOAD_displays.sh
+./DOWNLOAD_lib.sh
 ./DOWNLOAD_logger_elem.sh
 ./DOWNLOAD_main.sh
 ./DOWNLOAD_primitives.sh
