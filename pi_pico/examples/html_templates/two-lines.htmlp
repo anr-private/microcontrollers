@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html>
+<body>
+    The time is [[current-date-time]].
+    Memory status: &nbsp;  alloc: [[memory-allocated]] &nbsp; free: [[memory-free]]
+</body>
+</html>
+<!-- :mode=html: -->
