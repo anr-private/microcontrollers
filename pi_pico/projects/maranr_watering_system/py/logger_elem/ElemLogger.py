@@ -18,7 +18,7 @@ class ElemLogger:
         self.class_name = simplified_class_name
         self._log_enabled = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self._log_control = None # see below
-        prt(f"ElemLogger@14 init {self.class_name=}")
+        prt(f"EL@21 init {self.class_name=}")
         self._log_control = log_control
 
 
@@ -28,16 +28,16 @@ class ElemLogger:
 
     def log(self, mesg):
         if self._log_enabled:
-            #print(f"ElemLogger@19.log '{mesg=}' ")
+            #print(f"EL@31.log '{mesg=}' ")
             print(f"LOG: {mesg}")
             self._log_control.log_one_line(mesg)
     def logrt(self, mesg):
-        ###print(f"ElemLogger@22.logrt '{mesg=}' ")
+        ###print(f"EL@35.logrt '{mesg=}' ")
         print(f"LOGRT: {mesg}")
         self._log_control.log_one_line(mesg)
         raise RuntimeError(mesg)
     def logi(self, mesg):
-        #print(f"ElemLogger@25.logi '{mesg=}' ")
+        #print(f"EL@40.logi '{mesg=}' ")
         print(mesg)
         self._log_control.log_one_line(mesg)
 
