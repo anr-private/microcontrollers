@@ -56,12 +56,6 @@ class ElemLogControl:
 
         prt(f"ElemLogControl@42   obj is {repr(obj_instance)} ")
 
-        # get the Class of the obj_instance
-        #cls_obj = type(obj_instance)
-        #prt(f"ElemLogControl@46  register obj={repr(cls_obj)}  type={type(cls_obj)}")        
-        #cls_stg = str(cls_obj)
-        #prt(f"ElemLogControl@33 @@@@@@@@@@@@@@@@ register {cls_stg=}")        
-
         simplified_class_name = extract_simplified_classname(obj_instance)
         prt(f"ElemLogControl@51 {simplified_class_name=}")
 
@@ -71,6 +65,7 @@ class ElemLogControl:
         if logger is None:
             logger = ElemLogger(self, simplified_class_name)
             self.registry[simplified_class_name] = logger
+        if 0: self.dump_registered_loggers(self.registry)
         return logger
 
 
@@ -96,6 +91,14 @@ class ElemLogControl:
             print(f"ElemLogControl@95: Error writing to file '{fname}': {repr(ex)}")
             print(f"ElemLogControl@56: Error writing to file '{fname}': {str(ex)}")
 
+    def dump_registered_loggers(self, registry):
+        m = "Classes registered in ElemLogControl:"
+        prt(m)
+        self.log_one_line(m)
+        for k,v in self.registry.items():
+            m = f"  {k}  {v}"
+            prt(m)
+            self.log_one_line(m)
 
 
 def extract_simplified_classname(obj_instance):
@@ -110,6 +113,8 @@ def extract_simplified_classname(obj_instance):
     prt(f"ElemLogControl@76  {parts=}")
 
     simplified_class_name = parts[0]
+    simplified_class_name = simplified_class_name.replace("<", "")
+    simplified_class_name = simplified_class_name.replace(">", "")
     return simplified_class_name
 
 ###

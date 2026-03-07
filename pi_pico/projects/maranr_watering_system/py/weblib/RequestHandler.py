@@ -62,7 +62,7 @@ class RequestHandler(ElemLoggerABC):
             reply = self._handle_get_request(parsed_http)
             do_gc("RH@70.after-handle-get-req")
             if reply:
-                print(f"RH@43 {str(reply)=}")
+                ###print(f"RH@43 {str(reply)=}")
                 return reply
 
         print(f"RH@46  @@@@@@@ RequestHandler @ 34 CANNOT HANDLE REQ {parsed_http=}")
@@ -159,8 +159,9 @@ class RequestHandler(ElemLoggerABC):
 
         reply = rb.build_textual_file_reply(content_type, file_content)
 
-        print(f"RH@140 RequestHandler._handle_file_request REPLY is ...")
-        print(f"RH@141: {reply}")
+        ###print(f"RH@140 RequestHandler._handle_textual_file_request REPLY is ...")
+        ###print(f"RH@141: {reply}")
+        ###logi(f"RH@163 text-file-REPLY: {reply}")
         return reply
 
 

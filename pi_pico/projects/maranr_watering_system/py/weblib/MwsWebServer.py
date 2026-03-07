@@ -95,11 +95,12 @@ class MwsWebServer(ElemLoggerABC):
                         log(mesg)
                         break
                     m1 = f"MWS@78 HTTP-REPY is {str(httpReply)} "
-                    m2 = f"MWS@79 ... reply header... ----------------------------"
+                    m2 = f"MWS@79 ... reply header... --------------------"
                     m3 = f"{httpReply.get_header()}"
-                    m4 = f"MWS@85  ------------------ end of REPLY HEADER   {len(httpReply.get_header())}  -------------------"
-                    print(m1); print(m2); print(m3); print(m4)
-                    log(m1); log(m2); log(m3); log(m4)
+                    m4 = f"MWS@85  --- end of REPLY HEADER ---"  ###  {len(httpReply.get_header())}  -------------------"
+
+                    #print(m1); print(m2); print(m3); print(m4)
+                    logi(m1); logi(m2); logi(m3); logi(m4)
                     
                     writer.write(httpReply.get_header())
                     body = httpReply.get_body()
@@ -110,8 +111,7 @@ class MwsWebServer(ElemLoggerABC):
 
                     break
 
-            log(f"MWS@97 handle_new_client done with this client!")
-            log(f"MWS@98 handle_new_client done with this client!")
+            logi(f"MWS@97 handle_new_client done with this client!")
 
         except Exception as ex:
             print("$*$"*35);print("$*$"*35);print("$*$"*35);print("$*$"*35);

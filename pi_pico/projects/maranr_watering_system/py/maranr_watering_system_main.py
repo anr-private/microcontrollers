@@ -51,7 +51,6 @@ class MaranrWateringSystem(ElemLoggerABC):
         global log, logrt, logi
         print(f"MAIN@52 _set_logger: {repr(logger)}")
         print(f"MAIN@53 _set_logger: {str(logger)}")
-        ###raise RuntimeError(f"MAIN@53 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ RUNT in set logger _____________________:")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -113,7 +112,7 @@ class MaranrWateringSystem(ElemLoggerABC):
         num_retries = 0
         while num_retries < MAX_RETRIES:
             ok = mws_wifi.wifi_set_time_from_ntp(wlan)
-            print(f"@@@@@@@@@ MAIN@130  set time returnned {ok=}")
+            ###print(f"MAIN@130  set time returnned {ok=}")
             if ok:
                 m = "MWSMAIN@132  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
                 logi(m)

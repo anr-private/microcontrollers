@@ -4,7 +4,7 @@ import sys
 
 from .ElemLogControl import ElemLogControl
 
-PRT=True
+PRT=False
 def prt(s):
     if PRT: print (s)
 

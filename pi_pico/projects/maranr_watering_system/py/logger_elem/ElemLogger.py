@@ -6,7 +6,7 @@ import os
 import sys
 
 
-PRT=True
+PRT=False
 def prt(s):
     if PRT: print (s)
 
@@ -16,7 +16,7 @@ class ElemLogger:
 
     def __init__(self, log_control, simplified_class_name):
         self.class_name = simplified_class_name
-        self._log_enabled = True
+        self._log_enabled = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self._log_control = None # see below
         prt(f"ElemLogger@14 init {self.class_name=}")
         self._log_control = log_control
@@ -30,7 +30,7 @@ class ElemLogger:
         if self._log_enabled:
             #print(f"ElemLogger@19.log '{mesg=}' ")
             print(f"LOG: {mesg}")
-        self._log_control.log_one_line(mesg)
+            self._log_control.log_one_line(mesg)
     def logrt(self, mesg):
         ###print(f"ElemLogger@22.logrt '{mesg=}' ")
         print(f"LOGRT: {mesg}")
