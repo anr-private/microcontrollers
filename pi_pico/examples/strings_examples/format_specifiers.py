@@ -37,12 +37,10 @@ Alternate Form: The # specifier adds the appropriate prefix for
   binary (0b), octal (0o), or hexadecimal (0x) output. 
 """
 
-def basic_examples():
+def basic_int_examples():
     print(f"\n=== BASIC EXAMPLES  =================================")
     ii = 123
     jj = -531
-    ff = 135.79
-    ss = "A STRING!"
     
     print(f" width 10 default just: '{ii:10}'    {{ii:10}} ")
     print(f" width 10 left justif:  '{ii:<10}'   {{ii:<10}} ")
@@ -68,12 +66,10 @@ def basic_examples():
     print(f" width 10 right-justif: '{jj:=10}'   {{jj:=10}} ")
     print(f" width 10 right-justif: '{jj:-=10}'  {{jj:-=10}}   NOTE obscures the '-' of the value")
     
-def variable_spec_examples():
+def int_variable_spec_examples():
     print(f"\n=== VARIABLE SPEC EXAMPLES  =================================")
     ii = 123
     jj = -531
-    ff = 135.79
-    ss = "A STRING!"
     
     spec = "^10"
     print(f" width 10 centered:     '{jj:{spec}}'   {{jj:{{spec}}  spec='{spec}'   ")
@@ -92,8 +88,8 @@ def variable_spec_examples():
     
     
 def main():
-    basic_examples()
-    variable_spec_examples()
+    basic_int_examples()
+    int_variable_spec_examples()
     
 if  __name__ == "__main__":
     main()
