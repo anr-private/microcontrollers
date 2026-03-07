@@ -2,16 +2,23 @@
 # 
 # Control and registrar for ElemLogger
 
+import os
+import sys
+
+from utils import MWS_CONFIG
+
 from .ElemLogger import ElemLogger
 
 VALIDATE = 13524690
 
-PRT=True
+PRT=False
 def prt(s):
     if PRT: print (s)
 
 
 class ElemLogControl:
+    # central control for logging
+    # Handles the log file(s) - the only class that does so
 
     _instance = None
 
@@ -36,6 +43,11 @@ class ElemLogControl:
         if validate != VALIDATE:
             m = f"ElemLogControl@34 CALLED CTOR use get_instance()"
             raise RuntimeError(m)
+        self._log_file_path = "mws_log.txt"
+        config_fpath = MWS_CONFIG.get("log_file_path")
+        if config_fpath:
+            self._log_file_path = config_fpath
+        print(f"ElemLogControl@47  log_file_path='{self._log_file_path}' ")
 
 
     def register_user_class(self, obj_instance):
@@ -57,21 +69,32 @@ class ElemLogControl:
         logger = self.registry.get(simplified_class_name)
         prt(f"ElemLogControl@55  logger of {simplified_class_name} is {logger}")
         if logger is None:
-            logger = ElemLogger(simplified_class_name)
+            logger = ElemLogger(self, simplified_class_name)
             self.registry[simplified_class_name] = logger
         return logger
 
 
-    def junkkk(self, obj_instance):#@@@@@@@@@@@@@@@@@@
-        instances_of_cls = self._classes_to_instances.get(cls_obj)
-        if not instances_of_cls:
-            instances_of_cls = [obj_instance]
-            self._classes_to_instances[cls_obj] = instances_of_cls
-        else:
-            instances_of_cls.append(obj_instance)
-        prt(f"ElemLogControl@62  number of registered classes:  {len(self._classes_to_instances)}")
-        return self._log, self._logrt, self._logi
+    def remove_old_log_file(self):
+        # remove old log if any
+        fpath = self._log_file_path
+        try:
+            os.remove(fpath)
+            print(f"Old log file '{fpath}' deleted.")
+        except OSError as ex:
+            print(f"ElemLogControl@81 FAILED to delete log '{fpath}': {repr(ex)}")
+            print(f"ElemLogControl@82 ex='{str(ex)}' ")
 
+    def log_one_line(self, line):
+        # write to file
+        if line is None: line = ""
+        fname = self._log_file_path
+        try:
+            with open(fname, "a") as f:
+                f.write(line)
+                f.write("\n")
+        except Exception as ex:
+            print(f"ElemLogControl@95: Error writing to file '{fname}': {repr(ex)}")
+            print(f"ElemLogControl@56: Error writing to file '{fname}': {str(ex)}")
 
 
 

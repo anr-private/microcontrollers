@@ -15,7 +15,7 @@ try:
 except Exception:
     import time                 #Py3 unit tests
 
-from logger_elem.ElemLoggerABC import ElemLoggerABC
+from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
@@ -116,7 +116,6 @@ class MaranrWateringSystem(ElemLoggerABC):
             print(f"@@@@@@@@@ MAIN@130  set time returnned {ok=}")
             if ok:
                 m = "MWSMAIN@132  SUCCESSFULLY UPDATED SYSTEM TIME from NTP"
-                log(m)
                 logi(m)
                 break
             num_retries += 1
@@ -125,10 +124,8 @@ class MaranrWateringSystem(ElemLoggerABC):
     
         date_stg, time_stg = get_formatted_local_time()
         m = f"MWSMAIN@141 MAIN  CONNECTED TO WIFI.  local date,time: {date_stg}  {time_stg} "
-        log(m)
         logi(m)
         m = f"MWSMAIN@144 MAIN  CONNECTED TO WIFI.  {ip_addr=}  wlan={wlan}"
-        log(m)
         logi(m)
     
         # You will likely need to replace '0.0.0.0' with your device's actual IP address
@@ -144,13 +141,13 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         #@@@@@_log_start()
 
-        logi("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
+        logi("--- MWS --- BEGIN run_mws()  =======================")
 
-        print(f"MAIN@163 FS: {get_fs_space_string()}")
-        print(f"MAIN@164 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
-        print(f"MAIN@165  +++++ DO GC COLLECT   ++++++++++++++++++")
+        print(f"MAIN@149 FS: {get_fs_space_string()}")
+        print(f"MAIN@150 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+        print(f"MAIN@151  +++++ DO GC COLLECT   ++++++++++++++++++")
         gc.collect()
-        print(f"MAIN@167 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+        print(f"MAIN@153 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
         host,port = self.connect_to_wifi()
 
@@ -159,7 +156,7 @@ class MaranrWateringSystem(ElemLoggerABC):
             asyncio.run(self.main_task(host, port))
         except KeyboardInterrupt:
             date_stg, time_stg = get_formatted_local_time()
-            m = f"MWSMAIN@176 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+            m = f"MWSMAIN@162 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             log(m)
             logi(m)
         finally:
@@ -167,19 +164,22 @@ class MaranrWateringSystem(ElemLoggerABC):
             asyncio.new_event_loop()
 
 
-#@@@@@@@@@@@@@@@ REMOVE - move to logging
-#def _log_start():
-#    try:
-#        os.remove(LOG_FNAME)
-#    except Exception as ex:
-#        print(f"log_start no log file exists {LOG_FNAME=}")
+def main():
+    
+    print("MAIN: MARANR Watering System starting...")
+    
+    log_control = ElemLogControl.get_instance()
+    log_control.remove_old_log_file()
+
+    log_control.log_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
 
-
-
-if __name__ == '__main__':
     mws = MaranrWateringSystem()
     mws.run_mws()
+    
 
+if __name__ == '__main__':
+    main()
+    
 ### end ###
 

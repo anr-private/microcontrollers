@@ -21,6 +21,7 @@ except Exception as ex:
 MWS_CONFIG = {
     "lcd1602_sda_pin": 2,
     "lcd1602_scl_pin": 3,
+    "log_file_path":  "mws_log.txt",
     }
 
 ###@@@@@LOG_FNAME = "mws_log.txt"
