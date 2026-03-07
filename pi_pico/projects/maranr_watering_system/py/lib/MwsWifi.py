@@ -55,26 +55,26 @@ class MwsWifi(ElemLoggerABC):
         Return a wlan obj if successful else exception.
         """
         
-        logi(f"MwsWifi@29 CONNECT_TO_WIFI  ++++++++++++++++++++++++++++++")
+        logi(f"MwsWifi@58 CONNECT_TO_WIFI  ++++++++++++++++++++++++++++++")
         
         # Connect to WLAN
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
     
-        logi(f"MwsWifi@35   Connect to wifi: ssid='{ssid}'")
+        logi(f"MwsWifi@64   Connect to wifi: ssid='{ssid}'")
         wlan.connect(ssid, password)
     
         max_wait = 30 # Timeout in seconds
         num_tries = 0
         while num_tries < max_wait:
             wlan_status = wlan.status()
-            logi(f"MwsWifi@42 waiting...  wlan_status={wlan_status}")
+            logi(f"MwsWifi@71 waiting...  wlan_status={wlan_status}")
             if wlan_status < 0 or wlan_status >= 3:
                 break
             num_tries += 1
-            logi(f"MwsWifi@46 Waiting for connection...   num_tries={num_tries}  max={max_wait}")
+            logi(f"MwsWifi@75 Waiting for connection...   num_tries={num_tries}  max={max_wait}")
             utime.sleep(1)
-        logi(f"MwsWifi@48 wlan.status() = {wlan.status()}")
+        logi(f"MwsWifi@77 wlan.status() = {wlan.status()}")
         
         if wlan.status() != 3:
             wlan.disconnect() # ignored if not connected
@@ -96,7 +96,7 @@ class MwsWifi(ElemLoggerABC):
         try:
             ntptime.settime()
         except Exception as ex:
-            m = f"MwsWifi@70 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
+            m = f"MwsWifi@99 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
             logi(m)
             return False
     
@@ -106,11 +106,11 @@ class MwsWifi(ElemLoggerABC):
         # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
         # (year, month, mday, hour, minute, second, weekday, yearday)
         # weekday is 0=Sun, etc
-        logi(f"MwsWifi@81 TIME FROM NTP: {current_time} ") # as tuple
+        logi(f"MwsWifi@109 TIME FROM NTP: {current_time} ") # as tuple
         year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-        logi(f"MwsWifi@83 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
+        logi(f"MwsWifi@111 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
         weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"MwsWifi@85   {weekday_stg=}")
+        logi(f"MwsWifi@113   {weekday_stg=}")
     
         return True
 

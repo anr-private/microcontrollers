@@ -2,7 +2,7 @@
 #
 # Global data board
 
-from trivlog.TrivlogABC import TrivlogABC
+from logger_elem.ElemLoggerABC import ElemLoggerABC
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -10,19 +10,17 @@ logrt = None
 logi = None
 
 
-class DataBoard(TrivlogABC):
+class DataBoard(ElemLoggerABC):
     def __init__(self):
         super().__init__()
 
 
-    def _get_log_functions(self): 
-        return (log, logrt, logi)
-    def _set_log_functions(self, log_arg, logrt_arg, logi_arg):
+    def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"TrivlogExample@30.set_log_functions  {log_arg=}  {log_arg=}  {log_arg=}")
-        log = log_arg
-        logrt = logrt_arg
-        logi = logi_arg
+        #print(f"DataBoard@20 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 
 
