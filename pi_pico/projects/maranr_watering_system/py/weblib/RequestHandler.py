@@ -65,7 +65,7 @@ class RequestHandler(ElemLoggerABC):
                 ###print(f"RH@65 {str(reply)=}")
                 return reply
 
-        m = f"RH@68 RequestHandler @ 34 NOT IMPL YET: REQ {parsed_http=}")
+        m = f"RH@68 RequestHandler @ 34 NOT IMPL YET: REQ {parsed_http=}"
         #print(m)
         log(m)
         return None #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
