@@ -62,7 +62,7 @@ class ReplyBuilder(ElemLoggerABC):
 
         reply = self._build_reply()
 
-        log(f"RB@48 build_textual_file_reply: {str(reply)}")
+        log(f"RB@65 build_textual_file_reply: {str(reply)}")
         return reply
 
 
@@ -76,7 +76,7 @@ class ReplyBuilder(ElemLoggerABC):
 
         reply = self._build_reply()
 
-        log(f"RB@62.build_binary_file_reply: {str(reply)}")
+        log(f"RB@79.build_binary_file_reply: {str(reply)}")
         return reply
 
 
@@ -87,16 +87,16 @@ class ReplyBuilder(ElemLoggerABC):
         valsdict = {"RESOURCE" : resource_not_found}
         fmt_lines = []
         for line in NOT_FOUND_HTML_LINES:
-            log(f"RB@73  {line=}  {valsdict=}")
+            log(f"RB@90  {line=}  {valsdict=}")
             fmt_line = line.format(**valsdict)
-            log(f"RB@75  {fmt_line=}  {valsdict=}")
+            log(f"RB@92  {fmt_line=}  {valsdict=}")
             fmt_lines.append(fmt_line)
         body_lines = add_eol_to_lines(fmt_lines)
         self.body = "".join(body_lines)
 
         reply = self._build_reply()
 
-        log(f"RB@82.build_reply_404: {str(reply)}")
+        log(f"RB@99.build_reply_404: {str(reply)}")
         return reply
 
     def _build_reply(self):
@@ -113,7 +113,7 @@ class ReplyBuilder(ElemLoggerABC):
         lines = add_eol_to_lines(lines)
         header_stg = "".join(lines)
         #for line in lines:
-        #    PRINT(f"RB@99 {show_cc(line)}")
+        #    PRINT(f"RB@116 {show_cc(line)}")
 
         reply = HttpReply()
         reply.set_reply(header_stg, self.body)
