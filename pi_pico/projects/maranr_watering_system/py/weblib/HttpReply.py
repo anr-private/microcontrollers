@@ -28,7 +28,8 @@ class HttpReply(ElemLoggerABC):
     def set_reply(self, header, body):
 
         # header should be a str and should end with \r\n\r\n
-        if type(header) is not str:
+        ###@@@@@@@if typ e(header) is not str:
+        if not isinstance(header, str):
             raise RuntimeError(f"HttpReply.set_reply header is not str: {type(header)}")
         # header should have at least "HTTP/1.0 200 OK\r\n\r\n"
         if len(header) < 10:
@@ -55,12 +56,12 @@ class HttpReply(ElemLoggerABC):
 
         if self._body is None:
             body_len_stg = "None"
-        elif type(self._body) is str:
+        elif isinstance(self._body, str):
             body_len_stg = f"{len(self._body)}-chars"
-        elif type(self._body) is bytes:
+        elif isinstance(self._body, bytes):
             body_len_stg = f"{len(self._body)}-bytes"         
         else:
-            body_len_stg = f"{type(self._body)} unknown length"
+            body_len_stg = f"{type(self._body)}-unknown-len"
         #except Exception as ex:
         #    return "HttpReply ctor not finished, cannot use str() ex={repr(ex)}  {str(ex)}"
         s = []
