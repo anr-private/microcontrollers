@@ -190,69 +190,9 @@ class RequestHandler(ElemLoggerABC):
 
         reply = rb.build_textual_file_reply(content_type, file_content)
 
-        print(f"RH@170 RequestHandler._handle_file_request REPLY is ...")
-        print(f"RH@171: {reply}")
+        #print(f"RH@170 RequestHandler._handle_file_request REPLY is ...")
+        #print(f"RH@171: {reply}")
         return reply
-
-
-    def OLD__read_the_page_file(self, file_path):
-        if not file_path:
-            file_path = "/"
-        if file_path[0] != '/':
-            file_path = "/" + file_path
-
-        file_content = self.read_a_text_file(file_path)
-
-        if file_content is None:
-            log(f"RH@184 did not find file {file_path=}; adding the pages dir")
-            sep = ""
-            if file_path[0] != "/":
-                # add / between /pages and filepath
-                sep = "/"            
-            new_file_path = "/" + self.default_subdir + sep + file_path
-            file_path = new_file_path
-            log(f"RH@191 2nd try filename: {file_path}")
-            file_content = self.read_a_text_file(file_path)
-        return file_content
-
-
-    def OLD__read_a_text_file(self, file_path):
-        log(f"RH@197  read_a_text_file  {file_path=}")
-
-        try:
-            # Open the file in read mode ('r' is the default)
-            with open(file_path, 'r') as file:
-                # Read the entire content of the file
-                log(f"RH@203 Opened text file '{file_path}' ")
-                content = file.read()
-                log(f"RH@205  text-file='{file_path}' len={show_len(content)}")
-                return content
-    
-        except OSError as ex:
-            print(f"RH@209 Error reading text file '{file_path}'  exc={ex}")
-        except Exception as ex:
-            print(f"RH@211 Error reading text file '{file_path}'  exc={repr(ex)}  exc='{ex}'")
-        return None
-
-
-    def OLD__read_a_binary_file(self, file_path):
-        log(f"RH@216  read_a_binary_file  {file_path=}")
-
-        try:
-            # Open the file in read mode ('r' is the default)
-            with open(file_path, 'rb') as file:
-                # Read the entire content of the file
-                log(f"RH@222 Opened binary file '{file_path}' ")
-                content = file.read()
-                log(f"RH@224  binary-file='{file_path}' len={show_len(content)}")
-                return content
-    
-        except OSError as ex:
-            print(f"RH@228 Error reading binary file '{file_path}'  exc={ex}")
-        except Exception as ex:
-            print(f"RH@230 Error reading binary file '{file_path}'  exc={repr(ex)}  exc='{ex}'")
-        return None
-
 
 
     def _guess_file_content_type(self, file_path):
