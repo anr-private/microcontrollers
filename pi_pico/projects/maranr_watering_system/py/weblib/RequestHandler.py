@@ -46,42 +46,44 @@ class RequestHandler(ElemLoggerABC):
         httpParser = HttpParser()
 
         parsed_http = httpParser.parse_header_data(header)
-        do_gc("RH@49.after-parser-header")
+        ###do_gc("RH@49.after-parser-header")
         if parsed_http is None:
             print(f"RH@30 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error
             
-        m1 = f"RHS@23 CLIENT REQUEST {httpParser.latest_error()=}"
-        m2 = f"RHS@24 {parsed_http.long_string()}"
-        print(m1)
-        print(m2)
+        m1 = f"RH@23 CLIENT REQUEST   parseError: {httpParser.latest_error()}"
+        m2 = f"RH@24 {parsed_http.long_string()}"
+        #print(m1)
+        #print(m2)
         log(m1)
         log(m2)
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)
-            do_gc("RH@70.after-handle-get-req")
+            ###do_gc("RH@70.after-handle-get-req")
             if reply:
                 ###print(f"RH@43 {str(reply)=}")
                 return reply
 
-        print(f"RH@46  @@@@@@@ RequestHandler @ 34 CANNOT HANDLE REQ {parsed_http=}")
+        m = f"RH@46 RequestHandler @ 34 NOT IMPL YET: REQ {parsed_http=}")
+        #print(m)
+        log(m)
         return None #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             
 
     def _handle_get_request(self, parsed_http):
         req_url = parsed_http.request_url
 
-        if req_url == "/data":#@@@@@@@@@@@@@@@@@@
+        if req_url == "/data":#@@@@@@@@@@@@@@@@@@ data req not impl yet @@@@@@@@@@@@@@@
             pass
         else:
             reply = self._handle_file_request(parsed_http)
             if reply:
                 return reply
-        print(f"RH@59  @@@@@@@@ RequestHandler @ 56 SENDING 404 -- CANNOT HANDLE GET-REQ {parsed_http=}")
+        logi(f"RH@59  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http=}")
         rb = ReplyBuilder()
         reply = rb.build_reply_404(req_url)
-        log(f"RH@62 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        #log(f"RH@62 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
             
 
