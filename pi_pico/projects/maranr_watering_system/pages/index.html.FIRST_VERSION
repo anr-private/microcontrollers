@@ -42,7 +42,6 @@
             <h2>
               <span class="major">MARANR</span>
               <span class="minor">&nbsp; &nbsp;Watering System</span>
-              <span class="minor">&nbsp; &nbsp;[[date-time]]</span>
             </h2>
         </div>
     </div>
@@ -58,9 +57,5 @@
       &nbsp; &nbsp; 
       <a href="squares_red.html">Red Squares</a>
     </p>
-    <p>[[memory-status]] </p>
-    <p>[[filesystem-status-splitline]]</p>
-
 </body>
 </html>
-<!-- :mode=html: -->

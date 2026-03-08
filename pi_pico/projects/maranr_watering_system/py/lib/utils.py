@@ -80,16 +80,16 @@ def show_len(item):
     except Exception as ex:
         return f"ITEM-HAS-NO-LEN {item=} {ex=}"
 
-def extract_simplified_classname(class_stg):
-    # given a full class name string like "abc.def.MyClass"; return "MyClass"
-    # Obtain the string using  str(obj.__class__)
-    #print(f"   {class_stg=}")
-    parts = class_stg.rsplit(".", 1)
-    #print(f"  {parts=}")
-    base_name = parts[-1]
-    base_name = base_name.replace(">", "")
-    base_name = base_name.replace("'", "")
-    return base_name
+#def extract_simplified_classname(class_stg):
+#    # given a full class name string like "abc.def.MyClass"; return "MyClass"
+#    # Obtain the string using  str(obj.__class__)
+#    #print(f"   {class_stg=}")
+#    parts = class_stg.rsplit(".", 1)
+#    #print(f"  {parts=}")
+#    base_name = parts[-1]
+#    base_name = base_name.replace(">", "")
+#    base_name = base_name.replace("'", "")
+#    return base_name
 
 
 def get_memory_status_string(do_garbage_collect=False):
@@ -126,13 +126,12 @@ def convert_fs_space_to_string(fs_space):
     space_stg = f"{fs_space:,} bytes, {fs_space / KB:,.2f} KB, {fs_space / MB:.2f} MB"
     return space_stg
 
-def get_fs_space_string():
+def get_fs_space_string(sep=""):
     # 
     ts, fs = get_flash_space()
     tss = convert_fs_space_to_string(ts)
     fss = convert_fs_space_to_string(fs)
-    
-    return f"TOTAL SPACE {tss}   FREE SPACE {fss}"
+    return f"TOTAL SPACE {tss}   {sep}FREE SPACE {fss}"
 
 
 def get_local_time():  # for our TZ
@@ -142,13 +141,17 @@ def get_local_time():  # for our TZ
     local_time = time.localtime(time.time() - (6 * 3600))
     return local_time
 
+def get_formatted_date_time_string():
+    date_stg,time_stg = get_formatted_local_time()
+    return f"{date_stg} {time_stg}"
+
 def get_formatted_local_time():
     now = get_local_time()
     # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
     ###date_str = "Date: {}-{}-{}".format(now[0], now[1], now[2])
     ###time_str = "Time: {}:{}:{}".format(now[3], now[4], now[5])
     date_str = "{}-{}-{}".format(now[0], now[1], now[2])
-    time_str = "{}:{}:{}".format(now[3], now[4], now[5])
+    time_str = "{:02d}:{:02d}:{:02d}".format(now[3], now[4], now[5])
     return (date_str, time_str)
 
 def determine_py_platform():

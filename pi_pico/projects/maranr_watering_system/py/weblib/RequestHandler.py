@@ -27,7 +27,7 @@ logi = None
 
 class RequestHandler(ElemLoggerABC):
     def __init__(self):
-        self.default_file = "/pages/index.html"
+        self.default_file = "/pages/index.htmlp"
         self.default_subdir = "pages"
         self._templateGrinder = TemplateGrinder()
         super().__init__()
@@ -45,6 +45,11 @@ class RequestHandler(ElemLoggerABC):
         # header is str containing the header lines """
         # returns a reply, suitable for sending back to the client
 
+        m = "RH@48 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^ do gc.collect() ^^^" 
+        print(m)
+        logi(m)
+        gc.collect()
+
         httpParser = HttpParser()
 
         parsed_http = httpParser.parse_header_data(header)
@@ -57,8 +62,8 @@ class RequestHandler(ElemLoggerABC):
         m2 = f"RH@55 {parsed_http.long_string()}"
         #print(m1)
         #print(m2)
-        log(m1)
-        log(m2)
+        logi(m1)
+        logi(m2)
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)
@@ -159,12 +164,14 @@ class RequestHandler(ElemLoggerABC):
         log(f"RH@157  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
-            print("RH@166@@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING NEEDEE @@@@@@@@@@@@@@@@@@@@@@@@")
+            ###print("RH@166@@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING NEEDEE @@@@@@@@@@@@@@@@@@@@@@@@")
             updated_file_contents = self._templateGrinder.grind_file_contents(file_contents)
             if updated_file_contents is not None:
                 file_contents = updated_file_contents
-                print(f"RH@166  @@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING replace file contents @@@@@@@@@@@@@@@@@@@@@@@@")
-                print(f"RH@167  new contents type is {type(file_contents)}")
+                del updated_file_contents
+                gc.collect()  #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                ###print(f"RH@166  @@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING replace file contents @@@@@@@@@@@@@@@@@@@@@@@@")
+                ###print(f"RH@167  new contents type is {type(file_contents)}")
 
         # Build a reply that provides the file
         rb = ReplyBuilder()

@@ -3,6 +3,10 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
+from utils import get_memory_status_string
+from utils import get_fs_space_string
+from utils import get_formatted_date_time_string
+
 #PRT=True
 #def prt(s):
 #    if PRT: print (s)
@@ -30,13 +34,19 @@ class TemplateGrinder(ElemLoggerABC):
         logi = logger.logi
 
     def fetch_value_for_symbol(self, symbol_stg):
-        return "THE-VALUE-FOR-"+symbol_stg
+        if symbol_stg.lower() == "filesystem-status-splitline":
+            return get_fs_space_string(sep="<br>")
+        if symbol_stg.lower() == "memory-status":
+            return get_memory_status_string()
+        if symbol_stg.lower() == "date-time":
+            return get_formatted_date_time_string()
+        return f"Unknown-symbol:'{symbol_stg}'"
 
     def _split_the_file_contents(self, file_contents):
         lines = file_contents.split("\n")
-        print(f"TGND@36 @@@@@@@@@@ _split_the_file_contents  {len(lines)=}")
-        print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines)=}")
-        print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines[0])=}")
+        #print(f"TGND@36 @@@@@@@@@@ _split_the_file_contents  {len(lines)=}")
+        #print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines)=}")
+        #print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines[0])=}")
         return lines
 
     def process_the_lines(self, lines):
@@ -45,7 +55,7 @@ class TemplateGrinder(ElemLoggerABC):
 
         for lno, line in enumerate(lines):
 
-            if 0: print(f"@@@@ {lno} {line}")
+            #if 0: print(f"@@@@ {lno} {line}")
 
             processed_line = self.process_one_line(lno, line)
 
@@ -70,10 +80,10 @@ class TemplateGrinder(ElemLoggerABC):
         if start_pos < 0:
             return None
 
-        print(f"@57  {start_pos=}")
+        #print(f"@57  {start_pos=}")
 
         end_pos = processed_line.find(END_MARKER, start_pos + len(START_MARKER))
-        print(f"@59  {end_pos=}")
+        #print(f"@59  {end_pos=}")
         if end_pos <= start_pos:
             return None
 
@@ -81,20 +91,19 @@ class TemplateGrinder(ElemLoggerABC):
         headb = processed_line[:start_pos]
         tailb = processed_line[end_pos + len(END_MARKER):]
 
-        print(f"@@65  {len(symbol)=}  {symbol=} ")
+        #print(f"@@65  {len(symbol)=}  {symbol=} ")
         if len(symbol) <= 0:
             processed_line = "".join([headb, tailb])
-            print(f"@@81 EMPTY SYMBOL:  {processed_line=}")
+            #print(f"@@81 EMPTY SYMBOL:  {processed_line=}")
             return processed_line
 
-        print(f"@@61 found line {lno}. {processed_line}")
-        print(f"@@64 {len(headb)=}  {headb=}    {len(tailb)=} {tailb=}")
-        #lhead = 
+        #print(f"@@61 found line {lno}. {processed_line}")
+        #print(f"@@64 {len(headb)=}  {headb=}    {len(tailb)=} {tailb=}")
 
         value = self.fetch_value_for_symbol(symbol)
 
         processed_line = "".join([headb, value, tailb])
-        print(f"@@84  {processed_line=}")
+        #print(f"@@84  {processed_line=}")
         return processed_line
 
 
@@ -107,6 +116,7 @@ class TemplateGrinder(ElemLoggerABC):
             file_contents = raw_file_contents.decode("utf-8")
         else:
             logi("RH@109 @@@@@@@@@@@@@@@@@@ UNEXPECTED FILE CONTENTS TYPE={type(raw_file_contents)}")
+            return file_contents
 
         raw_lines = self._split_the_file_contents(file_contents)
 

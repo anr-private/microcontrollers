@@ -57,7 +57,7 @@ class MwsWebServer(ElemLoggerABC):
 
     async def handle_new_client(self, reader, writer):
         m = f"MWS@59 handle_new_client  {reader=} {writer=}  "
-        print();print(m); log(m)
+        print(); logi(m)
         
         hdrAccum = HdrAccum()
         line_num = 0
@@ -137,7 +137,10 @@ class MwsWebServer(ElemLoggerABC):
         reqHandler = RequestHandler()
         httpReply = reqHandler.handle_client_request(header)
 
-        log(f"MWS@138 httpReply: {str(httpReply)}")
+        m = f"MWS@138 httpReply: {str(httpReply)}"
+        print(m)
+        logi(m)
+
         return httpReply
 
         
