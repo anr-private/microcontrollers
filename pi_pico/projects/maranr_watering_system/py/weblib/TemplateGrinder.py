@@ -12,8 +12,8 @@ log = None
 logrt = None
 logi = None
 
-START_MARKER = b"[["
-END_MARKER = b"]]"
+START_MARKER = "[["
+END_MARKER = "]]"
 
 
 class TemplateGrinder(ElemLoggerABC):
@@ -47,17 +47,16 @@ class TemplateGrinder(ElemLoggerABC):
 
             if 0: print(f"@@@@ {lno} {line}")
 
-            processed_line_bytes = self.process_one_line(lno, line)
+            processed_line = self.process_one_line(lno, line)
 
-            processed_lines.append(processed_line_bytes)
+            processed_lines.append(processed_line)
 
         return processed_lines
 
 
-    def process_one_line(self, lno, line_bytes):
+    def process_one_line(self, lno, raw_line):
 
-        processed_line = line_bytes
-
+        processed_line = raw_line
         while 1:
             updated = self.substitute_into_line(lno, processed_line)
             if updated is None:
@@ -66,53 +65,57 @@ class TemplateGrinder(ElemLoggerABC):
         return processed_line
 
 
-    def substitute_into_line(self, lno, line_bytes):
-        start_pos = line_bytes.find(START_MARKER, 0)
+    def substitute_into_line(self, lno, processed_line):
+        start_pos = processed_line.find(START_MARKER, 0)
         if start_pos < 0:
             return None
 
         print(f"@57  {start_pos=}")
 
-        end_pos = line_bytes.find(END_MARKER, start_pos + len(START_MARKER))
+        end_pos = processed_line.find(END_MARKER, start_pos + len(START_MARKER))
         print(f"@59  {end_pos=}")
         if end_pos <= start_pos:
             return None
 
-        symbol_bytes = line_bytes[start_pos + len(START_MARKER):end_pos]
-        headb = line_bytes[:start_pos]
-        tailb = line_bytes[end_pos + len(END_MARKER):]
+        symbol = processed_line[start_pos + len(START_MARKER):end_pos]
+        headb = processed_line[:start_pos]
+        tailb = processed_line[end_pos + len(END_MARKER):]
 
-        print(f"@@65  {len(symbol_bytes)=}  {symbol_bytes=} ")
-        if len(symbol_bytes) <= 0:
-            processed_line_bytes = b"".join([headb, tailb])
-            print(f"@@81 EMPTY SYMBOL:  {processed_line_bytes=}")
-            return processed_line_bytes
+        print(f"@@65  {len(symbol)=}  {symbol=} ")
+        if len(symbol) <= 0:
+            processed_line = "".join([headb, tailb])
+            print(f"@@81 EMPTY SYMBOL:  {processed_line=}")
+            return processed_line
 
-        print(f"@@61 found line {lno}. {line_bytes}")
+        print(f"@@61 found line {lno}. {processed_line}")
         print(f"@@64 {len(headb)=}  {headb=}    {len(tailb)=} {tailb=}")
         #lhead = 
 
-        symbol_stg = symbol_bytes.decode("utf-8")
+        value = self.fetch_value_for_symbol(symbol)
 
-        value_stg = self.fetch_value_for_symbol(symbol_stg)
-
-        value_bytes = value_stg.encode("utf-8")
-
-        processed_line_bytes = b"".join([headb, value_bytes, tailb])
-        print(f"@@84  {processed_line_bytes=}")
-        return processed_line_bytes
+        processed_line = "".join([headb, value, tailb])
+        print(f"@@84  {processed_line=}")
+        return processed_line
 
 
-    def grind_file_contents(self, file_contents):
+    def grind_file_contents(self, raw_file_contents):
         ###@@@@@@@@@@@@@@@
+
+        if isinstance(raw_file_contents, str):
+            file_contents = raw_file_contents
+        elif isinstance(raw_file_contents, bytes):
+            file_contents = raw_file_contents.decode("utf-8")
+        else:
+            logi("RH@109 @@@@@@@@@@@@@@@@@@ UNEXPECTED FILE CONTENTS TYPE={type(raw_file_contents)}")
 
         raw_lines = self._split_the_file_contents(file_contents)
 
         processed_lines = self.process_the_lines(raw_lines)
 
-        new_contents_bytes = b"\n".join(processed_lines)
+        ###new_contents_by tes = b"\n".join(processed_lines)
+        new_contents_stg = "\n".join(processed_lines)
 
-        new_contents_stg = new_contents_bytes.decode("utf-8")
+        #new_contents_stg = new_contents_by tes.decode("utf-8")
         return new_contents_stg
 
 
