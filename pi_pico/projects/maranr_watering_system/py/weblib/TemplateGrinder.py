@@ -1,39 +1,46 @@
-# process_htmlp_file.py
-#
-# Example of processing an HTML file that contains template markup
-# where [[xxx]] means 'substitute the value of xxx here'.
+# TemplateGrinder.py
 
-import os
-import sys
+
+from logger_elem.ElemLoggerABC import ElemLoggerABC
+
+#PRT=True
+#def prt(s):
+#    if PRT: print (s)
+
+
+log = None
+logrt = None
+logi = None
 
 START_MARKER = b"[["
 END_MARKER = b"]]"
 
 
-class HtmlFixer:
-
+class TemplateGrinder(ElemLoggerABC):
+    
     def __init__(self):
-        pass
+        #self.num = num
+        super().__init__()
+
+    def _set_logger(self, logger):
+        global log, logrt, logi
+        #print(f"TemplateGrinder@24 _set_logger  logger is {logger}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
     def fetch_value_for_symbol(self, symbol_stg):
-        return "ITS-VALUE"
+        return "THE-VALUE-FOR-"+symbol_stg
 
-    def read_the_file(self, fpath):
-        with open(fpath, "rb") as inf:
-            lines = inf.readlines()
-        print(f"@22 READ  {len(lines)}  lines from {fpath} ")
+    def _split_the_file_contents(self, file_contents):
+        lines = file_contents.split("\n")
+        print(f"TGND@36 @@@@@@@@@@ _split_the_file_contents  {len(lines)=}")
+        print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines)=}")
+        print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines[0])=}")
         return lines
 
-    def write_the_lines(self, out_fpath, processed_lines):
-        ctr = 0
-        with open(out_fpath, "wb") as outf:
-            for line in processed_lines:
-                outf.write(line)
-                ctr += 1
-        print(f"write_the_lines@31  Wrote {ctr} lines to {out_fpath}")
+    def process_the_lines(self, lines):
 
-
-    def process_the_lines(self, fpath, lines):
         processed_lines = list()
 
         for lno, line in enumerate(lines):
@@ -96,25 +103,24 @@ class HtmlFixer:
         return processed_line_bytes
 
 
-    def process_a_file(self, fpath):
-        lines = self.read_the_file(fpath)
+    def grind_file_contents(self, file_contents):
+        ###@@@@@@@@@@@@@@@
 
-        processed_lines = self.process_the_lines(fpath, lines)
+        raw_lines = self._split_the_file_contents(file_contents)
 
-        out_fpath = fpath + ".out"
-        self.write_the_lines(out_fpath, processed_lines)
+        processed_lines = self.process_the_lines(raw_lines)
+
+        new_contents_bytes = b"\n".join(processed_lines)
+
+        new_contents_stg = new_contents_bytes.decode("utf-8")
+        return new_contents_stg
 
 
-def main(args):
-    if len(args) > 0:
-        fpath = args[0]
-    else:
-        fpath = "one-line.htmlp"
+    def __str__(self):
+        s = []
+        #s.append("num=%s" % str(self.num))
+        return ("%s[%s]" % 
+            (self.__class__.__name__, ",".join(s)))
 
-    hf = HtmlFixer()
-    hf.process_a_file(fpath)
-   
-if  __name__ == "__main__":
-    main(sys.argv[1:])
-    
+
 ###

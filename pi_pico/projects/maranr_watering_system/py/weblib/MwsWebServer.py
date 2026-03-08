@@ -114,9 +114,11 @@ class MwsWebServer(ElemLoggerABC):
             logi(f"MWS@114 handle_new_client done with this client!")
 
         except Exception as ex:
-            print("$*$"*35);print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            log(f"MWS@118 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' ")
-            ###raise
+            print("MWS@117 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"MWS@118 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print(m)
+            logi(m)
+            raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         finally:
             log("MWS@121 handle_new_client Closing client writer connection")
             writer.close()

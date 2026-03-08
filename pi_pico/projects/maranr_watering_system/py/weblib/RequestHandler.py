@@ -12,6 +12,7 @@ from lib.FileUtils import FileUtils
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
+from .TemplateGrinder import TemplateGrinder
 
 # Content-Type values
 # application/x-www-form-urlencoded  - posting a FORM(?)
@@ -28,6 +29,7 @@ class RequestHandler(ElemLoggerABC):
     def __init__(self):
         self.default_file = "/pages/index.html"
         self.default_subdir = "pages"
+        self._templateGrinder = TemplateGrinder()
         super().__init__()
 
 
@@ -139,13 +141,13 @@ class RequestHandler(ElemLoggerABC):
 
     def _handle_textual_file_request(self, file_path, content_type):
 
-        #@@@@@@file_content = self.read_the_page_file(file_path)
+        #@@@@@@file_contents = self.read_the_page_file(file_path)
         # Read the file
         fu = FileUtils()
-        file_content = fu.obtain_input_file(file_path, read_contents=True, 
+        file_contents = fu.obtain_input_file(file_path, read_contents=True, 
                 prefix_dir=self.default_subdir, w="RH@146")
 
-        if file_content is None:
+        if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
@@ -154,12 +156,20 @@ class RequestHandler(ElemLoggerABC):
             ###print(f"RH@154  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
-        log(f"RH@157  {file_path=} {content_type=}  len={show_len(file_content)}")
+        log(f"RH@157  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
+        if file_path.lower().endswith(".htmlp"):
+            print("RH@166@@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING NEEDEE @@@@@@@@@@@@@@@@@@@@@@@@")
+            updated_file_contents = self._templateGrinder.grind_file_contents(file_contents)
+            if updated_file_contents is not None:
+                file_contents = updated_file_contents
+                print(f"RH@166  @@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING replace file contents @@@@@@@@@@@@@@@@@@@@@@@@")
+                print(f"RH@167  new contents type is {type(file_contents)}")
+
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
-        reply = rb.build_textual_file_reply(content_type, file_content)
+        reply = rb.build_textual_file_reply(content_type, file_contents)
 
         ###print(f"RH@164 RequestHandler._handle_textual_file_request REPLY is ...")
         ###print(f"RH@165: {reply}")
@@ -169,14 +179,14 @@ class RequestHandler(ElemLoggerABC):
 
     def _handle_binary_file_request(self, file_path, content_type):
 
-        #@@@@@@file_content = self.read_the_page_file(file_path)
+        #@@@@@@file_contents = self.read_the_page_file(file_path)
         # Read the file
         fu = FileUtils()
-        file_content = fu.obtain_input_file(file_path, 
+        file_contents = fu.obtain_input_file(file_path, 
                 binary=True, read_contents=True, 
                 prefix_dir=self.default_subdir, w="RH@177")
 
-        if file_content is None:
+        if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
@@ -185,12 +195,12 @@ class RequestHandler(ElemLoggerABC):
             ###print(f"RH@185  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
-        log(f"RH@188  {file_path=} {content_type=}  len={show_len(file_content)}")
+        log(f"RH@188  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
-        reply = rb.build_textual_file_reply(content_type, file_content)
+        reply = rb.build_textual_file_reply(content_type, file_contents)
 
         #print(f"RH@195 RequestHandler._handle_file_request REPLY is ...")
         #print(f"RH@196: {reply}")
@@ -206,7 +216,7 @@ class RequestHandler(ElemLoggerABC):
             return None
         ext = parts[1].lower()
         #log(f"RH@208 _guess_file_content_type {ext=} {file_path=} ")
-        if ext in ["html", "htm"]:
+        if ext in ["html", "htm", "htmlp"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
         elif ext in ["js",]:
