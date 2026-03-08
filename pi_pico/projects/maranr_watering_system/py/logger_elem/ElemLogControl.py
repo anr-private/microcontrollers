@@ -87,9 +87,12 @@ class ElemLogControl:
             with open(fname, "a") as f:
                 f.write(line)
                 f.write("\n")
+        except OSError as ex:
+            print(f"ELC@91  Error writingReading '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
+            print(f"ELC@92  ex.dir: {dir(ex)} ")
         except Exception as ex:
-            print(f"ELC@91: Error writing to file '{fname}': {repr(ex)}")
-            print(f"ELC@92: Error writing to file '{fname}': {str(ex)}")
+            print(f"ELC@93: Error writing to file '{fname}': {repr(ex)}")
+            print(f"ELC@94: Error writing to file '{fname}': {str(ex)}")
 
     def dump_registered_loggers(self, registry):
         m = "ELC@95  Classes registered in ElemLogControl:"
