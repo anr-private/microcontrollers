@@ -2,12 +2,14 @@
 #
 # UPLOAD_ALL.sh
 
-./UPLOAD_displays.sh
-./UPLOAD_lib.sh
-./UPLOAD_logger_elem.sh
-./UPLOAD_main.sh
-./UPLOAD_primitives.sh
-./UPLOAD_sensors.sh
-./UPLOAD_weblib.sh
+SCRIPTS_DIR='../scripts'
+
+${SCRIPTS_DIR}/UPLOAD_displays.sh
+${SCRIPTS_DIR}/UPLOAD_lib.sh
+${SCRIPTS_DIR}/UPLOAD_logger_elem.sh
+${SCRIPTS_DIR}/UPLOAD_main.sh
+${SCRIPTS_DIR}/UPLOAD_primitives.sh
+${SCRIPTS_DIR}/UPLOAD_sensors.sh
+${SCRIPTS_DIR}/UPLOAD_weblib.sh
 
 ###

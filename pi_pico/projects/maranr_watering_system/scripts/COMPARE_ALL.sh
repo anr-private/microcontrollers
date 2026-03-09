@@ -2,12 +2,14 @@
 #
 # COMPARE_ALL.sh
 
-./COMPARE_displays.sh
-./COMPARE_lib.sh
-./COMPARE_logger_elem.sh
-./COMPARE_primitives.sh
-./COMPARE_sensors.sh
-./COMPARE_weblib.sh
+SCRIPTS_DIR='../scripts'
+
+${SCRIPTS_DIR}/COMPARE_displays.sh
+${SCRIPTS_DIR}/COMPARE_lib.sh
+${SCRIPTS_DIR}/COMPARE_logger_elem.sh
+${SCRIPTS_DIR}/COMPARE_primitives.sh
+${SCRIPTS_DIR}/COMPARE_sensors.sh
+${SCRIPTS_DIR}/COMPARE_weblib.sh
 
 
 ###

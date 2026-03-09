@@ -4,6 +4,8 @@
 #
 # copy all files to the pico
 
+SCRIPTS_DIR='../scripts'
+
 rm -rf */__pycache__
 
 # USE  'REMOVE_ALL_from_pico.sh'
@@ -22,15 +24,14 @@ rm -rf */__pycache__
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
 
-    ./PUSH_displays_to_pico.sh
-    ./PUSH_lib_to_pico.sh
-    ./PUSH_logger_elem_to_pico.sh
-    ./PUSH_primitives_to_pico.sh
-    ./PUSH_sensors_to_pico.sh
-    ./PUSH_weblib_to_pico.sh
-
+    ${SCRIPTS_DIR}/PUSH_displays_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_lib_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_logger_elem_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_primitives_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_sensors_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_weblib_to_pico.sh
     echo 'Copy the MAIN program'
-    ./PUSH_sensors_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_sensors_to_pico.sh
 }
 
 list_pico_filesystem_contents() {
