@@ -76,6 +76,10 @@ class MaranrWateringSystem(ElemLoggerABC):
             sensors_done = sensors_task.done()
             displays_done = displays_task.done()
     
+#MAIN@96 FS: TOTAL SPACE 868,352 bytes, 848.00 KB, 0.83 MB   FREE SPACE 507,904 bytes, 496.00 KB, 0.48 MB
+#MAIN@97 MEMORY:  gc.mem_alloc()=90240   gc.mem_free()=115328
+#MAIN@99 MEMORY AFTER GC:  gc.mem_alloc()=64464   gc.mem_free()=141104
+
             log(f"  Who is done:  web={webserver_task.done()}  "+\
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
             print(f"MAIN@96 FS: {get_fs_space_string()}")
