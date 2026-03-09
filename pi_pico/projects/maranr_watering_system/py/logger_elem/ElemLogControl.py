@@ -80,19 +80,35 @@ class ElemLogControl:
             print(f"ELC@80 ex='{str(ex)}' ")
 
     def log_one_line(self, line):
+        need_to_remove = self._log_this_line(line)
+        if need_to_remove:
+            print(f"ELC@103 REMOVING the current log file: error occurred, maybe out of space?")
+            self.remove_old_log_file()
+        self._log_this_line("ELC@87 REMOVED THE PREVIOUS LOGFILE - logger got an error")
+
+    def _log_this_line(self, line):
         # write to file
         if line is None: line = ""
         fname = self._log_file_path
+        remove_the_logfile = False
         try:
             with open(fname, "a") as f:
                 f.write(line)
                 f.write("\n")
         except OSError as ex:
             print(f"ELC@91  Error writingReading '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
-            print(f"ELC@92  ex.dir: {dir(ex)} ")
+            #print(f"ELC@92  ex.dir: {dir(ex)} ")
+            # 28 is 'out of space'
+            print(f"ELC@95 {ex.errno=}")
+            print(f"ELC@96  TEMP FIX: REMOVE THE logfile ")
+            remove_the_logfile = True
         except Exception as ex:
             print(f"ELC@93: Error writing to file '{fname}': {repr(ex)}")
             print(f"ELC@94: Error writing to file '{fname}': {str(ex)}")
+            remove_the_logfile = True
+
+        return remove_the_logfile:
+
 
     def dump_registered_loggers(self, registry):
         m = "ELC@95  Classes registered in ElemLogControl:"
