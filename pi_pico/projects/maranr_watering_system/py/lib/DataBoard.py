@@ -1,6 +1,8 @@
 # DataBoard.py
 #
 # Global data board
+#
+# Running average:   Average =+ (next_value - Average) / new-sample-count
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 

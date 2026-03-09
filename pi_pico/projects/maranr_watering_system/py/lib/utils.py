@@ -24,29 +24,6 @@ MWS_CONFIG = {
     "log_file_path":  "mws_log.txt",
     }
 
-###@@@@@LOG_FNAME = "mws_log.txt"
-
-
-#DEBUG = False ###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#print(f"@@@@@@@@@@@@@@@@@@@@ utils.dbg is MUTED @@@@@@@@@@@@@@@@@@")
-#def dbg(stg=None):
-#    # output a string to the debug output 
-#    if not DEBUG: return
-#    if stg is None: stg = ""
-#    print(f"DBG:{stg}")
-#
-#print(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ utils.loggg is MUTED")
-#def loggg(stg=None):
-#    if stg is None: stg = ""
-#    LOG_FNAME = "mws_log.txt"
-#    fname = LOG_FNAME
-#    try:
-#        with open(fname, "a") as f:
-#            f.write(stg)
-#            f.write("\n")
-#    except Exception as ex:
-#        print(f"log(): Error writing to file '{fname}': {ex}")
-#
 
 def string_to_int(s):
     try:
@@ -80,17 +57,6 @@ def show_len(item):
     except Exception as ex:
         return f"ITEM-HAS-NO-LEN {item=} {ex=}"
 
-#def extract_simplified_classname(class_stg):
-#    # given a full class name string like "abc.def.MyClass"; return "MyClass"
-#    # Obtain the string using  str(obj.__class__)
-#    #print(f"   {class_stg=}")
-#    parts = class_stg.rsplit(".", 1)
-#    #print(f"  {parts=}")
-#    base_name = parts[-1]
-#    base_name = base_name.replace(">", "")
-#    base_name = base_name.replace("'", "")
-#    return base_name
-
 
 def get_memory_status_string(do_garbage_collect=False):
     ### # prints memory map of block usage
@@ -121,13 +87,14 @@ def convert_fs_space_to_string(fs_space):
     KB = 1024
     MB = 1024 * KB
 
+    # Total space ex:  868,352 bytes, 848.00 KB, 0.83 MB
+    # Free space ex:   507,904 bytes, 496.00 KB, 0.48 MB
     #print(f"Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
     #print(f"Free space:  {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
-    space_stg = f"{fs_space:,} bytes, {fs_space / KB:,.2f} KB, {fs_space / MB:.2f} MB"
+    space_stg = f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
     return space_stg
 
 def get_fs_space_string(sep=""):
-    # 
     ts, fs = get_flash_space()
     tss = convert_fs_space_to_string(ts)
     fss = convert_fs_space_to_string(fs)
@@ -148,8 +115,6 @@ def get_formatted_date_time_string():
 def get_formatted_local_time():
     now = get_local_time()
     # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
-    ###date_str = "Date: {}-{}-{}".format(now[0], now[1], now[2])
-    ###time_str = "Time: {}:{}:{}".format(now[3], now[4], now[5])
     date_str = "{}-{}-{}".format(now[0], now[1], now[2])
     time_str = "{:02d}:{:02d}:{:02d}".format(now[3], now[4], now[5])
     return (date_str, time_str)
