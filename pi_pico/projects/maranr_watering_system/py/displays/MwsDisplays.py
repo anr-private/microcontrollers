@@ -61,8 +61,10 @@ class MwsDisplays(ElemLoggerABC):
                 self.just_show_some_hello_lines(ctr)
                 ...
             else:
-                print(f"WD.displays_coro RUNNING idle  COULD NOT FIND LCD!")
-
+                m = f"MwsDisplays@64 RUNNING idle! COULD NOT FIND LCD!"
+                logi(m)
+                print(m)
+                await asyncio.sleep(120) # slow the logging rate
             await asyncio.sleep(5)
             ctr += 1
 
