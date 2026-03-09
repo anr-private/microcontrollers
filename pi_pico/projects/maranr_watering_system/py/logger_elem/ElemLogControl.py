@@ -107,7 +107,7 @@ class ElemLogControl:
             print(f"ELC@107: Error writing to file '{fname}': {str(ex)}")
             remove_the_logfile = True
 
-        return remove_the_logfile:
+        return remove_the_logfile
 
 
     def dump_registered_loggers(self, registry):
