@@ -84,7 +84,7 @@ class ElemLogControl:
         if need_to_remove:
             print(f"ELC@85 REMOVING the current log file: error occurred, maybe out of space?")
             self.remove_old_log_file()
-        self._log_this_line("ELC@87 REMOVED THE PREVIOUS LOGFILE - logger got an error")
+            self._log_this_line("ELC@87 REMOVED THE PREVIOUS LOGFILE - logger got an error")
 
     def _log_this_line(self, line):
         # write to file
@@ -96,6 +96,7 @@ class ElemLogControl:
                 f.write(line)
                 f.write("\n")
         except OSError as ex:
+            # see examples/file_and_dirs_io/errno_show_all.py to see all errno values
             print(f"ELC@99  Error writingReading '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
             #print(f"ELC@100  ex.dir: {dir(ex)} ")
             # 28 is 'out of space'
