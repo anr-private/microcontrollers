@@ -113,7 +113,6 @@ class RequestHandler(ElemLoggerABC):
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
             log(f"RH@108 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
-            ###print(f"RH@109  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
             return reply
 
 

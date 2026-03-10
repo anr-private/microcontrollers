@@ -148,7 +148,49 @@ class FileUtils(ElemLoggerABC):
         return actual_path[1:]
     
 
-    def read_last_n_lines(self, fpath, n):
+#    def read_last_n_lines(self, fpath, n):
+#        """Reads the last N lines of a text file efficiently in MicroPython."""
+#        try:
+#            with open(fpath, 'rb') as f: # Open in binary mode for reliable seeking
+#                f.seek(0, SEEK_END)
+#                file_size = f.tell()
+#                position = file_size
+#                lines_found = 0
+#                lines = []
+#                fbytes = b""
+#    
+#                while position > 0 and lines_found <= n:
+#                    # Read a chunk from near the end
+#                    chunk_size = 128 # Read in small chunks to save memory
+#                    position = max(0, position - chunk_size)
+#                    f.seek(position)
+#                    chunk = f.read(file_size - position if position == 0 else chunk_size)
+#                    file_size = position # Update file_size for next iteration if needed
+#                    fbytes = chunk + fbytes # Prepend the new chunk to the fbytes
+#                    
+#                    # Count newlines in the fbytes
+#                    while b'\n' in fbytes and lines_found <= n:
+#                        # Find the last newline
+#                        last_newline_index = fbytes.rfind(b'\n')
+#                        if last_newline_index < 0:
+#                            break
+#                        
+#                        line = fbytes[last_newline_index + 1:]
+#                        if line: # Avoid empty lines if file ends with newline
+#                            lines.insert(0, line.decode('utf-8')) # Decode and insert at beginning
+#                            lines_found += 1
+#                        fbytes = fbytes[:last_newline_index] # Keep the remaining fbytes for the next line
+#    
+#                # If loop finishes and there's still content in fbytes, it's the first line(s)
+#                if fbytes and lines_found <= n:
+#                     lines.insert(0, fbytes.decode('utf-8'))
+#                     lines_found += 1
+#    
+#                return lines[-n:] # Return only the last N lines
+#        except OSError:
+#            return []
+
+    def read_last_n_lines(self, fpath, relative_line_number, number_of_lines):
         """Reads the last N lines of a text file efficiently in MicroPython."""
         try:
             with open(fpath, 'rb') as f: # Open in binary mode for reliable seeking
@@ -159,34 +201,49 @@ class FileUtils(ElemLoggerABC):
                 lines = []
                 fbytes = b""
     
-                while position > 0 and lines_found <= n:
+                while True:
+                    if position <= 0:
+                        break
+                    if lines_found >= relative_line_number:
+                        break
+
                     # Read a chunk from near the end
                     chunk_size = 128 # Read in small chunks to save memory
-                    position = max(0, position - chunk_size)
+                    chunk_size = 100 #@@@@@@@@@@@@@@@@@@@@@@@
+
+                    position = max(0, position-chunk_size)
                     f.seek(position)
-                    chunk = f.read(file_size - position if position == 0 else chunk_size)
+
+                    chunk = f.read(file_size-position if position == 0 else chunk_size)
+
+                    print(f"FU@219  read {len(chunk)} bytes")
+
                     file_size = position # Update file_size for next iteration if needed
                     fbytes = chunk + fbytes # Prepend the new chunk to the fbytes
                     
                     # Count newlines in the fbytes
-                    while b'\n' in fbytes and lines_found <= n:
+                    while b'\n' in fbytes and lines_found <= relative_line_number:
                         # Find the last newline
                         last_newline_index = fbytes.rfind(b'\n')
-                        if last_newline_index == -1:
+                        if last_newline_index < 0:
                             break
                         
                         line = fbytes[last_newline_index + 1:]
                         if line: # Avoid empty lines if file ends with newline
                             lines.insert(0, line.decode('utf-8')) # Decode and insert at beginning
                             lines_found += 1
-                        fbytes = fbytes[:last_newline_index] # Keep the remaining fbytes for the next line
+                            # Discard 'extra' lines at the end
+                            if len(lines) > number_of_lines:
+                                lines.pop()
+                        # Keep the remaining fbytes for the next line
+                        fbytes = fbytes[:last_newline_index] 
     
                 # If loop finishes and there's still content in fbytes, it's the first line(s)
-                if fbytes and lines_found <= n:
+                if fbytes and lines_found <= relative_line_number:
                      lines.insert(0, fbytes.decode('utf-8'))
                      lines_found += 1
     
-                return lines[-n:] # Return only the last N lines
+                return lines[-relative_line_number:] # Return only the last N lines
         except OSError:
             return []
 
