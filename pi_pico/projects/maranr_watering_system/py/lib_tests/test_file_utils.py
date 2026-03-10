@@ -1,5 +1,13 @@
 # test_file_utils.py
 #
+# You can run this either locally on the linux system by
+# opening this file in Thonny and then running it.
+# (That is the easiest way)
+#
+# Or you can copy the file to the Pico, go to the Pico's remote files/dirs
+# window, double-click it (downloads it back into Thonny), and then run
+# it in Thonny.
+
 import sys
 
 from lib.FileUtils import FileUtils
@@ -9,10 +17,6 @@ def create_a_text_file(fpath):
     with open(fpath, "w") as f:
         for i in range(1, 21):
             f.write(f"This is line {i}.\n")
-
-
-
-
 
 
 def test1():
