@@ -1,6 +1,12 @@
 #!/bin/bash
 #
 # PUSH_lib_tests_to_pico.sh
+#
+# NOTE you do not need to do this
+# You can just run the test_file_utils.py directly from the linux filesystem.
+# No need to copy to the pico.
+# You do need the MWS stuff installed - lib/ logger_elem/
+
 
 
 clean_up_old_dirs_and_files() {
