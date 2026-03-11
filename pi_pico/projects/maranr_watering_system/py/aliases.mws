@@ -42,6 +42,7 @@ alias PUSH_sensors_to_pico=../scripts/PUSH_sensors_to_pico.sh
 #alias PUSH_triv log_to_pico=../scripts/PUSH_triv log_to_pico.sh
 alias PUSH_weblib_to_pico=../scripts/PUSH_weblib_to_pico.sh
 
+alias REMOVE_ALL_from_pico=../scripts/REMOVE_ALL_from_pico.sh
 
 
 

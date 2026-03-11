@@ -14,6 +14,7 @@ files_to_remove = [
 dirs_to_empty_out = [
     "displays",
     "lib",
+    "lib2",
     "logger_elem",
     "primitives",
     "sensors",
