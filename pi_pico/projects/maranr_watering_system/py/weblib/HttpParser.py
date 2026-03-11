@@ -39,6 +39,7 @@ class HttpParser(ElemLoggerABC):
         see the ph.latest_error() flag(??NOTYET??) as well as 
         this-parser.latest_error().
         """
+        ###log = print #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         log(f"HP@43 parse_header_data  >>>>  {"NO-DATA" if hdr_data is None else len(hdr_data)}")
 
@@ -109,12 +110,14 @@ class HttpParser(ElemLoggerABC):
     def parse_start_line(self, ph, start_line):
         """ Parse the start line (first line of header):
             Request ex: GET / HTTP/1.1
+                        GET /log/linenumber=10&numlines=5 HTTP/1.1
                         POST /api/users HTTP/1.1
             Reply ex: HTTP/1.0 200 OK 
         Returns True-y if ok, False-yNone if error.
         """
         ###log(f"HP@116  {start_line=}  ph={ph}")
         log(f"HP@117  {start_line=}  ph={ph}")
+        ###print(f"HP@117  {start_line=}  ph={ph}   @@@@@@@@@@@@@@@@@@@@@@@@@@")
 
         self.no_err()
         if self.parse_request_start_line(ph, start_line):
@@ -133,7 +136,9 @@ class HttpParser(ElemLoggerABC):
             Request ex: GET / HTTP/1.1
                         POST /api/users HTTP/1.1
         """
+        ###log = print #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         log(f"HP@136 {start_line=}")
+        ###print(f"HP@136 {start_line=}")#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         parts = start_line.split()
         log(f"HP@139 parts={parts}")
@@ -161,10 +166,13 @@ class HttpParser(ElemLoggerABC):
         if not parsed_url:
             self.err(148, f"Failed to parse url '{request_url}'")
             return False
-        url_path, url_query_params, url_bookmark = parsed_url
+        url_path, url_query_parameters, url_bookmark = parsed_url
+        #print(f"@@@@@@@@@@@ 170 @@@@   {url_path=}")
+        #print(f"@@@@ 170 @@@@   {url_query_parameters=}")
+        #print(f"@@@@ 170 @@@@   {url_bookmark=}")
 
         ph.set_as_request(method_stg, request_url, 
-                          url_path, url_query_params, url_bookmark, 
+                          url_path, url_query_parameters, url_bookmark, 
                           got_version)
         return True
 
@@ -259,6 +267,8 @@ class HttpParser(ElemLoggerABC):
         """
         # assumes we have just the 'page.html?...#...' part
         url_stg = full_url
+        print(f"@@@ 267  {url_stg=}")
+        ###log = print #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         parts = url_stg.rsplit("#")
         log(f"HP@264 parts[#]  {parts}")
@@ -279,21 +289,24 @@ class HttpParser(ElemLoggerABC):
             query = ""
         log(f"HP@280  {path=}  {query=}")
 
-        query_parts = query.split("&")
-        log(f"HP@283 parts-of-query  {query_parts}")
-
-        query_params = {}
-        for qitem in query_parts:
-            log(f"HP@287 {qitem=}")
-            parts = qitem.split("=",1)
-            log(f"HP@289 Qparts {parts}")
-            qkey = parts[0]
-            qval = ""
-            if len(parts) > 1:
-                qval = parts[1]
-            query_params[qkey] = qval
-        log(f"HP@295 {query_params}")
+        if query:
+            query_parts = query.split("&")
+            log(f"HP@283 parts-of-query  {query_parts}")
     
+            query_params = {}
+            for qitem in query_parts:
+                log(f"HP@287 {qitem=}")
+                parts = qitem.split("=",1)
+                log(f"HP@289 Qparts {parts}")
+                qkey = parts[0]
+                qval = ""
+                if len(parts) > 1:
+                    qval = parts[1]
+                query_params[qkey] = qval
+        else:
+            query_params = {}
+        log(f"HP@295 {query_params}")
+
         return (path, query_params, frag)
 
     def unquote_url(self, url):

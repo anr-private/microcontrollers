@@ -6,6 +6,7 @@ import os
 import sys
 
 from utils import MWS_CONFIG
+from file_utils import read_last_n_lines
 
 from .ElemLogger import ElemLogger
 
@@ -36,7 +37,8 @@ class ElemLogControl:
     def _nullify_instance(cls):
         # UNIT TEST ONLY
         ElemLogControl._instance = None
-        ElemLogControl._clear_latest_messages()
+        # Remove any messages - unit test only
+        #ElemLogControl._clear_latest_messages()
 
 
     def __init__(self, validate=None):
@@ -79,6 +81,7 @@ class ElemLogControl:
             print(f"ELC@79 FAILED to delete log '{fpath}': {repr(ex)}")
             print(f"ELC@80 ex='{str(ex)}' ")
 
+
     def log_one_line(self, line):
         need_to_remove = self._log_this_line(line)
         if need_to_remove:
@@ -109,6 +112,19 @@ class ElemLogControl:
             remove_the_logfile = True
 
         return remove_the_logfile
+
+
+    def get_lines_from_log_file(self, relative_line_number, number_of_lines):
+        # get lines from the log file
+        # relative_line_number is the line number of the first line
+        # being requested, relative to the end of the file.
+        # number_of_lines is the number of lines
+        # So (1,1) gets the last line in the file,
+        # (10,2) gets the 10th and 9th lines from the end of file.
+        lines = read_last_n_lines(self._log_file_path, 
+                                  relative_line_number,
+                                  number_of_lines)
+        return lines
 
 
     def dump_registered_loggers(self, registry):

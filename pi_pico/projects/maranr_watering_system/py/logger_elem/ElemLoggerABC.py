@@ -23,6 +23,8 @@ class ElemLoggerABC:
         # Tell the subclass what to use for its logging functions
         self._set_logger(logger)
 
+    def _get_control_instance(self):
+        return ElemLogControl.get_instance()
 
 
     @classmethod

@@ -8,7 +8,8 @@ from utils import get_fs_space_string
 from utils import get_memory_status_string
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from lib.FileUtils import FileUtils
+from logger_elem.ElemLoggerABC import ElemLoggerABC
+from lib2.FileObtainer import FileObtainer
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
@@ -53,13 +54,13 @@ class RequestHandler(ElemLoggerABC):
         httpParser = HttpParser()
 
         parsed_http = httpParser.parse_header_data(header)
-        ###do_gc("RH@49.after-parser-header")
+        ###do_gc("RH@56.after-parser-header")
         if parsed_http is None:
-            print(f"RH@51 REQUEST PARSE ERROR: {httpParser.latest_error()}")
+            print(f"RH@58 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error
             
-        m1 = f"RH@54 CLIENT REQUEST   parseError: {httpParser.latest_error()}"
-        m2 = f"RH@55 {parsed_http.long_string()}"
+        m1 = f"RH@61 CLIENT REQUEST   parseError: {httpParser.latest_error()}"
+        m2 = f"RH@62 {parsed_http.long_string()}"
         #print(m1)
         #print(m2)
         logi(m1)
@@ -67,52 +68,124 @@ class RequestHandler(ElemLoggerABC):
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)
-            ###do_gc("RH@63.after-handle-get-req")
+            ###do_gc("RH@70.after-handle-get-req")
             if reply:
-                ###print(f"RH@65 {str(reply)=}")
+                ###print(f"RH@72 {str(reply)=}")
                 return reply
 
-        m = f"RH@68 RequestHandler @ 34 NOT IMPL YET: REQ {parsed_http=}"
-        #print(m)
-        log(m)
-        return None #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        m = f"RH@75 RequestHandler REQUEST {parsed_http=} NOT IMPL YET."
+        logi(m)
+        print(m)
+        rb = ReplyBuilder()
+        reply = rb.build_reply_404(url_path)
+        #log(f"RH@95 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        return reply
             
 
     def _handle_get_request(self, parsed_http):
-        req_url = parsed_http.request_url
+        # get just the /w/x/z without the ?parm=213&...
+        url_path = parsed_http.url_path
 
-        if req_url == "/data":#@@@@@@@@@@@@@@@@@@ data req not impl yet @@@@@@@@@@@@@@@
+        if url_path == "/data":#@@@@@@@@@@@@@@@@@@ data req not impl yet @@@@@@@@@@@@@@@
             pass
+        elif url_path == "/log":
+            print(f"RH@87  LOG request: {parsed_http}")
+            reply = self._handle_log_request(parsed_http)
+            if reply:
+                return reply
         else:
             reply = self._handle_file_request(parsed_http)
             if reply:
                 return reply
-        logi(f"RH@83  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http=}")
+        logi(f"RH@92  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
         rb = ReplyBuilder()
-        reply = rb.build_reply_404(req_url)
-        #log(f"RH@86 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        reply = rb.build_reply_404(url_path)
+        #log(f"RH@95 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
             
+    def _handle_log_request(self, parsed_http):
+        log(f"RH@104  _handle_log_request  ph={parsed_http}")
+
+        try:
+            params = parsed_http.url_query_parameters
+            relative_line_number = int(params.get("linenumber"))
+            numlines = int(params.get("numlines"))
+            
+        except (TypeError,ValueError) as ex:
+            m = f"RH@108 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
+            print(m)
+            logi(m)
+            return None
+        print(f"RH@116  {relative_line_number=}  {numlines=}")
+        elc = self._get_control_instance()
+
+        lines = elc.get_lines_from_log_file(relative_line_number, numlines)
+        print(f"RH@121 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
+        if lines is None: return None
+
+
+        html_lines = [
+        "<!DOCTYPE html>",
+        "<html>",
+        "<head>",
+        "    <title>Logger File Lines</title>",
+        "    <meta http-equiv=\"refresh\" content=\"0; url=index.htmlp\" />",
+        "</head>",
+        "<body>",
+        f"LOG LINES  {relative_line_number} - {(relative_line_number+numlines-1)} <br>",
+            ]
+        html_tail = [
+        "  </p>",
+        " <p><a href=\"index.htmlp\">BACK</a>.</p>",
+        "</body>",
+        "</html>",
+            ]
+
+        for line in lines:
+            line = line.replace('\n', '')
+            line += "<br>"
+            html_lines.append(line)
+        lines = None
+        html_lines.extend(html_tail)
+        body_string = "\n".join(html_lines)
+        del html_lines
+
+        print(f"RH@150 body_string:...")  
+        print(body_string)
+
+        # Build a reply that provides the log lines
+        rb = ReplyBuilder()
+
+        # use html's content type
+        content_type = self._guess_file_content_type("dummy.html")
+
+        # content type: use 
+        reply = rb.build_textual_file_reply(content_type, body_string)
+
+        print(f"RH@163  reply: {reply}")
+
+        return reply
+
 
     def _handle_file_request(self, parsed_http):
         """ """
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@95 Default file requested") 
+            log(f"RH@104 Default file requested") 
             file_path = self.default_file
         
-        log(f"RH@98 {file_path=}")
+        log(f"RH@107 {file_path=}")
 
         # See if file exists - maybe in /pages/ or etc
         # Don't worry about what type of file yet - do binary read.
         # Try the default_subdir as well.
-        fu = FileUtils()
-        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@104"):
+        fu = FileObtainer()
+        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@113"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"RH@108 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@117 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
 
@@ -123,7 +196,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"RH@120 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@128 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -135,9 +208,8 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to build a Reply."
             reply = rb.build_reply_404(m)
-            log(f"RH@132 REPLY WITH 404.  {file_path=}  {content_type=}")
-            log(f"RH@133 {m=}")
-            ###print(f"RH@134  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
+            log(f"RH@140 REPLY WITH 404.  {file_path=}  {content_type=}")
+            log(f"RH@141 {m=}")
             return reply
 
         return reply
@@ -145,83 +217,76 @@ class RequestHandler(ElemLoggerABC):
 
     def _handle_textual_file_request(self, file_path, content_type):
 
-        #@@@@@@file_contents = self.read_the_page_file(file_path)
         # Read the file
-        fu = FileUtils()
+        fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@146")
+                prefix_dir=self.default_subdir, w="RH@154")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@152 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@153 {m=}")
-            ###print(f"RH@154  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
+            log(f"RH@160 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@161 {m=}")
             return reply
 
-        log(f"RH@157  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@165  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
-            ###print("RH@166@@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING NEEDEE @@@@@@@@@@@@@@@@@@@@@@@@")
             updated_file_contents = self._templateGrinder.grind_file_contents(file_contents)
             if updated_file_contents is not None:
                 file_contents = updated_file_contents
                 del updated_file_contents
                 gc.collect()  #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                ###print(f"RH@166  @@@@@@@@@@@@@@@@@@@@@@ HTML PROCESSSING replace file contents @@@@@@@@@@@@@@@@@@@@@@@@")
-                ###print(f"RH@167  new contents type is {type(file_contents)}")
 
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
         reply = rb.build_textual_file_reply(content_type, file_contents)
 
-        ###print(f"RH@164 RequestHandler._handle_textual_file_request REPLY is ...")
-        ###print(f"RH@165: {reply}")
-        ###logi(f"RH@166 text-file-REPLY: {reply}")
+        ###print(f"RH@182 RequestHandler._handle_textual_file_request REPLY is ...")
+        ###print(f"RH@183: {reply}")
+        ###logi(f"RH@184 text-file-REPLY: {reply}")
         return reply
 
 
     def _handle_binary_file_request(self, file_path, content_type):
 
-        #@@@@@@file_contents = self.read_the_page_file(file_path)
         # Read the file
-        fu = FileUtils()
+        fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, 
                 binary=True, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@177")
+                prefix_dir=self.default_subdir, w="RH@195")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@183 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@184 {m=}")
-            ###print(f"RH@185  @@@@@@@@@@@   ERROR - NO PAGE FILE FOUND {file_path=}  NOT HANDLED YET !!!!!!!!!!!!!")
+            log(f"RH@201 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@202 {m=}")
             return reply
 
-        log(f"RH@188  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@206  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
         reply = rb.build_textual_file_reply(content_type, file_contents)
 
-        #print(f"RH@195 RequestHandler._handle_file_request REPLY is ...")
-        #print(f"RH@196: {reply}")
+        #print(f"RH@213 RequestHandler._handle_file_request REPLY is ...")
+        #print(f"RH@214: {reply}")
         return reply
 
 
     def _guess_file_content_type(self, file_path):
         # parts is ".../filename", "html" etc
         parts = file_path.rsplit(".", 1)
-        #log(f"RH@203 _guess_file_content_type {parts=} {file_path=} ")
+        #log(f"RH@221 _guess_file_content_type {parts=} {file_path=} ")
         if len(parts) < 2:
             # no extension found
             return None
         ext = parts[1].lower()
-        #log(f"RH@208 _guess_file_content_type {ext=} {file_path=} ")
+        #log(f"RH@226 _guess_file_content_type {ext=} {file_path=} ")
         if ext in ["html", "htm", "htmlp"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
@@ -238,9 +303,9 @@ class RequestHandler(ElemLoggerABC):
         elif ext in ["gif",]:
             t = "image/gif"
         else:
-            log(r"RH@225 **ERROR** Unknow Content-Type for file '{file_path}'")
+            log(r"RH@243 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
-        log(f"RH@227 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+        log(f"RH@245 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
 def do_gc(where):

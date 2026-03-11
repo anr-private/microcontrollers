@@ -64,7 +64,7 @@ class ParsedHttp:
         # ex: /some-file.html
         self.url_path = ""
         # ex: {'a': '123', 'bbb': 'xyz'}
-        self.url_parameters = {}
+        self.url_query_parameters = {}
         # ex: bookmark (from '#' in url)
         self.url_bookmark = ""
 
@@ -87,14 +87,14 @@ class ParsedHttp:
         return meth_name in METHOD_NAMES
 
     def set_as_request(self, method, request_url, 
-                       url_path, url_query_params, url_bookmark,
+                       url_path, url_query_parameters, url_bookmark,
                        http_version):
         """ This is a REQUEST mesg """
         self.request_flag = True
         self.method = method
         self.request_url = request_url
         self.url_path = url_path
-        self.url_query_params = url_query_params
+        self.url_query_parameters = url_query_parameters
         self.url_bookmark = url_bookmark
         self.http_version = http_version
 
@@ -144,15 +144,22 @@ class ParsedHttp:
         lines = []
         lines.append(f"{self.__class__.__name__}:")
 
-        s = []
-        s.append("  requestFlag=%s" % ("REQ" if self.request_flag else "REPLY"))
+        s = ["  "]
+        s.append("requestFlag=%s" % ("REQ" if self.request_flag else "REPLY"))
         if self.method: s.append("method=%s" % str(self.method))
         if self.request_url: s.append("req-url=%s" % str(self.request_url))
         s.append("httpVersion=%s" % str(self.http_version))
         lines.append(" ".join(s))
 
+        s = ["  "]
+        s.append("url_path=%s" % str(self.url_path))
+        s.append("url_params=%s" % str(self.url_query_parameters))
+        if self.url_bookmark:
+            s.append("url_bookmark=%s" % str(self.url_bookmark))
+        lines.append(" ".join(s))
+
         for field_name in sorted(self._fields):
-            s = f"  {field_name}: '{self._fields[field_name]}'"
+            s = f"   {field_name}: '{self._fields[field_name]}'"
             lines.append(s)
 
         return "\n".join(lines)
