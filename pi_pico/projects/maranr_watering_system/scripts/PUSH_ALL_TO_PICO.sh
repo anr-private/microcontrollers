@@ -26,6 +26,7 @@ copy_release_files_to_the_pico() {
 
     ${SCRIPTS_DIR}/PUSH_displays_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_lib_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_lib2_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_logger_elem_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_primitives_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_sensors_to_pico.sh
@@ -40,6 +41,7 @@ list_pico_filesystem_contents() {
     
     mpremote fs ls /displays
     mpremote fs ls /lib
+    mpremote fs ls /lib2
     mpremote fs ls /logger_elem
     mpremote fs ls /primitives
     mpremote fs ls /sensors
