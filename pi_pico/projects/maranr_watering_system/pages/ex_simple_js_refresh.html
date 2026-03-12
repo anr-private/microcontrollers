@@ -1,53 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>setInterval Example: Live Clock</title>
+    <title>Refreshes Itself</title>
 </head>
 <body>
 
-    <h1>Live Digital Clock</h1>
-    <div id="clock">Loading...</div>
-    <button onclick="stopClock()">Stop Clock</button>
-    <button onclick="startClock()">Start Clock</button>
+    <h1>Page that refreshes itself every 3 seconds</h1>
+    <div id="hibye">Page should refresh - or click a button</div>
+    <button onclick="sayHi()">Say Hi</button>
+    <button onclick="sayBye()">Say bye</button>
 
-    <script>
-        // Function to update the clock display
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString(); // Formats the time nicely
-            
-            // Update the clock element with the current time
-            const clockElement = document.getElementById('clock');
-            if (clockElement) {
-                clockElement.textContent = timeString;
-            }
-        }
+    <script type="text/javascript">   
+        // runs on page load 
+        setTimeout(
+            function(){ location = '' },
+            3000)
 
-        // Update clock immediately on page load
-        updateClock();
+    function sayHi() {
+        elt = document.getElementById("hibye")
+        elt.textContent = "HI!"
+    }
+    function sayBye() {
+        elt = document.getElementById("hibye")
+        elt.textContent = "BYE!"
+    }
 
-        // Set interval to update clock every second (1000 milliseconds)
-        var clockInterval = setInterval(updateClock, 1000);
-
-        // Function to stop the clock using clearInterval()
-        function stopClock() {
-            clearInterval(clockInterval);
-            console.log('Clock stopped');
-            document.getElementById('clock').textContent += " (Stopped)";
-        }
-        function startClock() {
-            clockInterval = setInterval(updateClock, 1000);
-            console.log('Clock started');
-            document.getElementById('clock').textContent = " (Started)";
-        }
     </script>
 
-<!-- script type="text/javascript">
-  setTimeout(function(){
-    location = ''
-  },60000)
-</script>
--->
 
 </body>
 </html>
