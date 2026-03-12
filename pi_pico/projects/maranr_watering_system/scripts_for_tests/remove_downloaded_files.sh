@@ -6,6 +6,7 @@ while true ; do
     rm -f index.html*
     rm -f maranr_logo.png*
     rm -f squares_red.html*
+    rm -f log*number*
     ls -l
     sleep 10
 done
