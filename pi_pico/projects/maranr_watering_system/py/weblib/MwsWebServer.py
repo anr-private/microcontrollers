@@ -127,6 +127,7 @@ class MwsWebServer(ElemLoggerABC):
 
         hdrAccum = HdrAccum()
         line_num = 0
+        header = None
         try:
             while 1:
                 #log(f"MWS@130 read_the_request  ======  READ A LINE  =================================")

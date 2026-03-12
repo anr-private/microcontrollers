@@ -32,7 +32,7 @@
       font-style: italic;
     }
   </style>
-  <title>Watering System</title>
+  <title>MARANR Watering System</title>
 </head>
 
 <body>
@@ -56,6 +56,9 @@
        &nbsp;
        <a href="squares_red.html">Red Squares</a>
     </p>
+    <p>
+      <a href="ex_simple_js_refresh.html">Simple self-updating page JS example</a>
+    </p>
 
     <p>
       <a href="menu1.html">Menu-test</a>
@@ -64,6 +67,7 @@
     </p>
     <p>[[memory-status]] </p>
     <p>[[filesystem-status-splitline]]</p>
+
 
 </body>
 </html>
