@@ -4,7 +4,7 @@ import asyncio
 import gc
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from utils import show_cc
+from utils import show_cc, get_formatted_date_time_string
 
 from .HdrAccum import HdrAccum
 from .ParsedHttp import ParsedHttp
@@ -57,8 +57,12 @@ class MwsWebServer(ElemLoggerABC):
         ###return result
 
     async def handle_new_client(self, reader, writer):
-        m = f"MWS@60 handle_new_client  {reader=} {writer=}  "
-        print(); logi(m)
+        m = "=====+++++-----+++++=====__________=====+++++-----+++++====="
+        print(m); logi(m)
+        m = f"MWS@60 handle_new_client   {get_formatted_date_time_string()}"
+        print(m); logi(m)
+        m = f"\nMWS@62 handle_new_client  reader={repr(reader)} writer={repr(writer)}  "
+        print(m); logi(m)
 
         try:
             request_stg = await self._read_the_request(reader)
@@ -113,7 +117,7 @@ class MwsWebServer(ElemLoggerABC):
         logi(m)
         gc.collect()
         mf = gc.mem_free()
-        m = "MWS@116 AFTER GC  FREE MEMORY is {mf}"
+        m = f"MWS@116 AFTER GC  FREE MEMORY is {mf}"
         print(m)
         logi(m)
         logi(f"MWS@119 handle_new_client done with this client!")

@@ -19,7 +19,7 @@ from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
-from MwsWifi import MwsWifi
+from lib2.MwsWifi import MwsWifi
 from weblib.MwsWebServer import MwsWebServer
 from utils import MWS_CONFIG
 from utils import get_formatted_local_time

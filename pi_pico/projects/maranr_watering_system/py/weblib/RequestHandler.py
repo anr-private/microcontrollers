@@ -58,8 +58,7 @@ class RequestHandler(ElemLoggerABC):
         if parsed_http is None:
             print(f"RH@58 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error
-            
-        m1 = f"RH@61 CLIENT REQUEST   parseError: {httpParser.latest_error()}"
+        m1 = f"RH@61 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
         m2 = f"RH@62 {parsed_http.long_string()}"
         #print(m1)
         #print(m2)
@@ -102,20 +101,29 @@ class RequestHandler(ElemLoggerABC):
         reply = rb.build_reply_404(url_path)
         #log(f"RH@95 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
+
             
     def _handle_log_request(self, parsed_http):
         log(f"RH@104  _handle_log_request  ph={parsed_http}")
 
+        params = parsed_http.url_query_parameters
+
+        rel_line_number_stg = params.get("linenumber")
+        num_lines_stg = params.get("numlines")
+        if rel_line_number_stg is None: rel_line_number_stg = "40"
+        if num_lines_stg is None: num_lines_stg = rel_line_number_stg
+
         try:
-            params = parsed_http.url_query_parameters
-            relative_line_number = int(params.get("linenumber"))
-            numlines = int(params.get("numlines"))
-            
+            relative_line_number = int(rel_line_number_stg)
+            numlines = int(num_lines_stg)
         except (TypeError,ValueError) as ex:
             m = f"RH@108 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
             print(m)
             logi(m)
-            return None
+            #return None
+            # use some defaults
+            relative_line_number = 20
+            numlines = 20
         print(f"RH@116  {relative_line_number=}  {numlines=}")
         elc = self._get_control_instance()
 
@@ -129,14 +137,19 @@ class RequestHandler(ElemLoggerABC):
         "<html>",
         "<head>",
         "    <title>Logger File Lines</title>",
-        "    <meta http-equiv=\"refresh\" content=\"0; url=index.htmlp\" />",
         "</head>",
         "<body>",
-        f"LOG LINES  {relative_line_number} - {(relative_line_number+numlines-1)} <br>",
+        f"LOG LINES   -{relative_line_number} to -{(relative_line_number-numlines+1)} &nbsp;  at end of log file.<br>",
+        "<p> ",
+           " &nbsp; <a href=\"log?linenumber=40&numlines=40\">last-40 to end-of-log</a> "
+           " &nbsp; <a href=\"log?linenumber=80&numlines=40\">-80 to -400</a>",
+           " &nbsp; <a href=\"log?linenumber=120&numlines=40\">-120 to -80</a>",
+           " &nbsp; <a href=\"log?linenumber=160&numlines=40\">-160 to -120</a>",
+        "</p>",
             ]
         html_tail = [
         "  </p>",
-        " <p><a href=\"index.htmlp\">BACK</a>.</p>",
+        " <p><a href=\"index.htmlp\">BACK</a></p>",
         "</body>",
         "</html>",
             ]

@@ -46,13 +46,17 @@
             </h2>
         </div>
     </div>
+
     <p>
       <a href="viewport_size.html">Viewport size</a>
       &nbsp; &nbsp; 
       <a href="screen_resolution.html">Screen resolution</a>
-      <br>
-      <a href="squares_red.html">Red Squares</a>
+     <br>
+       <a href="squares_red.html">Red Squares</a>
+       &nbsp;
+       <a href="log?linenumber=40&numlines=40">LOG-lines</a> 
     </p>
+
     <p>
       <a href="menu1.html">Menu-test</a>
       &nbsp; &nbsp; 
