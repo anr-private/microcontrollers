@@ -6,6 +6,7 @@ import gc
 from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
+from utils import get_formatted_date_time_string
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLoggerABC import ElemLoggerABC
@@ -46,7 +47,10 @@ class RequestHandler(ElemLoggerABC):
         # header is str containing the header lines """
         # returns a reply, suitable for sending back to the client
 
-        m = "RH@48 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^ do gc.collect() ^^^" 
+        m = f"RH@50 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {get_formatted_date_time_string()} ^^^^^^^^^^^^^"
+        print(m)
+        logi(m)
+        m = f"RH@53  -=-=-=  do gc.collect()  -=-=-= "
         print(m)
         logi(m)
         gc.collect()
@@ -54,12 +58,12 @@ class RequestHandler(ElemLoggerABC):
         httpParser = HttpParser()
 
         parsed_http = httpParser.parse_header_data(header)
-        ###do_gc("RH@56.after-parser-header")
+        ###do_gc("RH@61.after-parser-header")
         if parsed_http is None:
-            print(f"RH@58 REQUEST PARSE ERROR: {httpParser.latest_error()}")
+            print(f"RH@63 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error
-        m1 = f"RH@61 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
-        m2 = f"RH@62 {parsed_http.long_string()}"
+        m1 = f"RH@65 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
+        m2 = f"RH@66 {parsed_http.long_string()}"
         #print(m1)
         #print(m2)
         logi(m1)
@@ -67,17 +71,17 @@ class RequestHandler(ElemLoggerABC):
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)
-            ###do_gc("RH@70.after-handle-get-req")
+            ###do_gc("RH@74.after-handle-get-req")
             if reply:
-                ###print(f"RH@72 {str(reply)=}")
+                ###print(f"RH@76 {str(reply)=}")
                 return reply
 
-        m = f"RH@75 RequestHandler REQUEST {parsed_http=} NOT IMPL YET."
+        m = f"RH@79 RequestHandler REQUEST {parsed_http=} NOT IMPL YET."
         logi(m)
         print(m)
         rb = ReplyBuilder()
         reply = rb.build_reply_404(url_path)
-        #log(f"RH@95 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        #log(f"RH@84 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
             
 
@@ -88,7 +92,7 @@ class RequestHandler(ElemLoggerABC):
         if url_path == "/data":#@@@@@@@@@@@@@@@@@@ data req not impl yet @@@@@@@@@@@@@@@
             pass
         elif url_path == "/log":
-            print(f"RH@87  LOG request: {parsed_http}")
+            print(f"RH@95  LOG request: {parsed_http}")
             reply = self._handle_log_request(parsed_http)
             if reply:
                 return reply
@@ -96,15 +100,15 @@ class RequestHandler(ElemLoggerABC):
             reply = self._handle_file_request(parsed_http)
             if reply:
                 return reply
-        logi(f"RH@92  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
+        logi(f"RH@103  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
         rb = ReplyBuilder()
         reply = rb.build_reply_404(url_path)
-        #log(f"RH@95 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        #log(f"RH@106 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
 
             
     def _handle_log_request(self, parsed_http):
-        log(f"RH@104  _handle_log_request  ph={parsed_http}")
+        log(f"RH@111  _handle_log_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -117,18 +121,18 @@ class RequestHandler(ElemLoggerABC):
             relative_line_number = int(rel_line_number_stg)
             numlines = int(num_lines_stg)
         except (TypeError,ValueError) as ex:
-            m = f"RH@108 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
+            m = f"RH@124 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
             print(m)
             logi(m)
             #return None
             # use some defaults
             relative_line_number = 20
             numlines = 20
-        print(f"RH@116  {relative_line_number=}  {numlines=}")
+        print(f"RH@131  {relative_line_number=}  {numlines=}")
         elc = self._get_control_instance()
 
         lines = elc.get_lines_from_log_file(relative_line_number, numlines)
-        print(f"RH@121 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
+        print(f"RH@135 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
         if lines is None: return None
 
 
@@ -142,7 +146,7 @@ class RequestHandler(ElemLoggerABC):
         f"LOG LINES   -{relative_line_number} to -{(relative_line_number-numlines+1)} &nbsp;  at end of log file.<br>",
         "<p> ",
            " &nbsp; <a href=\"log?linenumber=40&numlines=40\">last-40 to end-of-log</a> "
-           " &nbsp; <a href=\"log?linenumber=80&numlines=40\">-80 to -400</a>",
+           " &nbsp; <a href=\"log?linenumber=80&numlines=40\">-80 to -40</a>",
            " &nbsp; <a href=\"log?linenumber=120&numlines=40\">-120 to -80</a>",
            " &nbsp; <a href=\"log?linenumber=160&numlines=40\">-160 to -120</a>",
         "</p>",
@@ -163,7 +167,7 @@ class RequestHandler(ElemLoggerABC):
         body_string = "\n".join(html_lines)
         del html_lines
 
-        print(f"RH@150 body_string:...")  
+        print(f"RH@170 body_string:...")  
         print(body_string)
 
         # Build a reply that provides the log lines
@@ -175,7 +179,7 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        print(f"RH@163  reply: {reply}")
+        print(f"RH@182  reply: {reply}")
 
         return reply
 
@@ -185,20 +189,20 @@ class RequestHandler(ElemLoggerABC):
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@104 Default file requested") 
+            log(f"RH@192 Default file requested") 
             file_path = self.default_file
         
-        log(f"RH@107 {file_path=}")
+        log(f"RH@195 {file_path=}")
 
         # See if file exists - maybe in /pages/ or etc
         # Don't worry about what type of file yet - do binary read.
         # Try the default_subdir as well.
         fu = FileObtainer()
-        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@113"):
+        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@201"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"RH@117 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@205 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
 
@@ -209,7 +213,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"RH@128 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@216 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -221,8 +225,8 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to build a Reply."
             reply = rb.build_reply_404(m)
-            log(f"RH@140 REPLY WITH 404.  {file_path=}  {content_type=}")
-            log(f"RH@141 {m=}")
+            log(f"RH@228 REPLY WITH 404.  {file_path=}  {content_type=}")
+            log(f"RH@229 {m=}")
             return reply
 
         return reply
@@ -233,17 +237,17 @@ class RequestHandler(ElemLoggerABC):
         # Read the file
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@154")
+                prefix_dir=self.default_subdir, w="RH@240")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@160 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@161 {m=}")
+            log(f"RH@246 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@247 {m=}")
             return reply
 
-        log(f"RH@165  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@250  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
             updated_file_contents = self._templateGrinder.grind_file_contents(file_contents)
@@ -257,9 +261,9 @@ class RequestHandler(ElemLoggerABC):
 
         reply = rb.build_textual_file_reply(content_type, file_contents)
 
-        ###print(f"RH@182 RequestHandler._handle_textual_file_request REPLY is ...")
-        ###print(f"RH@183: {reply}")
-        ###logi(f"RH@184 text-file-REPLY: {reply}")
+        ###print(f"RH@264 RequestHandler._handle_textual_file_request REPLY is ...")
+        ###print(f"RH@265: {reply}")
+        ###logi(f"RH@266 text-file-REPLY: {reply}")
         return reply
 
 
@@ -269,37 +273,37 @@ class RequestHandler(ElemLoggerABC):
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, 
                 binary=True, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@195")
+                prefix_dir=self.default_subdir, w="RH@276")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@201 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@202 {m=}")
+            log(f"RH@282 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@283 {m=}")
             return reply
 
-        log(f"RH@206  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@286  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
         reply = rb.build_textual_file_reply(content_type, file_contents)
 
-        #print(f"RH@213 RequestHandler._handle_file_request REPLY is ...")
-        #print(f"RH@214: {reply}")
+        #print(f"RH@293 RequestHandler._handle_file_request REPLY is ...")
+        #print(f"RH@294: {reply}")
         return reply
 
 
     def _guess_file_content_type(self, file_path):
         # parts is ".../filename", "html" etc
         parts = file_path.rsplit(".", 1)
-        #log(f"RH@221 _guess_file_content_type {parts=} {file_path=} ")
+        #log(f"RH@301 _guess_file_content_type {parts=} {file_path=} ")
         if len(parts) < 2:
             # no extension found
             return None
         ext = parts[1].lower()
-        #log(f"RH@226 _guess_file_content_type {ext=} {file_path=} ")
+        #log(f"RH@306 _guess_file_content_type {ext=} {file_path=} ")
         if ext in ["html", "htm", "htmlp"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
@@ -316,9 +320,9 @@ class RequestHandler(ElemLoggerABC):
         elif ext in ["gif",]:
             t = "image/gif"
         else:
-            log(r"RH@243 **ERROR** Unknow Content-Type for file '{file_path}'")
+            log(r"RH@323 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
-        log(f"RH@245 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+        log(f"RH@325 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
 def do_gc(where):
