@@ -112,7 +112,7 @@ class MwsWebServer(ElemLoggerABC):
             await reader.wait_closed()
             log("MWS@111 handle_new_client CLIENT READER is CLOSED")
 
-        m = "MWS@113 RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        m = "MWS@113 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         print(m)
         logi(m)
         gc.collect()

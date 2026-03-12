@@ -325,13 +325,13 @@ class RequestHandler(ElemLoggerABC):
         log(f"RH@325 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
-def do_gc(where):
-    if 1:
-        mss = get_memory_status_string(do_garbage_collect=False)
-        print(f"{where} MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
-        gc.collect()
-        mss = get_memory_status_string(do_garbage_collect=False)
-        print(f"{where} MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+#def do_gc(where):
+#    if 1:
+#        mss = get_memory_status_string(do_garbage_collect=False)
+#        print(f"{where} MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+#        gc.collect()
+#        mss = get_memory_status_string(do_garbage_collect=False)
+#        print(f"{where} MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 
 ###
 
