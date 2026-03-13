@@ -94,7 +94,7 @@ class RequestHandler(ElemLoggerABC):
             reply = self._handle_data_request(parsed_http)
             if reply: return reply
         elif url_path == "/log":
-            print(f"RH@95  LOG request: {parsed_http}")
+            print(f"RH@97  LOG request: {parsed_http}")
             reply = self._handle_log_request(parsed_http)
             if reply: return reply
         elif url_path == "/echo":
@@ -105,22 +105,22 @@ class RequestHandler(ElemLoggerABC):
             reply = self._handle_file_request(parsed_http)
             if reply: return reply
         # if fall through, we don't know how to handle
-        logi(f"RH@103  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
+        logi(f"RH@108  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
         rb = ReplyBuilder()
         reply = rb.build_reply_404(url_path)
-        #log(f"RH@106 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        #log(f"RH@111 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
 
 
     def _handle_data_request(self, parsed_http):
         params = parsed_http.url_query_parameters
 
-        print(f"RH@114  DATA REQ  params={params}")
+        print(f"RH@118  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         json_stg = '{"age": 1, "name": "Bob"}'
 
-        print(f"RH@119 body: JSON-string:...")  
+        print(f"RH@123 body: JSON-string:...")  
         print(json_stg)
 
         # Build a reply that provides the log lines
@@ -132,12 +132,15 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        print(f"RH@132  reply: {reply}")
+        m = f"RH@135  reply: {reply}"
+        print(m)
+        logi(m)
+
         return reply
 
             
     def _handle_echo_request(self, parsed_http):
-        log(f"RH@111  _handle_echo_request  ph={parsed_http}")
+        log(f"RH@143  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -161,7 +164,6 @@ class RequestHandler(ElemLoggerABC):
         params_lines = []
         for k,v in params.items():
             line = f" &nbsp; {k}  {v}  <br>"
-            print("RH@166 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ paramline {line}")
             params_lines.append(line)
        
         html_lines.extend(params_lines)
@@ -169,8 +171,8 @@ class RequestHandler(ElemLoggerABC):
         body_string = "\n".join(html_lines)
         del html_lines
 
-        print(f"RH@170 body_string:...")  
-        print(body_string)
+        #print(f"RH@174 body_string:...")  
+        #print(body_string)
 
         # Build a reply that provides the log lines
         rb = ReplyBuilder()
@@ -181,13 +183,20 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        print(f"RH@209  reply: {reply}")
+        m = f"RH@186  reply: {reply}"
+        mm = "body-string"
+        print(m)
+        print(mm)
+        print(body_string)
+        logi(m)
+        logi(mm)
+        logi(body_string)
 
         return reply
 
 
     def _handle_log_request(self, parsed_http):
-        log(f"RH@111  _handle_log_request  ph={parsed_http}")
+        log(f"RH@199  _handle_log_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -200,18 +209,18 @@ class RequestHandler(ElemLoggerABC):
             relative_line_number = int(rel_line_number_stg)
             numlines = int(num_lines_stg)
         except (TypeError,ValueError) as ex:
-            m = f"RH@124 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
+            m = f"RH@212 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
             print(m)
             logi(m)
             #return None
             # use some defaults
             relative_line_number = 20
             numlines = 20
-        print(f"RH@131  {relative_line_number=}  {numlines=}")
+        print(f"RH@219  {relative_line_number=}  {numlines=}")
         elc = self._get_control_instance()
 
         lines = elc.get_lines_from_log_file(relative_line_number, numlines)
-        print(f"RH@135 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
+        print(f"RH@223 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
         if lines is None: return None
 
 
@@ -246,7 +255,7 @@ class RequestHandler(ElemLoggerABC):
         body_string = "\n".join(html_lines)
         del html_lines
 
-        print(f"RH@170 body_string:...")  
+        print(f"RH@258 body_string:...")  
         print(body_string)
 
         # Build a reply that provides the log lines
@@ -258,7 +267,7 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        print(f"RH@182  reply: {reply}")
+        print(f"RH@270  reply: {reply}")
 
         return reply
 
@@ -268,20 +277,20 @@ class RequestHandler(ElemLoggerABC):
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@192 Default file requested") 
+            log(f"RH@280 Default file requested") 
             file_path = self.default_file
         
-        log(f"RH@195 {file_path=}")
+        log(f"RH@283 {file_path=}")
 
         # See if file exists - maybe in /pages/ or etc
         # Don't worry about what type of file yet - do binary read.
         # Try the default_subdir as well.
         fu = FileObtainer()
-        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@201"):
+        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@289"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"RH@205 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@293 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
 
@@ -292,7 +301,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"RH@216 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@304 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -304,8 +313,8 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to build a Reply."
             reply = rb.build_reply_404(m)
-            log(f"RH@228 REPLY WITH 404.  {file_path=}  {content_type=}")
-            log(f"RH@229 {m=}")
+            log(f"RH@316 REPLY WITH 404.  {file_path=}  {content_type=}")
+            log(f"RH@317 {m=}")
             return reply
 
         return reply
@@ -316,17 +325,17 @@ class RequestHandler(ElemLoggerABC):
         # Read the file
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@240")
+                prefix_dir=self.default_subdir, w="RH@328")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@246 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@247 {m=}")
+            log(f"RH@334 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@335 {m=}")
             return reply
 
-        log(f"RH@250  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@338  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
             updated_file_contents = self._templateGrinder.grind_file_contents(file_contents)
@@ -340,9 +349,9 @@ class RequestHandler(ElemLoggerABC):
 
         reply = rb.build_textual_file_reply(content_type, file_contents)
 
-        ###print(f"RH@264 RequestHandler._handle_textual_file_request REPLY is ...")
-        ###print(f"RH@265: {reply}")
-        ###logi(f"RH@266 text-file-REPLY: {reply}")
+        ###print(f"RH@352 RequestHandler._handle_textual_file_request REPLY is ...")
+        ###print(f"RH@353: {reply}")
+        ###logi(f"RH@354 text-file-REPLY: {reply}")
         return reply
 
 
@@ -352,37 +361,37 @@ class RequestHandler(ElemLoggerABC):
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, 
                 binary=True, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@276")
+                prefix_dir=self.default_subdir, w="RH@364")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@282 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@283 {m=}")
+            log(f"RH@370 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@371 {m=}")
             return reply
 
-        log(f"RH@286  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@374  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
 
         reply = rb.build_textual_file_reply(content_type, file_contents)
 
-        #print(f"RH@293 RequestHandler._handle_file_request REPLY is ...")
-        #print(f"RH@294: {reply}")
+        #print(f"RH@381 RequestHandler._handle_file_request REPLY is ...")
+        #print(f"RH@382: {reply}")
         return reply
 
 
     def _guess_file_content_type(self, file_path):
         # parts is ".../filename", "html" etc
         parts = file_path.rsplit(".", 1)
-        #log(f"RH@301 _guess_file_content_type {parts=} {file_path=} ")
+        #log(f"RH@389 _guess_file_content_type {parts=} {file_path=} ")
         if len(parts) < 2:
             # no extension found
             return None
         ext = parts[1].lower()
-        #log(f"RH@306 _guess_file_content_type {ext=} {file_path=} ")
+        #log(f"RH@394 _guess_file_content_type {ext=} {file_path=} ")
         if ext in ["html", "htm", "htmlp"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
@@ -401,9 +410,9 @@ class RequestHandler(ElemLoggerABC):
         elif ext in ["json",]:
             t = "application/json"
         else:
-            log(r"RH@323 **ERROR** Unknow Content-Type for file '{file_path}'")
+            log(r"RH@413 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
-        log(f"RH@325 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+        log(f"RH@415 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
 #def do_gc(where):
