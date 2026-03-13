@@ -89,21 +89,46 @@ class RequestHandler(ElemLoggerABC):
         # get just the /w/x/z without the ?parm=213&...
         url_path = parsed_http.url_path
 
-        if url_path == "/data":#@@@@@@@@@@@@@@@@@@ data req not impl yet @@@@@@@@@@@@@@@
-            pass
+        if url_path == "/data":
+            print(f"RH@93  DATA request: {parsed_http}")
+            reply = self._handle_data_request(parsed_http)
+            if reply: return reply
         elif url_path == "/log":
             print(f"RH@95  LOG request: {parsed_http}")
             reply = self._handle_log_request(parsed_http)
-            if reply:
-                return reply
+            if reply: return reply
         else:
             reply = self._handle_file_request(parsed_http)
-            if reply:
-                return reply
+            if reply: return reply
+        # if fall through, we don't know how to handle
         logi(f"RH@103  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
         rb = ReplyBuilder()
         reply = rb.build_reply_404(url_path)
         #log(f"RH@106 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        return reply
+
+
+    def _handle_data_request(self, parsed_http):
+        params = parsed_http.url_query_parameters
+
+        print(f"RH@114  DATA REQ  params={params}")
+
+        #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
+        json_stg = '{"age": 1, "name": "Bob"}'
+
+        print(f"RH@119 body: JSON-string:...")  
+        print(json_stg)
+
+        # Build a reply that provides the log lines
+        rb = ReplyBuilder()
+
+        # use html's content type
+        content_type = self._guess_file_content_type("X.json")
+
+        # content type: use 
+        reply = rb.build_textual_file_reply(content_type, json_stg)
+
+        print(f"RH@132  reply: {reply}")
         return reply
 
             
@@ -174,7 +199,7 @@ class RequestHandler(ElemLoggerABC):
         rb = ReplyBuilder()
 
         # use html's content type
-        content_type = self._guess_file_content_type("dummy.html")
+        content_type = self._guess_file_content_type("X.html")
 
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
@@ -319,6 +344,8 @@ class RequestHandler(ElemLoggerABC):
             t = "image/jpeg"
         elif ext in ["gif",]:
             t = "image/gif"
+        elif ext in ["json",]:
+            t = "application/json"
         else:
             log(r"RH@323 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None

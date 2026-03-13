@@ -59,6 +59,7 @@
     <p>
       <a href="ex_simple_js_clock_refresh.html">Simple CLOCK: self-updating page JS example</a>
       <a href="ex_simple_js_refresh.html">Simple self-updating page JS example</a>
+      <a href="ex_get_data_from_server.html">Simple data-fetch JS example</a>
     </p>
 
     <p>

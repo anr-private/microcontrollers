@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Data Update Example</title>
+</head>
+<body>
+    <h1>Live Server Time</h1>
+    <p>The time below is updated every 3 seconds without a full page reload.</p>
+    <div id="data-container" style="font-size: 24px; color: blue;">
+        Loading...
+    </div>
+
+    <script>
+        // Function to fetch data from the server and update the page
+        function fetchDataAndUpdate() {
+            // In a real application, you would replace this URL with your server endpoint
+            // For this example, we simulate fetching the current time
+            const dataUrl = 'data?a=123'; 
+
+            console.log("@@@@ START FETCH function");
+
+            fetch(dataUrl)
+              .then(response => {
+                // response.json() is called here and returns a new Promise
+                console.log("FETCH-THEN");
+                console.log(response);
+                var jsjs = response.json();
+                console.log(jsjs);
+                return jsjs;
+                ////return response.json(); 
+              })
+              .then(data => {
+                // This .then() receives the *resolved value* of the Promise
+                // returned by response.json(). 'data' is now your JavaScript object.
+                console.log("THEN-DATA");
+                console.log(typeof data);
+                console.log(data); 
+              })
+              .catch(error => {
+                // Handle any errors that occur during the fetch or JSON parsing
+                console.error('Error:', error); 
+              });
+        }
+/*
+            fetch(mockApiUrl)
+                .then(response => {
+                    console.log("response is ...");
+                    console.log(typeof response);
+                    console.log(response);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    var result = response.json();
+                    console.log("response.json is " + result);
+                    return result;
+                    //////return response.json(); // Convert the response to JSON
+                })
+                .then(data => {
+                    console.log("THEN data is ...");
+                    console.log(data);
+                    console.log(typeof data);
+                    // Extract the relevant data (e.g., current time) and update the DOM
+                    ////const currentTime = new Date(data.datetime).toLocaleTimeString();
+                    ////document.getElementById('data-container').innerText = `Current Time: ${currentTime}`;
+                    var data_stg = String(data);
+                    console.log(data_stg);
+                    var data_json = data_stg.json();
+                    document.getElementById('data-container').innerText = `${data_stg}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('data-container').innerText = 'Failed to load data.';
+                });
+        }
+*/
+
+        // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
+        // This function will run repeatedly until the window is closed or clearInterval() is called.
+        const intervalId = setInterval(fetchDataAndUpdate, 3000);
+
+        // Optional: Call the function immediately when the page loads for the first update
+        console.log("FIRST CALL TO THE FETCH");
+        fetchDataAndUpdate();
+
+    </script>
+</body>
+</html>
+
+<!-- 
+fetch('https://api.example.com')
+  .then(response => {
+    // response.json() is called here and returns a new Promise
+    return response.json(); 
+  })
+  .then(data => {
+    // This .then() receives the *resolved value* of the Promise
+    // returned by response.json(). 'data' is now your JavaScript object.
+    console.log(data); 
+  })
+  .catch(error => {
+    // Handle any errors that occur during the fetch or JSON parsing
+    console.error('Error:', error); 
+  });
+
+
+async function fetchData() {
+  try {
+    // Wait for the initial response headers to arrive
+    const response = await fetch('https://api.example.com'); 
+    
+    // Check for HTTP errors (fetch doesn't reject on 404/500)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Wait for the response body to be read and parsed as JSON
+    const data = await response.json(); 
+    
+    console.log(data); // 'data' is now your JavaScript object
+    
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+}
+
+fetchData();
+ -->
+
