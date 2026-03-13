@@ -97,6 +97,10 @@ class RequestHandler(ElemLoggerABC):
             print(f"RH@95  LOG request: {parsed_http}")
             reply = self._handle_log_request(parsed_http)
             if reply: return reply
+        elif url_path == "/echo":
+            print(f"RH@101  ECHO request: {parsed_http}")
+            reply = self._handle_echo_request(parsed_http)
+            if reply: return reply
         else:
             reply = self._handle_file_request(parsed_http)
             if reply: return reply
@@ -132,6 +136,56 @@ class RequestHandler(ElemLoggerABC):
         return reply
 
             
+    def _handle_echo_request(self, parsed_http):
+        log(f"RH@111  _handle_echo_request  ph={parsed_http}")
+
+        params = parsed_http.url_query_parameters
+
+        html_lines = [
+        "<!DOCTYPE html>",
+        "<html>",
+        "<head>",
+        "    <title>Echoes the Query Parameters</title>",
+        "</head>",
+        "<body>",
+        f"<h2>Echoed Query Parameters:</h2>",
+        "<p> ",
+            ]
+        html_tail = [
+        "  </p>",
+        " <p><a href=\"index.htmlp\">BACK</a></p>",
+        "</body>",
+        "</html>",
+            ]
+
+        params_lines = []
+        for k,v in params.items():
+            line = f" &nbsp; {k}  {v}  <br>"
+            print("RH@166 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ paramline {line}")
+            params_lines.append(line)
+       
+        html_lines.extend(params_lines)
+        html_lines.extend(html_tail)
+        body_string = "\n".join(html_lines)
+        del html_lines
+
+        print(f"RH@170 body_string:...")  
+        print(body_string)
+
+        # Build a reply that provides the log lines
+        rb = ReplyBuilder()
+
+        # use html's content type
+        content_type = self._guess_file_content_type("X.html")
+
+        # content type: use 
+        reply = rb.build_textual_file_reply(content_type, body_string)
+
+        print(f"RH@209  reply: {reply}")
+
+        return reply
+
+
     def _handle_log_request(self, parsed_http):
         log(f"RH@111  _handle_log_request  ph={parsed_http}")
 
