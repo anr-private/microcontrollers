@@ -36,7 +36,12 @@
                 // returned by response.json(). 'data' is now your JavaScript object.
                 console.log("THEN-DATA");
                 console.log(typeof data);
-                console.log(data); 
+                console.log(data);
+                console.log("AGE and NAME");
+                console.log(data.age);
+                console.log(data.name);
+                var elt = document.getElementById('data-container');
+                elt.innerText = `Age:${data.age} Name: ${data.name}`;
               })
               .catch(error => {
                 // Handle any errors that occur during the fetch or JSON parsing
