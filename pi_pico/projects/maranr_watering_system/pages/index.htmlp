@@ -52,13 +52,15 @@
       &nbsp; &nbsp; 
       <a href="screen_resolution.html">Screen resolution</a>
      <br>
-       <a href="log?linenumber=40&numlines=40">LOG-lines</a> 
+       <a href="echo?first=111&second=222&another=more-stuff-here">ECHO test</a> 
        &nbsp;
-       <a href="squares_red.html">Red Squares</a>
+       <a href="log?linenumber=40&numlines=40">LOG-lines</a> 
     </p>
     <p>
       <a href="ex_simple_js_clock_refresh.html">Simple CLOCK: self-updating page JS example</a>
+      <br>
       <a href="ex_simple_js_refresh.html">Simple self-updating page JS example</a>
+      <br>
       <a href="ex_get_data_from_server.html">Simple data-fetch JS example</a>
     </p>
 

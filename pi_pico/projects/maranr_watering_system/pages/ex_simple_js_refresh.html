@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Refreshes Itself</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Refreshes Itself</title>
 </head>
 <body>
 
@@ -11,8 +13,12 @@
     <button onclick="sayBye()">Say bye</button>
 
     <script type="text/javascript">   
-        // runs on page load 
-        setTimeout(
+        // runs on page load - the timeout is a one-time callback,
+        // but the page gets reloaded and so sets up a new timeout.
+        // setting 'location' to empty string reloads the same page
+        // The timeoutId can be used to cancel the timeout;
+        // we don't bother b/c the page is going to be reloaded entirely.
+        const timeoutId = setTimeout(
             function(){ location = '' },
             3000)
 

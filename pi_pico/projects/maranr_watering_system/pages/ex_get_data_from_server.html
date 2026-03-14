@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Data Update Example</title>
+    <title>Requests Data from Server</title>
 </head>
 <body>
-    <h1>Live Server Time</h1>
+    <h1>Requests data from server w/o page reload.</h1>
     <p>The time below is updated every 3 seconds without a full page reload.</p>
     <div id="data-container" style="font-size: 24px; color: blue;">
         Loading...
@@ -40,10 +40,11 @@
                     console.log("THEN-DATA");
                     console.log(typeof data);
                     console.log(data);
+                */
                     console.log("AGE and NAME");
                     console.log(data.age);
                     console.log(data.name);
-                */
+                
                 var elt = document.getElementById('data-container');
                 elt.innerText = `Age:${data.age} Name: ${data.name}`;
               })
