@@ -132,7 +132,10 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        m = f"RH@135  reply: {reply}"
+        m = f"RH@135  HTTP REPLY to DATA REQUEST:"
+        print(m)
+        logi(m)
+        m = f"RH@135 {reply.long_string()}"
         print(m)
         logi(m)
 
@@ -183,15 +186,12 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RH@186  reply: {reply}"
-        mm = "body-string"
+        m = f"RH@186 HTTP REPLY to ECHO request "
         print(m)
-        print(mm)
-        print(body_string)
         logi(m)
-        logi(mm)
-        logi(body_string)
-
+        m = f"RH@186  {reply.long_string()}"
+        print(m)
+        logi(m)
         return reply
 
 
@@ -267,7 +267,14 @@ class RequestHandler(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        print(f"RH@270  reply: {reply}")
+        m = f"RH@270 HTTP REPLY to LOG request "
+        print(m)
+        logi(m)
+        m = f"RH@273  {reply.long_string()}"
+        print(m)
+        logi(m)
+        return reply
+
 
         return reply
 

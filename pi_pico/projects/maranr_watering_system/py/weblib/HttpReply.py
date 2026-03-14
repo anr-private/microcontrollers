@@ -68,4 +68,22 @@ class HttpReply(ElemLoggerABC):
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 
+
+    def long_str(self):
+        hdr_len_stg  = str(len(self._header)) if self._header is not None else "NULL HEADER!"
+        body_len_stg = str(len(self._body)) if self._body is not None else "NULL BODY"
+
+        lines = []
+        lines.append(f"{self.__class__.__name__}:")
+        lines.append(f"hdr.len={hdr_len_stg}  body.len={body_len_stg}")
+        if self._header is not None:
+            lines.append("   --- reply header --- ");
+            lines.append(self._header)
+        if self._body is not None:
+            lines.append("   --- reply body --- ");
+            lines.append(self._body)
+
+        return "\n".join(lines)
+    long_string = long_str
+
 ###
