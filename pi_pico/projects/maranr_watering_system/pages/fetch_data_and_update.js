@@ -16,6 +16,11 @@
         // Optional: call immed when page loads
         console.log("FIRST CALL TO THE FETCH");
         fetchDataAndUpdate(dataUrl);
+
+        function handle_fetched_data(data) { // handle the received data
+            var elt = document.getElementById('data-container');
+            elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
+        }
 */
 
 function fetchDataAndUpdate(dataUrl) {
@@ -50,12 +55,14 @@ function fetchDataAndUpdate(dataUrl) {
             console.log(data.name);
             console.log(data.datetime);
         
-        var elt = document.getElementById('data-container');
-        elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
+            handle_fetched_data(data);
+
+        ////var elt = document.getElementById('data-container');
+        ////elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
       })
       .catch(error => {
         // Handle any errors that occur during the fetch or JSON parsing
-        console.error('Error:', error); 
+        console.error('fetch_data_and_update.js Error:', error); 
       });
 }
 

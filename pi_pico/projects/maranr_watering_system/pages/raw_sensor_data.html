@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Requests Data from Server</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Raw Sensor Data</title>
 </head>
 <body>
-    <h1>Requests data from server w/o page reload.</h1>
-    <p>The data is updated every 3 seconds using JS request, without a full page reload.</p>
+    <h1>Raw Sensor Data</h1>
+
     <div id="data-container" style="font-size: 24px; color: blue;">
         Loading...
     </div>
 
     <script src="fetch_data_and_update.js"></script>
     <script>
-        const dataUrl = "data?a=123"
+        const dataUrl = "data?sensor=ALL"
         // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // In order to pass an arg to the function, we use an anonymous go-between function.
@@ -27,12 +28,6 @@
         // Optional: Call the function immediately when the page loads for the first update
         //console.log("FIRST CALL TO THE FETCH");
         fetchDataAndUpdate(dataUrl);
-
-        function handle_fetched_data(data) {
-            var elt = document.getElementById('data-container');
-            elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
-        }
-
 
     </script>
 </body>
