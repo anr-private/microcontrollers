@@ -7,6 +7,7 @@
 
 import machine
 import time
+###import dht for DHT11 or DHT11 sensors
 
 adcpin = 4
 sensor = machine.ADC(adcpin)
