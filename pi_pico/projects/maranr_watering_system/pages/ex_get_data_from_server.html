@@ -28,7 +28,7 @@
         //console.log("FIRST CALL TO THE FETCH");
         fetchDataAndUpdate(dataUrl);
 
-        function handle_fetched_data(data) {
+        function handleFetchedData(data) {
             var elt = document.getElementById('data-container');
             elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
         }

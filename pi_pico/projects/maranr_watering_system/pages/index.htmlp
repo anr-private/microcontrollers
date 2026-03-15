@@ -62,6 +62,8 @@
       <br>
       <a href="ex_simple_js_refresh.html">Simple self-updating page JS example</a>
       <br>
+      <a href="raw_sensor_data.html">Raw Sensor Data </a>
+      <br>
       <a href="ex_get_data_from_server.html">Simple data-fetch JS example</a>
     </p>
 

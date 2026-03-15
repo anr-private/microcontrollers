@@ -19,7 +19,11 @@ class DataBoard(ElemLoggerABC):
 
     _instance = None
 
-    def __init__(self):
+    def __init__(self, validate):
+        if validate != VALIDATE:
+            raise RuntimeError(f"DataBoard CTOR is private!")
+        self.internal_temp_f = 0
+        self.internal_temp_c = 0
         super().__init__()
 
     @classmethod
@@ -40,6 +44,17 @@ class DataBoard(ElemLoggerABC):
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
+
+    def set_internal_temps(self, degsF, degsC):
+        self.internal_temp_f = degsF
+        self.internal_temp_c = degsC
+
+
+    def get_internal_temps_one_dec_place(self):
+        degs_f = f"{self.internal_temp_f:.1f}"
+        degs_c = f"{self.internal_temp_c:.1f}"
+        return degs_f, degs_c
+
 
 
 

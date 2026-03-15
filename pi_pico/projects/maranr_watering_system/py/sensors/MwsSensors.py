@@ -3,8 +3,10 @@
 import asyncio
 import gc
 import utime as time
+import machine
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
+from lib2.DataBoard import DataBoard
 from utils import get_fs_space_string
 from utils import get_memory_status_string
 
@@ -17,6 +19,7 @@ class MwsSensors(ElemLoggerABC):
     """ sensors and effectors """
 
     def __init__(self, *args):
+        self._data_board = None
         super().__init__()
 
 
@@ -32,6 +35,8 @@ class MwsSensors(ElemLoggerABC):
         """ creates,starts the coro. Returns task."""
         print("WS.startup!")
 
+        self._data_board = DataBoard.get_instance()
+
         task = asyncio.create_task(self.sensors_coro())
         return task
 
@@ -41,13 +46,13 @@ class MwsSensors(ElemLoggerABC):
         while 1:
             if 0:
                 fss = get_fs_space_string()
-                print(f"WS.sensors_coro RUNNING: {fss}")
+                print(f"SENSORS@.sensors_coro RUNNING: {fss}")
             if 0:
                 mss = get_memory_status_string(do_garbage_collect=False)
-                print(f"WS.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                print(f"SENSORS@.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
                 gc.collect()
                 mss = get_memory_status_string(do_garbage_collect=False)
-                print(f"WS.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                print(f"SENSORS@.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
             if 1:
                 ma_before = gc.mem_alloc()
                 mf_before = gc.mem_free()
@@ -59,9 +64,31 @@ class MwsSensors(ElemLoggerABC):
                 print(f"SENSOR@52  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++")
                 print(f"SENSOR@52  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++")
 
+            self._get_internal_temps()
+
+            await asyncio.sleep(10)
 
 
-            await asyncio.sleep(4)
+    def _get_internal_temps(self):
+        temperature_c = read_internal_temperature()
+        temperature_f = celsius_to_fahrenheit(temperature_c)
+        print(f"SENSOR@73  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F")
+        self._data_board.set_internal_temps(temperature_f, temperature_c);
+
+
+adcpin = 4
+sensor = machine.ADC(adcpin)
+
+def read_internal_temperature():
+    adc_value = sensor.read_u16()
+    voltage = (3.3 / 65535) * adc_value
+    temperature_celsius = 27 - (voltage - 0.706) / 0.001721
+    return temperature_celsius
+
+def celsius_to_fahrenheit(celsius):
+    return (celsius * 9/5) + 32
+
+
 
 #    def make_space_stg(self):
 #        ts, fs = get_flash_space()

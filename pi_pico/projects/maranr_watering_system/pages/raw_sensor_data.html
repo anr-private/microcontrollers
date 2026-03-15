@@ -9,13 +9,17 @@
 <body>
     <h1>Raw Sensor Data</h1>
 
-    <div id="data-container" style="font-size: 24px; color: blue;">
-        Loading...
+    <div id="NOTUSED__data-container" style="font-size: 24px; color: blue;">
+      Time Now:&nbsp; <span id="date_time">date-and-time</span>
+      <br>
+      Internal temps:&nbsp; <span id="internal_temp_F">internal_temp_F</span> &nbsp;&nbsp;
+      <span id="internal_temp_C">internal_temp_C</span>
     </div>
+XXXXXXXXX
 
     <script src="fetch_data_and_update.js"></script>
     <script>
-        const dataUrl = "data?sensor=ALL"
+        const dataUrl = "data?sensors=ALL"
         // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // In order to pass an arg to the function, we use an anonymous go-between function.
@@ -23,11 +27,22 @@
             () =>   {
                         fetchDataAndUpdate(dataUrl);
                     },
-            3000);
+            5000);
 
         // Optional: Call the function immediately when the page loads for the first update
         //console.log("FIRST CALL TO THE FETCH");
         fetchDataAndUpdate(dataUrl);
+
+        function handleFetchedData(data) {  // invoked by fetD
+            console.log("FETCHED DATA:...");
+            console.log(data);
+            var eltDatetime = document.getElementById('date_time');
+            eltDatetime.innerText = `${data.datetime}`;
+            var eltTempC = document.getElementById('internal_temp_C');
+            eltTempC.innerText = `${data.internal_temp_c} °C`;
+            var eltTempF = document.getElementById('internal_temp_F');
+            eltTempF.innerText = `${data.internal_temp_f} °F`;
+        }
 
     </script>
 </body>

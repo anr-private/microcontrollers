@@ -12,6 +12,7 @@ from utils import get_formatted_date_time_string
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.FileObtainer import FileObtainer
+from lib2.DataBoard import DataBoard
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
@@ -32,7 +33,8 @@ class RequestHandler(ElemLoggerABC):
     def __init__(self):
         self.default_file = "/pages/index.htmlp"
         self.default_subdir = "pages"
-        self._templateGrinder = TemplateGrinder()
+        self._grinder = TemplateGrinder()
+        self._data_board = DataBoard.get_instance()
         super().__init__()
 
 
@@ -121,6 +123,13 @@ class RequestHandler(ElemLoggerABC):
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {get_formatted_date_time_string()} }'
         data_dict = {"age": 1, "name": "Bob", "datetime": get_formatted_date_time_string() }
+
+        if "sensors" in params:
+            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@self._data_board.set_internal_temps(123.5,87.1)
+            degs_f, degs_c = self._data_board.get_internal_temps_one_dec_place()
+            data_dict["internal_temp_f"] = degs_f
+            data_dict["internal_temp_c"] = degs_c
+
         json_stg = json.dumps(data_dict)
         print(f"RH@123 body: JSON-string:...")  
         print(json_stg)
@@ -349,7 +358,7 @@ class RequestHandler(ElemLoggerABC):
         log(f"RH@338  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
-            updated_file_contents = self._templateGrinder.grind_file_contents(file_contents)
+            updated_file_contents = self._grinder.grind_file_contents(file_contents)
             if updated_file_contents is not None:
                 file_contents = updated_file_contents
                 del updated_file_contents

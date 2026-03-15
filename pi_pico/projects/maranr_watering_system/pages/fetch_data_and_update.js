@@ -55,7 +55,7 @@ function fetchDataAndUpdate(dataUrl) {
             console.log(data.name);
             console.log(data.datetime);
         
-            handle_fetched_data(data);
+            handleFetchedData(data);
 
         ////var elt = document.getElementById('data-container');
         ////elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
