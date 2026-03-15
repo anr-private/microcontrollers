@@ -1,0 +1,9 @@
+# This file is intentionally supposed to be 'old'
+# It's date/time are used to create new empty files in the /tmp/XXX
+# dirs in which the PY files are held for transfer.
+#
+# You can 'source' this file to fix its 'old'-ness date
+touch -d '1980-01-01 12:34:55' old_file.txt
+
+###
+
