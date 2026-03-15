@@ -4,7 +4,13 @@
 
 DBG=false
 
-for fp in primitives/* ; do
+TMP_DIR=/tmp/PRIMITIVES
+LOCAL_DIR=primitives
+
+
+mkdir -p $TMP_DIR
+
+for fp in ${LOCAL_DIR}/* ; do
 
     if $DBG ; then  echo ff is $fp ; fi
     fn=$(basename $fp)
@@ -15,23 +21,30 @@ for fp in primitives/* ; do
         continue
     fi
 
+    TMP_F="${TMP_DIR}/${fn}"
+
+    if [ ! -f "${TMP_F}" ] ; then
+        if $DBG ; then  echo '*** DOES NOT EXIST *** ' ${TMP_F} ; fi
+        touch -d '1980-01-01 12:34:55' ${TMP_F}
+    fi
+
     if $DBG ; then echo \
-    "diff -q primitives/$fn  /tmp/PRIMITIVES/$fn" ; fi
-    diff -q primitives/$fn  /tmp/PRIMITIVES/$fn
+    "diff -q ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn" ; fi
+    diff -q ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn
     result="$?"
     if [ "$result" == 0 ] ; then
         if $DBG ; then echo matches ; fi
     fi
     if [ "$result" == 1 ] ; then
-        if $DBG ; then echo "NOT matches  primitives/$fn  /tmp/PRIMITIVES/$fn" ; fi
+        if $DBG ; then echo "NOT matches  ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn" ; fi
         echo \
-        "  cp -p primitives/$fn  /tmp/PRIMITIVES/$fn"
-           cp -p primitives/$fn  /tmp/PRIMITIVES/$fn
+        "  cp -p ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn"
+           cp -p ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn
     fi
 
 done
 
 
-#cp -p primitives/* /tmp/PRIMITIVES/
+#cp -p ${LOCAL_DIR}/* ${TMP_DIR}/
 
 ###
