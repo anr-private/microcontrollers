@@ -36,7 +36,7 @@ class DataBoard(ElemLoggerABC):
     def _nullify_instance(cls):
         # UNIT TEST ONLY
         DataBoard._instance = None
-        DataBoard._clear_latest_messages()
+        ###DataBoard._clear_latest_messages()
 
     def _set_logger(self, logger):
         global log, logrt, logi
