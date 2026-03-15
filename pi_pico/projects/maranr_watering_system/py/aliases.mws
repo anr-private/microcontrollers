@@ -9,6 +9,17 @@ alias COMPARE_sensors=../scripts/COMPARE_sensors.sh
 #alias COMPARE_triv log=../scripts/COMPARE_triv log.sh
 alias COMPARE_weblib=../scripts/COMPARE_weblib.sh
 
+alias COMPARE_DISPLAYS=../scripts/COMPARE_displays.sh          
+alias COMPARE_LIB=../scripts/COMPARE_lib.sh
+alias COMPARE_LIB2=../scripts/COMPARE_lib2.sh
+alias COMPARE_LOGGER_ELEM=../scripts/COMPARE_logger_elem.sh
+alias COMPARE_MAIN=../scripts/COMPARE_main.sh
+alias COMPARE_PRIMITIVES=../scripts/COMPARE_primitives.sh
+alias COMPARE_SENSORS=../scripts/COMPARE_sensors.sh
+#alias COMPARE_TRIV LOG=../scripts/COMPARE_triv log.sh
+alias COMPARE_WEBLIB=../scripts/COMPARE_weblib.sh
+
+
 alias UPLOAD_ALL=../scripts/UPLOAD_ALL.sh
 alias UPLOAD_displays=../scripts/UPLOAD_displays.sh
 alias UPLOAD_lib=../scripts/UPLOAD_lib.sh
@@ -19,6 +30,17 @@ alias UPLOAD_primitives=../scripts/UPLOAD_primitives.sh
 alias UPLOAD_sensors=../scripts/UPLOAD_sensors.sh
 #alias UPLOAD_triv__log=../scripts/UPLOAD_triv__log.sh
 alias UPLOAD_weblib=../scripts/UPLOAD_weblib.sh
+
+alias UPLOAD_DISPLAYS=../scripts/UPLOAD_displays.sh
+alias UPLOAD_LIB=../scripts/UPLOAD_lib.sh
+alias UPLOAD_LIB2=../scripts/UPLOAD_lib2.sh
+alias UPLOAD_LOGGER_ELEM=../scripts/UPLOAD_logger_elem.sh
+alias UPLOAD_MAIN=../scripts/UPLOAD_main.sh
+alias UPLOAD_PRIMITIVES=../scripts/UPLOAD_primitives.sh
+alias UPLOAD_SENSORS=../scripts/UPLOAD_sensors.sh
+#alias UPLOAD_TRIV__LOG=../scripts/UPLOAD_triv__log.sh
+alias UPLOAD_WEBLIB=../scripts/UPLOAD_weblib.sh
+
 
 alias DOWNLOAD_ALL=../scripts/DOWNLOAD_ALL.sh
 alias DOWNLOAD_displays=../scripts/DOWNLOAD_displays.sh
@@ -31,6 +53,18 @@ alias DOWNLOAD_sensors=../scripts/DOWNLOAD_sensors.sh
 #alias DOWNLOAD_triv log=../scripts/DOWNLOAD_triv log.sh
 alias DOWNLOAD_weblib=../scripts/DOWNLOAD_weblib.sh
 
+alias DOWNLOAD_DISPLAYS=../scripts/DOWNLOAD_displays.sh
+alias DOWNLOAD_LIB=../scripts/DOWNLOAD_lib.sh
+alias DOWNLOAD_LIB2=../scripts/DOWNLOAD_lib2.sh
+alias DOWNLOAD_LOGGER_ELEM=../scripts/DOWNLOAD_logger_elem.sh
+alias DOWNLOAD_MAIN=../scripts/DOWNLOAD_main.sh
+alias DOWNLOAD_PRIMITIVES=../scripts/DOWNLOAD_primitives.sh
+alias DOWNLOAD_SENSORS=../scripts/DOWNLOAD_sensors.sh
+#alias DOWNLOAD_TRIV LOG=../scripts/DOWNLOAD_triv log.sh
+alias DOWNLOAD_WEBLIB=../scripts/DOWNLOAD_weblib.sh
+
+
+                                                              
 alias PUSH_ALL_TO_PICO=../scripts/PUSH_ALL_TO_PICO.sh    
 alias PUSH_displays_to_pico=../scripts/PUSH_displays_to_pico.sh
 alias PUSH_lib_to_pico=../scripts/PUSH_lib_to_pico.sh
@@ -41,6 +75,17 @@ alias PUSH_primitives_to_pico=../scripts/PUSH_primitives_to_pico.sh
 alias PUSH_sensors_to_pico=../scripts/PUSH_sensors_to_pico.sh
 #alias PUSH_triv log_to_pico=../scripts/PUSH_triv log_to_pico.sh
 alias PUSH_weblib_to_pico=../scripts/PUSH_weblib_to_pico.sh
+
+alias PUSH_DISPLAYS_to_pico=../scripts/PUSH_displays_to_pico.sh
+alias PUSH_LIB_to_pico=../scripts/PUSH_lib_to_pico.sh
+alias PUSH_LIB2_to_pico=../scripts/PUSH_lib2_to_pico.sh
+alias PUSH_LOGGER_ELEM_to_pico=../scripts/PUSH_logger_elem_to_pico.sh
+alias PUSH_MAIN_to_pico=../scripts/PUSH_main_to_pico.sh
+alias PUSH_PRIMITIVES_to_pico=../scripts/PUSH_primitives_to_pico.sh
+alias PUSH_SENSORS_to_pico=../scripts/PUSH_sensors_to_pico.sh
+#alias PUSH_TRIV LOG_to_pico=../scripts/PUSH_triv log_to_pico.sh
+alias PUSH_WEBLIB_to_pico=../scripts/PUSH_weblib_to_pico.sh
+
 
 alias REMOVE_ALL_from_pico=../scripts/REMOVE_ALL_from_pico.sh
 
