@@ -2,6 +2,7 @@
 
 import asyncio
 import gc
+import json
 
 from utils import show_len
 from utils import get_fs_space_string
@@ -118,8 +119,9 @@ class RequestHandler(ElemLoggerABC):
         print(f"RH@118  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
-        json_stg = '{"age": 1, "name": "Bob"}'
-
+        ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {get_formatted_date_time_string()} }'
+        data_dict = {"age": 1, "name": "Bob", "datetime": get_formatted_date_time_string() }
+        json_stg = json.dumps(data_dict)
         print(f"RH@123 body: JSON-string:...")  
         print(json_stg)
 

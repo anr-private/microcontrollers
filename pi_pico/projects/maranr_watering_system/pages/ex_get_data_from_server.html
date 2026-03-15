@@ -41,12 +41,13 @@
                     console.log(typeof data);
                     console.log(data);
                 */
-                    console.log("AGE and NAME");
+                    console.log("AGE and NAME and DATETIME");
                     console.log(data.age);
                     console.log(data.name);
+                    console.log(data.datetime);
                 
                 var elt = document.getElementById('data-container');
-                elt.innerText = `Age:${data.age} Name: ${data.name}`;
+                elt.innerText = `Age:${data.age} Name: ${data.name}  Date: ${data.datetime} `;
               })
               .catch(error => {
                 // Handle any errors that occur during the fetch or JSON parsing
