@@ -4,29 +4,42 @@
 
 DBG=false
 
-for fp in /tmp/TRIVLOG/* ; do
+TMP_DIR=/tmp/TRIVLOG
+LOCAL_DIR=trivlog
+
+if [ ! -d ${TMP_DIR} ] ; then
+    echo '*******************************************************'
+    echo '*******************************************************'
+    echo 'NO SUCH DIR: '  ${TMP_DIR}
+    echo '*******************************************************'
+    echo '*******************************************************'
+    exit 9
+fi
+
+
+for fp in ${TMP_DIR}/* ; do
 
     if $DBG ; then  echo ff is $fp ; fi
     fn=$(basename $fp)
     if $DBG ; then echo fn is $fn ; fi
 
     if $DBG ; then echo \
-    "diff -q  /tmp/TRIVLOG/$fn  trivlog/$fn  " ; fi
-    diff  -q  /tmp/TRIVLOG/$fn  trivlog/$fn  
+    "diff -q  ${TMP_DIR}/$fn  ${LOCAL_DIR}/$fn  " ; fi
+    diff  -q  ${TMP_DIR}/$fn  ${LOCAL_DIR}/$fn  
     result="$?"
     if [ "$result" == 0 ] ; then
         if $DBG ; then echo matches ; fi
     fi
     if [ "$result" == 1 ] ; then
-        if $DBG ; then echo "NOT matches  trivlog/$fn  /tmp/TRIVLOG/$fn" ; fi
+        if $DBG ; then echo "NOT matches  ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn" ; fi
         echo \
-        "cp -p /tmp/TRIVLOG/$fn  trivlog/$fn  "
-        cp  -p /tmp/TRIVLOG/$fn  trivlog/$fn
+        "cp -p ${TMP_DIR}/$fn  ${LOCAL_DIR}/$fn  "
+        cp  -p ${TMP_DIR}/$fn  ${LOCAL_DIR}/$fn
     fi
 
 done
 
 
-#cp -p trivlog/* /tmp/TRIVLOG/
+#cp -p ${LOCAL_DIR}/* ${TMP_DIR}/
 
 ###
