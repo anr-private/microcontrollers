@@ -14,13 +14,19 @@
 
     <script src="fetch_data_and_update.js"></script>
     <script>
+        const dataUrl = "data?a=123"
         // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
-        const intervalId = setInterval(fetchDataAndUpdate, 3000);
+        // In order to pass an arg to the function, we use an anonymous go-between function.
+        const intervalId = setInterval(
+            () =>   {
+                        fetchDataAndUpdate(dataUrl);
+                    },
+            3000);
 
         // Optional: Call the function immediately when the page loads for the first update
         //console.log("FIRST CALL TO THE FETCH");
-        fetchDataAndUpdate();
+        fetchDataAndUpdate(dataUrl);
 
     </script>
 </body>

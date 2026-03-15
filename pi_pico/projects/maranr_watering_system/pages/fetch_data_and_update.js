@@ -1,12 +1,29 @@
 // fetch_data_and_update.js
 
 // Function to fetch data from the server and update the page
-function fetchDataAndUpdate() {
+// See ex_get_data_from_server.html for an example.
+// Typical use: 
+/*
+    <script src="fetch_data_and_update.js"></script>
+    <script>
+        const dataUrl = "data?a=123"
+        // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
+        // This function will run repeatedly until the window is closed or clearInterval() is called.
+        // In order to pass an arg to the function, we use an anonymous go-between function.
+        const intervalId = setInterval(
+            () =>   {  fetchDataAndUpdate(dataUrl); },  // anon funct calls fetch w URL arg
+            3000);
+        // Optional: call immed when page loads
+        console.log("FIRST CALL TO THE FETCH");
+        fetchDataAndUpdate(dataUrl);
+*/
+
+function fetchDataAndUpdate(dataUrl) {
     // In a real application, you would replace this URL with your server endpoint
     // For this example, we simulate fetching the current time
-    const dataUrl = 'data?a=123'; 
+    ////const dataUrl = 'data?a=123'; 
 
-    //console.log("@@@@ START FETCH function");
+    console.log("fetchDataAndUpdate START FETCH url=" + dataUrl);
 
     fetch(dataUrl)
       .then(response => {
