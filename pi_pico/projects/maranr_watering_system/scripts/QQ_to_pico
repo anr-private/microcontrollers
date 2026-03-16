@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 DBG = False
+PRT = True
 V = False
 VV = False
 DRYRUN = False
@@ -29,18 +30,19 @@ class ToPico:
         self.pkg_names = []
 
     def do_options(self, opts):
-        global DBG, V, VV, DRYRUN
-        print(f"@22 opts={opts}")
+        global DBG, V, VV, DRYRUN, STOP_ON_ERROR, PRT
+        #print(f"@22 opts={opts}")
         if opts.debug: DBG = True
         if opts.verbose: V = True
         if opts.veryverbose: VV = True; V = True
+        if opts.quiet: PRT = False
         self.pkg_names.extend(opts.other_items)
         if opts.dryrun: DRYRUN = True;
-
+        if opts.stop_on_error: STOP_ON_ERROR = True
 
     def run(self):
         if DBG or V:
-            print(f"{DBG=}  {V=}  veryV={VV}    ")
+            print(f"QQ@42{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
         if DRYRUN: print("----- DRY RUN  -------------------------")
 
         for pkg_name in self.pkg_names:
@@ -57,36 +59,67 @@ class ToPico:
 
         # Get the marker file
         marker_path = pkg_dir_path / MARKER_FILENAME
-        print(f" {marker_path=}")
+        if PRT: print(f"QQ@60  {marker_path=}")
 
         if marker_path.is_dir():
-            perr(f"The marker is a DIRECTORY; expected a FILE!  '{marker_path}'")
+            perr(f"QQ@63 The marker is a DIRECTORY; expected a FILE!  '{marker_path}'")
         if not marker_path.exists():
-            print(f" -- Marker file {marker_path} does not exist.  Creating it now...")
+            if PRT: print(f"QQ@65  -- Marker file {marker_path} does not exist.  Creating it now...")
             self._create_marker_file(marker_path)
         else:
-            if V: print(f" -- Marker file {marker_path} exists. ")
+            if V: print(f"QQ@68 -- Marker file {marker_path} exists. ")
         marker_ts = self._get_file_timestamp(marker_path)
         if V: print(f"QQ@70 marker TIMESTAMP {marker_ts} ")
 
         filenames = self._get_files_in_pkg(pkg_dir_path)
-        print(f"@@@ FILENAMES {filenames} " )
+        if V: print(f"QQ@75 FILENAMES {filenames} " )
 
         files_and_ts = list()
         for fname in filenames:
             ts = self._get_file_timestamp(pkg_dir_path / fname)
             files_and_ts.append ( (fname, ts) )
-        print(f"QQ@79 files_and_ts: ")
-        print(f"QQ@80 {'\n'.join([ str(x) for x in files_and_ts])}")
+        if V: print(f"QQ@79 files_and_ts: ")
+        if V: print(f"QQ@80 {'\n'.join([ str(x) for x in files_and_ts])}")
 
         chosen_fnames = list()
         for fname, ts in files_and_ts:
-            print(f"@@@@@@ {fname=}  {ts=}")
+            if VV: print(f"QQ@86 {fname=}  {ts=}")
             if ts >= marker_ts:
                 chosen_fnames.append(fname)
             else:
                 if VV: print(f"QQ@85  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
         if V: print(f"@@89 Chosen: {chosen_fnames}")
+
+        self._copy_to_pico(pkg_dir_path, chosen_fnames)
+
+
+    def _copy_to_pico(self, pkg_dir_path, chosen_fnames):
+        for fname in chosen_fnames:
+            cmd_and_args = ("mpremote", "fs", "cp", str(pkg_dir_path/fname), ":")
+            self._run_a_command(cmd_and_args)
+
+
+    def _run_a_command(self, cmd_and_args):
+        # cmd_and_args is a list: ['cmd', 'arg', ...]
+        # Run the command and capturing its output
+        if V: print(f"QQ@97  RUN CMD: {cmd_and_args} ")
+        if DRYRUN:
+            print(f"QQ@107  DRY RUN: not performed:  {cmd_and_args}")
+            return
+
+        result = subprocess.run(cmd_and_args, capture_output=True, text=True)
+
+        if VV: print("QQ@106  Return code:", result.returncode)
+        if VV: print("QQ2107STDOUT:", result.stdout)
+        if VV: print("QQ@108STDERR:", result.stderr)
+
+        # Check if the command was successful (return code 0)
+        if result.returncode != 0:
+            perr("QQ@112 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
+            return
+        if PRT: print("QQ@114 {' '.join(cmd_and_args)} ")
+
+
 
     def _get_files_in_pkg(self, pkg_dir_path):
         files = list()
@@ -95,14 +128,13 @@ class ToPico:
             if not os.path.isfile(os.path.join(pkg_dir_path, fname)):
                 continue
             if fname == MARKER_FILENAME:
-                print("@@@@@@@@@@@@@@@ SKP MARKER")
                 continue
             files.append(fname)
         return files
 
 
     def _create_marker_file(self, marker_path):
-        if VV: print(f"Create marker file: '{marker_path}' ")
+        if VV: print(f"QQ@111 Create marker file: '{marker_path}' ")
         with open(marker_path, "w") as f:
             pass
         access_time = 100000
@@ -111,7 +143,7 @@ class ToPico:
 
     def _get_file_timestamp(self, fpath):
         s = os.stat(fpath)
-        if V: print(f"QQ@81  fpath={fpath}  status={s} ")
+        if V: print(f"QQ@119  fpath={fpath}  status={s} ")
         return s.st_mtime
 
 
@@ -167,6 +199,8 @@ class SimpleOptionsParser(object):
         opts.veryverbose = False
         opts.debug = False
         opts.dryrun = False
+        opts.quiet = False
+        opts.stop_on_error = False
 
         argidx = 0
         debug_itself = False
@@ -174,25 +208,26 @@ class SimpleOptionsParser(object):
 
             arg = args[argidx]; argidx += 1
 
-            #print(f"@@@@ arg is {arg}  @@@@@@@@@@@@@@@@@@@@@@")
+            if debug_itself: print(f"QQ@177 arg is '{arg}'")
 
             if arg.startswith("--"):
                 opt = arg[2:]
             elif arg.startswith("-"):
                 opt = arg[1:]
             else:
-                #print(f"@@@@@@@@@@ NOT AN OPT {arg}")
+                if debug_itself: print(f"QQ@189 NOT AN OPT {arg}")
                 opts.other_items.append(arg)
                 continue
 
             optLc = opt.lower()
-            ###del arg
-            #print(f"@@@@@@@@@@@ OPT is {opt}    {optLc=} ")
+            if debug_itself: print(f"QQ@195  OPT is {opt}    {optLc=} ")
 
-            #print(f"+++$$$ opt='{opt}'  optLc='{optLc}'")
             if optLc in ("help","h"):
                 print(HELP_INFO)
                 sys.exit(1)
+
+            elif opt in ("q", "quiet"):
+                opts.quiet = True
 
             elif opt in ("v", "verbose"):
                 opts.verbose = True
@@ -202,8 +237,11 @@ class SimpleOptionsParser(object):
                 opts.veryverbose = True
                 print("VERY VERBOSE MODE")
 
-            elif opt in ("z", "debug"):
+            elif opt in ("x", "stop", "stop-on-error"):
                 opts.debug = True
+
+            elif opt in ("z", "debug"):
+                opts.stop_on_error = True
 
             elif opt in ("zoption", "zoptions", "debug_itself"):
                 debug_itself = True
@@ -222,7 +260,7 @@ class SimpleOptionsParser(object):
                 raise RuntimeError(s)
 
         if debug_itself:
-            print(f"  $$$ SimpleOptionsParser Args: {args}")
+            print(f"QQ@229 $$$ SimpleOptionsParser Args: {args}")
 
         return opts
 
@@ -244,18 +282,17 @@ class SimpleOptionsParser(object):
 
         if 1:
             opts = self.parseOptions(["-zoptions", "-v"])
-            print(f"+++ opts={opts}")
+            print(f"QQ@251  +++ opts={opts}")
             assert opts.verbose is True
             assert opts.veryverbose is False
             assert opts.other_items == []
         if 1:
             opts = self.parseOptions(["-zoptions", "a", "b"])
-            print(f"+++ opts={opts}")
+            print(f"QQ@257  +++ opts={opts}")
             assert opts.other_items == ["a", "b"]
 
 
 def main(args):
-    ###print(f"{args}")
     opts = SimpleOptionsParser().parseOptions(args)
     to_pico = ToPico()
     to_pico.do_options(opts)
