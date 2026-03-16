@@ -40,6 +40,4 @@ for fp in ${TMP_DIR}/* ; do
 done
 
 
-#cp -p ${LOCAL_DIR}/* ${TMP_DIR}/
-
 ###
