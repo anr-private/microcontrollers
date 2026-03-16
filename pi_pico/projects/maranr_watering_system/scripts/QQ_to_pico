@@ -1,0 +1,311 @@
+#!/usr/bin/env python3
+# :mode=python:
+#
+# QQ_to_pico
+# 
+# Quick-push just the updated files to the Pico
+
+import os
+import sys
+
+DBG = False
+V = False
+VV = False
+DRYRUN = False
+
+HELP_INFO="""
+This is the HELP not done yet
+"""
+
+
+class ToPico:
+    def __init__(self):
+        self.pkg_names = []
+
+    def do_options(self, opts):
+        global DBG, V, VV, DRYRUN
+        print(f"@22 opts={opts}")
+        if opts.debug: DBG = True
+        if opts.verbose: V = True
+        if opts.veryverbose: VV = True; V = True
+        self.pkg_names.extend(opts.other_items)
+        if opts.dryrun: DRYRUN = True;
+
+
+    def run(self):
+        if DBG or V:
+            print(f"{DBG=}  {V=}  veryV={VV}    ")
+        if DRYRUN: print("----- DRY RUN  -------------------------")
+
+
+####################################################################
+
+class SimpleOptionsParser(object):
+    """ Simplified options parser """
+
+    class _Options(object):
+        """ """
+        def __init__(self):
+            """ """
+
+        @property
+        def optionNames(self):
+            """ Returns a collection of str: the property names
+            of the option values.
+            """
+            names = []
+            for n in self.__dict__.keys():
+                if n.startswith("_"): continue
+                names.append(n)
+            return names
+
+        def __str__(self):
+            """ """
+            s = []
+            for name in self.optionNames:
+                val = getattr(self, name)
+                s.append(f"{name}={val}")
+            return f"{self.__class__.__name__}[{','.join(s)}]"
+        __repr__ = __str__
+
+
+    ################################################################
+
+    def parseOptions(self, args):
+        """ """
+
+        opts = SimpleOptionsParser._Options()
+
+        # Items that are not options (do not start with '-' or '--')
+        opts.other_items = []
+
+        opts.verbose = False
+        opts.veryverbose = False
+        opts.debug = False
+        opts.dryrun = False
+
+        argidx = 0
+        debug_itself = False
+        while argidx < len(args):
+
+            arg = args[argidx]; argidx += 1
+
+            #print(f"@@@@ arg is {arg}  @@@@@@@@@@@@@@@@@@@@@@")
+
+            if arg.startswith("--"):
+                opt = arg[2:]
+            elif arg.startswith("-"):
+                opt = arg[1:]
+            else:
+                #print(f"@@@@@@@@@@ NOT AN OPT {arg}")
+                opts.other_items.append(arg)
+                continue
+
+            optLc = opt.lower()
+            ###del arg
+            #print(f"@@@@@@@@@@@ OPT is {opt}    {optLc=} ")
+
+            #print(f"+++$$$ opt='{opt}'  optLc='{optLc}'")
+            if optLc in ("help","h"):
+                print(HELP_INFO)
+                sys.exit(1)
+
+            elif opt in ("v", "verbose"):
+                opts.verbose = True
+
+            elif opt in ("vv", "veryverbose"):
+                opts.verbose = True
+                opts.veryverbose = True
+                print("VERY VERBOSE MODE")
+
+            elif opt in ("z", "debug"):
+                opts.debug = True
+
+            elif opt in ("zoption", "zoptions", "debug_itself"):
+                debug_itself = True
+
+            elif optLc in ("y", "dry", "dryrun",):
+                opts.dryrun = True
+
+            # elif self._isInt(opt):
+                # ival = int(opt)
+                # opts.dataSets.append(ival)
+    
+            else:
+                s = f"*ERROR* Unknown option '{arg}'"
+                if not opt:
+                    s = "*ERROR Stand-alone option marker disallowed:  '-' or '--' by itself."
+                raise RuntimeError(s)
+
+        if debug_itself:
+            print(f"  $$$ SimpleOptionsParser Args: {args}")
+
+        return opts
+
+
+    ################################################################
+
+    def _isInt(self, stg):
+        try:
+            _ = int(stg)
+            return True
+        except (ValueError, TypeError):
+            pass
+        return False
+
+    ################################################################
+
+    def runTests(self):
+        """ Run some simple tests """
+
+        if 1:
+            opts = self.parseOptions(["-zoptions", "-v"])
+            print(f"+++ opts={opts}")
+            assert opts.verbose is True
+            assert opts.veryverbose is False
+            assert opts.other_items == []
+        if 1:
+            opts = self.parseOptions(["-zoptions", "a", "b"])
+            print(f"+++ opts={opts}")
+            assert opts.other_items == ["a", "b"]
+
+
+def main(args):
+    ###print(f"{args}")
+    opts = SimpleOptionsParser().parseOptions(args)
+    to_pico = ToPico()
+    to_pico.do_options(opts)
+    to_pico.run()
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
+# :mode=python:
+
+###
+
+
+
+_="""
+
+TIMESTAMP_MARKER_FILE="__QPUSH_MARKER__"
+
+LOCAL_DIR="lib"
+
+DBG=false
+VERBOSE=false
+BOTH=false
+
+# touch -d "2024-01-15 14:30:00" report.txt
+
+
+get_marker_timestamp() {
+    # returns the timestamp as an int
+    local MARKER="$1"   ###"${LOCAL_DIR}/${TIMESTAMP_MARKER_FILE}"
+    if [ ! -f ${MARKER} ] ; then
+        echo '********* CANNOT FILE THE TIMESTAMP MARKER  ************'
+        echo '  Looking for ' ${MARKER}
+        echo '********** SO USING A VERY OLD TIMESAMP  **********'
+        touch -d "1980-01-02 00:01:02" ${MARKER}
+    fi
+    ts=$(stat -c %Y ${MARKER})
+    echo $ts
+}
+
+#--- copy the new stuff to the Pico ---
+copy_changed_files_to_the_pico() {
+    # 1 is the marker file path for this dir
+
+
+    local ts_ref="$1"
+
+    if $VERBOSE ; then
+        echo "copy_changed_files_to_the_pico  ts_ref is ${ts_ref}"
+    fi
+    if $DBG ; then
+        echo "Copy contents of ${LOCAL_DIR}/ "
+    fi
+
+    for fpath in ${LOCAL_DIR}/* ; do
+
+        if $BOTH ; then  echo ' ' ; echo fpath is $fpath ; fi
+        fname=$(basename $fpath)
+        if $DBG ; then echo fname is $fname ; fi
+
+        if [ "${fname}" = "${TIMESTAMP_MARKER_FILE}" ] ; then
+            if $DBG ; then echo 'SKIP THE MARKER!!!!! ' ; fi
+            continue
+        fi
+
+        local ts=$(stat -c %Y  ${fpath})
+        if $DBG ; then echo 'ts is ' $ts ; fi
+
+        if ((ts <= ts_ref)); then
+            if $VERBOSE ; then 
+                #local s=$(ls -l ${fpath} | cut -c 24-)
+                echo '  Already up-to-date  its TIMESTAMP is OLD  ' $ts '<=' $ts_ref "   " $((ts_ref-ts))
+            fi
+            ###ls -l ${fpath}
+            continue
+        fi
+        echo 'DO THIS ONE!' $fpath
+
+        echo \
+        "mpremote fs cp ${fpath}  :"
+         mpremote fs cp ${fpath}  :
+
+    done
+
+
+    ###mpremote fs cp -r lib   :
+}
+
+list_pico_filesystem_contents() {
+    echo ' '
+    echo 'LIST THE PICO CONTENTS: ROOT DIR'
+    mpremote fs ls 
+    echo ' '    
+    echo 'LIST THE PICO CONTENTS: /lib'
+    mpremote fs ls /lib
+}
+
+
+main() {
+    ###echo "QUICK-PUSH_LIB_FILES_TO_PICO "
+
+    if [ "$1" = "D" -o  "$1" = "d" ] ; then
+        echo '________________________ DEBUG ENABLED   _______________'
+        DBG=true
+    fi
+    if [ "$1" = "V" -o  "$1" = "v" ] ; then
+        echo '________________________ VERBOSE ENABLED   _______________'
+        VERBOSE=true
+    fi
+    if [ "$1" = "DV"  -o  "$1" = "dv" ] ; then
+        echo '________________________ DEBUG and VERBOSE BOTH ENABLED   _______________'
+        DBG=true
+        VERBOSE=true
+        BOTH=true
+    fi
+
+
+    local MARKER_FPATH="${LOCAL_DIR}/${TIMESTAMP_MARKER_FILE}"
+
+    local ref_tstamp=$(get_marker_timestamp ${MARKER_FPATH})
+    if $VERBOSE ; then 
+
+        local s=$(ls -l ${MARKER_FPATH} | cut -c 23-)
+        echo "MARKER: ${MARKER_FPATH}  ref_tstamp=${ref_tstamp}  ${s}"
+    fi
+
+    copy_changed_files_to_the_pico ${ref_tstamp}
+
+    if $VERBOSE ; then echo 'UPDATE the marker file ' ${MARKER_FPATH} ; fi
+    touch ${MARKER_FPATH}
+}
+
+
+main $*
+"""
+
+###
