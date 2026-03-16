@@ -6,16 +6,22 @@
 # Quick-push just the updated files to the Pico
 
 import os
+from pathlib import Path
+import subprocess
 import sys
 
 DBG = False
 V = False
 VV = False
 DRYRUN = False
+STOP_ON_ERROR = True
+
 
 HELP_INFO="""
 This is the HELP not done yet
 """
+
+MARKER_FILENAME = "__QPUSH_MARKER__"
 
 
 class ToPico:
@@ -36,6 +42,84 @@ class ToPico:
         if DBG or V:
             print(f"{DBG=}  {V=}  veryV={VV}    ")
         if DRYRUN: print("----- DRY RUN  -------------------------")
+
+        for pkg_name in self.pkg_names:
+            self.do_pkg(pkg_name)
+
+
+    def do_pkg(self, pkg_name):
+        if V: print(f"\n+++ Pkg: {pkg_name}  -------")
+
+        pkg_dir_path = Path("./"+pkg_name)
+        if not pkg_dir_path.is_dir():
+            perr(f"No such pkg dir: ./{pkg_name}")
+            return
+
+        # Get the marker file
+        marker_path = pkg_dir_path / MARKER_FILENAME
+        print(f" {marker_path=}")
+
+        if marker_path.is_dir():
+            perr(f"The marker is a DIRECTORY; expected a FILE!  '{marker_path}'")
+        if not marker_path.exists():
+            print(f" -- Marker file {marker_path} does not exist.  Creating it now...")
+            self._create_marker_file(marker_path)
+        else:
+            if V: print(f" -- Marker file {marker_path} exists. ")
+        marker_ts = self._get_file_timestamp(marker_path)
+        if V: print(f"QQ@70 marker TIMESTAMP {marker_ts} ")
+
+        filenames = self._get_files_in_pkg(pkg_dir_path)
+        print(f"@@@ FILENAMES {filenames} " )
+
+        files_and_ts = list()
+        for fname in filenames:
+            ts = self._get_file_timestamp(pkg_dir_path / fname)
+            files_and_ts.append ( (fname, ts) )
+        print(f"QQ@79 files_and_ts: ")
+        print(f"QQ@80 {'\n'.join([ str(x) for x in files_and_ts])}")
+
+        chosen_fnames = list()
+        for fname, ts in files_and_ts:
+            print(f"@@@@@@ {fname=}  {ts=}")
+            if ts >= marker_ts:
+                chosen_fnames.append(fname)
+            else:
+                if VV: print(f"QQ@85  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
+        if V: print(f"@@89 Chosen: {chosen_fnames}")
+
+    def _get_files_in_pkg(self, pkg_dir_path):
+        files = list()
+        for fname in os.listdir(pkg_dir_path):
+            # skip dirs, etc
+            if not os.path.isfile(os.path.join(pkg_dir_path, fname)):
+                continue
+            if fname == MARKER_FILENAME:
+                print("@@@@@@@@@@@@@@@ SKP MARKER")
+                continue
+            files.append(fname)
+        return files
+
+
+    def _create_marker_file(self, marker_path):
+        if VV: print(f"Create marker file: '{marker_path}' ")
+        with open(marker_path, "w") as f:
+            pass
+        access_time = 100000
+        modification_time = 100001
+        os.utime(marker_path, (access_time, modification_time))
+
+    def _get_file_timestamp(self, fpath):
+        s = os.stat(fpath)
+        if V: print(f"QQ@81  fpath={fpath}  status={s} ")
+        return s.st_mtime
+
+
+def perr(err):
+    print(f"**ERROR**  {err}")
+    if STOP_ON_ERROR:
+        raise RuntimeError(f"STOPPING DUE TO ERROR: {err}")
+
 
 
 ####################################################################
