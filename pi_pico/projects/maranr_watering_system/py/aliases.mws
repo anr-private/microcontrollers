@@ -1,3 +1,6 @@
+
+alias QQ_to_pico=../scripts/QQ_to_pico
+
 alias COMPARE_ALL=../scripts/COMPARE_ALL.sh
 alias COMPARE_displays=../scripts/COMPARE_displays.sh
 alias COMPARE_lib=../scripts/COMPARE_lib.sh
