@@ -25,7 +25,8 @@ This is the HELP not done yet
 
 MARKER_FILENAME = "__QPUSH_MARKER__"
 
-ALL_DIRS={
+# aka packages
+ALL_DIRS=[
      "displays",
      "lib",
      "lib2",
@@ -33,7 +34,7 @@ ALL_DIRS={
      "primitives",
      "sensors",
      "weblib",
-    }
+    ]
 
 class ToPico:
     def __init__(self):
@@ -49,16 +50,27 @@ class ToPico:
         if opts.dryrun: DRYRUN = True;
         if opts.stop_on_error: STOP_ON_ERROR = True
 
-        if "ALL" in opts.other_items:
-            if len(opts.other_items) != 1:
-                perr("QQ@54 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
+        req_items = opts.other_items
+        if len(req_items) == 0: req_items = ["ALL"]
+        if "ALL" in req_items:
+            if len(req_items) != 1:
+                perr(f"QQ@54 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
                 sys.exit(1)
-            print("@@@@ USE ALL")
             pkgs = set(ALL_DIRS)
         else:
-            pkgs = set(opts.other_items)
-        print(f"@@@ set pkgs {pkgs}")
-        sys.exit(1)
+            pkgs = set(req_items)
+        # Verify the pkg names are known to us
+        for p in pkgs:
+            if p not in ALL_DIRS:
+                perr(f"QQ@65 Unrecognized package name '{p}'")
+                sys.exit(1)
+        # Create a list of requested packages (dirs), in order per ALL_DIRS
+        self.pkg_names = []
+        for pkgname in ALL_DIRS:
+            if pkgname in pkgs:
+                self.pkg_names.append(pkgname)
+                ###print(f"@@@@@@@@@ {pkgname}  added to {self.pkg_names}")
+        if V: print(f"QQ@65 Pkgs to be updated: {self.pkg_names}")
 
 
     def run(self):
@@ -118,11 +130,11 @@ class ToPico:
 
         num_copied = len(chosen_fnames)
         if num_copied > 1:
-            print(f"QQ@101 Copied {num_copied} files to the PICO")
+            print(f"QQ@101 Copied {num_copied} files to the PICO  {pkg_name}")
         elif num_copied == 1:
-            print(f"QQ@103 Copied 1 file to the PICO")
+            print(f"QQ@103 Copied 1 file to the PICO  {pkg_name}")
         else:
-            print(f"QQ@105  NO FILES copied to the PICO")
+            print(f"QQ@105  NO FILES copied to the PICO  {pkg_name}")
 
         # Update the marker's timestamp(s)
         if DRYRUN: 
@@ -290,7 +302,7 @@ class SimpleOptionsParser(object):
             elif opt in ("z", "debug"):
                 opts.stop_on_error = True
 
-            elif opt in ("zoption", "zoptions", "debug_itself"):
+            elif opt in ("zz", "zoption", "zoptions", "debug_itself"):
                 debug_itself = True
 
             elif optLc in ("y", "dry", "dryrun",):
@@ -308,6 +320,7 @@ class SimpleOptionsParser(object):
 
         if debug_itself:
             print(f"QQ@290 $$$ SimpleOptionsParser Args: {args}")
+            print(f"QQ@322 parsed options: {opts}")
 
         return opts
 
@@ -332,11 +345,11 @@ class SimpleOptionsParser(object):
             print(f"QQ@312  +++ opts={opts}")
             assert opts.verbose is True
             assert opts.veryverbose is False
-            assert opts.other_items == []
+            assert req_items == []
         if 1:
             opts = self.parseOptions(["-zoptions", "a", "b"])
             print(f"QQ@318  +++ opts={opts}")
-            assert opts.other_items == ["a", "b"]
+            assert req_items == ["a", "b"]
 
 
 def main(args):
