@@ -1,0 +1,65 @@
+Raspberry PI Pico  Pins
+
+Pin Range        Best For                     "Special" Function Level
+-----------     --------------------------   ----------------------------
+GP0  – GP9      UART/I2C/SPI Defaults        Moderate - used by default)
+GP10 – GP15     General Purpose / PWM        Very Low 
+GP19 – GP22     General Purpose / PWM        Low
+GP26 – GP28     ADC Analog Inputs            Moderate - used by ADC
+GP23 – GP25,29  Internal / Board Functions   High - avoid
+
+
+SPECIAL USE PINS  ====================================
+
+GPIO 23, 24, 25, 29: These are used internally on the board (SMPS Power save, VBUS Sense, Onboard LED, VSYS measurement).
+    GPIO 23 SMPS (switched mode power supply): Power save
+    GPIO 24 VBUS Sense
+    GPIO 25 Onboard LED
+    GPIO 29 VSYS voltage
+
+    GPIO 0, 1:           Default UART0 TX/RX.  Secondary: 
+    GPIO 4, 5:           Default I2C0 SDA/SCL.
+    GPIO 16, 17, 18, 19: Default SPI0.
+    GPIO 26, 27, 28:     ADC (Analog-to-Digital)
+
+
+These pins are best for basic digital on/off switching or simple input because they lack default peripheral mappings (like the first I2C/UART): 
+BEST PINS for simple i/o and switching
+    GPIO 10, GPIO 11, GPIO 12, GPIO 13, GPIO 14, GPIO 15, GPIO 19, GPIO 20, GPIO 21, GPIO 22.
+    GP14/15 are used for UART1 default, but are freely available if not using UART1. 
+
+
+POWER PINS  =====================================
+
+These are not GPIO numbered - they use 'raw' hardware pin numbers (1-40)
+
+HW   NAME      FUNCTION
+PIN
+---- -------- -----------------------------------------------------------
+40   VBUS     5v directly from USB
+39   VSYS     1.8 - 5.5v power to Pico  (See note below)
+38   GND
+37   3V3_EN   Connects to the board SMPS enable pin. It is a hardware power 
+                on/off (hardware reset). Set it to LOW to reset.
+36   3V3_OUT  Supply power to low-power accessories. Max 300mA
+                This max excludes the power used by the Pico / Pico-2 chip; 
+                so all 300mA is available for accessories.
+35   ADC_REF  ADC pin power supply voltage;
+33   AGND     GND reference for the ADC pins;
+30   RUN      The enable pin; set to LOW to reset the microcontroller chip
+                RP2040 (software reset).
+
+GND pins: 3  8  13  18  23  28  33 (33 is ADC GND)   38
+
+
+=== VBUS and VSYS  ========================================
+
+VBUS (pin 40) is connected directly to USB.
+
+VSYS (pin 39) used to power the Pico if USB is not used.
+   If power is supplied to VSYS, no voltage appears on VBUS
+   (VBUS is on the reverse side of a Shottky diode).
+
+The diode causes a small drop (0.3 - 0.4v) from VBUS to VSYS.
+
+###
