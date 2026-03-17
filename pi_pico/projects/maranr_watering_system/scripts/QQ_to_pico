@@ -54,7 +54,7 @@ class ToPico:
         if len(req_items) == 0: req_items = ["ALL"]
         if "ALL" in req_items:
             if len(req_items) != 1:
-                perr(f"QQ@54 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
+                perr(f"QQ@57 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
                 sys.exit(1)
             pkgs = set(ALL_DIRS)
         else:
@@ -70,12 +70,12 @@ class ToPico:
             if pkgname in pkgs:
                 self.pkg_names.append(pkgname)
                 ###print(f"@@@@@@@@@ {pkgname}  added to {self.pkg_names}")
-        if V: print(f"QQ@65 Pkgs to be updated: {self.pkg_names}")
+        if V: print(f"QQ@73 Pkgs to be updated: {self.pkg_names}")
 
 
     def run(self):
         if DBG or V:
-            print(f"QQ@46{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
+            print(f"QQ@78{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
         if DRYRUN: print("----- DRY RUN  -------------------------")
 
         for pkg_name in self.pkg_names:
@@ -92,58 +92,58 @@ class ToPico:
 
         # Get the marker file
         marker_fpath = pkg_dir_path / MARKER_FILENAME
-        if V: print(f"QQ@63  {marker_fpath=}")
+        if V: print(f"QQ@95  {marker_fpath=}")
 
         if marker_fpath.is_dir():
-            perr(f"QQ@66 The marker is a DIRECTORY; expected a FILE!  '{marker_fpath}'")
+            perr(f"QQ@98 The marker is a DIRECTORY; expected a FILE!  '{marker_fpath}'")
         if not marker_fpath.exists():
-            if PRT: print(f"QQ@68  -- Marker file {marker_fpath} does not exist.  Creating it now...")
+            if PRT: print(f"QQ@100  -- Marker file {marker_fpath} does not exist.  Creating it now...")
             self._create_marker_file(marker_fpath)
         else:
-            if V: print(f"QQ@71 -- Marker file {marker_fpath} exists. ")
+            if V: print(f"QQ@103 -- Marker file {marker_fpath} exists. ")
         marker_ts = self._get_file_timestamp(marker_fpath)
-        if V: print(f"QQ@73 marker TIMESTAMP {marker_ts} ")
+        if V: print(f"QQ@105 marker TIMESTAMP {marker_ts} ")
 
         filenames = self._get_files_in_pkg(pkg_dir_path)
-        if V: print(f"QQ@76 FILENAMES {filenames} " )
+        if V: print(f"QQ@108 FILENAMES {filenames} " )
 
         files_and_ts = list()
         for fname in filenames:
             ts = self._get_file_timestamp(pkg_dir_path / fname)
             files_and_ts.append ( (fname, ts) )
         if V: 
-            print(f"QQ@83 files_and_ts: ")
+            print(f"QQ@115 files_and_ts: ")
             for fname, ts in files_and_ts:
                 diff = ts - marker_ts
                 print(f"  {fname:>25s} {ts:10.1f} {diff:10.1f}")
 
         chosen_fnames = list()
         for fname, ts in files_and_ts:
-            if VV: print(f"QQ@90 {fname=}  {ts=}")
+            if VV: print(f"QQ@122 {fname=}  {ts=}")
             if ts >= marker_ts:
                 chosen_fnames.append(fname)
             else:
-                if VV: print(f"QQ@94  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
-        if V: print(f"QQ@95 Files to be copied: {chosen_fnames}")
+                if VV: print(f"QQ@126  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
+        if V: print(f"QQ@127 Files to be copied: {chosen_fnames}")
 
         self._copy_to_pico(pkg_dir_path, chosen_fnames)
 
         num_copied = len(chosen_fnames)
         if num_copied > 1:
-            print(f"QQ@101 Copied {num_copied} files to the PICO  {pkg_name}")
+            print(f"QQ@133 Copied {num_copied} files to the PICO  {pkg_name}")
         elif num_copied == 1:
-            print(f"QQ@103 Copied 1 file to the PICO  {pkg_name}")
+            print(f"QQ@135 Copied 1 file to the PICO  {pkg_name}")
         else:
-            print(f"QQ@105  NO FILES copied to the PICO  {pkg_name}")
+            print(f"QQ@137  NO FILES copied to the PICO  {pkg_name}")
 
         # Update the marker's timestamp(s)
         if DRYRUN: 
-            print(f"QQ@109 DRYRUN: Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
+            print(f"QQ@141 DRYRUN: Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
         else:
             self._set_file_timestamps_to_now(marker_fpath)
             if V:
                 ts = self._get_file_timestamp(marker_fpath)
-                print(f"QQ@114  Marker file '{marker_fpath}' TIMESTAMP updated to {ts:.1f}")
+                print(f"QQ@146  Marker file '{marker_fpath}' TIMESTAMP updated to {ts:.1f}")
 
 
     def _copy_to_pico(self, pkg_dir_path, chosen_fnames):
@@ -155,22 +155,22 @@ class ToPico:
     def _run_a_command(self, cmd_and_args):
         # cmd_and_args is a list: ['cmd', 'arg', ...]
         # Run the command and capturing its output
-        if V: print(f"QQ@126  RUN CMD: {cmd_and_args} ")
+        if V: print(f"QQ@158  RUN CMD: {cmd_and_args} ")
         if DRYRUN:
-            print(f"QQ@128  DRY RUN: not performed:  {' '.join(cmd_and_args)}")
+            print(f"QQ@160  DRY RUN: not performed:  {' '.join(cmd_and_args)}")
             return
 
         result = subprocess.run(cmd_and_args, capture_output=True, text=True)
 
-        if VV: print("QQ@133  Return code:", result.returncode)
+        if VV: print("QQ@165  Return code:", result.returncode)
         if VV: print("QQ2107STDOUT:", result.stdout)
-        if VV: print("QQ@135STDERR:", result.stderr)
+        if VV: print("QQ@167STDERR:", result.stderr)
 
         # Check if the command was successful (return code 0)
         if result.returncode != 0:
-            perr("QQ@139 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
+            perr("QQ@171 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
             return
-        if PRT: print(f"QQ@141  >>>  {' '.join(cmd_and_args)} ")
+        if PRT: print(f"QQ@173  >>>  {' '.join(cmd_and_args)} ")
 
 
     def _get_files_in_pkg(self, pkg_dir_path):
@@ -186,7 +186,7 @@ class ToPico:
 
 
     def _create_marker_file(self, marker_fpath):
-        if VV: print(f"QQ@157 Create marker file: '{marker_fpath}' ")
+        if VV: print(f"QQ@189 Create marker file: '{marker_fpath}' ")
         with open(marker_fpath, "w") as f:
             pass
         access_time = 100000
@@ -195,7 +195,7 @@ class ToPico:
 
     def _get_file_timestamp(self, fpath):
         s = os.stat(fpath)
-        if VV: print(f"QQ@166  fpath={fpath}  status={s} ")
+        if VV: print(f"QQ@198  fpath={fpath}  status={s} ")
         return s.st_mtime
 
     def _set_file_timestamps_to_now(self, fpath):
@@ -267,19 +267,19 @@ class SimpleOptionsParser(object):
 
             arg = args[argidx]; argidx += 1
 
-            if debug_itself: print(f"QQ@238 arg is '{arg}'")
+            if debug_itself: print(f"QQ@270 arg is '{arg}'")
 
             if arg.startswith("--"):
                 opt = arg[2:]
             elif arg.startswith("-"):
                 opt = arg[1:]
             else:
-                if debug_itself: print(f"QQ@245 NOT AN OPT {arg}")
+                if debug_itself: print(f"QQ@277 NOT AN OPT {arg}")
                 opts.other_items.append(arg)
                 continue
 
             optLc = opt.lower()
-            if debug_itself: print(f"QQ@250  OPT is {opt}    {optLc=} ")
+            if debug_itself: print(f"QQ@282  OPT is {opt}    {optLc=} ")
 
             if optLc in ("help","h"):
                 print(HELP_INFO)
@@ -319,8 +319,8 @@ class SimpleOptionsParser(object):
                 raise RuntimeError(s)
 
         if debug_itself:
-            print(f"QQ@290 $$$ SimpleOptionsParser Args: {args}")
-            print(f"QQ@322 parsed options: {opts}")
+            print(f"QQ@322 $$$ SimpleOptionsParser Args: {args}")
+            print(f"QQ@323 parsed options: {opts}")
 
         return opts
 
@@ -342,13 +342,13 @@ class SimpleOptionsParser(object):
 
         if 1:
             opts = self.parseOptions(["-zoptions", "-v"])
-            print(f"QQ@312  +++ opts={opts}")
+            print(f"QQ@345  +++ opts={opts}")
             assert opts.verbose is True
             assert opts.veryverbose is False
             assert req_items == []
         if 1:
             opts = self.parseOptions(["-zoptions", "a", "b"])
-            print(f"QQ@318  +++ opts={opts}")
+            print(f"QQ@351  +++ opts={opts}")
             assert req_items == ["a", "b"]
 
 
