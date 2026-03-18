@@ -1,0 +1,44 @@
+To determine the ideal size for your ring buffer, you need to balance system memory against the burst rate of your interrupts.
+There is no "magic number," but you can calculate a safe estimate using three key factors:
+1. The "Burst Capacity" Calculation
+The buffer's main job is to hold data during the time your asyncio task is "busy" or "sleeping."
+
+* Max Interrupt Rate: How many IRQs fire per second? (e.g., 100/sec)
+* Max Latency: What is the longest time your asyncio loop might be busy before it returns to await signal.wait()? (e.g., 0.5 seconds if you have a slow task).
+* Formula: (Rate * Latency) * Safety Margin = Buffer Size
+* Example: (100 IRQs/sec * 0.5 sec) * 2 (safety) = 100 slots.
+
+2. Empirical Testing (The Best Method)
+Since asyncio timing can be unpredictable, the most reliable way is to monitor the "High Water Mark" during development. Add a "peak usage" variable to your RingBuffer class:
+
+class RingBuffer:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = [0] * size
+        self.count = 0
+        self.peak = 0  # <--- Track the maximum ever reached
+
+    def put(self, val):
+        if self.count == self.size: return False
+        # ... (rest of put logic)
+        self.count += 1
+        if self.count > self.peak:
+            self.peak = self.count # Update peak
+        return True
+
+Run your system under the "worst-case" stress (e.g., trigger all 3 IRQs as fast as possible). If peak reaches your size, your buffer is too small. If peak only reaches 10% of size, you are wasting RAM.
+3. Memory Constraints
+On MicroPython boards (like the ESP32 or RP2040), RAM is limited.
+
+* Small Ints: A list of 100 small integers is very cheap (a few hundred bytes).
+* Large Buffers: If you need thousands of slots, use array.array('I', [0]*1000) instead of a list. array.array is much more memory-efficient because it stores raw bytes rather than Python object pointers.
+
+4. The "Overflow" Strategy
+Decide what happens if the buffer does fill up. You have two choices:
+
+* Reject New: Keep the old data, ignore the new (current put logic).
+* Overwrite Old: Drop the oldest unread item to make room for the new one. This is usually preferred for real-time sensors where the newest data is the most relevant.
+
+Would you like the code to modify the put method so it automatically overwrites the oldest data when full?
+
+

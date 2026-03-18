@@ -1,0 +1,29 @@
+In MicroPython, micropython.schedule and asyncio are separate systems that work together to bridge the gap between high-priority, restrictive hardware interrupts and your standard application code. [1, 2] 
+How They Interact
+
+* Execution Order: micropython.schedule has higher priority than asyncio. When an IRQ calls schedule(), the scheduled function is placed in a queue. MicroPython will execute this function as soon as it returns to the "main" context—typically between two bytecode instructions—even if an asyncio task is currently running.
+* Context Bridge: The primary interaction is that schedule() allows you to safely set a ThreadSafeFlag or update shared data. Because asyncio is cooperative, it cannot "know" an interrupt happened until it yields control (using await). schedule() ensures the data is moved into a safe place (like a list) so that when the asyncio loop next resumes, the data is ready for the task to process.
+* Memory Allocation: asyncio tasks and coroutines can allocate memory freely. Hardware IRQs cannot. micropython.schedule acts as the "middleman" that runs in a context where memory allocation is allowed, making it the perfect place to append() to lists or set() flags for your tasks. [2, 3, 4, 5, 6, 7, 8] 
+
+Key Performance Note
+While schedule() is fast, there is a variable amount of latency between when the IRQ fires and when your asyncio task actually processes it. This is because the asyncio task must wait for the currently running task to hit an await statement before it can wake up and check the flag. [4, 5, 9] 
+
+| Feature | Hardware IRQ | micropython.schedule | asyncio Task |
+|---|---|---|---|
+| Priority | Absolute (Preemptive) | High (Interrupts main) | Low (Cooperative) |
+| Memory Allocation | Forbidden | Allowed | Allowed |
+| Best For | Toggling a Pin | Moving data to a buffer | Business logic / IO |
+
+Would you like to see how to handle the case where multiple IRQs fire simultaneously before the asyncio task has a chance to wake up?
+
+[1] [https://github.com](https://github.com/peterhinch/micropython-async/blob/master/v3/docs/INTERRUPTS.md)
+[2] [https://www.digikey.com](https://www.digikey.com/en/maker/projects/getting-started-with-asyncio-in-micropython-raspberry-pi-pico/110b4243a2f544b6af60411a85f0437c)
+[3] [https://www.youtube.com](https://www.youtube.com/watch?v=WSLSyBNua-4&t=2)
+[4] [https://ifx-micropython.readthedocs.io](https://ifx-micropython.readthedocs.io/en/latest/reference/isr_rules.html)
+[5] [https://www.digikey.com](https://www.digikey.com/en/videos/d/digi-key-electronics/how-to-use-asyncio-in-micropython-raspberry-pi-pico-digi-key-electronics)
+[6] [https://docs.micropython.org](https://docs.micropython.org/en/latest/pyboard/reference/isr_rules.html)
+[7] [https://docs.micropython.org](https://docs.micropython.org/en/latest/library/asyncio.html)
+[8] [https://www.digikey.com](https://www.digikey.com/en/maker/projects/getting-started-with-asyncio-in-micropython-raspberry-pi-pico/110b4243a2f544b6af60411a85f0437c)
+[9] [https://docs.micropython.org](https://docs.micropython.org/en/latest/library/asyncio.html)
+
+

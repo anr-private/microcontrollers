@@ -1,0 +1,89 @@
+Using a Ring Buffer (or Circular Buffer) is the professional way to handle streaming data in embedded systems. Unlike a standard list, it uses a fixed amount of memory and never triggers the garbage collector by expanding or shrinking. [1, 2, 3, 4, 5] 
+Complete MicroPython Implementation with Ring Buffer
+
+import asyncioimport micropythonimport machine
+# --- 1. Fixed-Size Ring Buffer Class ---class RingBuffer:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = [0] * size  # Pre-allocate all memory once
+        self.head = 0  # Write pointer
+        self.tail = 0  # Read pointer
+        self.count = 0
+
+    def put(self, val):
+        """Adds data; returns False if buffer is full."""
+        if self.count == self.size:
+            return False 
+        self.buffer[self.head] = val
+        self.head = (self.head + 1) % self.size
+        self.count += 1
+        return True
+
+    def get(self):
+        """Removes and returns data; returns None if empty."""
+        if self.count == 0:
+            return None
+        val = self.buffer[self.tail]
+        self.tail = (self.tail + 1) % self.size
+        self.count -= 1
+        return val
+# --- 2. Shared Resources ---rb = RingBuffer(20)          # Buffer for 20 incoming integerssignal = asyncio.ThreadSafeFlag()
+# --- 3. IRQ & Scheduler Logic ---def scheduled_put(val):
+    """Runs in 'main' context: safe to interact with the buffer."""
+    if not rb.put(val):
+        print("Buffer Overflow!")
+    signal.set() # Wake up the processor task
+def irq_handler(pin):
+    """Hardware IRQ: very fast, schedules the data transfer."""
+    # Example: use pin ID as the data value
+    pin_id = 1 
+    micropython.schedule(scheduled_put, pin_id)
+# --- 4. Asyncio Tasks ---async def data_processor():
+    """Wakes up on signal and clears the ring buffer."""
+    print("[Processor] Waiting for data...")
+    while True:
+        await signal.wait()  # Sleep efficiently
+        
+        while rb.count > 0:
+            item = rb.get()
+            print(f"[Processor] Handled: {item}")
+async def background_checker():
+    """Periodically checks buffer status without blocking."""
+    while True:
+        # We can check 'rb.count' anytime to see how full it is
+        print(f"[Monitor] Buffer usage: {rb.count}/{rb.size}")
+        await asyncio.sleep(5)
+async def main():
+    # Setup your pins here
+    # p1 = machine.Pin(0, machine.Pin.IN).irq(handler=irq_handler)
+    
+    print("--- System Ready ---")
+    asyncio.create_task(data_processor())
+    asyncio.create_task(background_checker())
+    
+    while True:
+        await asyncio.sleep(1)
+try:
+    asyncio.run(main())except KeyboardInterrupt:
+    print("Stopped")
+
+Why this is better for high-traffic:
+
+* Constant Time ($O(1)$): Both put and get operations take the same amount of time regardless of how many items are stored.
+* No Allocations: The [0] * size list is created once at boot. It never grows or shrinks, preventing MemoryError during high-frequency interrupts.
+* Predictability: You decide exactly how much RAM the buffer consumes (e.g., 100 slots or 1000 slots) at the start. [3, 4, 6, 7] 
+
+Would you like to see how to modify this so it overwrites the oldest data instead of stopping when the buffer is full? [2, 8] 
+
+[1] [https://stackoverflow.com](https://stackoverflow.com/questions/4151320/efficient-circular-buffer)
+[2] [https://thingsdaq.org](https://thingsdaq.org/2023/04/18/circular-buffer-in-python/)
+[3] [https://en.wikipedia.org](https://en.wikipedia.org/wiki/Circular_buffer#:~:text=Circular%20buffering%20makes%20a%20good%20implementation%20strategy,implementation;%20all%20queue%20operations%20are%20constant%20time.)
+[4] [https://haikel-fazzani.deno.dev](https://haikel-fazzani.deno.dev/blog/ring-buffer#:~:text=Pros:%20Minimal%20overhead%2C%20no%20reallocations%2C%20cache%2Dfriendly%20due,potential%20for%20data%20loss%20in%20overwriting%20mode.)
+[5] [https://www.research.hangukquant.com](https://www.research.hangukquant.com/p/implementing-a-c-level-ringbuffer)
+[6] [https://scsynth.org](https://scsynth.org/t/ringbuffer-even-slower-than-using-a-list/12460)
+[7] [https://mrc-ide.github.io](https://mrc-ide.github.io/ring/#:~:text=Ring%20buffers%20%28or%20circular%20buffers%29%20are%20like,for%20queues%20%28with%20a%20fixed%20maximum%20size%29.)
+[8] [https://www.youtube.com](https://www.youtube.com/shorts/CphkxpiX8J0)
+
+
+###
+

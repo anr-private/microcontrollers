@@ -1,0 +1,146 @@
+
+
+import asyncioimport micropythonimport machineimport time
+# --- Configuration & Buffering ---# Pre-allocate a list to act as our data bridge# micropython.schedule handles the memory safety between IRQ and Taskdata_queue = []data_signal = asyncio.ThreadSafeFlag()
+# --- IRQ & Scheduler Logic ---
+def scheduled_handler(val):
+    """
+    Runs in the 'main' context.
+    Safely appends data and signals the asyncio event loop.
+    """
+    data_queue.append(val)
+    data_signal.set()
+def irq_handler(pin):
+    """
+    Hardware IRQ: Runs instantly. 
+    Cannot allocate memory; must use schedule().
+    """
+    # We pass the pin ID (or any small int) to the scheduler
+    # Assuming pin IDs 0, 1, and 2 for this example
+    pin_num = 0 
+    micropython.schedule(scheduled_handler, pin_num)
+# Setup simulated IRQs (Change pins to match your hardware)# For demo purposes, we'll just define the handler.# pin0 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)# pin0.irq(trigger=machine.Pin.IRQ_FALLING, handler=irq_handler)
+# --- Asyncio Tasks ---
+async def data_processor():
+    """
+    Consumes data whenever the signal flag is set.
+    """
+    print("[Processor] Started and waiting for IRQ data...")
+    while True:
+        # 1. Wait for the signal (Non-blocking to the rest of the loop)
+        await data_signal.wait()
+        
+        # 2. Process all items currently in the queue
+        while data_queue:
+            item = data_queue.pop(0)
+            print(f"[Processor] Handling data item: {item}")
+        
+        # ThreadSafeFlag.wait() automatically clears itself in MicroPython
+async def background_monitor():
+    """
+    Illustrates that the loop is NOT blocked. 
+    This runs even if no IRQs are firing.
+    """
+    count = 0
+    while True:
+        print(f"[Monitor] Heartbeat {count}...")
+        count += 1
+        await asyncio.sleep(5) # Give other tasks time to run
+async def main():
+    # Start both tasks concurrently
+    print("--- System Starting ---")
+    
+    # Create the tasks
+    processor = asyncio.create_task(data_processor())
+    monitor = asyncio.create_task(background_monitor())
+    
+    # Keep main alive
+    while True:
+        await asyncio.sleep(1)
+# --- Execution ---try:
+    asyncio.run(main())except KeyboardInterrupt:
+    print("System Stopped")
+
+Key Highlights of this Program:
+
+   1. ThreadSafeFlag: This is the "bridge" that allows the data_processor to sleep efficiently until an IRQ happens.
+   2. micropython.schedule: This ensures that even if the IRQ fires while the list is full, the .append() operation happens in a memory-safe context.
+   3. data_queue.pop(0): Inside the while data_queue loop, we handle multiple interrupts that might have occurred back-to-back before the asyncio task had a chance to wake up.
+   4. background_monitor: This task proves the system is non-blocking. It continues to print "Heartbeat" every 5 seconds regardless of whether data is coming in from the IRQs.
+
+Do you want to add a timeout to the processor so it performs a specific cleanup action if no IRQ triggers within a certain timeframe?
+
+
+
+
+import asyncioimport micropythonimport machineimport time
+# --- Configuration & Buffering ---# Pre-allocate a list to act as our data bridge# micropython.schedule handles the memory safety between IRQ and Taskdata_queue = []data_signal = asyncio.ThreadSafeFlag()
+# --- IRQ & Scheduler Logic ---
+def scheduled_handler(val):
+    """
+    Runs in the 'main' context.
+    Safely appends data and signals the asyncio event loop.
+    """
+    data_queue.append(val)
+    data_signal.set()
+def irq_handler(pin):
+    """
+    Hardware IRQ: Runs instantly. 
+    Cannot allocate memory; must use schedule().
+    """
+    # We pass the pin ID (or any small int) to the scheduler
+    # Assuming pin IDs 0, 1, and 2 for this example
+    pin_num = 0 
+    micropython.schedule(scheduled_handler, pin_num)
+# Setup simulated IRQs (Change pins to match your hardware)# For demo purposes, we'll just define the handler.# pin0 = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)# pin0.irq(trigger=machine.Pin.IRQ_FALLING, handler=irq_handler)
+# --- Asyncio Tasks ---
+async def data_processor():
+    """
+    Consumes data whenever the signal flag is set.
+    """
+    print("[Processor] Started and waiting for IRQ data...")
+    while True:
+        # 1. Wait for the signal (Non-blocking to the rest of the loop)
+        await data_signal.wait()
+        
+        # 2. Process all items currently in the queue
+        while data_queue:
+            item = data_queue.pop(0)
+            print(f"[Processor] Handling data item: {item}")
+        
+        # ThreadSafeFlag.wait() automatically clears itself in MicroPython
+async def background_monitor():
+    """
+    Illustrates that the loop is NOT blocked. 
+    This runs even if no IRQs are firing.
+    """
+    count = 0
+    while True:
+        print(f"[Monitor] Heartbeat {count}...")
+        count += 1
+        await asyncio.sleep(5) # Give other tasks time to run
+async def main():
+    # Start both tasks concurrently
+    print("--- System Starting ---")
+    
+    # Create the tasks
+    processor = asyncio.create_task(data_processor())
+    monitor = asyncio.create_task(background_monitor())
+    
+    # Keep main alive
+    while True:
+        await asyncio.sleep(1)
+# --- Execution ---try:
+    asyncio.run(main())except KeyboardInterrupt:
+    print("System Stopped")
+
+Key Highlights of this Program:
+
+   1. ThreadSafeFlag: This is the "bridge" that allows the data_processor to sleep efficiently until an IRQ happens.
+   2. micropython.schedule: This ensures that even if the IRQ fires while the list is full, the .append() operation happens in a memory-safe context.
+   3. data_queue.pop(0): Inside the while data_queue loop, we handle multiple interrupts that might have occurred back-to-back before the asyncio task had a chance to wake up.
+   4. background_monitor: This task proves the system is non-blocking. It continues to print "Heartbeat" every 5 seconds regardless of whether data is coming in from the IRQs.
+
+Do you want to add a timeout to the processor so it performs a specific cleanup action if no IRQ triggers within a certain timeframe?
+
+

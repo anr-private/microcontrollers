@@ -27,7 +27,7 @@ async def consumer(q):
             item = q.get_nowait()  # Consume data
             print(f"                  CONSUMER: got {item=}")
         except QueueEmpty as ex:
-            print(f"                  CONSUMER got ex='{ex}'  s='{str(ex)}'  repr='{repr(ex)}' ")
+            print(f"                  CONSUMER got ex='{ex}'  str(ex)='{str(ex)}'  repr(ex)='{repr(ex)}' ")
             await asyncio.sleep(3)
         
 async def SIMPLER_consumer(q):
