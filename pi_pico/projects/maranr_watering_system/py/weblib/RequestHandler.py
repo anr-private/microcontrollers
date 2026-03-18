@@ -129,6 +129,10 @@ class RequestHandler(ElemLoggerABC):
             degs_f, degs_c = self._data_board.get_internal_temps_one_dec_place()
             data_dict["internal_temp_f"] = degs_f
             data_dict["internal_temp_c"] = degs_c
+        if "debug" in params:
+            lines = self._data_board.status_lines()
+            hlines = "<br>\n".join(lines)
+            data_dict["databoard_status"] = hlines
 
         json_stg = json.dumps(data_dict)
         print(f"RH@123 body: JSON-string:...")  

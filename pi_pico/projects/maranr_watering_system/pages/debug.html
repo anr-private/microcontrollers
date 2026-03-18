@@ -4,23 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <title>Raw Sensor Data</title>
+  <title>Debug Stuff</title>
 </head>
 <body>
-    <h1>Raw Sensor Data</h1>
+    <h1>Debug Stuff</h1>
 
     <div id="NOTUSED__data-container" style="font-size: 24px; color: blue;">
       Time Now:&nbsp; <span id="date_time">date-and-time</span>
-      <br>
-      Internal temps:&nbsp; <span id="internal_temp_F">internal_temp_F</span> &nbsp;&nbsp;
-      <span id="internal_temp_C">internal_temp_C</span>
     </div>
+    <div id="notusedyet"  style="font-size: 24px; color: blue;">
+        <span id="db_status">databoard status </span>
+    </div
     <p><a href="index.html"> BACK </a>
 
 
     <script src="fetch_data_and_update.js"></script>
     <script>
-        const dataUrl = "data?sensors=ALL"
+        const dataUrl = "data?debug=ALL"
         // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // In order to pass an arg to the function, we use an anonymous go-between function.
@@ -34,15 +34,19 @@
         //console.log("FIRST CALL TO THE FETCH");
         fetchDataAndUpdate(dataUrl);
 
-        function handleFetchedData(data) {  // invoked by fetD
+        function handleFetchedData(data) {  // invoked by fetch_data_and_update.js
             console.log("FETCHED DATA:...");
             console.log(data);
+
             var eltDatetime = document.getElementById('date_time');
             eltDatetime.innerText = `${data.datetime}`;
-            var eltTempC = document.getElementById('internal_temp_C');
-            eltTempC.innerText = `${data.internal_temp_c} °C`;
-            var eltTempF = document.getElementById('internal_temp_F');
-            eltTempF.innerText = `${data.internal_temp_f} °F`;
+
+            var eltDbStatus = document.getElementById('db_status');
+            //console.log("eltDbStatus=" + eltDbStatus);
+            var dbstatus = `${data.databoard_status}`;
+            //console.log("DBstatus is ...");
+            //console.log(dbstatus)
+            eltDbStatus.innerHTML = dbstatus
         }
 
     </script>

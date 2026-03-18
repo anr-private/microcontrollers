@@ -81,7 +81,8 @@ class DataBoard(ElemLoggerABC):
 
     def status_lines(self):
         lines = []
-        lines.append(f"DataBoard State:")
+        lines.append(f"DataBoard State:  {self.system_state}")
+        lines.append(f" IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'}")
         lines.append(f" system.state={self.system_state} ")
         lines.append(f" Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
         return lines
