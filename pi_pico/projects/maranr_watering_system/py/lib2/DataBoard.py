@@ -17,11 +17,20 @@ VALIDATE = 192756
 
 class DataBoard(ElemLoggerABC):
 
+    SYS_STATE_STARTUP = 0
+    SYS_STATE_OFF     = 1
+    SYS_STATE_OFF     = 2
+    SYS_STATE_OFF     = 3
+    SYS_STATE_OFF     = 4
+
+
+
     _instance = None
 
     def __init__(self, validate):
         if validate != VALIDATE:
             raise RuntimeError(f"DataBoard CTOR is private!")
+        self.system_state = SYS_STATE_STARTUP
         self.internal_temp_f = 0
         self.internal_temp_c = 0
         super().__init__()
