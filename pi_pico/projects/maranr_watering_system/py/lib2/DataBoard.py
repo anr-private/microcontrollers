@@ -31,6 +31,9 @@ class DataBoard(ElemLoggerABC):
         if validate != VALIDATE:
             raise RuntimeError(f"DataBoard CTOR is private!")
         self.system_state = self.SYS_STATE_STARTUP
+        self.ipaddr = None
+        self.port = 0
+        self.webserver_active = False
         self.internal_temp_f = 0
         self.internal_temp_c = 0
         super().__init__()
@@ -54,6 +57,12 @@ class DataBoard(ElemLoggerABC):
         logrt = logger.logrt
         logi = logger.logi
 
+
+    def set_ip_and_port(self, ipaddr, port):
+        self.ipaddr = ipaddr
+        self.port = port
+        print(f"DataBoard@64  SET IPADDR={self.ipaddr}  PORT={self.port} ")
+
     def set_internal_temps(self, degsF, degsC):
         self.internal_temp_f = degsF
         self.internal_temp_c = degsC
@@ -64,7 +73,21 @@ class DataBoard(ElemLoggerABC):
         degs_c = f"{self.internal_temp_c:.1f}"
         return degs_f, degs_c
 
+    def __str__(self):
+        s = []
+        s.append("x=%s" % str(self.x))
+        return ("%s[%s]" % 
+            (self.__class__.__name__, ",".join(s)))
 
+    def status_lines(self):
+        lines = []
+        lines.append(f"DataBoard State:")
+        lines.append(f" system.state={self.system_state} ")
+        lines.append(f" Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
+        return lines
+
+    def long_string(self):
+        return "\n".join(self.status_lines())
 
 
 ###

@@ -9,6 +9,7 @@ except Exception:
     import time                 #Py3 unit tests
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
+from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
@@ -32,6 +33,10 @@ class MaranrWateringSystem(ElemLoggerABC):
     async def main_task(self):
         print(f"MWSMAIN@31  in main_task");
 
+        # Create this first: most other classes use it immediately
+        dataBoard = DataBoard.get_instance()
+        print(f"MWSMAIN@36 Created DataBoard. state=...\n{dataBoard.long_string()} ")
+
         wifi = MwsWifi.get_instance()
         wifi_task = asyncio.create_task(wifi.wifi_task())
         print(f"MWSMAIN@46 wifi task is {wifi_task} ")
@@ -49,7 +54,7 @@ class MaranrWateringSystem(ElemLoggerABC):
         log(f"MWSMAIN@35 {webserver_task=}")
     
         while 1:
-            print(f"MWSMAIN@49                  MAIN TASK running TopOfLoop   ")
+            print(f"MWSMAIN@49 MAIN TASK running TopOfLoop   ")
             webserver_done = webserver_task.done()
             sensors_done = sensors_task.done()
             displays_done = displays_task.done()
@@ -78,7 +83,7 @@ class MaranrWateringSystem(ElemLoggerABC):
                 break
             """
 
-            print(f"MWSMAIN@81                 MAIN TASK running  SLEEP   ")
+            print(f"MWSMAIN@81  MAIN TASK running  SLEEP 3  ")
             await asyncio.sleep(3)
 
 

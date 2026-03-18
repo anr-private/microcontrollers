@@ -3,6 +3,7 @@
 import asyncio
 import gc
 
+from lib2.DataBoard import DataBoard
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from utils import show_cc, get_formatted_date_time_string
 
@@ -21,10 +22,13 @@ class MwsWebServer(ElemLoggerABC):
 
     def __init__(self):
         #@@@@@@@@$$$$$$$$$$$$$$$$$$$
-        host = "192.168.1.49"
-        port = 8000
-        self.host = host
-        self.port = port
+        #ipaddr = "192.168.1.49"
+        #port = 8000
+        #self._ipaddr = ipaddr
+        #self._port = port
+        self._ipaddr = None
+        self._port = 0
+        self._dataBoard = DataBoard.get_instance()
         super().__init__()
 
 
@@ -45,15 +49,116 @@ class MwsWebServer(ElemLoggerABC):
 
 
     async def webserver_coro(self):
+        server = None
 
-        callbk = self.handle_new_client
-        server = await asyncio.start_server(callbk, self.host, self.port)
-        log(f"MWS@48 webserver_coro: Listening on {self.host}:{self.port}...")
-        log(f"MWS@49  Server obj is {type(server)}")
+        while True:
+            ipaddr = self._dataBoard.ipaddr
+            port   = self._dataBoard.port
+            log(f"MWS@52 webserver_coro MONITOR CONNECTION STATUS: IP:PORT  {ipaddr} {port}")
 
-        while 1:
-            log(f"MWS@52 webserver_coro RUNNING idle!")
-            await asyncio.sleep(5)
+            # default sleep time - assuming nothing has changed...
+            sleep_secs = 15 #@@@$$$$$$$$$$$$
+
+            # Do we need to stop the server?
+            need_to_stop = False
+            if ipaddr is None and server is not None:
+                need_to_stop = True
+                logi(f"MWS@63  NEED TO STOP SERVER:  we do not have an IPADDR (any longer)")
+            if ipaddr is not None and self._ipaddr != ipaddr:
+                need_to_stop = True
+                logi(f"MWS@63  NEED TO STOP SERVER:  IPADDR changed: ours: {self._ipaddr}  NEW: {ipaddr}")
+            if port != 0 and self._port != port:
+                need_to_stop = True
+                logi(f"MWS@63  NEED TO STOP SERVER:  PORT changed: ours: {self._port}  NEW: {port}")
+
+            if need_to_stop:
+                if server is not None:
+                    logi(f"MWS@75 STOPPING THE SERVER ")
+                    await self._close_the_server(server)
+                    server = None
+                    self._ipaddr = None
+                    self._port = 0
+                    self._dataBoard.webserver_active = False
+                    sleep_secs = 10 #@@@$$$$$
+                else:
+                    logi(f"MWS@75 STOP THE SERVER - except there is no server running")
+
+            need_to_start = False
+            if server is None:
+                # No server running. Do we need to start one?  (Can we with what we have?)
+                if ipaddr is not None:   # we assume therefore that port != 0:
+                    need_to_start = True
+
+            if need_to_start:
+                logi(f"MWS@75 (RE)STARTING THE SERVER")
+                callbk = self.handle_new_client
+                server = await asyncio.start_server(callbk, ipaddr, port)
+
+                self._ipaddr = ipaddr
+                self._port = port
+                self._dataBoard.webserver_active = True
+                sleep_secs = 10
+                logi(f"MWS@96 (RE)STARTED THE SERVER  {self._ipaddr} {self._port}")
+
+            if sleep_secs is not None:
+                await asyncio.sleep(sleep_secs)
+
+
+    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+###    def OLDCORO(self):
+###        server = None
+###        while True:
+###
+###            # If we lose our IP, shut down the server and wait for a new IP.
+###            if not ipaddr and self._ipaddr is not None:
+###                sleep_secs = 0
+###                if server is not None:
+###                    logi("MWS@59  LOST WIFI CONNECTION!  closing the server")
+###                    await self._close_the_server(server)
+###                    sleep_secs = 5
+###                server = None
+###                self._ipaddr = None
+###                self._port = 0
+###                self._dataBoard.webserver_active = False
+###                if sleep_secs:
+###                    await asyncio.sleep(sleep_secs)
+###
+###            # Did the ip or port change?
+###            if ipaddr != self._ipaddr or port != self._port:
+###                m = f"MWS@70 IP / PORT changed: old: {self._ipaddr} {self._port}  NEW: {ipaddr} {port}"
+###                print(m)
+###                logi(m)
+###                if server is not None:
+###                    logi("MWS@59  IP/PORT CHANGED: closing the server")
+###                    await self._close_the_server(server)
+###                    server = None
+###                    self._dataBoard.webserver_active = False
+###
+###            logi(f"MWS@50 (RE)Start the server on {ipaddr}:{port}")
+###
+###            callbk = self.handle_new_client
+###            server = await asyncio.start_server(callbk, ipaddr, port)
+###
+###            self._ipaddr = ipaddr
+###            self._port = port
+###            self._dataBoard.webserver_active = True
+###
+###            log(f"MWS@86 webserver_coro: Listening on {self._ipaddr}:{self._port}...")
+###            log(f"MWS@87  Server obj is {type(server)}")
+###                
+###            await asyncio.sleep(5)
+
+
+    async def _close_the_server(self, server):
+        logi(f"MWS@78 CLOSE THE SERVER")
+        try:
+            server.close()
+            logi(f"MWS@78 AWAITING for the SERVER to CLOSE")
+            await server.wait_closed()
+        except Exception as ex:
+            m = f"MWS@84 *ERROR* Closing the server:  {repr(ex)}"
+            print(m)
+            logi(m)
 
         ###result = "NO RESULT YET from webserver_coro"
         ###log(f"MWS@56 webserver_coro COMPLETED.  {result=}")
@@ -115,7 +220,7 @@ class MwsWebServer(ElemLoggerABC):
             await reader.wait_closed()
             log("MWS@111 handle_new_client CLIENT READER is CLOSED")
 
-        m = "MWS@113 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        m = f"MWS@113 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         print(m)
         logi(m)
         gc.collect()

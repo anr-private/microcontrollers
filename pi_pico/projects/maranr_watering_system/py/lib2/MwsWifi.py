@@ -18,6 +18,7 @@ except Exception:
     import time
 
 from lib.utils import MWS_CONFIG
+from lib2.DataBoard import DataBoard
 from details import SSID, PW
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
@@ -75,6 +76,7 @@ class MwsWifi(ElemLoggerABC):
         if do_not_call_directly != 1234567:
             raise RuntimeError("MwsWifi.init DO NOT CALL")
         #@@@@@$$$$$self.wlan = None
+        self._dataBoard = DataBoard.get_instance()
         self._ipaddr = None
         self._port = None
         super().__init__()
@@ -116,7 +118,7 @@ class MwsWifi(ElemLoggerABC):
             if next_state not in states:
                 print(f"MwsWifi@116  No such state {next_state}  - RESTART!")
                 self._nullify_connection_state(st)
-                next_state = 0
+                next_state = 1
 
             st.state = next_state
 
@@ -173,7 +175,7 @@ class MwsWifi(ElemLoggerABC):
     def _state_check_connected(self, st):
         # See if still connected
         if st.wlan.isconnected():
-            print(f"MwsWifi@173 STILL CONNECTED!")
+            print(f"MwsWifi@173 STILL CONNECTED  {self._ipaddr} {self._port}")
             st.sleep_secs = 3
             return 0
         print(f"MwsWifi@176 *** LOST OUR CONNECTION  ****  {st}")
@@ -191,6 +193,7 @@ class MwsWifi(ElemLoggerABC):
         print(f"MwsWifi@188  NULLIFY - STARTING OVER")
         self._ipaddr = None
         self._port = None
+        self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
         wlan = st.wlan
         st.nullify()
         # Clean up if possible
@@ -203,6 +206,7 @@ class MwsWifi(ElemLoggerABC):
         info = wlan.ifconfig()
         self._ipaddr = info[0]
         self._port = OUR_PORT_NUMBER
+        self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
         print(f"MwsWifi@203  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
 
 
