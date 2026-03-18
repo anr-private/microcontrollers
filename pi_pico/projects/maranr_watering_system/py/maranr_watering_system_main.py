@@ -16,13 +16,15 @@ from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 
 #from displays.MwsDisplays import MwsDisplays
 #from sensors.MwsSensors import MwsSensors
-from lib2.MwsWifi import MwsWifi
+#from lib2.MwsWifi import MwsWifi
 #from weblib.MwsWebServer import MwsWebServer
 from utils import MWS_CONFIG
 from utils import get_formatted_local_time
 from utils import get_fs_space_string
 from utils import get_memory_status_string
 from utils import get_formatted_local_time
+
+from main.MaranrWateringSystem import MaranrWateringSystem
 
 #if determine_py_platform() == "micropython":
 #    sys.path.append("/http")
@@ -36,16 +38,15 @@ logrt = None
 logi = None
 
 
-print(f"@@@MAIN@42  {MWS_CONFIG=}")
 
-
-
-from MaranrWateringSystem import MaranrWateringSystem
 
 
 def main():
     
     print("MAIN: MARANR Watering System starting...")
+
+    print(f"MAIN@48  {MWS_CONFIG=}")
+
     
     log_control = ElemLogControl.get_instance()
     log_control.remove_old_log_file()
