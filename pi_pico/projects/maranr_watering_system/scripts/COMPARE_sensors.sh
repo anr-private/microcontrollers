@@ -2,7 +2,7 @@
 #
 # COMPARE_sensors.sh
 
-diff -q sensors /tmp/SENSORS |grep -v 'Only in sensors:'
+diff -q sensors /tmp/SENSORS  |grep -v __QPUSH_MARKER__ 
 
 
 ###

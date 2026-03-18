@@ -16,6 +16,7 @@ dirs_to_empty_out = [
     "lib",
     "lib2",
     "logger_elem",
+    "mws",
     "primitives",
     "sensors",
     #"trivlog",

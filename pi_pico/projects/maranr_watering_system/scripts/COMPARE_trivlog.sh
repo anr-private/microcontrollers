@@ -2,7 +2,7 @@
 #
 # COMPARE_trivlog.sh
 
-diff -q trivlog /tmp/TRIVLOG |grep -v 'Only in trivlog:'
+diff -q trivlog /tmp/TRIVLOG  |grep -v __QPUSH_MARKER__ 
 
 
 ###

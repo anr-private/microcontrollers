@@ -2,7 +2,7 @@
 #
 
 
-diff -q weblib /tmp/WEBLIB |grep -v ARCHIVE |grep -v '.COPY'
+diff -q weblib /tmp/WEBLIB  |grep -v __QPUSH_MARKER__  |grep -v '.COPY'
 
 
 

@@ -9,6 +9,7 @@ ${SCRIPTS_DIR}/UPLOAD_lib.sh
 ${SCRIPTS_DIR}/UPLOAD_lib2.sh
 ${SCRIPTS_DIR}/UPLOAD_logger_elem.sh
 ${SCRIPTS_DIR}/UPLOAD_main.sh
+${SCRIPTS_DIR}/UPLOAD_mws.sh
 ${SCRIPTS_DIR}/UPLOAD_primitives.sh
 ${SCRIPTS_DIR}/UPLOAD_sensors.sh
 ${SCRIPTS_DIR}/UPLOAD_weblib.sh
