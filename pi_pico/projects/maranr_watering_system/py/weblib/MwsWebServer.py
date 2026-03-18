@@ -19,7 +19,10 @@ logi = None
 class MwsWebServer(ElemLoggerABC):
     #  top-level Server class 
 
-    def __init__(self, host, port):
+    def __init__(self):
+        #@@@@@@@@$$$$$$$$$$$$$$$$$$$
+        host = "192.168.1.49"
+        port = 8000
         self.host = host
         self.port = port
         super().__init__()

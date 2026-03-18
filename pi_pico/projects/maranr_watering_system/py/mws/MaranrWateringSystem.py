@@ -10,6 +10,9 @@ except Exception:
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.MwsWifi import MwsWifi
+from displays.MwsDisplays import MwsDisplays
+from sensors.MwsSensors import MwsSensors
+from weblib.MwsWebServer import MwsWebServer
 
 
 class MaranrWateringSystem(ElemLoggerABC):
@@ -26,38 +29,35 @@ class MaranrWateringSystem(ElemLoggerABC):
         logi = logger.logi
 
 
-#$$$    async def main_task(self, host, port):
     async def main_task(self):
         print(f"MWSMAIN@31  in main_task");
 
-#$$$        webserver = MwsWebServer(host, port) 
-#$$$        webserver_task = webserver.start_the_task()
-#$$$        log(f"MWSMAIN@35 {webserver_task=}")
-#$$$    
-#$$$        sensors = MwsSensors()
-#$$$        sensors_task = sensors.start_the_task()
-#$$$        log(f"MWSMAIN@39 {sensors_task=}")
-#$$$        
-#$$$        displays = MwsDisplays()
-#$$$        displays_task = displays.start_the_task()
-#$$$        log(f"MWSMAIN@43 {displays_task=}")
         wifi = MwsWifi.get_instance()
         wifi_task = asyncio.create_task(wifi.wifi_task())
         print(f"MWSMAIN@46 wifi task is {wifi_task} ")
 
+        sensors = MwsSensors()
+        sensors_task = sensors.start_the_task()
+        log(f"MWSMAIN@39 {sensors_task=}")
+        
+        displays = MwsDisplays()
+        displays_task = displays.start_the_task()
+        log(f"MWSMAIN@43 {displays_task=}")
+
+        webserver = MwsWebServer() 
+        webserver_task = webserver.start_the_task()
+        log(f"MWSMAIN@35 {webserver_task=}")
+    
         while 1:
             print(f"MWSMAIN@49                  MAIN TASK running TopOfLoop   ")
-            #$$$log(f"MWSMAIN@50  MAIN TASK running    {host=}   {port=} ")
-            #$$$
-            #webserver_done = webserver_task.done()
-            #sensors_done = sensors_task.done()
-            #displays_done = displays_task.done()
+            webserver_done = webserver_task.done()
+            sensors_done = sensors_task.done()
+            displays_done = displays_task.done()
     
 #MAIN@96 FS: TOTAL SPACE 868,352 bytes, 848.00 KB, 0.83 MB   FREE SPACE 507,904 bytes, 496.00 KB, 0.48 MB
 #MAIN@97 MEMORY:  gc.mem_alloc()=90240   gc.mem_free()=115328
 #MAIN@99 MEMORY AFTER GC:  gc.mem_alloc()=64464   gc.mem_free()=141104
 
-            #print(f"MWSMAIN@60  MAIN TASK running    ")
 
             _=""" #$$$$$
             log(f"  Who is done:  web={webserver_task.done()}  "+\

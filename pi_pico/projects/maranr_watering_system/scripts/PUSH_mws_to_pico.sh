@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# PUSH_lib2_to_pico.sh
+# PUSH_mws_to_pico.sh
 
 
 clean_up_old_dirs_and_files() {
@@ -15,8 +15,8 @@ clean_up_old_dirs_and_files() {
 
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
-    echo 'Copy contents of lib2/ '
-    mpremote fs cp -r lib2   :
+    echo 'Copy contents of mws/ '
+    mpremote fs cp -r mws   :
     
     #echo 'Remove the client files we do not need'
     #mpremote fs rm http/AnrHttpClient.py
@@ -27,13 +27,13 @@ list_pico_filesystem_contents() {
     echo 'LIST THE PICO CONTENTS: ROOT DIR'
     mpremote fs ls 
     echo ' '    
-    echo 'LIST THE PICO CONTENTS: /lib2'
-    mpremote fs ls /lib2
+    echo 'LIST THE PICO CONTENTS: /mws'
+    mpremote fs ls /mws
 }
 
 
 main() {
-    echo "PUSH_LIB2_FILES_TO_PICO -- MAIN"
+    echo "PUSH_MWS_FILES_TO_PICO "
     clean_up_old_dirs_and_files
     copy_release_files_to_the_pico
     list_pico_filesystem_contents

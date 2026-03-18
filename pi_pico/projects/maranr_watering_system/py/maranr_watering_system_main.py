@@ -24,7 +24,7 @@ from utils import get_fs_space_string
 from utils import get_memory_status_string
 from utils import get_formatted_local_time
 
-from main.MaranrWateringSystem import MaranrWateringSystem
+from mws.MaranrWateringSystem import MaranrWateringSystem
 
 #if determine_py_platform() == "micropython":
 #    sys.path.append("/http")
