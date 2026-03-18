@@ -1,0 +1,118 @@
+# MaranrWateringSystem.py
+
+import asyncio
+import sys
+
+try:
+    import utime as time        #uPy
+except Exception:
+    import time                 #Py3 unit tests
+
+from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
+from lib2.MwsWifi import MwsWifi
+
+
+class MaranrWateringSystem(ElemLoggerABC):
+
+    def __init__(self):
+        super().__init__()
+
+    def _set_logger(self, logger):
+        global log, logrt, logi
+        print(f"MWSMAIN@52 _set_logger: {repr(logger)}")
+        print(f"MWSMAIN@53 _set_logger: {str(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
+
+
+#$$$    async def main_task(self, host, port):
+    async def main_task(self):
+        print(f"MWSMAIN@31  in main_task");
+
+#$$$        webserver = MwsWebServer(host, port) 
+#$$$        webserver_task = webserver.start_the_task()
+#$$$        log(f"MWSMAIN@78 {webserver_task=}")
+#$$$    
+#$$$        sensors = MwsSensors()
+#$$$        sensors_task = sensors.start_the_task()
+#$$$        log(f"MWSMAIN@82 {sensors_task=}")
+#$$$        
+#$$$        displays = MwsDisplays()
+#$$$        displays_task = displays.start_the_task()
+#$$$        log(f"MWSMAIN@86 {displays_task=}")
+        wifi = MwsWifi.get_instance()
+        wifi_task = asyncio.create_task(wifi.wifi_task())
+        print(f"MWSMAIN@46 wifi task is {wifi_task} ")
+
+        while 1:
+            print(f"MWSMAIN@49                  MAIN TASK running TopOfLoop   ")
+            #$$$log(f"MWSMAIN@45  MAIN TASK running    {host=}   {port=} ")
+            #$$$
+            #webserver_done = webserver_task.done()
+            #sensors_done = sensors_task.done()
+            #displays_done = displays_task.done()
+    
+#MAIN@96 FS: TOTAL SPACE 868,352 bytes, 848.00 KB, 0.83 MB   FREE SPACE 507,904 bytes, 496.00 KB, 0.48 MB
+#MAIN@97 MEMORY:  gc.mem_alloc()=90240   gc.mem_free()=115328
+#MAIN@99 MEMORY AFTER GC:  gc.mem_alloc()=64464   gc.mem_free()=141104
+
+            #print(f"MWSMAIN@57  MAIN TASK running    ")
+
+            _=""" #$$$$$
+            log(f"  Who is done:  web={webserver_task.done()}  "+\
+                   f"displays={displays_task.done()}  sensors={sensors_task.done()}")
+            print(f"MAIN@96 FS: {get_fs_space_string()}")
+            print(f"MAIN@97 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+            gc.collect()
+            print(f"MAIN@99 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+
+            #log(f"   state: {sensors_task.state}")  # bool
+            #log(f"   data: {sensors_task.data}")    # None
+            
+            # not impl in micropython
+            ###done, pending = await asyncio.wait(tasks, timeout=1)
+    
+            if webserver_done and sensors_done and displays_done:
+                log("MWSMAIN@59  MAIN_TASK: all tasks are done!")
+                break
+            """
+
+            print(f"MWSMAIN@78                 MAIN TASK running  SLEEP   ")
+            await asyncio.sleep(3)
+
+
+    def run_mws(self):
+
+        logi("--- MaranrWateringSystem --- BEGIN run_mws()  =======================")
+
+        #print(f"MAIN@149 FS: {get_fs_space_string()}")
+        #print(f"MAIN@150 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+        #print(f"MAIN@151  +++++ DO GC COLLECT   ++++++++++++++++++")
+        #gc.collect()
+        #print(f"MAIN@153 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+
+        ###@@@host,port = self.connect_to_wifi()
+        print("MWSMAIN@89  START THE MAIN TASK")
+        try:
+            # Start the event loop and run the main server coroutine
+            #$$$asyncio.run(self.main_task(host, port))
+            print("MWSMAIN@93  START THE MAIN TASK")
+            asyncio.run(self.main_task())
+            print("MWSMAIN@95  START THE MAIN TASK")
+
+        except KeyboardInterrupt:
+            #@@@@@@@@
+            #date_stg, time_stg = get_formatted_local_time()
+            #m = f"MWSMAIN@162 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+            #log(m)
+            #logi(m)
+            print("MWSMAIN@55 interrupt from keyboard")
+
+        finally:
+            # Clean up the event loop (optional, but good practice)
+            asyncio.new_event_loop()
+
+
+
+### end ###

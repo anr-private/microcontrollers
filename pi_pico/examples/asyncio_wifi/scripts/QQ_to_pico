@@ -1,0 +1,526 @@
+#!/usr/bin/env python3
+# :mode=python:
+#
+# QQ_to_pico
+# 
+# Quick-push just the updated files to the Pico
+
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+DBG = False
+PRT = True
+V = False
+VV = False
+DRYRUN = False
+STOP_ON_ERROR = True
+FORCE_UPDATE = False
+
+HELP_INFO="""
+This is the HELP not done yet
+"""
+
+MARKER_FILENAME = "__QPUSH_MARKER__"
+
+# aka packages
+ALL_DIRS=[
+     #"displays",
+     "lib",
+     "lib2",
+     "logger_elem",
+     #"primitives",
+     #"sensors",
+     #"weblib",
+    ]
+
+class ToPico:
+    def __init__(self):
+        self.pkg_names = []
+        self._force_update = False
+
+    def do_options(self, opts):
+        global DBG, V, VV, DRYRUN, STOP_ON_ERROR, PRT
+        #print(f"@22 opts={opts}")
+        if opts.debug: DBG = True
+        if opts.verbose: V = True
+        if opts.veryverbose: VV = True; V = True
+        if opts.quiet: PRT = False
+        if opts.dryrun: DRYRUN = True;
+        if opts.stop_on_error: STOP_ON_ERROR = True
+        if opts.force_update: self._force_update = True
+
+        req_items = opts.other_items
+        if len(req_items) == 0: req_items = ["ALL"]
+        if "ALL" in req_items:
+            if len(req_items) != 1:
+                perr(f"QQ@59 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
+                sys.exit(1)
+            pkgs = set(ALL_DIRS)
+        else:
+            pkgs = set(req_items)
+        # Verify the pkg names are known to us
+        for p in pkgs:
+            if p not in ALL_DIRS:
+                perr(f"QQ@67 Unrecognized package name '{p}'")
+                sys.exit(1)
+        # Create a list of requested packages (dirs), in order per ALL_DIRS
+        self.pkg_names = []
+        for pkgname in ALL_DIRS:
+            if pkgname in pkgs:
+                self.pkg_names.append(pkgname)
+        if V: print(f"QQ@74 Pkgs to be updated: {self.pkg_names}")
+
+
+    def run(self):
+        if DBG or V:
+            print(f"QQ@79{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
+        if DRYRUN: print("----- DRY RUN  -------------------------")
+
+        for pkg_name in self.pkg_names:
+            self.do_pkg(pkg_name)
+
+        self._copy_main_to_pico()
+
+    def _copy_main_to_pico(self):
+        main_fname = "maranr_watering_system_main.py"
+        cmd_and_args = (
+            "mpremote", "fs", "cp", 
+            main_fname, f":main.py")
+        self._run_a_command(cmd_and_args)
+        if PRT: print(f"QQ@93 Copied MAIN to pico:  {" ".join(cmd_and_args)} ")
+
+        main_fname = "MaranrWateringSystem.py"
+        cmd_and_args = (
+            "mpremote", "fs", "cp", 
+            main_fname, f":")
+        self._run_a_command(cmd_and_args)
+        if PRT: print(f"QQ@93 Copied MAIN to pico:  {" ".join(cmd_and_args)} ")
+
+
+    def do_pkg(self, pkg_name):
+        if V: print(f"\n+++ Pkg: {pkg_name}  -------")
+
+        pkg_dir_path = Path("./"+pkg_name)
+        if not pkg_dir_path.is_dir():
+            perr(f"No such pkg dir: ./{pkg_name}")
+            return
+
+        # Get the marker file
+        marker_fpath = pkg_dir_path / MARKER_FILENAME
+        if V: print(f"QQ@106  {marker_fpath=}")
+
+        if marker_fpath.is_dir():
+            perr(f"QQ@109 The marker is a DIRECTORY; expected a FILE!  '{marker_fpath}'")
+        if not marker_fpath.exists():
+            if PRT: print(f"QQ@111  -- Marker file {marker_fpath} does not exist.  Creating it now...")
+            self._create_marker_file(marker_fpath)
+        else:
+            if V: print(f"QQ@114 -- Marker file {marker_fpath} exists. ")
+        marker_ts = self._get_file_timestamp(marker_fpath)
+        if V: print(f"QQ@116 marker TIMESTAMP {marker_ts} ")
+        if self._force_update:
+            marker_ts = 0
+            if V: print(f"QQ@119 marker FORCE UPDATE: zero the marker TIMESTAMP {marker_ts} ")
+
+        filenames = self._get_files_in_pkg(pkg_dir_path)
+        if V: print(f"QQ@122 FILENAMES {filenames} " )
+
+        files_and_ts = list()
+        for fname in filenames:
+            ts = self._get_file_timestamp(pkg_dir_path / fname)
+            files_and_ts.append ( (fname, ts) )
+        if V: 
+            print(f"QQ@129 files_and_ts: ")
+            for fname, ts in files_and_ts:
+                diff = ts - marker_ts
+                print(f"  {fname:>25s} {ts:10.1f} {diff:10.1f}")
+
+        chosen_fnames = list()
+        for fname, ts in files_and_ts:
+            if VV: print(f"QQ@136 {fname=}  {ts=}")
+            if ts >= marker_ts:
+                chosen_fnames.append(fname)
+            else:
+                if VV: print(f"QQ@140  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
+        if V: print(f"QQ@141 Files to be copied: {chosen_fnames}")
+
+        self._copy_to_pico(pkg_dir_path, chosen_fnames)
+
+        num_copied = len(chosen_fnames)
+        if num_copied > 1:
+            if PRT: print(f"QQ@147 Copied {num_copied} files to the PICO  {pkg_name}")
+        elif num_copied == 1:
+            if PRT: print(f"QQ@149 Copied 1 file to the PICO  {pkg_name}")
+        else:
+            if PRT: print(f"QQ@151  NO FILES copied to the PICO  {pkg_name}")
+
+        # Update the marker's timestamp(s)
+        if DRYRUN: 
+            print(f"QQ@155 DRYRUN: Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
+        else:
+            self._set_file_timestamps_to_now(marker_fpath)
+            if V:
+                ts = self._get_file_timestamp(marker_fpath)
+                print(f"QQ@160  Marker file '{marker_fpath}' TIMESTAMP updated to {ts:.1f}")
+
+
+    def _copy_to_pico(self, pkg_dir_path, chosen_fnames):
+        cmd_and_args = (
+                "mpremote", "fs", "mkdir", 
+                f":/{pkg_dir_path}")
+        self._run_a_command(cmd_and_args, ignore_failure=True)
+
+        for fname in chosen_fnames:
+            cmd_and_args = (
+                "mpremote", "fs", "cp", 
+                str(pkg_dir_path/fname), f":/{pkg_dir_path}/")
+            self._run_a_command(cmd_and_args)
+
+
+    def _run_a_command(self, cmd_and_args, ignore_failure=False):
+        # cmd_and_args is a list: ['cmd', 'arg', ...]
+        # Run the command and capturing its output
+        if V: print(f"QQ@179  RUN CMD: {cmd_and_args} ")
+        if DRYRUN:
+            print(f"QQ@181  DRY RUN: not performed:  {' '.join(cmd_and_args)}")
+            return
+
+        result = subprocess.run(cmd_and_args, capture_output=True, text=True)
+
+        if VV: print("QQ@186  Return code:", result.returncode)
+        if VV: print("QQ2107STDOUT:", result.stdout)
+        if VV: print("QQ@188STDERR:", result.stderr)
+
+        # Check if the command was successful (return code 0)
+        if result.returncode != 0:
+            if ignore_failure:
+                if V: print(f"QQ@193     IGNORED FAILED command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
+            else:
+                perr(f"QQ@195 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
+
+
+    def _get_files_in_pkg(self, pkg_dir_path):
+        files = list()
+        for fname in os.listdir(pkg_dir_path):
+            # skip dirs, etc
+            if not os.path.isfile(os.path.join(pkg_dir_path, fname)):
+                continue
+            if fname == MARKER_FILENAME:
+                continue
+            files.append(fname)
+        return files
+
+
+    def _create_marker_file(self, marker_fpath):
+        if VV: print(f"QQ@211 Create marker file: '{marker_fpath}' ")
+        with open(marker_fpath, "w") as f:
+            pass
+        access_time = 100000
+        modification_time = 100001
+        os.utime(marker_fpath, (access_time, modification_time))
+
+    def _get_file_timestamp(self, fpath):
+        s = os.stat(fpath)
+        if VV: print(f"QQ@220  fpath={fpath}  status={s} ")
+        return s.st_mtime
+
+    def _set_file_timestamps_to_now(self, fpath):
+        secs = time.time()
+        access_time = secs
+        modification_time = secs
+        os.utime(fpath, (access_time, modification_time) )
+
+
+
+def perr(err):
+    print(f"**ERROR**  {err}")
+    if STOP_ON_ERROR:
+        raise RuntimeError(f"STOPPING DUE TO ERROR: {err}")
+
+
+
+####################################################################
+
+class SimpleOptionsParser(object):
+    """ Simplified options parser """
+
+    class _Options(object):
+        """ """
+        def __init__(self):
+            """ """
+
+        @property
+        def optionNames(self):
+            """ Returns a collection of str: the property names
+            of the option values.
+            """
+            names = []
+            for n in self.__dict__.keys():
+                if n.startswith("_"): continue
+                names.append(n)
+            return names
+
+        def __str__(self):
+            """ """
+            s = []
+            for name in self.optionNames:
+                val = getattr(self, name)
+                s.append(f"{name}={val}")
+            return f"{self.__class__.__name__}[{','.join(s)}]"
+        __repr__ = __str__
+
+
+    ################################################################
+
+    def parseOptions(self, args):
+        """ """
+
+        opts = SimpleOptionsParser._Options()
+
+        # Items that are not options (do not start with '-' or '--')
+        opts.other_items = []
+
+        opts.verbose = False
+        opts.veryverbose = False
+        opts.debug = False
+        opts.force_update = False
+        opts.dryrun = False
+        opts.quiet = False
+        opts.stop_on_error = False
+
+        argidx = 0
+        debug_itself = False
+        while argidx < len(args):
+
+            arg = args[argidx]; argidx += 1
+
+            if debug_itself: print(f"QQ@293 arg is '{arg}'")
+
+            if arg.startswith("--"):
+                opt_stg = arg[2:]
+            elif arg.startswith("-"):
+                opt_stg = arg[1:]
+            else:
+                if debug_itself: print(f"QQ@300 NOT AN OPT {arg}")
+                opts.other_items.append(arg)
+                continue
+
+            ####optLc = opt.lower()
+            ###if debug_itself: print(f"QQ@305  OPT is {opt}    {optLc=} ")
+            if debug_itself: print(f"QQ@306  OPT is {opt}  ")
+
+            if opt_stg in ("help","h"):
+                print(HELP_INFO)
+                sys.exit(1)
+
+            elif opt_stg in ("q", "quiet"):
+                opts.quiet = True
+
+            elif opt_stg in ("v", "verbose"):
+                opts.verbose = True
+
+            elif opt_stg in ("V", "vv", "veryverbose"):
+                opts.verbose = True
+                opts.veryverbose = True
+                print("VERY VERBOSE MODE")
+
+            elif opt_stg in ("X", "stop", "stop-on-error"):
+                opts.debug = True
+
+            elif opt_stg in ("Z", "z", "debug"):
+                opts.stop_on_error = True
+
+            elif opt_stg in ("zz", "ZZ", "zoption", "zoptions", "debug_itself"):
+                debug_itself = True
+
+            elif opt_stg in ("Y","y", "dry", "dryrun",):
+                opts.dryrun = True
+
+            elif opt_stg in ("F", "force", "force-update",):
+                opts.force_update = True
+
+            # elif self._isInt(opt):
+                # ival = int(opt)
+                # opts.dataSets.append(ival)
+    
+            else:
+                s = f"*ERROR* Unknown option '{arg}'"
+                if not opt:
+                    s = "*ERROR Stand-alone option marker disallowed:  '-' or '--' by itself."
+                raise RuntimeError(s)
+
+        if debug_itself:
+            print(f"QQ@349 $$$ SimpleOptionsParser Args: {args}")
+            print(f"QQ@350 parsed options: {opts}")
+
+        return opts
+
+
+    ################################################################
+
+    def _isInt(self, stg):
+        try:
+            _ = int(stg)
+            return True
+        except (ValueError, TypeError):
+            pass
+        return False
+
+    ################################################################
+
+    def runTests(self):
+        """ Run some simple tests """
+
+        if 1:
+            opts = self.parseOptions(["-zoptions", "-v"])
+            print(f"QQ@372  +++ opts={opts}")
+            assert opts.verbose is True
+            assert opts.veryverbose is False
+            assert req_items == []
+        if 1:
+            opts = self.parseOptions(["-zoptions", "a", "b"])
+            print(f"QQ@378  +++ opts={opts}")
+            assert req_items == ["a", "b"]
+
+
+def main(args):
+    opts = SimpleOptionsParser().parseOptions(args)
+    to_pico = ToPico()
+    to_pico.do_options(opts)
+    to_pico.run()
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
+# :mode=python:
+
+###
+
+
+
+_="""
+
+TIMESTAMP_MARKER_FILE="__QPUSH_MARKER__"
+
+LOCAL_DIR="lib"
+
+DBG=false
+VERBOSE=false
+BOTH=false
+
+# touch -d "2024-01-15 14:30:00" report.txt
+
+
+get_marker_timestamp() {
+    # returns the timestamp as an int
+    local MARKER="$1"   ###"${LOCAL_DIR}/${TIMESTAMP_MARKER_FILE}"
+    if [ ! -f ${MARKER} ] ; then
+        echo '********* CANNOT FILE THE TIMESTAMP MARKER  ************'
+        echo '  Looking for ' ${MARKER}
+        echo '********** SO USING A VERY OLD TIMESAMP  **********'
+        touch -d "1980-01-02 00:01:02" ${MARKER}
+    fi
+    ts=$(stat -c %Y ${MARKER})
+    echo $ts
+}
+
+#--- copy the new stuff to the Pico ---
+copy_changed_files_to_the_pico() {
+    # 1 is the marker file path for this dir
+
+
+    local ts_ref="$1"
+
+    if $VERBOSE ; then
+        echo "copy_changed_files_to_the_pico  ts_ref is ${ts_ref}"
+    fi
+    if $DBG ; then
+        echo "Copy contents of ${LOCAL_DIR}/ "
+    fi
+
+    for fpath in ${LOCAL_DIR}/* ; do
+
+        if $BOTH ; then  echo ' ' ; echo fpath is $fpath ; fi
+        fname=$(basename $fpath)
+        if $DBG ; then echo fname is $fname ; fi
+
+        if [ "${fname}" = "${TIMESTAMP_MARKER_FILE}" ] ; then
+            if $DBG ; then echo 'SKIP THE MARKER!!!!! ' ; fi
+            continue
+        fi
+
+        local ts=$(stat -c %Y  ${fpath})
+        if $DBG ; then echo 'ts is ' $ts ; fi
+
+        if ((ts <= ts_ref)); then
+            if $VERBOSE ; then 
+                #local s=$(ls -l ${fpath} | cut -c 24-)
+                echo '  Already up-to-date  its TIMESTAMP is OLD  ' $ts '<=' $ts_ref "   " $((ts_ref-ts))
+            fi
+            ###ls -l ${fpath}
+            continue
+        fi
+        echo 'DO THIS ONE!' $fpath
+
+        echo \
+        "mpremote fs cp ${fpath}  :"
+         mpremote fs cp ${fpath}  :
+
+    done
+
+
+    ###mpremote fs cp -r lib   :
+}
+
+list_pico_filesystem_contents() {
+    echo ' '
+    echo 'LIST THE PICO CONTENTS: ROOT DIR'
+    mpremote fs ls 
+    echo ' '    
+    echo 'LIST THE PICO CONTENTS: /lib'
+    mpremote fs ls /lib
+}
+
+
+main() {
+    ###echo "QUICK-PUSH_LIB_FILES_TO_PICO "
+
+    if [ "$1" = "D" -o  "$1" = "d" ] ; then
+        echo '________________________ DEBUG ENABLED   _______________'
+        DBG=true
+    fi
+    if [ "$1" = "V" -o  "$1" = "v" ] ; then
+        echo '________________________ VERBOSE ENABLED   _______________'
+        VERBOSE=true
+    fi
+    if [ "$1" = "DV"  -o  "$1" = "dv" ] ; then
+        echo '________________________ DEBUG and VERBOSE BOTH ENABLED   _______________'
+        DBG=true
+        VERBOSE=true
+        BOTH=true
+    fi
+
+
+    local MARKER_FPATH="${LOCAL_DIR}/${TIMESTAMP_MARKER_FILE}"
+
+    local ref_tstamp=$(get_marker_timestamp ${MARKER_FPATH})
+    if $VERBOSE ; then 
+
+        local s=$(ls -l ${MARKER_FPATH} | cut -c 23-)
+        echo "MARKER: ${MARKER_FPATH}  ref_tstamp=${ref_tstamp}  ${s}"
+    fi
+
+    copy_changed_files_to_the_pico ${ref_tstamp}
+
+    if $VERBOSE ; then echo 'UPDATE the marker file ' ${MARKER_FPATH} ; fi
+    touch ${MARKER_FPATH}
+}
+
+
+main $*
+"""
+
+###
