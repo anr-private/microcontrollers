@@ -27,10 +27,20 @@ Water pump candidates:
   shurflo 1 GPM RV water pump
 
 
-POWER
+===  PINS  ===============================================
+
+ GPIO 2,3  - I2C SDA, SCL.   LCD
+
+
+'available' GP19-GP22 - used for state/status indication
+
+
+
+===  POWER  ===============================================
 
   LCD 1602 power:  1-2 mA for display. 30-40 mA if backlit; 100-120 mA possible.
       QAPASS actual (with backlight):  3.3v 46mA   5.0v 80mA
+      Uses 5v power (VSYS) or 3.3v (3V3_OUT)
 
 Pi Pico
   20-50 mA when using wifi, peaking 100mA. Common avg 45 mA. 18-20 mA at idle.
