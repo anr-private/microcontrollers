@@ -35,6 +35,9 @@ password = PW
 
 OUR_PORT_NUMBER = 8000
 
+NTP_UPDATE_INTERVAL_SECS = 3600 # once an hour
+
+
 class _State:
 
     # active _State
@@ -46,6 +49,8 @@ class _State:
         self.sleep_secs = 1
         self.status_retries = 0
         self.restarts_counter = 0
+        self.latest_ntp_update_secs = 0 # 'a long time ago'
+        self.num_ntp_updates = 0
 
     def nullify(self):
         self.state = 1
@@ -54,12 +59,17 @@ class _State:
         self.status_retries = 0
         
     def __str__(self):
+        ntp_elapsed = time.time() - self.latest_ntp_update_secs
+        elapsed_stg = f"{ntp_elapsed}/{NTP_UPDATE_INTERVAL_SECS}"
         s = []
         s.append("state=%s" % str(self.state))
         s.append("wlan=%s" % str(self.wlan))
         s.append("sleepSecs=%s" % str(self.sleep_secs))
         s.append("retries=%s" % str(self.status_retries))
         s.append("restarts_counter=%s" % str(self.restarts_counter))
+        s.append("latest_ntp_update_secs=%s" % str(self.latest_ntp_update_secs))
+        s.append("ntp_elapsed_secs=%s" % str(elapsed_stg))
+        s.append("num_ntp_updates=%s" % str(self.num_ntp_updates))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 
@@ -184,12 +194,16 @@ class MwsWifi(ElemLoggerABC):
 
     def _state_check_connected(self, st):
         # See if still connected
-        if st.wlan.isconnected():
-            print(f"MwsWifi@181 STILL CONNECTED  {self._ipaddr} {self._port}")
-            st.sleep_secs = 3
-            return 0
-        print(f"MwsWifi@184 *** LOST OUR CONNECTION  ****  {st}")
-        return 1
+        if not st.wlan.isconnected():
+            print(f"MwsWifi@184 *** LOST OUR CONNECTION  ****  {st}")
+            return 1
+
+        print(f"MwsWifi@181 STILL CONNECTED  {self._ipaddr} {self._port}")
+
+        self._wifi_set_time_from_ntp(st)
+
+        st.sleep_secs = 3
+        return 0
 
 
     def _no_such_state(self, st):
@@ -223,6 +237,44 @@ class MwsWifi(ElemLoggerABC):
         self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
         print(f"MwsWifi@217  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
 
+
+    def _wifi_set_time_from_ntp(self, st):
+        # See if it's time to update
+        now = time.time()
+
+        elapsed = now - st.latest_ntp_update_secs
+        print(f"MwsWifi@237  NTP elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
+        if elapsed < NTP_UPDATE_INTERVAL_SECS:
+            return
+
+        m = f"MwsWifi@241 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {st}"
+        print(m)
+        logi(m)
+
+        try:
+            ntptime.settime()
+        except Exception as ex:
+            m = f"MwsWifi@324 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
+            logi(m)
+            return False
+    
+        # verify the time
+        current_time = utime.localtime()
+    
+        # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
+        # (year, month, mday, hour, minute, second, weekday, yearday)
+        # weekday is 0=Sun, etc
+        logi(f"MwsWifi@334 TIME FROM NTP: {current_time} ") # as tuple
+        year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
+        logi(f"MwsWifi@336 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
+        weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
+        logi(f"MwsWifi@338   {weekday_stg=}")
+    
+        # successful update
+        st.latest_ntp_update_secs = now
+        st.num_ntp_updates += 1
+
+        return True
 
 ######################################################################
 ######################################################################
@@ -323,27 +375,5 @@ class MwsWifi(ElemLoggerABC):
         return wlan, ip_addr
 
 
-    def ___OLD__wifi_set_time_from_ntp(self, wlan):
-    
-        try:
-            ntptime.settime()
-        except Exception as ex:
-            m = f"MwsWifi@324 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
-            logi(m)
-            return False
-    
-        # verify the time
-        current_time = utime.localtime()
-    
-        # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
-        # (year, month, mday, hour, minute, second, weekday, yearday)
-        # weekday is 0=Sun, etc
-        logi(f"MwsWifi@334 TIME FROM NTP: {current_time} ") # as tuple
-        year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-        logi(f"MwsWifi@336 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
-        weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"MwsWifi@338   {weekday_stg=}")
-    
-        return True
 
 ###
