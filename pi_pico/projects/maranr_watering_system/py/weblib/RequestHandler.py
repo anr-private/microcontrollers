@@ -13,6 +13,7 @@ from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.FileObtainer import FileObtainer
 from lib2.DataBoard import DataBoard
+from lib2.MwsWifi import MwsWifi
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
@@ -133,6 +134,7 @@ class RequestHandler(ElemLoggerABC):
             lines = self._data_board.status_lines()
             hlines = "<br>\n".join(lines)
             data_dict["databoard_status"] = hlines
+            data_dict["wifi_state"] = str(MwsWifi.state)
 
         json_stg = json.dumps(data_dict)
         print(f"RH@123 body: JSON-string:...")  

@@ -36,6 +36,10 @@ password = PW
 OUR_PORT_NUMBER = 8000
 
 class _State:
+
+    # active _State
+    state = None
+
     def __init__(self):
         self.state = 1
         self.wlan = None
@@ -56,10 +60,8 @@ class _State:
         s.append("sleepSecs=%s" % str(self.sleep_secs))
         s.append("retries=%s" % str(self.status_retries))
         s.append("restarts_counter=%s" % str(self.restarts_counter))
-
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
-
 
 
 class MwsWifi(ElemLoggerABC):
@@ -96,6 +98,9 @@ class MwsWifi(ElemLoggerABC):
         print(f"nMwsWifi@94 TASK STARTED!")
 
         st = _State()
+
+        # for allowing visbility
+        MwsWifi.state = st
 
         states = {
             0:  self._state_zero,

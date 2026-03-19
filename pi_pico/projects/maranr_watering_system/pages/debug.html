@@ -12,9 +12,13 @@
     <div id="NOTUSED__data-container" style="font-size: 24px; color: blue;">
       Time Now:&nbsp; <span id="date_time">date-and-time</span>
     </div>
-    <div id="notusedyet"  style="font-size: 24px; color: blue;">
+    <div id="notusedyetdbstatus"  style="font-size: 24px; color: blue;">
         <span id="db_status">databoard status </span>
-    </div
+    </div>
+    <div id="notusedyetwifi"  style="font-size: 24px; color: blue;">
+        Wifi: <span id="wifi_status">wifi status </span>
+    </div>
+
     <p><a href="index.html"> BACK </a>
 
 
@@ -47,6 +51,10 @@
             //console.log("DBstatus is ...");
             //console.log(dbstatus)
             eltDbStatus.innerHTML = dbstatus
+
+            var eltWifiStatus = document.getElementById('wifi_status');
+            var wifi_status = `${data.wifi_state}`;
+            eltWifiStatus.innerText = wifi_status
         }
 
     </script>
