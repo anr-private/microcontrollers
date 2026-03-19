@@ -8,6 +8,7 @@
 #Handle DHCP Timeouts: The Pico W might fail to get an IP quickly. Add a timeout to your connection script; if it doesn't connect within 10-20 seconds, deactivate (wlan.active(False)) and reactivate the interface before trying again.
 #Place your network setup code in boot.py, which runs automatically on startup 
 #  before main.py, as is standard practice for MicroPython devices. 
+# Run machine.reset() to reboot
 
 import network
 import utime
