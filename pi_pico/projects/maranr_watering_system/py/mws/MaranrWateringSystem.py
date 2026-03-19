@@ -1,6 +1,7 @@
 # MaranrWateringSystem.py
 
 import asyncio
+import machine  # probably not needed
 import sys
 
 try:
@@ -14,11 +15,13 @@ from lib2.MwsWifi import MwsWifi
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
+from utils import determine_machine_type
 
 
 class MaranrWateringSystem(ElemLoggerABC):
 
     def __init__(self):
+        self._onboard_led = None
         super().__init__()
 
     def _set_logger(self, logger):
@@ -36,6 +39,10 @@ class MaranrWateringSystem(ElemLoggerABC):
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
         print(f"MWSMAIN@36 Created DataBoard. state=...\n{dataBoard.long_string()} ")
+
+        self._onboard_led = self._get_onboard_led()
+        self._toggle_onboad_led()
+
 
         wifi = MwsWifi.get_instance()
         wifi_task = asyncio.create_task(wifi.wifi_task())
@@ -85,6 +92,7 @@ class MaranrWateringSystem(ElemLoggerABC):
 
             print(f"MWSMAIN@81  MAIN TASK running  SLEEP 3  ")
             await asyncio.sleep(3)
+            self._toggle_onboad_led()
 
 
     def run_mws(self):
@@ -118,6 +126,20 @@ class MaranrWateringSystem(ElemLoggerABC):
             # Clean up the event loop (optional, but good practice)
             asyncio.new_event_loop()
 
+    def _toggle_onboad_led(self):
+        if self._onboard_led is not None:
+            self._onboard_led.toggle()
+
+    def _get_onboard_led(self):
+        this_machine = determine_machine_type()
+
+        if this_machine == "pi pico w":
+            # 'EXT_GPIO0'  GPIO zero on the wifi chip (not the Pico)
+            led = machine.Pin("LED", machine.Pin.OUT)
+        else:
+            print(f"**ERROR**  unknown machine '{this_machine}'")
+            led = machine.Pin(25, machine.Pin.OUT)
+        return led
 
 
 ### end ###
