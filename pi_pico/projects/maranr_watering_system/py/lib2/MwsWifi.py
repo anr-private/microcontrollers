@@ -240,6 +240,7 @@ class MwsWifi(ElemLoggerABC):
 
     def _wifi_set_time_from_ntp(self, st):
         # See if it's time to update
+        # TODO handle daylight savings time
         now = time.time()
 
         elapsed = now - st.latest_ntp_update_secs
@@ -275,105 +276,6 @@ class MwsWifi(ElemLoggerABC):
         st.num_ntp_updates += 1
 
         return True
-
-######################################################################
-######################################################################
-######################################################################
-
-    def OLDSTUFF(self):
-
-        CTR = 8
-        while 1:
-            if sleep_secs > 0:
-                print(f"nMwsWifi@229 task sleeping {sleep_secs} secs")
-                await asyncio.sleep(sleep_secs)
-            sleep_secs = 1   # default
-
-            print(f"MwsWifi@233   CTR is {CTR} _________________________________")
-            if CTR < 0:
-                if self.wlan is not None: 
-                    self.wlan.active(False)
-                    print(f"MwsWifi@237  _____________******************* SIMULATE DISCONNECT")
-                else:
-                    print(f"MwsWifi@239  _____________******************* CANNOT SIMULATE DISCONNECT")
-
-                CTR = 8
-            CTR -= 1
-
-            if self.wlan is None:
-                self._create_wlan_obj()
-                status_retries = 30
-                continue
-
-            if status_retries > 0:
-                if self.wlan.status() == 3:
-                    # Got a good status - done waiting.
-                    status_retries = 0
-                    self._set_ipaddr_and_port()
-                    continue
-                # Give up?
-                status_retries -=1
-                if status_retries <= 0:
-                    status_retries = 0
-                    print(f"nMwsWifi@259 Giving up on waiting for status==3 - start over")
-                    self._nullify_connection_state()
-                    continue
-
-            # Check if we're still connected
-            if not self.wlan.isconnected():
-                print(f"MwsWifi@265 *** LOST OUR WIFI CONNECTION ***.   Start over.")
-                self._nullify_connection_state()
-                sleep_secs = 4
-                continue
-
-            print(f"nMwsWifi@270 wifi is connected ok")
-            sleep_secs = 4 #$$$$$
-
-
-
-######################################################################
-
-
-    def ___OLD_connect_to_wifi(self, show_details=True):
-        """ Connect to the WIFI WLAN.
-        Return a wlan obj if successful else exception.
-        """
-        
-        logi(f"MwsWifi@283 CONNECT_TO_WIFI  ++++++++++++++++++++++++++++++")
-        
-        # Connect to WLAN
-        wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
-    
-        logi(f"MwsWifi@289   Connect to wifi: ssid='{ssid}'")
-        wlan.connect(ssid, password)
-    
-        max_wait = 30 # Timeout in seconds
-        num_tries = 0
-        while num_tries < max_wait:
-            wlan_status = wlan.status()
-            logi(f"MwsWifi@296 waiting...  wlan_status={wlan_status}")
-            if wlan_status < 0 or wlan_status >= 3:
-                break
-            num_tries += 1
-            logi(f"MwsWifi@300 Waiting for connection...   num_tries={num_tries}  max={max_wait}")
-            utime.sleep(1)
-        logi(f"MwsWifi@302 wlan.status() = {wlan.status()}")
-        
-        if wlan.status() != 3:
-            wlan.disconnect() # ignored if not connected
-            raise RuntimeError(f"Network connection failed. wlan.status={wlan_status}")
-    
-        if show_details:
-            logi(f"Connected to wlan {ssid}")
-            info = wlan.ifconfig()
-            ip_addr = info[0]
-            logi(f"  IP={ip_addr}")
-            # typical output: INFO: ('192.168.1.49', '255.255.255.0', '192.168.1.1', '192.168.1.1')
-            ###logi(f"  INFO: {info}")
-        
-        return wlan, ip_addr
-
 
 
 ###

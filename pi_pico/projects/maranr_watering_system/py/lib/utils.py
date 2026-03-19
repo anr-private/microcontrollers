@@ -23,6 +23,7 @@ MWS_CONFIG = {
     "lcd1602_scl_pin": 3,
     "log_file_path":  "mws_log.txt",
     }
+#TODO ADD table for daylight savings time changes
 
 
 def string_to_int(s):
@@ -103,9 +104,13 @@ def get_fs_space_string(sep=""):
 
 def get_local_time():  # for our TZ
     # Get UTC time from clock
-    #### RETURNS UTC  utc_time = time.localtime()
+    #### THIS RETURNS UTC  utc_time = time.localtime()
     # Example: Apply offset for Central TZ: UTC-6 hrs
-    local_time = time.localtime(time.time() - (6 * 3600))
+    # TODO handle automatic switch to DAYLIGHT_TIME_OFFSET
+    STD_TIME_OFFSET = -6 # hours
+    DAYLIGHT_TIME_OFFSET = -5 # hours
+    offset = DAYLIGHT_TIME_OFFSET * 3600 # seconds
+    local_time = time.localtime(time.time() + offset)
     return local_time
 
 def get_formatted_date_time_string():
