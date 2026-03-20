@@ -24,11 +24,21 @@ class LCD():
         # P3: --
         # P4-P7: DB4-DB7
 
+        self.ok = False
+
         self.i2c = i2c
         print('(Re)Initializing...')
         scan_result = i2c.scan()
-        while not scan_result:
-            print("Cannot Locate I2C Device")
+        retry_ctr_max = 3 #@@@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$ TODO raise the limit; do more retries but don't hang the task
+        retry_ctr = 0
+        while 1:
+            if scan_result:
+                break
+            print("LCD@31 Cannot Locate I2C Device")
+            retry_ctr += 1
+            if retry_ctr >= retry_ctr_max:
+                print("LCD@39 FAILED TO FIND the LCD - abandon i2c.scan()")
+                return
             time.sleep_ms(10)
             scan_result = i2c.scan()
 
@@ -57,6 +67,7 @@ class LCD():
         self.add_command(0x06)  # 0000   0110
         self.add_command(0x01)  # 0000   0001
         self.execute()
+        self.ok = True
 
     def queue(self, dat):
         '''

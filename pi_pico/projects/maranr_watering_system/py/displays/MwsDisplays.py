@@ -54,6 +54,15 @@ class MwsDisplays(ElemLoggerABC):
     async def displays_coro(self):
 
         self.locate_the_lcd()
+        if not self.lcd.ok:
+            m = f"MwsDisplays@58  CANNOT FIND THE lcd!"
+            logi(m)
+            print(m)
+            m = f"MwsDisplays@58  STOPPING THE displays TASK!!!!!!!!!!!!!!!!!!!!!!!"
+            logi(m)
+            print(m)
+            return
+#@@@@@@@@@@@$$$$$$$$$$$$$ TODO handle searching for the LCD better!
 
         ctr = 1
         while 1:
