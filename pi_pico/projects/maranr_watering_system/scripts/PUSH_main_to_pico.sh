@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# PUSH_HTTP_to_pico.sh
+# PUSH_main_to_pico.sh
 #
 # MAIN py -  push the repo files to the pico
 # 
@@ -18,9 +18,9 @@ fi
 clean_up_old_dirs_and_files() {
     echo '**** CLEANUP for MAIN-PGM  IS NOT DONE YET ***************'
     # echo 'CLEANUP: copy the cleanup program and run it'
-    # mpremote fs cp remove_old_watering_files.py  :/
+    # mpremote ${PREM_DEVICE} fs cp remove_old_watering_files.py  :/
     # echo '   Run the cleanup'
-    # mpremote run remove_old_watering_files.py
+    # mpremote ${PREM_DEVICE} run remove_old_watering_files.py
     echo 'CLEANUP is done'
     echo '----------------'
 }
@@ -29,16 +29,16 @@ clean_up_old_dirs_and_files() {
 copy_release_files_to_the_pico() {
 
     echo 'Copy contents of MAIN-PGM'
-    mpremote fs cp maranr_watering_system_main.py :/main.py
+    mpremote ${PREM_DEVICE} fs cp maranr_watering_system_main.py :/main.py
     
     #echo 'Remove the files we do not need'
-    #mpremote fs rm xxxx/XXXX.py
+    #mpremote ${PREM_DEVICE} fs rm xxxx/XXXX.py
 }
 
 list_pico_filesystem_contents() {
     echo ' '
     echo 'LIST THE PICO CONTENTS:'
-    mpremote fs ls 
+    mpremote ${PREM_DEVICE} fs ls 
 }
 
 main() {

@@ -67,22 +67,22 @@ copy_changed_files_to_the_pico() {
         echo 'DO THIS ONE!' $fpath
 
         echo \
-        "mpremote fs cp ${fpath}  :"
-         mpremote fs cp ${fpath}  :
+        "mpremote ${PREM_DEVICE} fs cp ${fpath}  :"
+         mpremote ${PREM_DEVICE} fs cp ${fpath}  :
 
     done
 
 
-    ###mpremote fs cp -r lib   :
+    ###mpremote ${PREM_DEVICE} fs cp -r lib   :
 }
 
 list_pico_filesystem_contents() {
     echo ' '
     echo 'LIST THE PICO CONTENTS: ROOT DIR'
-    mpremote fs ls 
+    mpremote ${PREM_DEVICE} fs ls 
     echo ' '    
     echo 'LIST THE PICO CONTENTS: /lib'
-    mpremote fs ls /lib
+    mpremote ${PREM_DEVICE} fs ls /lib
 }
 
 

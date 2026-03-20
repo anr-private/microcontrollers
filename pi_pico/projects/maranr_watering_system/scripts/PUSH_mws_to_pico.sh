@@ -14,9 +14,9 @@ fi
 clean_up_old_dirs_and_files() {
     echo 'CLEANUP: copy the cleanup program and run it'
     echo '*** NOT IMPLEMENETED YET ***'
-    #mpremote fs cp remove_old_watering_files.py  :/
+    #mpremote ${PREM_DEVICE} fs cp remove_old_watering_files.py  :/
     #echo '   Run the cleanup'
-    #mpremote run remove_old_watering_files.py
+    #mpremote ${PREM_DEVICE} run remove_old_watering_files.py
     echo 'CLEANUP is done'
     echo '----------------'
 }
@@ -24,19 +24,19 @@ clean_up_old_dirs_and_files() {
 #--- copy the new stuff to the Pico ---
 copy_release_files_to_the_pico() {
     echo 'Copy contents of mws/ '
-    mpremote fs cp -r mws   :
+    mpremote ${PREM_DEVICE} fs cp -r mws   :
     
     #echo 'Remove the client files we do not need'
-    #mpremote fs rm http/AnrHttpClient.py
+    #mpremote ${PREM_DEVICE} fs rm http/AnrHttpClient.py
 }
 
 list_pico_filesystem_contents() {
     echo ' '
     echo 'LIST THE PICO CONTENTS: ROOT DIR'
-    mpremote fs ls 
+    mpremote ${PREM_DEVICE} fs ls 
     echo ' '    
     echo 'LIST THE PICO CONTENTS: /mws'
-    mpremote fs ls /mws
+    mpremote ${PREM_DEVICE} fs ls /mws
 }
 
 

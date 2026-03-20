@@ -9,9 +9,9 @@ rm -rf */__pycache__
 #--- get rid of the old stuff ---
 clean_up_old_dirs_and_files() {
     echo 'CLEANUP: copy the cleanup program and run it'
-    mpremote fs cp remove_MWS_files.py  :/
+    mpremote ${PREM_DEVICE} fs cp remove_MWS_files.py  :/
     echo '   Run the cleanup'
-    mpremote run remove_MWS_files.py
+    mpremote ${PREM_DEVICE} run remove_MWS_files.py
     echo 'CLEANUP is done'
     echo '----------------'
 }

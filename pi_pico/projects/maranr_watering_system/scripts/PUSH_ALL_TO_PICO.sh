@@ -22,9 +22,9 @@ rm -rf */__pycache__
 ####--- get rid of the old stuff ---
 ###clean_up_old_dirs_and_files() {
 ###    echo 'CLEANUP: copy the cleanup program and run it'
-###    mpremote fs cp remove_old_watering_files.py  :/
+###    mpremote ${PREM_DEVICE} fs cp remove_old_watering_files.py  :/
 ###    echo '   Run the cleanup'
-###    mpremote run remove_old_watering_files.py
+###    mpremote ${PREM_DEVICE} run remove_old_watering_files.py
 ###    echo 'CLEANUP is done'
 ###    echo '----------------'
 ###}
@@ -42,22 +42,22 @@ copy_release_files_to_the_pico() {
     ${SCRIPTS_DIR}/PUSH_sensors_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_weblib_to_pico.sh
     echo 'Copy the MAIN program'
-    ${SCRIPTS_DIR}/PUSH_sensors_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_main_to_pico.sh
 }
 
 list_pico_filesystem_contents() {
     echo ' '
     echo 'LIST THE PICO CONTENTS:'
     
-    mpremote fs ls /displays
-    mpremote fs ls /lib
-    mpremote fs ls /lib2
-    mpremote fs ls /logger_elem
-    mpremote fs ls /mws
-    mpremote fs ls /primitives
-    mpremote fs ls /sensors
-    mpremote fs ls /weblib
-    mpremote fs ls 
+    mpremote ${PREM_DEVICE} fs ls /displays
+    mpremote ${PREM_DEVICE} fs ls /lib
+    mpremote ${PREM_DEVICE} fs ls /lib2
+    mpremote ${PREM_DEVICE} fs ls /logger_elem
+    mpremote ${PREM_DEVICE} fs ls /mws
+    mpremote ${PREM_DEVICE} fs ls /primitives
+    mpremote ${PREM_DEVICE} fs ls /sensors
+    mpremote ${PREM_DEVICE} fs ls /weblib
+    mpremote ${PREM_DEVICE} fs ls 
 }
 
 main() {

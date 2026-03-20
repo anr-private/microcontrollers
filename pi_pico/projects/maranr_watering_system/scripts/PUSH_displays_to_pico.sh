@@ -18,9 +18,9 @@ rm -rf displays/__pycache__
 clean_up_old_dirs_and_files() {
     echo '**** CLEANUP for displays IS NOT DONE YET ***************'
     # echo 'CLEANUP: copy the cleanup program and run it'
-    # mpremote fs cp remove_old_watering_files.py  :/
+    # mpremote ${PREM_DEVICE} fs cp remove_old_watering_files.py  :/
     # echo '   Run the cleanup'
-    # mpremote run remove_old_watering_files.py
+    # mpremote ${PREM_DEVICE} run remove_old_watering_files.py
     echo 'CLEANUP is done'
     echo '----------------'
 }
@@ -29,18 +29,18 @@ clean_up_old_dirs_and_files() {
 copy_release_files_to_the_pico() {
 
     echo 'Copy contents of dir  displays'
-    mpremote $PREM_DEVICE fs cp -r displays :
+    mpremote ${PREM_DEVICE} $PREM_DEVICE fs cp -r displays :
     
     #echo 'Remove the files we do not need'
-    #mpremote fs rm displays/AnrHttpClient.py
+    #mpremote ${PREM_DEVICE} fs rm displays/AnrHttpClient.py
 }
 
 list_pico_filesystem_contents() {
     echo ' '
     echo 'LIST THE PICO CONTENTS:'
-    mpremote $PREM_DEVICE fs ls 
+    mpremote ${PREM_DEVICE} $PREM_DEVICE fs ls 
     
-    mpremote  $PREM_DEVICE fs ls /displays
+    mpremote ${PREM_DEVICE}  $PREM_DEVICE fs ls /displays
 }
 
 main() {
