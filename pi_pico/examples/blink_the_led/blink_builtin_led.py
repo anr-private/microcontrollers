@@ -40,6 +40,7 @@ print(f"Blink the built-in LED {led}")
 # Infinite loop to continuously blink the LED
 try:
     while True:
+        print("LOOP: blink the LED")
         led.value(1)  # Turn the LED on (set pin value to high)
         utime.sleep(0.5)  # Pause for 0.5 seconds
         led.value(0)  # Turn the LED off (set pin value to low)
