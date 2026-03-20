@@ -1,10 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 #
 # PUSH_ALL_TO_PICO.sh
 #
 # copy all files to the pico
 
 SCRIPTS_DIR='../scripts'
+
+
+if [[ "$PREM_DEVICE" == 'a0' || "$PREM_DEVICE" == 'a1' ]] ; then
+    echo 'PREM_DEVICE is currently ok: "'${PREM_DEVICE}'"'
+else
+    echo '***** PREM_DEVICE does not have a proper value: "'${PREM_DEVICE}'"'
+    exit 9
+fi
+
 
 rm -rf */__pycache__
 

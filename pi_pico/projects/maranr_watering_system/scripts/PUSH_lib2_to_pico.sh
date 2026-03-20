@@ -3,6 +3,14 @@
 # PUSH_lib2_to_pico.sh
 
 
+if [[ "$PREM_DEVICE" == 'a0' || "$PREM_DEVICE" == 'a1' ]] ; then
+    echo 'PREM_DEVICE is currently ok: "'${PREM_DEVICE}'"'
+else
+    echo '***** PREM_DEVICE does not have a proper value: "'${PREM_DEVICE}'"'
+    exit 9
+fi
+
+
 clean_up_old_dirs_and_files() {
     echo 'CLEANUP: copy the cleanup program and run it'
     echo '*** NOT IMPLEMENETED YET ***'

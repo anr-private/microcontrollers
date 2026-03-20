@@ -1,10 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 #
 # PUSH_SENSORS_to_pico.sh
 #
 # sensors/ -  push the repo files to the pico
 # 
 rm -rf sensors/__pycache__
+
+
+if [[ "$PREM_DEVICE" == 'a0' || "$PREM_DEVICE" == 'a1' ]] ; then
+    echo 'PREM_DEVICE is currently ok: "'${PREM_DEVICE}'"'
+else
+    echo '***** PREM_DEVICE does not have a proper value: "'${PREM_DEVICE}'"'
+    exit 9
+fi
+
 
 #--- get rid of the old stuff ---
 clean_up_old_dirs_and_files() {

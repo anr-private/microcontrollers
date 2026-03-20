@@ -1,4 +1,7 @@
 
+alias USE_A0='export PREM_DEVICE="a0"'
+alias USE_A1='export PREM_DEVICE="a1"'
+
 alias QQ_to_pico=../scripts/QQ_to_pico
 
 alias COMPARE_ALL=../scripts/COMPARE_ALL.sh
