@@ -15,7 +15,9 @@ from machine import SoftI2C, Pin
 
 
 class LCD():
+    #@@@@$%$$$$$$$$ TODO fix this to work with async- esp the retries for finding the LCD
     def __init__(self, i2c):
+
 
         # board definition
         # P0: RS

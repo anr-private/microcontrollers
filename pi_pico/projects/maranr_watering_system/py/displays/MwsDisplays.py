@@ -12,6 +12,7 @@ from machine import Pin, SoftI2C
 #from lib.utils import loggg
 from lib.utils import MWS_CONFIG
 from logger_elem.ElemLoggerABC import ElemLoggerABC
+from lib2.DataBoard import DataBoard
 
 from displays.lib_lcd1602_2004_with_i2c import LCD
 
@@ -26,13 +27,12 @@ NUM_ROWS = 2
 
 
 class MwsDisplays(ElemLoggerABC):
-    # top-level Server class
     def __init__(self):
-        super().__init__()
-
+        self._dataBoard = DataBoard.get_instance()
         self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
         self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
+        super().__init__()
 
 
     def _set_logger(self, logger):
@@ -95,7 +95,7 @@ class MwsDisplays(ElemLoggerABC):
     
     def just_show_some_hello_lines(self, ctr):
         if self.lcd is None: return
-        line1 = "The Display LCD!"
+        line1 = f"{self._dataBoard.ipaddr}:{self._dataBoard.port}"
         line2 = f"ctr={ctr}      "
         self.lcd.puts(line1, x=0,y=0)
         self.lcd.puts(line2, x=0,y=1)
