@@ -1,6 +1,8 @@
 
 alias USE_A0='export PREM_DEVICE="a0"'
 alias USE_A1='export PREM_DEVICE="a1"'
+alias USE_A2='export PREM_DEVICE="a2"'
+alias USE_A3='export PREM_DEVICE="a3"'
 alias USE_='echo PREM_DEVICE: ${PREM_DEVICE}'
 
 alias QQ_to_pico='../scripts/QQ_to_pico ${PREM_DEVICE}'

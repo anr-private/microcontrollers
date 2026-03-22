@@ -33,8 +33,10 @@ Options:
   --debug_itself    Debug the options processing.  [--z, --Z, --zoption, --zoptions]
 
 DEST-DEVICE is  
-  /dev/ttyACM0 or a0   
+  /dev/ttyACM0 or a0
   /dev/ttyACM1 or a1
+  /dev/ttyACM2 or a2
+  /dev/ttyACM3 or a3
 NOTE that you must define PREM_DEVICE so that the QQ_to_pico alias can work.
 You can use the USE_A0,... aliases to do this.
 
@@ -49,10 +51,21 @@ DEVICE_TO_IDENTIFIER = {
     "A0":               "a0",
     "/dev/ttyACM0":     "a0",
     "/dev/ttyacm0":     "a0",
+
     "a1":               "a1",
     "A1":               "a1",
     "/dev/ttyACM1":     "a1",
     "/dev/ttyacm1":     "a1",
+
+    "a2":               "a2",
+    "A2":               "a2",
+    "/dev/ttyACM2":     "a2",
+    "/dev/ttyacm2":     "a2",
+
+    "a3":               "a3",
+    "A3":               "a3",
+    "/dev/ttyACM3":     "a3",
+    "/dev/ttyacm3":     "a3",
     }
 
 # aka packages

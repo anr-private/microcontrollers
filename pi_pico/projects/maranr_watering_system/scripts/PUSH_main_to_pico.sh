@@ -6,7 +6,7 @@
 # 
 rm -rf ./__pycache__
 
-if [[ "$PREM_DEVICE" == 'a0' || "$PREM_DEVICE" == 'a1' ]] ; then
+if [[ "$PREM_DEVICE" == 'a0' || "$PREM_DEVICE" == 'a1' || "$PREM_DEVICE" == 'a2' || "$PREM_DEVICE" == 'a3' ]] ; then
     echo 'PREM_DEVICE is currently ok: "'${PREM_DEVICE}'"'
 else
     echo '***** PREM_DEVICE does not have a proper value: "'${PREM_DEVICE}'"'
