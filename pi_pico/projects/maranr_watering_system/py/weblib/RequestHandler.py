@@ -135,7 +135,8 @@ class RequestHandler(ElemLoggerABC):
             hlines = "<br>\n".join(lines)
             data_dict["databoard_status"] = hlines
             data_dict["wifi_state"] = str(MwsWifi.state)
-
+        if "settings" in params:
+            data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
         json_stg = json.dumps(data_dict)
         print(f"RH@123 body: JSON-string:...")  
         print(json_stg)

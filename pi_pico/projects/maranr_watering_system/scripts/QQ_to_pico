@@ -15,15 +15,41 @@ DBG = False
 PRT = True
 V = False
 VV = False
-DRYRUN = False
+# global so that perr() can access
 STOP_ON_ERROR = True
-FORCE_UPDATE = False
 
 HELP_INFO="""
-This is the HELP not done yet
+QQ_to_pico  <options>  DEST-DEVICE  ...pkg-names...
+Options:
+  --help            Show this help.  [-h]
+  --quiet           Quiet mode  [-q]
+  --verbose         Verbose mode [-v]
+  --veryverbose     Very verbose  [-V, -vv, --vv]
+  --stop-on-error   Stop if any error  [--stop, -X]
+  --force-update    Force copying all files to the device; ignores marker files.  [-F, --force]
+  --dryrun          Dry run: do not copy to device.  [-Y, -N]
+  --force-marker-file-update  Perform an update ('touch') the marker files, even if dryrun.  [-U]
+  --debug           Debug  [-Z, -z]
+  --debug_itself    Debug the options processing.  [--z, --Z, --zoption, --zoptions]
+DEST-DEVICE is  
+  /dev/ttyACM0 or a0   
+  /dev/ttyACM1 or a1
+The pkg-names are 'displays','lib', etc.
+Specify ALL for all packages - which is the default if none are specified.
 """
 
-MARKER_FILENAME = "__QPUSH_MARKER__"
+MARKER_FILENAME_TEMPLATE = "__QPUSH_MARKER__{mpremote_device}"
+
+DEVICE_TO_IDENTIFIER = {
+    "a0":               "a0",
+    "A0":               "a0",
+    "/dev/ttyACM0":     "a0",
+    "/dev/ttyacm0":     "a0",
+    "a1":               "a1",
+    "A1":               "a1",
+    "/dev/ttyACM1":     "a1",
+    "/dev/ttyacm1":     "a1",
+    }
 
 # aka packages
 ALL_DIRS=[
@@ -40,28 +66,59 @@ ALL_DIRS=[
 class ToPico:
     def __init__(self):
         self.pkg_names = []
+        # Force copying to the device regards of timestamps on the files
         self._force_update = False
+        # Dry run - do not copy to device
+        self._dryrun = False
+        # Perform a 'touch' update on marker files. Normally disabled for
+        # dryrun, but can be forced using an option.
+        self._do_marker_file_touch = True
 
     def do_options(self, opts):
-        global DBG, V, VV, DRYRUN, STOP_ON_ERROR, PRT
+        global DBG, V, VV, STOP_ON_ERROR, PRT
         #print(f"@22 opts={opts}")
         if opts.debug: DBG = True
         if opts.verbose: V = True
         if opts.veryverbose: VV = True; V = True
         if opts.quiet: PRT = False
-        if opts.dryrun: DRYRUN = True;
+        
+        if opts.dryrun: 
+            self._dryrun = True
+            # Do not update the marker file timestamp - unless FORCED
+            self._do_marker_file_touch = False
+            if opts.force_marker_file_update: self._do_marker_file_touch = True
+
         if opts.stop_on_error: STOP_ON_ERROR = True
         if opts.force_update: self._force_update = True
+        # 'a0', 'a1',...
+        self._device_identifier = None
+        # __QPUSH_MARKER__a0, etc.
+        self._marker_filename = None
 
-        req_items = opts.other_items
-        if len(req_items) == 0: req_items = ["ALL"]
-        if "ALL" in req_items:
-            if len(req_items) != 1:
+
+        if len(opts.other_items) <= 0:
+            print(f"do_options@58 YOU MUST INCLUDE A DESTINATION DEVICE!")
+            print(f"               Try --help")
+
+        # First non-option item must be a destination device 
+        dev_stg = opts.other_items[0]
+        requested_pkgs = opts.other_items[1:]
+
+        if V: print(f"QQ@78  Device '{dev_stg}'   Pkgs-requested: '{requested_pkgs}' ")
+
+        dev_id = DEVICE_TO_IDENTIFIER.get(dev_stg)
+        if not dev_id:
+            raise RuntimeError(f"QQ@94 Unknown mpremote device: '{dev_stg}'")
+        self._device_identifier = dev_id
+
+        if len(requested_pkgs) == 0: requested_pkgs = ["ALL"]
+        if "ALL" in requested_pkgs:
+            if len(requested_pkgs) != 1:
                 perr(f"QQ@59 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
                 sys.exit(1)
             pkgs = set(ALL_DIRS)
         else:
-            pkgs = set(req_items)
+            pkgs = set(requested_pkgs)
         # Verify the pkg names are known to us
         for p in pkgs:
             if p not in ALL_DIRS:
@@ -78,17 +135,19 @@ class ToPico:
     def run(self):
         if DBG or V:
             print(f"QQ@79{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
-        if DRYRUN: print("----- DRY RUN  -------------------------")
+        if self._dryrun: print("QQ@139  ----------- DRY RUN  -------------------------")
 
         for pkg_name in self.pkg_names:
             self.do_pkg(pkg_name)
 
         self._copy_main_to_pico()
 
+
     def _copy_main_to_pico(self):
         main_fname = "maranr_watering_system_main.py"
         cmd_and_args = (
-            "mpremote", "fs", "cp", 
+            "mpremote", self._device_identifier,
+            "fs", "cp", 
             main_fname, f":main.py")
         self._run_a_command(cmd_and_args)
         if PRT: print(f"QQ@93 Copied MAIN to pico:  {" ".join(cmd_and_args)} ")
@@ -102,8 +161,11 @@ class ToPico:
             perr(f"No such pkg dir: ./{pkg_name}")
             return
 
+        self._marker_filename = MARKER_FILENAME_TEMPLATE.format(mpremote_device=self._device_identifier)
+        if V: print(f"Marker filename='{self._marker_filename}'")
+
         # Get the marker file
-        marker_fpath = pkg_dir_path / MARKER_FILENAME
+        marker_fpath = pkg_dir_path / self._marker_filename
         if V: print(f"QQ@106  {marker_fpath=}")
 
         if marker_fpath.is_dir():
@@ -152,8 +214,8 @@ class ToPico:
             if PRT: print(f"QQ@151  NO FILES copied to the PICO  {pkg_name}")
 
         # Update the marker's timestamp(s)
-        if DRYRUN: 
-            print(f"QQ@155 DRYRUN: Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
+        if not self._do_marker_file_touch: 
+            print(f"QQ@206: _do_marker_file_touch: FALSE!  Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
         else:
             self._set_file_timestamps_to_now(marker_fpath)
             if V:
@@ -178,7 +240,7 @@ class ToPico:
         # cmd_and_args is a list: ['cmd', 'arg', ...]
         # Run the command and capturing its output
         if V: print(f"QQ@179  RUN CMD: {cmd_and_args} ")
-        if DRYRUN:
+        if self._dryrun:
             print(f"QQ@181  DRY RUN: not performed:  {' '.join(cmd_and_args)}")
             return
 
@@ -202,7 +264,7 @@ class ToPico:
             # skip dirs, etc
             if not os.path.isfile(os.path.join(pkg_dir_path, fname)):
                 continue
-            if fname == MARKER_FILENAME:
+            if fname == self._marker_filename:
                 continue
             files.append(fname)
         return files
@@ -282,6 +344,7 @@ class SimpleOptionsParser(object):
         opts.debug = False
         opts.force_update = False
         opts.dryrun = False
+        opts.force_marker_file_update = False
         opts.quiet = False
         opts.stop_on_error = False
 
@@ -324,17 +387,20 @@ class SimpleOptionsParser(object):
             elif opt_stg in ("X", "stop", "stop-on-error"):
                 opts.debug = True
 
+            elif opt_stg in ("F", "force", "force-update",):
+                opts.force_update = True
+
+            elif opt_stg in ("N", "Y","y", "dry", "dryrun",):
+                opts.dryrun = True
+
+            elif opt_stg in ("U", "force-marker-file-update",):
+                opts.force_marker_file_update = True
+
             elif opt_stg in ("Z", "z", "debug"):
                 opts.stop_on_error = True
 
             elif opt_stg in ("zz", "ZZ", "zoption", "zoptions", "debug_itself"):
                 debug_itself = True
-
-            elif opt_stg in ("Y","y", "dry", "dryrun",):
-                opts.dryrun = True
-
-            elif opt_stg in ("F", "force", "force-update",):
-                opts.force_update = True
 
             # elif self._isInt(opt):
                 # ival = int(opt)
@@ -342,7 +408,7 @@ class SimpleOptionsParser(object):
     
             else:
                 s = f"*ERROR* Unknown option '{arg}'"
-                if not opt:
+                if not opt_stg:
                     s = "*ERROR Stand-alone option marker disallowed:  '-' or '--' by itself."
                 raise RuntimeError(s)
 
@@ -390,131 +456,5 @@ if __name__ == "__main__":
     main(sys.argv[1:])
 
 # :mode=python:
-
-###
-
-
-
-_="""
-
-TIMESTAMP_MARKER_FILE="__QPUSH_MARKER__"
-
-LOCAL_DIR="lib"
-
-DBG=false
-VERBOSE=false
-BOTH=false
-
-# touch -d "2024-01-15 14:30:00" report.txt
-
-
-get_marker_timestamp() {
-    # returns the timestamp as an int
-    local MARKER="$1"   ###"${LOCAL_DIR}/${TIMESTAMP_MARKER_FILE}"
-    if [ ! -f ${MARKER} ] ; then
-        echo '********* CANNOT FILE THE TIMESTAMP MARKER  ************'
-        echo '  Looking for ' ${MARKER}
-        echo '********** SO USING A VERY OLD TIMESAMP  **********'
-        touch -d "1980-01-02 00:01:02" ${MARKER}
-    fi
-    ts=$(stat -c %Y ${MARKER})
-    echo $ts
-}
-
-#--- copy the new stuff to the Pico ---
-copy_changed_files_to_the_pico() {
-    # 1 is the marker file path for this dir
-
-
-    local ts_ref="$1"
-
-    if $VERBOSE ; then
-        echo "copy_changed_files_to_the_pico  ts_ref is ${ts_ref}"
-    fi
-    if $DBG ; then
-        echo "Copy contents of ${LOCAL_DIR}/ "
-    fi
-
-    for fpath in ${LOCAL_DIR}/* ; do
-
-        if $BOTH ; then  echo ' ' ; echo fpath is $fpath ; fi
-        fname=$(basename $fpath)
-        if $DBG ; then echo fname is $fname ; fi
-
-        if [ "${fname}" = "${TIMESTAMP_MARKER_FILE}" ] ; then
-            if $DBG ; then echo 'SKIP THE MARKER!!!!! ' ; fi
-            continue
-        fi
-
-        local ts=$(stat -c %Y  ${fpath})
-        if $DBG ; then echo 'ts is ' $ts ; fi
-
-        if ((ts <= ts_ref)); then
-            if $VERBOSE ; then 
-                #local s=$(ls -l ${fpath} | cut -c 24-)
-                echo '  Already up-to-date  its TIMESTAMP is OLD  ' $ts '<=' $ts_ref "   " $((ts_ref-ts))
-            fi
-            ###ls -l ${fpath}
-            continue
-        fi
-        echo 'DO THIS ONE!' $fpath
-
-        echo \
-        "mpremote fs cp ${fpath}  :"
-         mpremote fs cp ${fpath}  :
-
-    done
-
-
-    ###mpremote fs cp -r lib   :
-}
-
-list_pico_filesystem_contents() {
-    echo ' '
-    echo 'LIST THE PICO CONTENTS: ROOT DIR'
-    mpremote fs ls 
-    echo ' '    
-    echo 'LIST THE PICO CONTENTS: /lib'
-    mpremote fs ls /lib
-}
-
-
-main() {
-    ###echo "QUICK-PUSH_LIB_FILES_TO_PICO "
-
-    if [ "$1" = "D" -o  "$1" = "d" ] ; then
-        echo '________________________ DEBUG ENABLED   _______________'
-        DBG=true
-    fi
-    if [ "$1" = "V" -o  "$1" = "v" ] ; then
-        echo '________________________ VERBOSE ENABLED   _______________'
-        VERBOSE=true
-    fi
-    if [ "$1" = "DV"  -o  "$1" = "dv" ] ; then
-        echo '________________________ DEBUG and VERBOSE BOTH ENABLED   _______________'
-        DBG=true
-        VERBOSE=true
-        BOTH=true
-    fi
-
-
-    local MARKER_FPATH="${LOCAL_DIR}/${TIMESTAMP_MARKER_FILE}"
-
-    local ref_tstamp=$(get_marker_timestamp ${MARKER_FPATH})
-    if $VERBOSE ; then 
-
-        local s=$(ls -l ${MARKER_FPATH} | cut -c 23-)
-        echo "MARKER: ${MARKER_FPATH}  ref_tstamp=${ref_tstamp}  ${s}"
-    fi
-
-    copy_changed_files_to_the_pico ${ref_tstamp}
-
-    if $VERBOSE ; then echo 'UPDATE the marker file ' ${MARKER_FPATH} ; fi
-    touch ${MARKER_FPATH}
-}
-
-
-main $*
-"""
 
 ###

@@ -86,6 +86,13 @@ class MwsWifi(ElemLoggerABC):
         return MwsWifi._instance
 
 
+    @classmethod
+    def get_ip_and_port(cls):
+        obj = MwsWifi._instance
+        if not obj._instance: return "IP-PORT-?!"
+        if not obj._ipaddr: return "IP:PORT-unknown"
+        return f"{obj._ipaddr}:{obj._port}"
+
     def __init__(self, do_not_call_directly):
         if do_not_call_directly != 1234567:
             raise RuntimeError("MwsWifi.init DO NOT CALL")
@@ -102,6 +109,10 @@ class MwsWifi(ElemLoggerABC):
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
+
+    # def get_ip_and_port(self):@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        # if not self._ipaddr: return "IP:PORT-unknown"
+        # return f"{self._ipaddr}:{self.port}"
 
 
     async def wifi_task(self):

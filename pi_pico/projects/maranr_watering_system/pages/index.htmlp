@@ -49,13 +49,18 @@
     </div>
 
     <p>
-      <a href="viewport_size.html">Viewport size</a>
+      <a href="settings.html">Settings</a>
       &nbsp; &nbsp; 
-      <a href="screen_resolution.html">Screen resolution</a>
+      <a href="debug.html">Debug</a>
      <br>
        <a href="echo?first=111&second=222&another=more-stuff-here">ECHO test</a> 
        &nbsp;
        <a href="log?linenumber=40&numlines=40">LOG-lines</a> 
+    </p>
+    <p>
+      <a href="viewport_size.html">Viewport size</a>
+      &nbsp; &nbsp; 
+      <a href="screen_resolution.html">Screen resolution</a>
     </p>
     <p>
       <a href="ex_simple_js_clock_refresh.html">Simple CLOCK: self-updating page JS example</a>
