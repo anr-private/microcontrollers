@@ -31,9 +31,13 @@ Options:
   --force-marker-file-update  Perform an update ('touch') the marker files, even if dryrun.  [-U]
   --debug           Debug  [-Z, -z]
   --debug_itself    Debug the options processing.  [--z, --Z, --zoption, --zoptions]
+
 DEST-DEVICE is  
   /dev/ttyACM0 or a0   
   /dev/ttyACM1 or a1
+NOTE that you must define PREM_DEVICE so that the QQ_to_pico alias can work.
+You can use the USE_A0,... aliases to do this.
+
 The pkg-names are 'displays','lib', etc.
 Specify ALL for all packages - which is the default if none are specified.
 """
