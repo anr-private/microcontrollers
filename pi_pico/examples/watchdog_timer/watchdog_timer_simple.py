@@ -2,11 +2,24 @@
 #
 # Simple example of how to use the watchdog timer
 
+# dir(machine):
+#  ['__class__', '__name__',
+#   'ADC', 'I2C', 'I2CTarget', 'I2S', 'PWM', 'PWRON_RESET', 'Pin',
+#   'RTC', 'SPI', 'Signal', 'SoftI2C', 'SoftSPI', 'Timer', 'UART',
+#   'USBDevice', 'WDT', 'WDT_RESET', '__dict__', 'bitstream', 'bootloader',
+#   'deepsleep', 'dht_readinto', 'disable_irq', 'enable_irq', 'freq',
+#   'idle', 'lightsleep', 'mem16', 'mem32', 'mem8', 'reset', 'reset_cause',
+#   'soft_reset', 'time_pulse_us', 'unique_id']
+
 import sys
 from machine import WDT
 import time
 import ubinascii
 
+if 0:
+    print(dir(machine))
+    sys.exit(1)
+    
 def show_machine_id():
     raw_id = machine.unique_id()
     ###print(machine.unique_id())
@@ -44,8 +57,13 @@ def show_machine_reset_cause():
     elif prev_cause == machine.WDT_RESET:
         print(f"  ... value {prev_cause} is machine.WDT_RESET - Pico was resetarted by the Watchdog Timer.")
     else:
-        print(f"  ... value {prev_cause} is machine.PWRON_RESET - Pico was powered on")
+        print(f"  ... value {prev_cause} is machine.??? not known")
     print(f"NOTE that a soft reset does not clear/alter the machine.reset() value.")
+
+    # OTHER VALUES:
+    #  DEEPSLEEP_RESET
+    #  SOFT_RESET    
+
     return
     
 

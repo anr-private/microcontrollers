@@ -2,6 +2,15 @@
 #
 # How to get the unique ID of the Pico
 
+# dir(machine):
+#  ['__class__', '__name__',
+#   'ADC', 'I2C', 'I2CTarget', 'I2S', 'PWM', 'PWRON_RESET', 'Pin',
+#   'RTC', 'SPI', 'Signal', 'SoftI2C', 'SoftSPI', 'Timer', 'UART',
+#   'USBDevice', 'WDT', 'WDT_RESET', '__dict__', 'bitstream', 'bootloader',
+#   'deepsleep', 'dht_readinto', 'disable_irq', 'enable_irq', 'freq',
+#   'idle', 'lightsleep', 'mem16', 'mem32', 'mem8', 'reset', 'reset_cause',
+#   'soft_reset', 'time_pulse_us', 'unique_id']
+
 import sys
 from machine import WDT
 import time
