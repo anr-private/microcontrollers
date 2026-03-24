@@ -71,6 +71,10 @@ class ElemLogControl:
         return logger
 
 
+    def get_registered_classes(self):
+        return self.registry.keys()
+
+
     def remove_old_log_file(self):
         # remove old log if any
         fpath = self._log_file_path

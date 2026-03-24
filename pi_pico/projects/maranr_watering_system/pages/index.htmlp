@@ -53,7 +53,7 @@
       &nbsp; &nbsp; 
       <a href="debug.html">Debug</a>
      <br>
-       <a href="echo?first=111&second=222&another=more-stuff-here">ECHO test</a> 
+       <a href="log?settings=ALL">LOG-settings</a> 
        &nbsp;
        <a href="log?linenumber=40&numlines=40">LOG-lines</a> 
     </p>
@@ -63,13 +63,15 @@
       <a href="screen_resolution.html">Screen resolution</a>
     </p>
     <p>
-      <a href="ex_simple_js_clock_refresh.html">Simple CLOCK: self-updating page JS example</a>
-      <br>
-      <a href="ex_simple_js_refresh.html">Simple self-updating page JS example</a>
-      <br>
-      <a href="raw_sensor_data.html">Raw Sensor Data </a>
-      <br>
-      <a href="ex_get_data_from_server.html">Simple data-fetch JS example</a>
+        <a href="echo?first=111&second=222&another=more-stuff-here">ECHO test</a> 
+        <br>
+        <a href="ex_simple_js_clock_refresh.html">Simple CLOCK: self-updating page JS example</a>
+        <br>
+        <a href="ex_simple_js_refresh.html">Simple self-updating page JS example</a>
+        <br>
+        <a href="raw_sensor_data.html">Raw Sensor Data </a>
+        <br>
+        <a href="ex_get_data_from_server.html">Simple data-fetch JS example</a>
     </p>
 
     <p>

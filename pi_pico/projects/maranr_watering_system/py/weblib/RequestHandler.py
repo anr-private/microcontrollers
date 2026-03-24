@@ -10,7 +10,7 @@ from utils import get_memory_status_string
 from utils import get_formatted_date_time_string
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from logger_elem.ElemLoggerABC import ElemLoggerABC
+from logger_elem.ElemLogControl import ElemLogControl
 from lib2.FileObtainer import FileObtainer
 from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
@@ -137,6 +137,7 @@ class RequestHandler(ElemLoggerABC):
             data_dict["wifi_state"] = str(MwsWifi.state)
         if "settings" in params:
             data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
+
         json_stg = json.dumps(data_dict)
         print(f"RH@123 body: JSON-string:...")  
         print(json_stg)
@@ -220,6 +221,10 @@ class RequestHandler(ElemLoggerABC):
 
         params = parsed_http.url_query_parameters
 
+        if "settings" in params:
+            return self._handle_log_settings_request(parsed_http, params)
+
+
         rel_line_number_stg = params.get("linenumber")
         num_lines_stg = params.get("numlines")
         if rel_line_number_stg is None: rel_line_number_stg = "40"
@@ -296,7 +301,65 @@ class RequestHandler(ElemLoggerABC):
         return reply
 
 
+    def _handle_log_settings_request(self, parsed_http, params):
+        # JSON request
+        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+
+        print(f"RH@118  LOG-SETTINGS-REQ  params={params}")
+
+        data_dict = {"datetime": get_formatted_date_time_string() }
+
+        classes = ElemLogControl.get_instance().get_registered_classes()
+        classes_dict = dict()
+        i = 0
+        for class_name in classes:
+            classes_dict[class_name] = i
+            i += 1
+        data_dict["classes"] = classes_dict
+
+        json_stg = json.dumps(data_dict)
+        print(f"RH@315 body: JSON-string:...")  
+        print(json_stg)
+
+        # Build a reply that provides the log lines
+        rb = ReplyBuilder()
+
+        # use html's content type
+        content_type = self._guess_file_content_type("X.json")
+
+        # content type: use 
+        reply = rb.build_textual_file_reply(content_type, json_stg)
+
+        m = f"RH@327  HTTP REPLY to DATA REQUEST:"
+        print(m)
+        logi(m)
+        m = f"RH@330 {reply.long_string()}"
+        print(m)
+        logi(m)
+
         return reply
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     def _handle_file_request(self, parsed_http):
