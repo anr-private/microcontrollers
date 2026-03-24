@@ -82,7 +82,6 @@ REMOTE_DIRS = {
 
 class ToPico:
     def __init__(self):
-        #@@@@@@@@@@@@@@@@@@ RENAME
         self.page_dir_names = []
         # Force copying to the device regards of timestamps on the files
         self._force_update = False
@@ -461,8 +460,6 @@ def main(args):
     opts = SimpleOptionsParser().parseOptions(args)
     to_pico = ToPico()
     to_pico.do_options(opts)
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DRYRUN IS FORECED at line 465@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    to_pico._dryrun = True # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     to_pico.run()
 
 if __name__ == "__main__":
