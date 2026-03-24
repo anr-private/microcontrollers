@@ -1,8 +1,17 @@
 // fetch_data_async.js
 
 
+let isFetching = false;
+
 async function fetchDataAsync(url, callbk) {
-    console.log("fetchDataAsync@5  fetchData url=" + url);
+    console.log("fetchDataAsync@7  url=" + url);
+    console.log("fetchDataAsync@8  isFetching=" + isFetching);
+
+    if (isFetching) {
+        console.log("fetchDataAsync@8 FETCHING IS ALREADY ACTIVE!");
+        return;
+    }
+    isFetching = true;
 
     try {
         const response = await fetch(url);
@@ -28,12 +37,17 @@ async function fetchDataAsync(url, callbk) {
         console.log(data2);
         callbk(data2);
 
+        console.log("fetchDataAsync@31 ALL DONE @@@@@@@@@@_______________@@@@@@@@@@@@@@@@@______________@@@@@@@@@@@");
+
         //@@@@return data2;
 
       } catch (error) {
           // Handle any errors that occurred during the fetch or processing
           console.error('fetchDataAsync@26 Error fetching data:', error);
           throw error; // Re-throw if necessary
+      } finally {
+          console.log("fetchDataAsync@49 FETCH COMPLETED.  RESETTING THE FLAG");
+          isFetching = false;
       }
 }
 
