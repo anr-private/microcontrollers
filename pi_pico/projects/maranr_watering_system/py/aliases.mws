@@ -5,7 +5,7 @@ alias USE_A2='export PREM_DEVICE="a2"'
 alias USE_A3='export PREM_DEVICE="a3"'
 alias USE_='echo PREM_DEVICE: ${PREM_DEVICE}'
 
-alias PP_to_pico='../PP_to_pico ${PREM_DEVICE}'
+alias PP_to_pico='./scripts/PP_to_pico ${PREM_DEVICE}'
 alias QQ_to_pico='../scripts/QQ_to_pico ${PREM_DEVICE}'
 
 alias COMPARE_ALL=../scripts/COMPARE_ALL.sh

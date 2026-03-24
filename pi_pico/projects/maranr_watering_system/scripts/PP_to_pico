@@ -19,7 +19,7 @@ VV = False
 STOP_ON_ERROR = True
 
 HELP_INFO="""
-PP_to_pico  <options>  DEST-DEVICE  ...pkg-names...
+PP_to_pico  <options>  DEST-DEVICE  ...page-dirs...
 Options:
   --help            Show this help.  [-h]
   --quiet           Quiet mode  [-q]
@@ -40,11 +40,11 @@ DEST-DEVICE is
 NOTE that you must define PREM_DEVICE so that the PP_to_pico alias can work.
 You can use the USE_A0,... aliases to do this.
 
-The pkg-names are 'displays','lib', etc.
-Specify ALL for all packages - which is the default if none are specified.
+The page-dirs are 'pages', etc.
+Specify ALL for all directories - which is the default if none are specified.
 """
 
-MARKER_FILENAME_TEMPLATE = "__QPUSH_MARKER__{mpremote_device}"
+MARKER_FILENAME_TEMPLATE = "__PPUSH_MARKER__{mpremote_device}"
 
 DEVICE_TO_IDENTIFIER = {
     "a0":               "a0",
@@ -68,21 +68,22 @@ DEVICE_TO_IDENTIFIER = {
     "/dev/ttyacm3":     "a3",
     }
 
-# aka packages
+# aka pages folders
 ALL_DIRS=[
-     "displays",
-     "lib",
-     "lib2",
-     "logger_elem",
-     "mws",
-     "primitives",
-     "sensors",
-     "weblib",
+     "pages",
+     "pages_big_files",
     ]
+# map local-pages-dir to remote dir
+REMOTE_DIRS = {
+    "pages":            "pages",
+    "pages_big_files":  "pages",
+    }
+
 
 class ToPico:
     def __init__(self):
-        self.pkg_names = []
+        #@@@@@@@@@@@@@@@@@@ RENAME
+        self.page_dir_names = []
         # Force copying to the device regards of timestamps on the files
         self._force_update = False
         # Dry run - do not copy to device
@@ -120,34 +121,34 @@ class ToPico:
 
         # First non-option item must be a destination device 
         dev_stg = opts.other_items[0]
-        requested_pkgs = opts.other_items[1:]
+        requested_dirs = opts.other_items[1:]
 
-        if V: print(f"PP@125  Device '{dev_stg}'   Pkgs-requested: '{requested_pkgs}' ")
+        if V: print(f"PP@125  Device '{dev_stg}'   Directories-requested: '{requested_dirs}' ")
 
         dev_id = DEVICE_TO_IDENTIFIER.get(dev_stg)
         if not dev_id:
             raise RuntimeError(f"PP@129 Unknown mpremote device: '{dev_stg}'")
         self._device_identifier = dev_id
 
-        if len(requested_pkgs) == 0: requested_pkgs = ["ALL"]
-        if "ALL" in requested_pkgs:
-            if len(requested_pkgs) != 1:
-                perr(f"PP@135 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
+        if len(requested_dirs) == 0: requested_dirs = ["ALL"]
+        if "ALL" in requested_dirs:
+            if len(requested_dirs) != 1:
+                perr(f"PP@135 The 'ALL' pseudo-directory-name must be specified by itself; no other dirs allowed.")
                 sys.exit(1)
-            pkgs = set(ALL_DIRS)
+            d_names = set(ALL_DIRS)
         else:
-            pkgs = set(requested_pkgs)
-        # Verify the pkg names are known to us
-        for p in pkgs:
-            if p not in ALL_DIRS:
-                perr(f"PP@143 Unrecognized package name '{p}'")
+            d_names = set(requested_dirs)
+        # Verify the directory names are known to us
+        for d_n in d_names:
+            if d_n not in ALL_DIRS:
+                perr(f"PP@143 Unrecognized package name '{d_n}'")
                 sys.exit(1)
-        # Create a list of requested packages (dirs), in order per ALL_DIRS
-        self.pkg_names = []
-        for pkgname in ALL_DIRS:
-            if pkgname in pkgs:
-                self.pkg_names.append(pkgname)
-        if V: print(f"PP@150 Pkgs to be updated: {self.pkg_names}")
+        # Create a list of requested dirs, in order per ALL_DIRS
+        self.page_dir_names = []
+        for d_name in ALL_DIRS:
+            if d_name in d_names:
+                self.page_dir_names.append(d_name)
+        if V: print(f"PP@150 Dirs to be copied: {self.page_dir_names}")
 
 
     def run(self):
@@ -155,35 +156,23 @@ class ToPico:
             print(f"PP@155{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
         if self._dryrun: print("PP@156  ----------- DRY RUN  -------------------------")
 
-        for pkg_name in self.pkg_names:
-            self.do_pkg(pkg_name)
-
-        self._copy_main_to_pico()
+        for page_dir_name in self.page_dir_names:
+            self.do_page_directory(page_dir_name)
 
 
-    def _copy_main_to_pico(self):
-        main_fname = "maranr_watering_system_main.py"
-        cmd_and_args = (
-            "mpremote", self._device_identifier,
-            "fs", "cp", 
-            main_fname, f":main.py")
-        self._run_a_command(cmd_and_args)
-        if PRT: print(f"PP@171 Copied MAIN to pico:  {" ".join(cmd_and_args)} ")
+    def do_page_directory(self, page_dir_name):
+        if V: print(f"\n+++ Pages Directory: {page_dir_name}  -------")
 
-
-    def do_pkg(self, pkg_name):
-        if V: print(f"\n+++ Pkg: {pkg_name}  -------")
-
-        pkg_dir_path = Path("./"+pkg_name)
-        if not pkg_dir_path.is_dir():
-            perr(f"No such pkg dir: ./{pkg_name}")
+        local_dir_path = Path("./"+page_dir_name)
+        if not local_dir_path.is_dir():
+            perr(f"No such local_dir_path page dir: {local_dir_path}  {page_dir_name=}")
             return
 
         self._marker_filename = MARKER_FILENAME_TEMPLATE.format(mpremote_device=self._device_identifier)
         if V: print(f"Marker filename='{self._marker_filename}'")
 
         # Get the marker file
-        marker_fpath = pkg_dir_path / self._marker_filename
+        marker_fpath = local_dir_path / self._marker_filename
         if V: print(f"PP@187  {marker_fpath=}")
 
         if marker_fpath.is_dir():
@@ -199,12 +188,12 @@ class ToPico:
             marker_ts = 0
             if V: print(f"PP@200 marker FORCE UPDATE: zero the marker TIMESTAMP {marker_ts} ")
 
-        filenames = self._get_files_in_pkg(pkg_dir_path)
+        filenames = self._get_files_in_dir(local_dir_path)
         if V: print(f"PP@203 FILENAMES {filenames} " )
 
         files_and_ts = list()
         for fname in filenames:
-            ts = self._get_file_timestamp(pkg_dir_path / fname)
+            ts = self._get_file_timestamp(local_dir_path / fname)
             files_and_ts.append ( (fname, ts) )
         if V: 
             print(f"PP@210 files_and_ts: ")
@@ -221,15 +210,17 @@ class ToPico:
                 if VV: print(f"PP@221  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
         if V: print(f"PP@222 Files to be copied: {chosen_fnames}")
 
-        self._copy_to_pico(pkg_dir_path, chosen_fnames)
+        remote_dir_path_stg = REMOTE_DIRS.get(str(local_dir_path))
+
+        self._copy_to_pico(local_dir_path, remote_dir_path_stg, chosen_fnames)
 
         num_copied = len(chosen_fnames)
         if num_copied > 1:
-            if PRT: print(f"PP@228 Copied {num_copied} files to the PICO  {pkg_name}")
+            if PRT: print(f"PP@228 Copied {num_copied} files from {page_dir_name} to the PICO.")
         elif num_copied == 1:
-            if PRT: print(f"PP@230 Copied 1 file to the PICO  {pkg_name}")
+            if PRT: print(f"PP@230 Copied 1 file to the PICO  {page_dir_name}")
         else:
-            if PRT: print(f"PP@232  NO FILES copied to the PICO  {pkg_name}")
+            if PRT: print(f"PP@232  NO FILES copied to the PICO  {page_dir_name}")
 
         # Update the marker's timestamp(s)
         if not self._do_marker_file_touch: 
@@ -241,16 +232,18 @@ class ToPico:
                 print(f"PP@241  Marker file '{marker_fpath}' TIMESTAMP updated to {ts:.1f}")
 
 
-    def _copy_to_pico(self, pkg_dir_path, chosen_fnames):
+    def _copy_to_pico(self, local_dir_path, remote_dir_path_stg, chosen_fnames):
+
+        if V: print(f"PP@252  str(local_dir_path)='{str(local_dir_path)}'  remote_dir_path_stg='{remote_dir_path_stg}' ")
         cmd_and_args = (
                 "mpremote", "fs", "mkdir", 
-                f":/{pkg_dir_path}")
+                f":/{remote_dir_path_stg}")
         self._run_a_command(cmd_and_args, ignore_failure=True)
 
         for fname in chosen_fnames:
             cmd_and_args = (
                 "mpremote", "fs", "cp", 
-                str(pkg_dir_path/fname), f":/{pkg_dir_path}/")
+                str(local_dir_path/fname), f":/{remote_dir_path_stg}/")
             self._run_a_command(cmd_and_args)
 
 
@@ -276,11 +269,11 @@ class ToPico:
                 perr(f"PP@276 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
 
 
-    def _get_files_in_pkg(self, pkg_dir_path):
+    def _get_files_in_dir(self, local_dir_path):
         files = list()
-        for fname in os.listdir(pkg_dir_path):
+        for fname in os.listdir(local_dir_path):
             # skip dirs, etc
-            if not os.path.isfile(os.path.join(pkg_dir_path, fname)):
+            if not os.path.isfile(os.path.join(local_dir_path, fname)):
                 continue
             if fname == self._marker_filename:
                 continue
@@ -468,6 +461,8 @@ def main(args):
     opts = SimpleOptionsParser().parseOptions(args)
     to_pico = ToPico()
     to_pico.do_options(opts)
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DRYRUN IS FORECED at line 465@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    to_pico._dryrun = True # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     to_pico.run()
 
 if __name__ == "__main__":
