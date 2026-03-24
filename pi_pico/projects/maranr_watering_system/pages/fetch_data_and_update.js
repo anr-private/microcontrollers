@@ -28,6 +28,14 @@ function fetchDataAndUpdate(dataUrl) {
     // For this example, we simulate fetching the current time
     ////const dataUrl = 'data?a=123'; 
 
+    console.log("fetchDataAndUpdate START FETCH url=" + dataUrl + 
+        "@@@@@@@@@@@@@@@@@@@@@@@ DISABLED FOR NOW @@@@@@@@@@@@@@@@@@");
+
+
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#######################
+
+
     console.log("fetchDataAndUpdate START FETCH url=" + dataUrl);
 
     fetch(dataUrl)

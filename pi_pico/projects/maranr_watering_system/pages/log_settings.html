@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
+  <style>
+  .whitespace-right-chkbox {
+      margin-right: 20px; /* Adds space to the right of each checkbox */
+  }
+  </style>
   <title>Log Settings</title>
 </head>
 <body>
@@ -13,36 +18,68 @@
       Time Now:&nbsp; <span id="date_time">date-and-time</span>
     </div>
 
+    <div id="checkboxes_div">
+    </div>
     <p><a href="index.html"> BACK </a>
 
 
+    <!-- script src="fetch_data_and_update.js"></script  -->
 
-    <script src="fetch_data_and_update.js"></script>
+    <script src="fetch_data_async.js"></script>
     <script>
-        const dataUrl = "log?settings=ALL"
-        // Use setInterval to call fetchDataAndUpdate every N milliseconds.
-        // The function runs repeatedly until the window is closed or 
-        // clearInterval() is called.
-        // In order to pass an arg to the setInterval function,     
-        // we use an anonymous go-between function.
-        const intervalId = setInterval(
-            () =>   {
-                        fetchDataAndUpdate(dataUrl);
-                    },
-            5000);
+    const dataUrl = "log?settings=ALL"
+    // Use setInterval to call fetchDataAndUpdate every N milliseconds.
+    // The function runs repeatedly until the window is closed or 
+    // clearInterval() is called.
+    // In order to pass an arg to the setInterval function,     
+    // we use an anonymous go-between function.
+    const intervalId = setInterval(
+        () =>   {
+                    fetchDataAndUpdate(dataUrl);
+                },
+        10000); // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-        // Optional: Call the function immediately when the page loads for the first update
-        //console.log("FIRST CALL TO THE FETCH");
-        fetchDataAndUpdate(dataUrl);
+    // Optional: Call the function immediately when the page loads for the first update
+    //console.log("FIRST CALL TO THE FETCH");
+    fetchDataAndUpdate(dataUrl);
 
+    function fetchDataAndUpdate(dataUrl) {
+        console.log("fetchDataAndUpdate START FETCH url=" + dataUrl);
+
+        // @@@@const data = 
+        fetchDataAsync(dataUrl, handleReceivedData);
+    }
+    function handleReceivedData(data) {
+        console.log("hRD: FETCHED DATA:...");
+        console.log(data);
+
+        var eltDatetime = document.getElementById('date_time');
+        eltDatetime.innerText = `${data.datetime}`;
+
+        const classes = data.classes;
+        console.log("CLASSES"); console.log(classes);
+        const clsNames = Object.keys(classes) 
+        console.log("clsNames"); console.log(clsNames);
+        // sorts the list in place
+        clsNames.sort();
+        console.log("clsNames-sorted"); console.log(clsNames);
+
+
+
+    }
+
+
+/*
         function handleFetchedData(data) {  // invoked by fetch_data_and_update.js
             console.log("FETCHED DATA:...");
             console.log(data);
 
-/*
+
             const classes = data.classes;
             handleClassesLogStatus(classes);
+        }
 */
+/*
             const classes = data.classes;
             console.log("CLASSES"); console.log(classes);
             const clsNames = Object.keys(classes) 
@@ -75,7 +112,7 @@
             ////var wifi_ip = `${data.wifi_ip_and_port}`;
             ////eltWifiIp.innerText = wifi_ip;
         }
-
+*/
         function handleClassesLogStatus(classes) {
             console.log("CLASSES"); console.log(classes);
             const clsNames = Object.keys(classes) 
@@ -84,14 +121,21 @@
             clsNames.sort();
             console.log("clsNames-sorted"); console.log(clsNames);
 
+            createTheCheckboxes(clsNames);
+
 ////            const sortedNames = Object.keys(classes).sort();
 
             //for (const clsname in classes) {
             //for (const clsname in sortedNames) {
+            var limit = 3;
             for (const clsname of clsNames) {
                 console.log("clsname: " + clsname);
                 const v = classes[clsname];
                 console.log("val=" + v);
+                limit -= 1;
+                if (limit <= 0) {
+                    break;
+                }
             }
 
 
@@ -121,21 +165,51 @@
         // // 3. Add the 'change' event listener to the checkbox
         // checkbox.addEventListener('change', handleCheckboxChange);
 // 
+        function handleCheckboxClick(event) {
+            const checkbox = event.target;
+            console.log(`Checkbox with value ${checkbox.value} was clicked.`);
+            console.log(`Checkbox with id    ${checkbox.id} was clicked.`);
+            console.log(`New checked state: ${checkbox.checked}`);
+            
+            // You can add more logic here, specific to your needs
+        }
 
 
+        function createTheCheckboxes(clsNames) {
+            console.log("createTheCheckboxes clsNames:..."); console.log(clsNames);
+            for (clsName of clsNames) {
+                createOneCheckbox(clsName);
+            }
+        }
 
-        function createNewCheckbox() {
+        function createOneCheckbox(clsName) {
+            const itsId = clsName + "ID";
+            const existingElt = document.getElementById(itsId);
+            if (existingElt != null) {
+                console.log("Checkbox exists: " + itsId);
+                return;
+            }
+            console.log("NEW CHECKBOX: " + itsId);
+
             const newCheckbox = document.createElement('input');
             newCheckbox.type = 'checkbox';
-            newCheckbox.id = 'newId';
-            newCheckbox.value = 'newValue';
+            newCheckbox.id = itsId;
+            newCheckbox.value = clsName+"VALUE";
+            newCheckbox.addEventListener('click', handleCheckboxClick);
             
-            const label = document.createElement('label');
-            label.htmlFor = 'newId';
-            label.appendChild(document.createTextNode('New Checkbox'));
-        
-            document.body.appendChild(newCheckbox);
-            document.body.appendChild(label);
+            const label = document.createElement("label");
+            label.htmlFor = itsId;
+            label.appendChild(document.createTextNode(" "+clsName+'TEXT'));
+            label.classList.add("whitespace-right-chkbox");
+
+
+            const divElt = document.getElementById("checkboxes_div");
+            if (divElt == null) {
+                console.log("CHECKBOX DIV ELT NOT FOUND");
+                return;
+            }
+            divElt.appendChild(newCheckbox);
+            divElt.appendChild(label);
         }
 
     // Define your function
