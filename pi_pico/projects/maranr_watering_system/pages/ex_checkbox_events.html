@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>EXAMPLE: checkbox events handling</title>
+</head>
+<body>
+    <h1>EXAMPLE: checkbox events handling</h1>
+
+
+<div>
+    <label><input type="checkbox" class="myCheckbox" value="val-1"> Option 1</label><br>
+    <label><input type="checkbox" class="myCheckbox" value="val-2"> Option 2</label><br>
+    <label><input type="checkbox" class="myCheckbox" value="val-3"> Option 3</label><br>
+</div>
+<p id="status_output">Status updates appear here.</p>
+
+
+    <!-- script src="fetch_data_and_update.js"></script -->
+    <script>
+
+    // The shared function that handles the event
+    function handleCheckboxChange(event) {
+        // event.target refers to the specific checkbox that triggered the event
+        const checkbox = event.target;
+        console.log("hCC@27 target is..."); console.log(target);
+
+        const statusOutputElt = document.getElementById('status_output');
+    
+        if (checkbox.checked) {
+            statusOutputElt.textContent = `${checkbox.value} is CHECKED`;
+        } else {
+            statusOutputElt.textContent = `${checkbox.value} is UNCHECKED`;
+        }
+    }
+
+    // Select all checkboxes with the class 'myCheckbox'
+    const checkboxes = document.querySelectorAll('.myCheckbox');
+
+    // Loop through the NodeList and add the event listener to each
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', handleCheckboxChange);
+    });
+
+    </script>
+</body>
+</html>

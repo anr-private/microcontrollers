@@ -116,6 +116,7 @@ class ToPico:
         if len(opts.other_items) <= 0:
             print(f"do_options@58 YOU MUST INCLUDE A DESTINATION DEVICE!")
             print(f"               Try --help")
+            raise RuntimeError(f"do_options@58 YOU MUST INCLUDE A DESTINATION DEVICE on the command line!")
 
         # First non-option item must be a destination device 
         dev_stg = opts.other_items[0]

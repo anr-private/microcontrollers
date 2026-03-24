@@ -9,25 +9,22 @@
 <body>
     <h1>Log Settings</h1>
 
-    <div id="NOTUSED__data-container" style="font-size: 24px; color: blue;">
+    <div id="NOTUSED__data_time_div" style="font-size: 24px; color: blue;">
       Time Now:&nbsp; <span id="date_time">date-and-time</span>
-    </div>
-    <div id="notusedyetdbstatus"  style="font-size: 24px; color: blue;">
-        <span id="db_status">databoard status </span>
-    </div>
-    <div id="notusedyetwifi"  style="font-size: 24px; color: blue;">
-        Wifi: <span id="wifi_ip_and_port">wifi IP:PORT </span>
     </div>
 
     <p><a href="index.html"> BACK </a>
 
 
+
     <script src="fetch_data_and_update.js"></script>
     <script>
         const dataUrl = "log?settings=ALL"
-        // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
-        // This function will run repeatedly until the window is closed or clearInterval() is called.
-        // In order to pass an arg to the function, we use an anonymous go-between function.
+        // Use setInterval to call fetchDataAndUpdate every N milliseconds.
+        // The function runs repeatedly until the window is closed or 
+        // clearInterval() is called.
+        // In order to pass an arg to the setInterval function,     
+        // we use an anonymous go-between function.
         const intervalId = setInterval(
             () =>   {
                         fetchDataAndUpdate(dataUrl);
@@ -42,6 +39,10 @@
             console.log("FETCHED DATA:...");
             console.log(data);
 
+/*
+            const classes = data.classes;
+            handleClassesLogStatus(classes);
+*/
             const classes = data.classes;
             console.log("CLASSES"); console.log(classes);
             const clsNames = Object.keys(classes) 
@@ -49,9 +50,9 @@
             // sorts the list in place
             clsNames.sort();
             console.log("clsNames-sorted"); console.log(clsNames);
-
-////            const sortedNames = Object.keys(classes).sort();
-
+// 
+// ////            const sortedNames = Object.keys(classes).sort();
+// 
             //for (const clsname in classes) {
             //for (const clsname in sortedNames) {
             for (const clsname of clsNames) {
@@ -74,6 +75,76 @@
             ////var wifi_ip = `${data.wifi_ip_and_port}`;
             ////eltWifiIp.innerText = wifi_ip;
         }
+
+        function handleClassesLogStatus(classes) {
+            console.log("CLASSES"); console.log(classes);
+            const clsNames = Object.keys(classes) 
+            console.log("clsNames"); console.log(clsNames);
+            // sorts the list in place
+            clsNames.sort();
+            console.log("clsNames-sorted"); console.log(clsNames);
+
+////            const sortedNames = Object.keys(classes).sort();
+
+            //for (const clsname in classes) {
+            //for (const clsname in sortedNames) {
+            for (const clsname of clsNames) {
+                console.log("clsname: " + clsname);
+                const v = classes[clsname];
+                console.log("val=" + v);
+            }
+
+
+        }
+
+
+
+
+
+        // // 1. Get a reference to the checkbox element
+        // const checkbox = document.getElementById("subscribeNews");
+        // 
+        // // 2. Define the function to be invoked
+        // function handleCheckboxChange() {
+          // const statusArea = document.getElementById("statusArea");
+          // 
+          // // Check the 'checked' property to determine the current state
+          // if (checkbox.checked) {
+            // statusArea.textContent = "Status: Subscribed! Thank you.";
+            // console.log("Checkbox is checked.");
+          // } else {
+            // statusArea.textContent = "Status: Not subscribed";
+            // console.log("Checkbox is unchecked.");
+          // }
+        // }
+        // 
+        // // 3. Add the 'change' event listener to the checkbox
+        // checkbox.addEventListener('change', handleCheckboxChange);
+// 
+
+
+
+        function createNewCheckbox() {
+            const newCheckbox = document.createElement('input');
+            newCheckbox.type = 'checkbox';
+            newCheckbox.id = 'newId';
+            newCheckbox.value = 'newValue';
+            
+            const label = document.createElement('label');
+            label.htmlFor = 'newId';
+            label.appendChild(document.createTextNode('New Checkbox'));
+        
+            document.body.appendChild(newCheckbox);
+            document.body.appendChild(label);
+        }
+
+    // Define your function
+    function myLoadedFunction() {
+      console.log("The entire page, including images and resources, has fully loaded.");
+      
+    }
+    // Add an event listener to the window object
+    window.addEventListener('load', myLoadedFunction);
 
     </script>
 </body>

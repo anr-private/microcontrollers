@@ -33,10 +33,10 @@ function fetchDataAndUpdate(dataUrl) {
     fetch(dataUrl)
       .then(response => {
         // response.json() is called here and returns a new Promise
-        /*
-            console.log("FETCH-THEN");
+        
+            console.log("fDAU@37 FETCH-THEN");
             console.log(response);
-        */
+        
         //var jsjs = response.json();
         //console.log(jsjs);
         //return jsjs;
@@ -45,14 +45,15 @@ function fetchDataAndUpdate(dataUrl) {
       .then(data => {
         // This .then() receives the *resolved value* of the Promise
         // returned by response.json(). 'data' is now your JavaScript object.
-        /*
-            console.log("THEN-DATA");
+        
+            console.log("fDAU@49 THEN-DATA");
             console.log(typeof data);
             console.log(data);
-        */
-            console.log("AGE and NAME and DATETIME");
-            console.log(data.age);
-            console.log(data.name);
+        
+            // console.log("AGE and NAME");
+            // console.log(data.age);
+            // console.log(data.name);
+            console.log("fDAU@56 DATETIME");
             console.log(data.datetime);
         
             handleFetchedData(data);
