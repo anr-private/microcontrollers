@@ -151,6 +151,7 @@ class RequestHandlerLogControl(ElemLoggerABC):
         classes_dict = dict()
         for class_name, logger in self._elc.registry.items():
             classes_dict[class_name] = 1 if logger.is_enabled() else 0
+            classes_dict[class_name] = 1 #@@@@@@@@@@@if logger.is_enabled() else 0
         data_dict["classes"] = classes_dict
 
         json_stg = json.dumps(data_dict)

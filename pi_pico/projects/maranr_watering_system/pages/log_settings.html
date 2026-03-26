@@ -27,84 +27,126 @@
 
     <script src="fetch_data_async.js"></script>
     <script>
-    const dataUrl = "log?settings&whatever=123"
-    // Use setInterval to call fetchDataAndUpdate every N milliseconds.
+    const baseLogUrl = "log?settings&whatever=123"
+    // Use setInterval to run every N milliseconds.
     // The function runs repeatedly until the window is closed or 
     // clearInterval() is called.
-    // In order to pass an arg to the setInterval function,     
-    // we use an anonymous go-between function.
+    // To pass an arg via setInterval, use an anonymous go-between function.
 ////    const intervalId = setInterval(
 ////        () =>   {
-////                    fetchDataAndUpdate(dataUrl);
+////                    fetchDataAndUpdate(baseLogUrl);
 ////                },
-////        30000); // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+////        5000); // 5 secs
 ////
     // Optional: Call the function immediately when the page loads for the first update
     //console.log("FIRST CALL TO THE FETCH");
-    //// fetchDataAndUpdate(dataUrl);
+    //// fetchDataAndUpdate(baseLogUrl);
 
-    function fetchDataAndUpdate(dataUrl) {
-        console.log("fetchDataAndUpdate START FETCH url=" + dataUrl);
-
-        // @@@@const data = 
-        fetchDataAsync(dataUrl, handleReceivedData);
+    function fetchDataAndUpdate(theUrl) {
+        console.log("fetchDataAndUpdate START FETCH url=" + theUrl);
+        fetchDataAsync(theUrl, handleReceivedDataCB);
     }
-    function handleReceivedData(data) {
+    function handleReceivedDataCB(data) {
         console.log("hRD: FETCHED DATA:...");
         console.log(data);
 
         var eltDatetime = document.getElementById('date_time');
         eltDatetime.innerText = `${data.datetime}`;
 
-        const classes = data.classes;
-        console.log("CLASSES"); console.log(classes);
-        const clsNames = Object.keys(classes) 
+        const classData = data.classes;
+        ////console.log("CLASSDATA"); console.log(classData);
+        handleClassesLogStatus(classData);
+
+        /* @@@@@
+        const clsNames = Object.keys(classData) 
         console.log("clsNames"); console.log(clsNames);
         // sorts the list in place
         clsNames.sort();
         console.log("clsNames-sorted"); console.log(clsNames);
-
-        handleClassesLogStatus(classes);
-
-
+        
+        */
     }
-
-
 /*
-            for (const clsname of clsNames) {
-                console.log("clsname: " + clsname);
-                const v = classes[clsname];
+            for (const clsName of clsNames) {
+                console.log("clsName: " + clsName);
+                const v = classData[clsName];
                 console.log("val=" + v);
             }
         }
 */
-    function handleClassesLogStatus(classes) {
-        console.log("CLASSES"); console.log(classes);
-        const clsNames = Object.keys(classes) 
-        console.log("clsNames"); console.log(clsNames);
-        // sorts the list in place
-        clsNames.sort();
+    function handleClassesLogStatus(classData) {
+        ////console.log("CLASSDATA"); console.log(classData);
+        const clsNames = Object.keys(classData) 
+        ////console.log("clsNames"); console.log(clsNames);
+        clsNames.sort(); // sorts in-place
         console.log("clsNames-sorted"); console.log(clsNames);
 
-        createTheCheckboxes(clsNames);
-
-////            const sortedNames = Object.keys(classes).sort();
-
-        //for (const clsname in classes) {
-        //for (const clsname in sortedNames) {
-        var limit = 3;
-        for (const clsname of clsNames) {
-            console.log("clsname: " + clsname);
-            const v = classes[clsname];
+        for (const clsName of clsNames) {
+            console.log("clsName: " + clsName);
+            const v = classData[clsName]; // 0 if log disabled, 1 if enabled
             console.log("val=" + v);
-            limit -= 1;
-            if (limit <= 0) {
-                break;
+
+            updateOneCheckbox(clsName, v);
+        }
+    }
+
+    function updateOneCheckbox(clsName, val) {
+
+        const itsId = clsName + "ID";
+        console.log("CHECKBOX ID: " + itsId);
+
+        var checkboxElt = document.getElementById(itsId);
+        if (checkboxElt == null) {
+            console.log("CREATE Checkbox: " + itsId);
+            createOneCheckbox(clsName, itsId);
+            checkboxElt = document.getElementById(itsId);
+        }
+        console.log(checkboxElt);
+
+        checkboxElt.checked = (val != 0);
+        console.log("checked=" + checkboxElt.checked);
+    }
+
+    function  createOneCheckbox(clsName, itsId) {
+        const newCheckbox = document.createElement('input');
+        newCheckbox.type = 'checkbox';
+        newCheckbox.id = itsId;
+        newCheckbox.value = clsName+"VALUE";
+        newCheckbox.checked = false;
+
+        newCheckbox.addEventListener('click', handleCheckboxClick);
+        
+        const label = document.createElement("label");
+        label.htmlFor = itsId;
+        label.appendChild(document.createTextNode(" "+clsName+'TEXT'));
+        label.classList.add("whitespace-right-chkbox");
+
+        const divElt = document.getElementById("checkboxes_div");
+        if (divElt == null) {
+            console.log("CHECKBOX DIV ELT NOT FOUND");
+            return;
+        }
+        divElt.appendChild(newCheckbox);
+        divElt.appendChild(label);
+    }
+
+/*
+
+        updateTheCheckboxes(clsNames);
+
+        if (true) { // show some classes,vals
+            var limit = 3;
+            for (const clsName of clsNames) {
+                console.log("clsName: " + clsName);
+                const v = class es[clsName];
+                console.log("val=" + v);
+                limit -= 1;
+                if (limit <= 0) {
+                    break;
+                }
             }
         }
-
-
-    }
+    }*/
 
 
 
@@ -140,14 +182,14 @@
         }
 
 
-        function createTheCheckboxes(clsNames) {
-            console.log("createTheCheckboxes clsNames:..."); console.log(clsNames);
+/*        function updateTheCheckboxes(clsNames) {
+            console.log("updateTheCheckboxes clsNames:..."); console.log(clsNames);
             for (clsName of clsNames) {
-                createOneCheckbox(clsName);
+                create One Checkbox   (clsName);
             }
-        }                                              
+        }*/
 
-        function createOneCheckbox(clsName) {
+        function createOneCheckbox_ORIG(clsName) {
             const itsId = clsName + "ID";
             const existingElt = document.getElementById(itsId);
             if (existingElt != null) {
@@ -160,6 +202,8 @@
             newCheckbox.type = 'checkbox';
             newCheckbox.id = itsId;
             newCheckbox.value = clsName+"VALUE";
+            newCheckbox.checked = false;
+
             newCheckbox.addEventListener('click', handleCheckboxClick);
             
             const label = document.createElement("label");
@@ -180,7 +224,7 @@
     // Define your function
     function myLoadedFunction() {
       console.log("The entire page, including images and resources, has fully loaded.");
-      fetchDataAndUpdate(dataUrl);
+      fetchDataAndUpdate(baseLogUrl);
     }
     // Add an event listener to the window object
     window.addEventListener('load', myLoadedFunction);
