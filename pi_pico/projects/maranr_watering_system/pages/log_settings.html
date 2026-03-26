@@ -27,7 +27,7 @@
 
     <script src="fetch_data_async.js"></script>
     <script>
-    const baseLogUrl = "log?settings&whatever=123"
+    const baseLogUrl = "log?settings"
     // Use setInterval to run every N milliseconds.
     // The function runs repeatedly until the window is closed or 
     // clearInterval() is called.
@@ -130,56 +130,17 @@
         divElt.appendChild(label);
     }
 
-/*
-
-        updateTheCheckboxes(clsNames);
-
-        if (true) { // show some classes,vals
-            var limit = 3;
-            for (const clsName of clsNames) {
-                console.log("clsName: " + clsName);
-                const v = class es[clsName];
-                console.log("val=" + v);
-                limit -= 1;
-                if (limit <= 0) {
-                    break;
-                }
-            }
-        }
-    }*/
-
-
-
-
-
-        // // 1. Get a reference to the checkbox element
-        // const checkbox = document.getElementById("subscribeNews");
-        // 
-        // // 2. Define the function to be invoked
-        // function handleCheckboxChange() {
-          // const statusArea = document.getElementById("statusArea");
-          // 
-          // // Check the 'checked' property to determine the current state
-          // if (checkbox.checked) {
-            // statusArea.textContent = "Status: Subscribed! Thank you.";
-            // console.log("Checkbox is checked.");
-          // } else {
-            // statusArea.textContent = "Status: Not subscribed";
-            // console.log("Checkbox is unchecked.");
-          // }
-        // }
-        // 
-        // // 3. Add the 'change' event listener to the checkbox
-        // checkbox.addEventListener('change', handleCheckboxChange);
-// 
-        function handleCheckboxClick(event) {
-            const checkbox = event.target;
-            console.log(`Checkbox with value ${checkbox.value} was clicked.`);
-            console.log(`Checkbox with id    ${checkbox.id} was clicked.`);
-            console.log(`New checked state: ${checkbox.checked}`);
-            
-            // You can add more logic here, specific to your needs
-        }
+    function handleCheckboxClick(event) {
+        const checkbox = event.target;
+        console.log(`Checkbox with value ${checkbox.value} was clicked.`);
+        console.log(`Checkbox with id    ${checkbox.id} was clicked.`);
+        console.log(`New checked state: ${checkbox.checked}`);
+        let chkd = 0;
+        if (checkbox.checked) chkd = 1;
+        const url = `${baseLogUrl}&${checkbox.id}=${chkd}`;
+        console.log("URL: " + url);
+        fetchDataAndUpdate(url);
+    }
 
 
 /*        function updateTheCheckboxes(clsNames) {

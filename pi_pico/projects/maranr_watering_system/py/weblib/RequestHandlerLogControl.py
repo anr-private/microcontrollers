@@ -144,14 +144,29 @@ class RequestHandlerLogControl(ElemLoggerABC):
         print(f"RHLOG@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
         print(f"RHLOG@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
 
+        # Ex: params = {'settings': '', 'DataBoardID': '0'}
         print(f"RHLOG@118  LOG-SETTINGS-REQ  params={params}")
+        for raw_cls_name,state_stg in params.items():
+            if raw_cls_name == "settings":
+                print(f"RHLOG@151 SKIP THIS: {raw_cls_name} = '{state_stg}' ")
+                continue
+            cls_name = raw_cls_name;
+            if cls_name.endswith("ID"): cls_name = cls_name[:-2]
+            enable_requested = state_stg != "0"
+            # find the logger for the class
+            logger = self._elc.registry.get(cls_name)
+            print(f"RHLOG@157 {cls_name} {enable_requested=}  logger={logger}")
+            if logger is not None:
+                logger.enable_log(enable_requested)
+                print(f"RHLOG@157 LOGGER {cls_name} IS NOW {enable_requested=}")
+
+        # Assemble the response
 
         data_dict = {"datetime": get_formatted_date_time_string() }
             
         classes_dict = dict()
         for class_name, logger in self._elc.registry.items():
             classes_dict[class_name] = 1 if logger.is_enabled() else 0
-            classes_dict[class_name] = 1 #@@@@@@@@@@@if logger.is_enabled() else 0
         data_dict["classes"] = classes_dict
 
         json_stg = json.dumps(data_dict)
