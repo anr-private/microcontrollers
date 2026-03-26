@@ -74,6 +74,7 @@ class ElemLogControl:
     def get_registered_classes(self):
         return self.registry.keys()
 
+
     def enable_logging(self, class_name, enabled):
         logger = self.registry.get(class_name)
         print(f"@@@@ ELC@79 logger is {logger}  {enabled=}")

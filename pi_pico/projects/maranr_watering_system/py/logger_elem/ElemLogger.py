@@ -16,17 +16,17 @@ class ElemLogger:
 
     def __init__(self, log_control, simplified_class_name):
         self.class_name = simplified_class_name
-        self._log_enabled = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        self.log_enabled = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self._log_control = log_control
         prt(f"ELOG@21 init {self.class_name=}")
 
 
     def enable_log(self, enabled):
-        self._log_enabled = not not enabled
+        self.log_enabled = not not enabled
             
 
     def log(self, mesg):
-        if self._log_enabled:
+        if self.log_enabled:
             #print(f"ELOG@31.log '{mesg=}' ")
             print(f"LOG: {mesg}")
             self._log_control.log_one_line(mesg)
@@ -46,7 +46,7 @@ class ElemLogger:
     def __str__(self):
         s = []
         s.append("cls=%s" % str(self.class_name))
-        s.append("logEnabled=%s" % str(self._log_enabled))
+        s.append("logEnabled=%s" % str(self.log_enabled))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 

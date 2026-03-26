@@ -136,7 +136,7 @@ class RequestHandlerLogControl(ElemLoggerABC):
 
 
     def _handle_log_settings_request(self, parsed_http, params):
-        # JSON request
+        # JSON request  EX: /log?settings&whatever=123
         print(f"RHLOG@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
         print(f"RHLOG@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
         print(f"RHLOG@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
