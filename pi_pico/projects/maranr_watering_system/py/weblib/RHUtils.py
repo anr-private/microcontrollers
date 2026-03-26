@@ -3,7 +3,7 @@
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
 
-# Logging functions; provided by our parent class using set_log_functions()
+# Logging functions; our parent ses set_log_functions()
 log = None
 logrt = None
 logi = None
@@ -15,7 +15,6 @@ class RHUtils(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"RHUtils@25 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
