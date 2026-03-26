@@ -15,7 +15,7 @@
     <h1>Log Settings</h1>
 
     <div id="NOTUSED__data_time_div" style="font-size: 24px; color: blue;">
-      Time Now:&nbsp; <span id="date_time">date-and-time</span>
+      Latest update:&nbsp; <span id="date_time">date-and-time</span>
     </div>
 
     <div id="checkboxes_div">
@@ -33,15 +33,15 @@
     // clearInterval() is called.
     // In order to pass an arg to the setInterval function,     
     // we use an anonymous go-between function.
-    const intervalId = setInterval(
-        () =>   {
-                    fetchDataAndUpdate(dataUrl);
-                },
-        30000); // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+////    const intervalId = setInterval(
+////        () =>   {
+////                    fetchDataAndUpdate(dataUrl);
+////                },
+////        30000); // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+////
     // Optional: Call the function immediately when the page loads for the first update
     //console.log("FIRST CALL TO THE FETCH");
-    fetchDataAndUpdate(dataUrl);
+    //// fetchDataAndUpdate(dataUrl);
 
     function fetchDataAndUpdate(dataUrl) {
         console.log("fetchDataAndUpdate START FETCH url=" + dataUrl);
@@ -145,7 +145,7 @@
             for (clsName of clsNames) {
                 createOneCheckbox(clsName);
             }
-        }
+        }                                              
 
         function createOneCheckbox(clsName) {
             const itsId = clsName + "ID";
@@ -180,7 +180,7 @@
     // Define your function
     function myLoadedFunction() {
       console.log("The entire page, including images and resources, has fully loaded.");
-      
+      fetchDataAndUpdate(dataUrl);
     }
     // Add an event listener to the window object
     window.addEventListener('load', myLoadedFunction);
