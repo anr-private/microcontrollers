@@ -1,6 +1,5 @@
 # ClassA.py
 
-
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
 PRT=True
@@ -27,10 +26,21 @@ class ClassA(ElemLoggerABC):
         logi = logger.logi
 
 
+    def to_log(self, m):
+        print(f"@@@@@ CLASSA@29  log is {log}")
+        log(m)
+
+    def to_logrt(self, m):
+        logrt(m)
+
+    def to_logi(self, m):
+        logi(m)
+
+
     def try_all_loggers(self):
         log(  "LOG-MESG-ClassA-{self.num}-test@15")
         logrt("LOGRT-MESG-ClassA-{self.num}-test@16")
-        log(  "LOGI-MESG-ClassA-{self.num}-test@17")
+        logi(  "LOGI-MESG-ClassA-{self.num}-test@17")
 
 
     def __str__(self):

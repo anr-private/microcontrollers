@@ -54,7 +54,7 @@ class ElemLogControl:
 
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses ElemLogControlABC
-        # Returns a tuple of the log functions the caller should use
+        # Returns a logger obj the caller should use
 
         prt(f"ELC@57   obj is {repr(obj_instance)} ")
 
@@ -73,6 +73,11 @@ class ElemLogControl:
 
     def get_registered_classes(self):
         return self.registry.keys()
+
+    def enable_logging(self, class_name, enabled):
+        logger = self.registry.get(class_name)
+        print(f"@@@@ ELC@79 logger is {logger}  {enabled=}")
+        logger.enable_log(enabled)
 
 
     def remove_old_log_file(self):
