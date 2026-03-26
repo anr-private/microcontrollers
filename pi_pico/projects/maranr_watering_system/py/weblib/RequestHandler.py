@@ -17,7 +17,9 @@ from lib2.MwsWifi import MwsWifi
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
+from .RequestHandlerLogControl import RequestHandlerLogControl
 from .TemplateGrinder import TemplateGrinder
+from .RHUtils import RHUtils
 
 # Content-Type values
 # application/x-www-form-urlencoded  - posting a FORM(?)
@@ -36,6 +38,8 @@ class RequestHandler(ElemLoggerABC):
         self.default_subdir = "pages"
         self._grinder = TemplateGrinder()
         self._data_board = DataBoard.get_instance()
+        self._rh_log_control = RequestHandlerLogControl()
+        self.__rhu = RHUtils()  # just to set up its logging
         super().__init__()
 
 
@@ -99,7 +103,7 @@ class RequestHandler(ElemLoggerABC):
             if reply: return reply
         elif url_path == "/log":
             print(f"RH@97  LOG request: {parsed_http}")
-            reply = self._handle_log_request(parsed_http)
+            reply = self._rh_log_control.handle_log_request(parsed_http)
             if reply: return reply
         elif url_path == "/echo":
             print(f"RH@101  ECHO request: {parsed_http}")
@@ -146,7 +150,7 @@ class RequestHandler(ElemLoggerABC):
         rb = ReplyBuilder()
 
         # use html's content type
-        content_type = self._guess_file_content_type("X.json")
+        content_type = RHUtils.guess_file_content_type("X.json")
 
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
@@ -202,7 +206,7 @@ class RequestHandler(ElemLoggerABC):
         rb = ReplyBuilder()
 
         # use html's content type
-        content_type = self._guess_file_content_type("X.html")
+        content_type = RHUtils.guess_file_content_type("X.html")
 
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
@@ -216,132 +220,132 @@ class RequestHandler(ElemLoggerABC):
         return reply
 
 
-    def _handle_log_request(self, parsed_http):
-        log(f"RH@199  _handle_log_request  ph={parsed_http}")
-
-        params = parsed_http.url_query_parameters
-
-        if "settings" in params:
-            return self._handle_log_settings_request(parsed_http, params)
-
-
-        rel_line_number_stg = params.get("linenumber")
-        num_lines_stg = params.get("numlines")
-        if rel_line_number_stg is None: rel_line_number_stg = "40"
-        if num_lines_stg is None: num_lines_stg = rel_line_number_stg
-
-        try:
-            relative_line_number = int(rel_line_number_stg)
-            numlines = int(num_lines_stg)
-        except (TypeError,ValueError) as ex:
-            m = f"RH@212 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
-            print(m)
-            logi(m)
-            #return None
-            # use some defaults
-            relative_line_number = 20
-            numlines = 20
-        print(f"RH@219  {relative_line_number=}  {numlines=}")
-        elc = self._get_control_instance()
-
-        lines = elc.get_lines_from_log_file(relative_line_number, numlines)
-        print(f"RH@223 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
-        if lines is None: return None
-
-
-        html_lines = [
-        "<!DOCTYPE html>",
-        "<html>",
-        "<head>",
-        "    <title>Logger File Lines</title>",
-        "</head>",
-        "<body>",
-        f"LOG LINES   -{relative_line_number} to -{(relative_line_number-numlines+1)} &nbsp;  at end of log file.<br>",
-        "<p> ",
-           " &nbsp; <a href=\"log?linenumber=40&numlines=40\">last-40 to end-of-log</a> "
-           " &nbsp; <a href=\"log?linenumber=80&numlines=40\">-80 to -40</a>",
-           " &nbsp; <a href=\"log?linenumber=120&numlines=40\">-120 to -80</a>",
-           " &nbsp; <a href=\"log?linenumber=160&numlines=40\">-160 to -120</a>",
-        "</p>",
-            ]
-        html_tail = [
-        "  </p>",
-        " <p><a href=\"index.htmlp\">BACK</a></p>",
-        "</body>",
-        "</html>",
-            ]
-
-        for line in lines:
-            line = line.replace('\n', '')
-            line += "<br>"
-            html_lines.append(line)
-        lines = None
-        html_lines.extend(html_tail)
-        body_string = "\n".join(html_lines)
-        del html_lines
-
-        print(f"RH@258 body_string:...")  
-        print(body_string)
-
-        # Build a reply that provides the log lines
-        rb = ReplyBuilder()
-
-        # use html's content type
-        content_type = self._guess_file_content_type("X.html")
-
-        # content type: use 
-        reply = rb.build_textual_file_reply(content_type, body_string)
-
-        m = f"RH@270 HTTP REPLY to LOG request "
-        print(m)
-        logi(m)
-        m = f"RH@273  {reply.long_string()}"
-        print(m)
-        logi(m)
-        return reply
-
-
-    def _handle_log_settings_request(self, parsed_http, params):
-        # JSON request
-        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-
-        print(f"RH@118  LOG-SETTINGS-REQ  params={params}")
-
-        data_dict = {"datetime": get_formatted_date_time_string() }
-
-        classes = ElemLogControl.get_instance().get_registered_classes()
-        classes_dict = dict()
-        i = 0
-        for class_name in classes:
-            classes_dict[class_name] = i
-            i += 1
-        data_dict["classes"] = classes_dict
-
-        json_stg = json.dumps(data_dict)
-        print(f"RH@315 body: JSON-string:...")  
-        print(json_stg)
-
-        # Build a reply that provides the log lines
-        rb = ReplyBuilder()
-
-        # use html's content type
-        content_type = self._guess_file_content_type("X.json")
-
-        # content type: use 
-        reply = rb.build_textual_file_reply(content_type, json_stg)
-
-        m = f"RH@327  HTTP REPLY to DATA REQUEST:"
-        print(m)
-        logi(m)
-        m = f"RH@330 {reply.long_string()}"
-        print(m)
-        logi(m)
-
-        return reply
+###    def _handle_log_request(self, parsed_http):
+###        log(f"RH@199  _handle_log_request  ph={parsed_http}")
+###
+###        params = parsed_http.url_query_parameters
+###
+###        if "settings" in params:
+###            return self._handle_log_settings_request(parsed_http, params)
+###
+###
+###        rel_line_number_stg = params.get("linenumber")
+###        num_lines_stg = params.get("numlines")
+###        if rel_line_number_stg is None: rel_line_number_stg = "40"
+###        if num_lines_stg is None: num_lines_stg = rel_line_number_stg
+###
+###        try:
+###            relative_line_number = int(rel_line_number_stg)
+###            numlines = int(num_lines_stg)
+###        except (TypeError,ValueError) as ex:
+###            m = f"RH@212 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
+###            print(m)
+###            logi(m)
+###            #return None
+###            # use some defaults
+###            relative_line_number = 20
+###            numlines = 20
+###        print(f"RH@219  {relative_line_number=}  {numlines=}")
+###        elc = self._get_control_instance()
+###
+###        lines = elc.get_lines_from_log_file(relative_line_number, numlines)
+###        print(f"RH@223 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
+###        if lines is None: return None
+###
+###
+###        html_lines = [
+###        "<!DOCTYPE html>",
+###        "<html>",
+###        "<head>",
+###        "    <title>Logger File Lines</title>",
+###        "</head>",
+###        "<body>",
+###        f"LOG LINES   -{relative_line_number} to -{(relative_line_number-numlines+1)} &nbsp;  at end of log file.<br>",
+###        "<p> ",
+###           " &nbsp; <a href=\"log?linenumber=40&numlines=40\">last-40 to end-of-log</a> "
+###           " &nbsp; <a href=\"log?linenumber=80&numlines=40\">-80 to -40</a>",
+###           " &nbsp; <a href=\"log?linenumber=120&numlines=40\">-120 to -80</a>",
+###           " &nbsp; <a href=\"log?linenumber=160&numlines=40\">-160 to -120</a>",
+###        "</p>",
+###            ]
+###        html_tail = [
+###        "  </p>",
+###        " <p><a href=\"index.htmlp\">BACK</a></p>",
+###        "</body>",
+###        "</html>",
+###            ]
+###
+###        for line in lines:
+###            line = line.replace('\n', '')
+###            line += "<br>"
+###            html_lines.append(line)
+###        lines = None
+###        html_lines.extend(html_tail)
+###        body_string = "\n".join(html_lines)
+###        del html_lines
+###
+###        print(f"RH@258 body_string:...")  
+###        print(body_string)
+###
+###        # Build a reply that provides the log lines
+###        rb = ReplyBuilder()
+###
+###        # use html's content type
+###        content_type = self._guess_file_content_type("X.html")
+###
+###        # content type: use 
+###        reply = rb.build_textual_file_reply(content_type, body_string)
+###
+###        m = f"RH@270 HTTP REPLY to LOG request "
+###        print(m)
+###        logi(m)
+###        m = f"RH@273  {reply.long_string()}"
+###        print(m)
+###        logi(m)
+###        return reply
+###
+###
+###    def _handle_log_settings_request(self, parsed_http, params):
+###        # JSON request
+###        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+###        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+###        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+###        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+###        print(f"RH@303 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+###
+###        print(f"RH@118  LOG-SETTINGS-REQ  params={params}")
+###
+###        data_dict = {"datetime": get_formatted_date_time_string() }
+###
+###        classes = ElemLogControl.get_instance().get_registered_classes()
+###        classes_dict = dict()
+###        i = 0
+###        for class_name in classes:
+###            classes_dict[class_name] = i
+###            i += 1
+###        data_dict["classes"] = classes_dict
+###
+###        json_stg = json.dumps(data_dict)
+###        print(f"RH@315 body: JSON-string:...")  
+###        print(json_stg)
+###
+###        # Build a reply that provides the log lines
+###        rb = ReplyBuilder()
+###
+###        # use html's content type
+###        content_type = self._guess_file_content_type("X.json")
+###
+###        # content type: use 
+###        reply = rb.build_textual_file_reply(content_type, json_stg)
+###
+###        m = f"RH@327  HTTP REPLY to DATA REQUEST:"
+###        print(m)
+###        logi(m)
+###        m = f"RH@330 {reply.long_string()}"
+###        print(m)
+###        logi(m)
+###
+###        return reply
 
 
 
@@ -385,7 +389,7 @@ class RequestHandler(ElemLoggerABC):
 
 
         # OK the file exists. What kind of file is it?
-        content_type = self._guess_file_content_type(file_path)
+        content_type = RHUtils.guess_file_content_type(file_path)
 
         if not content_type:
             rb = ReplyBuilder()
@@ -473,37 +477,38 @@ class RequestHandler(ElemLoggerABC):
         return reply
 
 
-    def _guess_file_content_type(self, file_path):
-        # parts is ".../filename", "html" etc
-        parts = file_path.rsplit(".", 1)
-        #log(f"RH@389 _guess_file_content_type {parts=} {file_path=} ")
-        if len(parts) < 2:
-            # no extension found
-            return None
-        ext = parts[1].lower()
-        #log(f"RH@394 _guess_file_content_type {ext=} {file_path=} ")
-        if ext in ["html", "htm", "htmlp"]:
-            #@@@@ maybe use "text/html; charset=UTF-8"?
-            t = "text/html"
-        elif ext in ["js",]:
-            t = "text/javascript"
-        elif ext in ["css",]:
-            t = "text/css"
-        elif ext in ["ico",]:
-            t = "image/x-icon"
-        elif ext in ["png",]:
-            t = "image/png"
-        elif ext in ["jpeg", "jpg"]:
-            t = "image/jpeg"
-        elif ext in ["gif",]:
-            t = "image/gif"
-        elif ext in ["json",]:
-            t = "application/json"
-        else:
-            log(r"RH@413 **ERROR** Unknow Content-Type for file '{file_path}'")
-            t = None
-        log(f"RH@415 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
-        return t
+###    def _guess _file_content_type(self, file_path):
+###        # parts is ".../filename", "html" etc
+###        parts = file_path.rsplit(".", 1)
+###        #log(f"RH@389 _guess_file_content_type {parts=} {file_path=} ")
+###        if len(parts) < 2:
+###            # no extension found
+###            return None
+###        ext = parts[1].lower()
+###        #log(f"RH@394 _guess_file_content_type {ext=} {file_path=} ")
+###        if ext in ["html", "htm", "htmlp"]:
+###            #@@@@ maybe use "text/html; charset=UTF-8"?
+###            t = "text/html"
+###        elif ext in ["js",]:
+###            t = "text/javascript"
+###        elif ext in ["css",]:
+###            t = "text/css"
+###        elif ext in ["ico",]:
+###            t = "image/x-icon"
+###        elif ext in ["png",]:
+###            t = "image/png"
+###        elif ext in ["jpeg", "jpg"]:
+###            t = "image/jpeg"
+###        elif ext in ["gif",]:
+###            t = "image/gif"
+###        elif ext in ["json",]:
+###            t = "application/json"
+###        else:
+###            log(r"RH@413 **ERROR** Unknow Content-Type for file '{file_path}'")
+###            t = None
+###        log(f"RH@415 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+###        return t
+
 
 #def do_gc(where):
 #    if 1:
