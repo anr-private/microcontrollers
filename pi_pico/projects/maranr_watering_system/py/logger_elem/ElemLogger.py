@@ -21,6 +21,9 @@ class ElemLogger:
         prt(f"ELOG@21 init {self.class_name=}")
 
 
+    def is_enabled(self):
+        return self.log_enabled
+
     def enable_log(self, enabled):
         self.log_enabled = not not enabled
             

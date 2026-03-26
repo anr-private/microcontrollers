@@ -40,6 +40,7 @@ class RequestHandlerLogControl(ElemLoggerABC):
         self.default_subdir = "pages"
         self._grinder = TemplateGrinder()
         self._data_board = DataBoard.get_instance()
+        self._elc = ElemLogControl.get_instance()
         super().__init__()
 
     def _set_logger(self, logger):
@@ -146,13 +147,10 @@ class RequestHandlerLogControl(ElemLoggerABC):
         print(f"RHLOG@118  LOG-SETTINGS-REQ  params={params}")
 
         data_dict = {"datetime": get_formatted_date_time_string() }
-
-        classes = ElemLogControl.get_instance().get_registered_classes()
+            
         classes_dict = dict()
-        i = 0
-        for class_name in classes:
-            classes_dict[class_name] = i
-            i += 1
+        for class_name, logger in self._elc.registry.items():
+            classes_dict[class_name] = 1 if logger.is_enabled() else 0
         data_dict["classes"] = classes_dict
 
         json_stg = json.dumps(data_dict)
