@@ -12,10 +12,10 @@ except Exception:
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
+from lib2.TimeMgr import TimeMgr
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
-from time_utils import get_formatted_date_time_string
 from utils import determine_machine_type
 
 # Logging functions; provided by our parent class using set_log_functions()
@@ -38,7 +38,7 @@ class MaranrWateringSystem(ElemLoggerABC):
 
 
     async def main_task(self):
-        logi(f"MWSMAIN@40  MAIN TASK STARTED {get_formatted_date_time_string()}");
+        logi(f"MWSMAIN@40  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
 
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
@@ -66,12 +66,13 @@ class MaranrWateringSystem(ElemLoggerABC):
     
         logging_ctr = 999
         while 1:
+            log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
+
             logging_ctr += 1
             if logging_ctr >= 30:
                 logging_ctr = 0
-                logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
-            logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
-            log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
+                logi(f"{TimeMgr.get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
+            logi(f"{TimeMgr.get_formatted_date_time_string()} @@@@@@@@@@@@@@@@@@@@@@@@@@@=_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
 
             webserver_done = webserver_task.done()
             sensors_done = sensors_task.done()

@@ -24,7 +24,6 @@ class DataBoard(ElemLoggerABC):
     SYS_STATE_OFF     = 4
 
 
-
     _instance = None
 
     def __init__(self, validate):
@@ -63,15 +62,16 @@ class DataBoard(ElemLoggerABC):
         self.port = port
         print(f"DataBoard@64  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
+
     def set_internal_temps(self, degsF, degsC):
         self.internal_temp_f = degsF
         self.internal_temp_c = degsC
-
 
     def get_internal_temps_one_dec_place(self):
         degs_f = f"{self.internal_temp_f:.1f}"
         degs_c = f"{self.internal_temp_c:.1f}"
         return degs_f, degs_c
+
 
     def __str__(self):
         s = []

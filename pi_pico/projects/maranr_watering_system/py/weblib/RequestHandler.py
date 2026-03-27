@@ -4,7 +4,6 @@ import asyncio
 import gc
 import json
 
-from time_utils import get_formatted_date_time_string
 from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
@@ -14,6 +13,7 @@ from logger_elem.ElemLogControl import ElemLogControl
 from lib2.FileObtainer import FileObtainer
 from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
+from lib2.TimeMgr import TimeMgr
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
@@ -54,7 +54,7 @@ class RequestHandler(ElemLoggerABC):
         # header is str containing the header lines """
         # returns a reply, suitable for sending back to the client
 
-        m = f"RH@57 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {get_formatted_date_time_string()} ^^^^^^^^^^^^^"
+        m = f"RH@57 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {TimeMgr.get_formatted_date_time_string()} ^^^^^^^^^^^^^"
         logi(m)
         m = f"RH@59  -=-=-=  do gc.collect()  -=-=-= "
         logi(m)
@@ -122,8 +122,8 @@ class RequestHandler(ElemLoggerABC):
         logi(f"RH@122  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
-        ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {get_formatted_date_time_string()} }'
-        data_dict = {"age": 1, "name": "Bob", "datetime": get_formatted_date_time_string() }
+        ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
+        data_dict = {"age": 1, "name": "Bob", "datetime": TimeMgr.get_formatted_date_time_string() }
 
         if "sensors" in params:
             #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@self._data_board.set_internal_temps(123.5,87.1)

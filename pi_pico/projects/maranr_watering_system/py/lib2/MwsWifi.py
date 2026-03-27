@@ -21,7 +21,8 @@ from lib.utils import MWS_CONFIG
 from lib2.DataBoard import DataBoard
 from details import SSID, PW
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from time_utils import set_time_clock_from_ntp
+from lib2.TimeMgr import TimeMgr
+
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -99,6 +100,7 @@ class MwsWifi(ElemLoggerABC):
             raise RuntimeError("MwsWifi.init DO NOT CALL")
         #@@@@@$$$$$self.wlan = None
         self._dataBoard = DataBoard.get_instance()
+        self._time_mgr = TimeMgr.get_instance()
         self._ipaddr = None
         self._port = 0
         super().__init__()
@@ -215,7 +217,7 @@ class MwsWifi(ElemLoggerABC):
             log(m)
 
         #@@@@@@@@@@@self._wifi_set_time_from_ntp(st)
-        set_time_clock_from_ntp()
+        self._time_mgr.set_time_clock_from_ntp()
 
         st.sleep_secs = 10
         return 0

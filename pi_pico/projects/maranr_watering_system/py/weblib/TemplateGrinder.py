@@ -3,9 +3,9 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
-from time_utils import get_formatted_date_time_string
 from utils import get_memory_status_string
 from utils import get_fs_space_string
+from lib2.TimeMgr import TimeMgr
 
 #PRT=True
 #def prt(s):
@@ -24,7 +24,7 @@ BODY_SUBS = {
     # NOTE keys are always all lower case!
     "filesystem-status-splitline": (get_fs_space_string, (), {"sep":"<br>"} ),
     "memory-status": (get_memory_status_string, ()),
-    "date-time": (get_formatted_date_time_string, ()),
+    "date-time": (TimeMgr.get_formatted_date_time_string, ()),
     }
 
 
@@ -58,15 +58,6 @@ class TemplateGrinder(ElemLoggerABC):
         r = funct(*args, **kw)
         return r
 
-
-    def OLD__fetch_value_for_symbol(self, symbol_stg):
-        if symbol_stg.lower() == "filesystem-status-splitline":
-            return get_fs_space_string(sep="<br>")
-        if symbol_stg.lower() == "memory-status":
-            return get_memory_status_string()
-        if symbol_stg.lower() == "date-time":
-            return get_formatted_date_time_string()
-        return f"Unknown-symbol:'{symbol_stg}'"
 
     def _split_the_file_contents(self, file_contents):
         lines = file_contents.split("\n")

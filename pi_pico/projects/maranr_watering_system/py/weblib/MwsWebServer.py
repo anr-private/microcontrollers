@@ -4,8 +4,8 @@ import asyncio
 import gc
 
 from lib2.DataBoard import DataBoard
+from lib2.TimeMgr import TimeMgr
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from time_utils import get_formatted_date_time_string
 from utils import show_cc
 
 from .HdrAccum import HdrAccum
@@ -115,7 +115,7 @@ class MwsWebServer(ElemLoggerABC):
     async def handle_new_client(self, reader, writer):
         m = f"-----=====-----=====-----===== NEW CLIENT =====-----====="
         logi(m)
-        m = f"WEBSVR@117 =====___ NEW CLIENT  ___+++++___  {get_formatted_date_time_string()}  ___+++++=====__________=====+++++-----+++++====="
+        m = f"WEBSVR@117 =====___ NEW CLIENT  ___+++++___  {TimeMgr.get_formatted_date_time_string()}  ___+++++=====__________=====+++++-----+++++====="
         logi(m)
         m = f"\nWEBSVR@119 handle_new_client  reader={repr(reader)} writer={repr(writer)}  "
         logi(m)

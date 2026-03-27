@@ -7,7 +7,6 @@ import asyncio
 import gc
 import json
 
-from time_utils import get_formatted_date_time_string
 from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
@@ -17,6 +16,7 @@ from logger_elem.ElemLogControl import ElemLogControl
 from lib2.FileObtainer import FileObtainer
 from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
+from lib2.TimeMgr import TimeMgr
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
@@ -160,7 +160,7 @@ class RequestHandlerLogControl(ElemLoggerABC):
 
         # Assemble the response
 
-        data_dict = {"datetime": get_formatted_date_time_string() }
+        data_dict = {"datetime": TimeMgr.get_formatted_date_time_string() }
             
         classes_dict = dict()
         for class_name, logger in self._elc.registry.items():
