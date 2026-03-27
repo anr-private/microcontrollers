@@ -70,7 +70,6 @@ class MaranrWateringSystem(ElemLoggerABC):
             if logging_ctr >= 30:
                 logging_ctr = 0
                 logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
-            ###logi(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ MWSMAIN@73     {logging_ctr=}")
             logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
             log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
 
@@ -124,7 +123,7 @@ class MaranrWateringSystem(ElemLoggerABC):
             asyncio.run(self.main_task())
 
         except KeyboardInterrupt:
-            #@@@@@@@@
+            #@@@@@@@@ TODO Handle keyboard in MWS main
             #date_stg, time_stg = get_formatted_local_time()
             #m = f"MWSMAIN@120 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             #logi(m)
