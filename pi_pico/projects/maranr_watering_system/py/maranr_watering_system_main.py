@@ -12,6 +12,7 @@ try:
 except Exception:
     import time                 #Py3 unit tests
 
+from time_utils import set_time_utils_logger
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 
 #from displays.MwsDisplays import MwsDisplays
@@ -19,7 +20,7 @@ from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 #from lib2.MwsWifi import MwsWifi
 #from weblib.MwsWebServer import MwsWebServer
 from utils import MWS_CONFIG
-from utils import get_formatted_local_time
+from time_utils import get_formatted_local_time
 from utils import get_fs_space_string
 from utils import get_memory_status_string
 
@@ -50,7 +51,10 @@ def main():
     log_control = ElemLogControl.get_instance()
     log_control.remove_old_log_file()
 
-    log_control.log_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
+    # provide logger to modules that do not get registered with ElemLogControl
+    set_time_utils_logger(log_control.log_and_print_one_line)
+
+    log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
 
     mws = MaranrWateringSystem()

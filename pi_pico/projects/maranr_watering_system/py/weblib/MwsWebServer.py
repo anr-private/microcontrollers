@@ -5,7 +5,8 @@ import gc
 
 from lib2.DataBoard import DataBoard
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from utils import show_cc, get_formatted_date_time_string
+from time_utils import get_formatted_date_time_string
+from utils import show_cc
 
 from .HdrAccum import HdrAccum
 from .ParsedHttp import ParsedHttp

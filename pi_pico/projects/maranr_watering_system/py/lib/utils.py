@@ -102,28 +102,6 @@ def get_fs_space_string(sep=""):
     return f"TOTAL SPACE {tss}   {sep}FREE SPACE {fss}"
 
 
-def get_local_time():  # for our TZ
-    # Get UTC time from clock
-    #### THIS RETURNS UTC  utc_time = time.localtime()
-    # Example: Apply offset for Central TZ: UTC-6 hrs
-    # TODO handle automatic switch to DAYLIGHT_TIME_OFFSET
-    STD_TIME_OFFSET = -6 # hours
-    DAYLIGHT_TIME_OFFSET = -5 # hours
-    offset = DAYLIGHT_TIME_OFFSET * 3600 # seconds
-    local_time = time.localtime(time.time() + offset)
-    return local_time
-
-def get_formatted_date_time_string():
-    date_stg,time_stg = get_formatted_local_time()
-    return f"{date_stg} {time_stg}"
-
-def get_formatted_local_time():
-    now = get_local_time()
-    # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
-    date_str = "{}-{}-{}".format(now[0], now[1], now[2])
-    time_str = "{:02d}:{:02d}:{:02d}".format(now[3], now[4], now[5])
-    return (date_str, time_str)
-
 def determine_py_platform():
     # returns "micropython", "cpython" 
     if "micropython" in platform.platform().lower():

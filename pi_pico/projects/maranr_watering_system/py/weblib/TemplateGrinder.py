@@ -3,9 +3,9 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
+from time_utils import get_formatted_date_time_string
 from utils import get_memory_status_string
 from utils import get_fs_space_string
-from utils import get_formatted_date_time_string
 
 #PRT=True
 #def prt(s):

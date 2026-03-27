@@ -92,6 +92,10 @@ class ElemLogControl:
             print(f"ELC@80 ex='{str(ex)}' ")
 
 
+    def log_and_print_one_line(self, line):
+        self.log_one_line(line)
+        print(line)
+
     def log_one_line(self, line):
         need_to_remove = self._log_this_line(line)
         if need_to_remove:

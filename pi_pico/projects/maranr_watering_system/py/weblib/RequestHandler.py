@@ -4,10 +4,10 @@ import asyncio
 import gc
 import json
 
+from time_utils import get_formatted_date_time_string
 from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
-from utils import get_formatted_date_time_string
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl

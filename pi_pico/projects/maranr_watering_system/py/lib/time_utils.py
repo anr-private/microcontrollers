@@ -19,9 +19,10 @@ except Exception as ex:
     print(f"utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
+NTP_UPDATE_INTERVAL_SECS = 60 # how often we update @@@@@@@@@@@@@@@@@@@
 LATEST_NTP_UPDATE_SECS = 0  # a long time ago
-NTP_UPDATE_INTERVAL_SECS = 3 # how often we update @@@@@@@@@@@@@@@@@@@
 NUMBER_OF_NTP_UPDATES = 0
+NUMBER_OF_TIME_JUMPS = 0
 
 #TODO ADD table for daylight savings time changes
 
@@ -66,33 +67,50 @@ def get_time_unix_seconds(secs=None):
 
 
 def set_time_clock_from_ntp():
-    global LATEST_NTP_UPDATE_SECS, NUMBER_OF_NTP_UPDATES
+    global LATEST_NTP_UPDATE_SECS
+    global NUMBER_OF_NTP_UPDATES
+    global NUMBER_OF_TIME_JUMPS
 
-    LOGI(f"TimeUtils@65 set_time_clock_from_ntp @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    LOGI(f"TimeUtils@71 set_time_clock_from_ntp @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
     # Time to call NTP website and update?
     now = time.time()
     elapsed = now - LATEST_NTP_UPDATE_SECS
-    LOGI(f"TimeUtils@74  Time for NTP update?  elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
+    LOGI(f"TimeUtils@76  Time for NTP update?  elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
+    LOGI(f"TimeUtils@77  ... now: {now}  LATEST_NTP_UPDATE_SECS {LATEST_NTP_UPDATE_SECS} ")
+
     if elapsed < NTP_UPDATE_INTERVAL_SECS:
-        LOGI(f"TimeUtils@74  Not time yet for update. elapsed < INTERVAL:  {elapsed} < {NTP_UPDATE_INTERVAL_SECS}")
+        LOGI(f"TimeUtils@78  Not time yet for update. elapsed < INTERVAL:  {elapsed} < {NTP_UPDATE_INTERVAL_SECS}")
         return
 
-    LOGI(f"TimeUtils@79 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {NTP_UPDATE_INTERVAL_SECS=}")
+    LOGI(f"TimeUtils@81 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {NTP_UPDATE_INTERVAL_SECS=}")
+
+    now_was = now
 
     try:
         ntptime.settime()
     except Exception as ex:
-        LOGI(f"TimeUtils@69 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}")
+        LOGI(f"TimeUtils@86 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}")
         return False
 
     now = time.time()
-    LOGI("TimeUtils@71 set_time_clock_from_ntp  Micropython epoch: {now} secs.  unix: {get_time_unix_seconds(now)}")
+    LOGI(f"TimeUtils@90 set_time_clock_from_ntp  Micropython epoch: {now} secs.  unix: {get_time_unix_seconds(now)}")
     #print("Seconds since MicroPython epoch (2000):", micropython_timestamp)
     #print("Seconds since Unix epoch (1970):", unix_timestamp)
 
     LATEST_NTP_UPDATE_SECS = now
     NUMBER_OF_NTP_UPDATES += 1
+
+    LOGI(f"TimeUtils@97  after update, elaspsed is {now-LATEST_NTP_UPDATE_SECS} ")
+
+    # Did time jump by very much?
+    jumped_secs = now - now_was
+    LOGI(f"TimeUtils@108  TIME-JUMP-DELTA secs {jumped_secs}")
+    if abs(jumped_secs) > 10:
+        NUMBER_OF_TIME_JUMPS += 1
+        LOGI(f"TimeUtils@107  ***************** TIME JUMPED!   {jumped_secs} secs  *************************")
+        LOGI(f"TimeUtils@107  ***************** TIME JUMPED!   {NUMBER_OF_TIME_JUMPS=}  *************************")
+        
 
     # verify the time
     current_time = time.localtime()
@@ -100,11 +118,11 @@ def set_time_clock_from_ntp():
     # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
     # (year, month, mday, hour, minute, second, weekday, yearday)
     # weekday is 0=Sun, etc
-    LOGI(f"TimeUtils@81 TIME FROM NTP: {current_time} ") # as tuple
+    LOGI(f"TimeUtils@103 TIME FROM NTP: {current_time} ") # as tuple
     year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-    LOGI(f"TimeUtils@83 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  ")
+    LOGI(f"TimeUtils@105 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  ")
     weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-    LOGI(f"TimeUtils@85   {weekday=}  {yearday=}   {weekday_stg=}")
+    LOGI(f"TimeUtils@107   {weekday=}  {yearday=}   {weekday_stg=}")
     
 
 def main():

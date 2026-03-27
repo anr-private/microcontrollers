@@ -15,8 +15,8 @@ from lib2.MwsWifi import MwsWifi
 from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
+from time_utils import get_formatted_date_time_string
 from utils import determine_machine_type
-from utils import get_formatted_date_time_string
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -70,7 +70,7 @@ class MaranrWateringSystem(ElemLoggerABC):
             if logging_ctr >= 30:
                 logging_ctr = 0
                 logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
-            logi(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ MWSMAIN@73     {logging_ctr=}")
+            ###logi(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ MWSMAIN@73     {logging_ctr=}")
             logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
             log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
 

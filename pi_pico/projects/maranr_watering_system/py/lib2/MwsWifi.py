@@ -11,18 +11,17 @@
 # Run machine.reset() to reboot
 
 import network
-import utime
-import ntptime
 import asyncio
 try:
-    import utime as time
-except Exception:
     import time
+except ModuleNotFoundError:
+    import utime as time
 
 from lib.utils import MWS_CONFIG
 from lib2.DataBoard import DataBoard
 from details import SSID, PW
 from logger_elem.ElemLoggerABC import ElemLoggerABC
+from time_utils import set_time_clock_from_ntp
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -215,7 +214,8 @@ class MwsWifi(ElemLoggerABC):
         else:
             log(m)
 
-        self._wifi_set_time_from_ntp(st)
+        #@@@@@@@@@@@self._wifi_set_time_from_ntp(st)
+        set_time_clock_from_ntp()
 
         st.sleep_secs = 10
         return 0
@@ -252,43 +252,66 @@ class MwsWifi(ElemLoggerABC):
         logi(f"MwsWifi@242  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
 
 
-    def _wifi_set_time_from_ntp(self, st):
-        # See if it's time to update
-        # TODO handle daylight savings time
-        now = time.time()
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#    def _wifi_set_time_from_ntp(self, st):
+#        # See if it's time to update
+#        # TODO handle daylight savings time
+#        now = time.time()
+#
+#        elapsed = now - st.latest_ntp_update_secs
+#        log(f"MwsWifi@261  Time for NTP update?  elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
+#        if elapsed < NTP_UPDATE_INTERVAL_SECS:
+#            return
+#
+#        logi(f"MwsWifi@265 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {NTP_UPDATE_INTERVAL_SECS=}")
+#
+#        set_time_clock_from_ntp()
+#
+#        # successful update
+#        st.latest_ntp_update_secs = time.time()
+#        st.num_ntp_updates += 1
 
-        elapsed = now - st.latest_ntp_update_secs
-        log(f"MwsWifi@251  NTP elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
-        if elapsed < NTP_UPDATE_INTERVAL_SECS:
-            return
 
-        m = f"MwsWifi@255 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {st}"
-        logi(m)
-
-        try:
-            ntptime.settime()
-        except Exception as ex:
-            m = f"MwsWifi@261 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
-            logi(m)
-            return False
-    
-        # verify the time
-        current_time = utime.localtime()
-    
-        # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
-        # (year, month, mday, hour, minute, second, weekday, yearday)
-        # weekday is 0=Sun, etc
-        logi(f"MwsWifi@271 TIME FROM NTP: {current_time} ") # as tuple
-        year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-        logi(f"MwsWifi@273 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
-        weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"MwsWifi@275   {weekday_stg=}")
-    
-        # successful update
-        st.latest_ntp_update_secs = now
-        st.num_ntp_updates += 1
-
-        return True
+##############@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#    def _wifi_set_time_from_ntp__OLD(self, st):
+#        # See if it's time to update
+#        # TODO handle daylight savings time
+#        now = time.time()
+#
+#        elapsed = now - st.latest_ntp_update_secs
+#        log(f"MwsWifi@251  NTP elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
+#        if elapsed < NTP_UPDATE_INTERVAL_SECS:
+#            return
+#
+#        logi(f"MwsWifi@255 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {st}")
+#
+#        try:
+#            ntptime.settime()
+#        except Exception as ex:
+#            m = f"MwsWifi@261 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
+#            logi(m)
+#            return False
+#    
+#        # verify the time
+#        current_time = time.localtime()
+#        print("Seconds since MicroPython epoch (2000):", micropython_timestamp)
+#        print("Seconds since Unix epoch (1970):", unix_timestamp)
+#
+#
+#        # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
+#        # (year, month, mday, hour, minute, second, weekday, yearday)
+#        # weekday is 0=Sun, etc
+#        logi(f"MwsWifi@271 TIME FROM NTP: {current_time} ") # as tuple
+#        year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
+#        logi(f"MwsWifi@273 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
+#        weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
+#        logi(f"MwsWifi@275   {weekday_stg=}")
+#    
+#        # successful update
+#        st.latest_ntp_update_secs = now
+#        st.num_ntp_updates += 1
+#
+#        return True
 
 
 ###
