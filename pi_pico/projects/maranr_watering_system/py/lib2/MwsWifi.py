@@ -51,6 +51,7 @@ class _State:
         self.restarts_counter = 0
         self.latest_ntp_update_secs = 0 # 'a long time ago'
         self.num_ntp_updates = 0
+        self.check_connected_ctr = 0
 
     def nullify(self):
         self.state = 1
@@ -70,6 +71,7 @@ class _State:
         s.append("latest_ntp_update_secs=%s" % str(self.latest_ntp_update_secs))
         s.append("ntp_elapsed_secs=%s" % str(elapsed_stg))
         s.append("num_ntp_updates=%s" % str(self.num_ntp_updates))
+        s.append("check_connected_ctr=%s" % str(self.check_connected_ctr))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 
@@ -203,11 +205,19 @@ class MwsWifi(ElemLoggerABC):
             logi(f"MwsWifi@203 *** LOST OUR CONNECTION  ****  {st}")
             return 1
 
-        logi(f"MwsWifi@206 STILL CONNECTED  {self._ipaddr} {self._port}")
+        # Reduce the routine 'connected' mesg when logging is not enabled
+        # on this class (ie when only logi() actually logs)
+        m = f"MwsWifi@206 STILL CONNECTED  {self._ipaddr} {self._port}"
+        st.check_connected_ctr += 1
+        if st.check_connected_ctr >= 10:
+            st.check_connected_ctr = 0
+            logi(m)
+        else:
+            log(m)
 
         self._wifi_set_time_from_ntp(st)
 
-        st.sleep_secs = 3
+        st.sleep_secs = 10
         return 0
 
 

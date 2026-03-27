@@ -90,6 +90,7 @@
         }
     }
 
+
     function updateOneCheckbox(clsName, val) {
 
         const itsId = clsName + "ID";
@@ -107,18 +108,19 @@
         console.log("checked=" + checkboxElt.checked);
     }
 
+
     function  createOneCheckbox(clsName, itsId) {
         const newCheckbox = document.createElement('input');
         newCheckbox.type = 'checkbox';
         newCheckbox.id = itsId;
-        newCheckbox.value = clsName+"VALUE";
+        newCheckbox.value = clsName+"VAL";
         newCheckbox.checked = false;
 
         newCheckbox.addEventListener('click', handleCheckboxClick);
         
         const label = document.createElement("label");
         label.htmlFor = itsId;
-        label.appendChild(document.createTextNode(" "+clsName+'TEXT'));
+        label.appendChild(document.createTextNode(" "+clsName));
         label.classList.add("whitespace-right-chkbox");
 
         const divElt = document.getElementById("checkboxes_div");
@@ -129,6 +131,7 @@
         divElt.appendChild(newCheckbox);
         divElt.appendChild(label);
     }
+
 
     function handleCheckboxClick(event) {
         const checkbox = event.target;
