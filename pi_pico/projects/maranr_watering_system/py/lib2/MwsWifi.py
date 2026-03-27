@@ -105,18 +105,13 @@ class MwsWifi(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"MwsWifi@87 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
 
-    # def get_ip_and_port(self):@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        # if not self._ipaddr: return "IP:PORT-unknown"
-        # return f"{self._ipaddr}:{self.port}"
-
 
     async def wifi_task(self):
-        print(f"nMwsWifi@94 TASK STARTED!")
+        log(f"nMwsWifi@114 TASK STARTED!")
 
         st = _State()
 
@@ -133,7 +128,7 @@ class MwsWifi(ElemLoggerABC):
 
 
         while 1:
-            print(f"\nMwsWifi@108 STATE: {st}")
+            log(f"\nMwsWifi@131 STATE: {st}")
 
             state_callable = states.get(st.state, self._no_such_state)
 
@@ -142,27 +137,27 @@ class MwsWifi(ElemLoggerABC):
             # Zero means repeat the state
             if next_state == 0: next_state = st.state
 
-            print(f"MwsWifi@117  next_state={next_state}")
+            log(f"MwsWifi@140  next_state={next_state}")
             if next_state not in states:
-                print(f"MwsWifi@119  No such state {next_state}  - RESTART!")
+                log(f"MwsWifi@142  No such state {next_state}  - RESTART!")
                 self._nullify_connection_state(st)
                 next_state = 1
 
             st.state = next_state
 
             if st.sleep_secs > 0:
-                print(f"MwsWifi@126 task sleeping {st.sleep_secs} secs   {st}")
+                log(f"MwsWifi@149 task sleeping {st.sleep_secs} secs   {st}")
                 await asyncio.sleep(st.sleep_secs)
                 # set back to default
                 st.sleep_secs = 1
 
 
     def _state_zero(self, st):
-        print(f"MwsWifi@133  SHOULD NEVER ENTER STATE ZERO!  {st}")
+        logi(f"MwsWifi@156  SHOULD NEVER ENTER STATE ZERO!  {st}")
         return 1
 
     def _state_init(self, st):
-        print(f"MwsWifi@137  (RE) INITIALIZE   {st}")
+        logi(f"MwsWifi@160  (RE) INITIALIZE   {st}")
         self._nullify_connection_state(st)
         st.restarts_counter += 1
         st.sleep_secs = 0
@@ -174,8 +169,7 @@ class MwsWifi(ElemLoggerABC):
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
         # Connect
-        logi(f"MwsWifi@149   Connect to wifi: ssid='{ssid}'")
-        ###print(f"MwsWifi@150   Connect to wifi: ssid='{ssid}'")
+        logi(f"MwsWifi@172   Connect to wifi: ssid='{ssid}'")
         wlan.connect(ssid, password)
         st.wlan = wlan
         st.status_retries = 30
@@ -185,11 +179,11 @@ class MwsWifi(ElemLoggerABC):
     def _state_status_wait(self, st):
         st.status_retries -= 1
         if st.status_retries <= 0:
-            print(f"MwsWifi.148  STATUS RETRIES EXHAUSTED. Restart")
+            log(f"MwsWifi.148  STATUS RETRIES EXHAUSTED. Restart")
             return 1
 
         status = st.wlan.status()
-        print(f"MwsWifi@164  wlan.status = {status} ")
+        log(f"MwsWifi@186  wlan.status = {status} ")
 
         if status != 3:
             st.sleep_secs = 5
@@ -197,7 +191,7 @@ class MwsWifi(ElemLoggerABC):
             return 0
 
         # Got a good status. Move to the next state
-        print(f"MwsWifi@172  Status-Wait GOT GOOD-CONNECTION STATUS  {st}")
+        logi(f"MwsWifi@194  Status-Wait GOT GOOD-CONNECTION STATUS  {st}")
         self._set_ipaddr_and_port(st.wlan)
         st.status_retries = 0
         st.sleep_secs = 1
@@ -206,10 +200,10 @@ class MwsWifi(ElemLoggerABC):
     def _state_check_connected(self, st):
         # See if still connected
         if not st.wlan.isconnected():
-            print(f"MwsWifi@184 *** LOST OUR CONNECTION  ****  {st}")
+            logi(f"MwsWifi@203 *** LOST OUR CONNECTION  ****  {st}")
             return 1
 
-        print(f"MwsWifi@181 STILL CONNECTED  {self._ipaddr} {self._port}")
+        logi(f"MwsWifi@206 STILL CONNECTED  {self._ipaddr} {self._port}")
 
         self._wifi_set_time_from_ntp(st)
 
@@ -218,14 +212,14 @@ class MwsWifi(ElemLoggerABC):
 
 
     def _no_such_state(self, st):
-        print(f"MwsWifi@189 ILLEGAL STATE! {st}")
-        ###$$$$ return 1
-        raise RuntimeError(f"MwsWifi@191 ILLEGAL STATE {st}")
-        sys.exit(1) #$$$$$$$$$$$$$$$$$$
+        logi(f"MwsWifi@215 ILLEGAL STATE! {st}")
+        ###$$$$$$$ return 1  TODO fix this
+        ###raise RuntimeError(f"MwsWifi@217 ILLEGAL STATE {st}")
+        ###sys.exit(1) #$$$$$$$$$$$$$$$$$$
 
 
     def _nullify_connection_state(self, st):
-        print(f"MwsWifi@196  NULLIFY - STARTING OVER")
+        log(f"MwsWifi@222  NULLIFY - STARTING OVER")
         self._ipaddr = None
         self._port = 0
         self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
@@ -234,8 +228,7 @@ class MwsWifi(ElemLoggerABC):
         # Clean up if possible
         if wlan is not None:
             #@@@@@@@@@@@@@@@@$$$$$$$$$$$$ ADD try/except
-            m = "MwsWifi@205 DISCONNECT the wlan object."
-            print(m)
+            m = "MwsWifi@231 DISCONNECT the wlan object."
             logi(m)
             wlan.active(False)
             wlan.disconnect()
@@ -246,7 +239,7 @@ class MwsWifi(ElemLoggerABC):
         self._ipaddr = info[0]
         self._port = OUR_PORT_NUMBER
         self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
-        print(f"MwsWifi@217  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
+        logi(f"MwsWifi@242  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
 
 
     def _wifi_set_time_from_ntp(self, st):
@@ -255,18 +248,17 @@ class MwsWifi(ElemLoggerABC):
         now = time.time()
 
         elapsed = now - st.latest_ntp_update_secs
-        print(f"MwsWifi@237  NTP elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
+        log(f"MwsWifi@251  NTP elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
         if elapsed < NTP_UPDATE_INTERVAL_SECS:
             return
 
-        m = f"MwsWifi@241 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {st}"
-        print(m)
+        m = f"MwsWifi@255 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {st}"
         logi(m)
 
         try:
             ntptime.settime()
         except Exception as ex:
-            m = f"MwsWifi@324 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
+            m = f"MwsWifi@261 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}"
             logi(m)
             return False
     
@@ -276,11 +268,11 @@ class MwsWifi(ElemLoggerABC):
         # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
         # (year, month, mday, hour, minute, second, weekday, yearday)
         # weekday is 0=Sun, etc
-        logi(f"MwsWifi@334 TIME FROM NTP: {current_time} ") # as tuple
+        logi(f"MwsWifi@271 TIME FROM NTP: {current_time} ") # as tuple
         year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-        logi(f"MwsWifi@336 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
+        logi(f"MwsWifi@273 {year=}  {month=}  {date=}  {hour=}  {minute=}  {second=}  {weekday=}  {yearday=}  ")
         weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"MwsWifi@338   {weekday_stg=}")
+        logi(f"MwsWifi@275   {weekday_stg=}")
     
         # successful update
         st.latest_ntp_update_secs = now

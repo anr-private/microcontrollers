@@ -20,7 +20,6 @@ class HttpReply(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"HttpReply@23 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi

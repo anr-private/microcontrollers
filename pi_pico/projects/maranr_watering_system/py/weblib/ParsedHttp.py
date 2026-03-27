@@ -98,6 +98,7 @@ class ParsedHttp:
         self.url_bookmark = url_bookmark
         self.http_version = http_version
 
+
     def set_as_reply(self, http_version, reply_code, reply_stg):
         """ This is a REPLY mesg """
         self.request_flag = False
@@ -110,9 +111,8 @@ class ParsedHttp:
             e = "ParsedHttp.is_request called but flag has not been set yet."
             #raise RuntimeError(e)
             #@@@@ temp: later, convert back to RuntimeError
-            m = f"PH@115 *********INTERNAL-ERROR**** "+e
+            m = f"PH@114 *********INTERNAL-ERROR**** "+e
             print(m)
-            log(m)
         return self.request_flag
 
     def is_reply(self):

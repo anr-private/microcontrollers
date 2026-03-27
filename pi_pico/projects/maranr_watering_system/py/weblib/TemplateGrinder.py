@@ -37,10 +37,10 @@ class TemplateGrinder(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"TemplateGrinder@24 _set_logger  logger is {logger}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
+
 
     def _fetch_value_for_symbol(self, symbol_stg):
         funct_info = BODY_SUBS.get(symbol_stg)
@@ -70,9 +70,6 @@ class TemplateGrinder(ElemLoggerABC):
 
     def _split_the_file_contents(self, file_contents):
         lines = file_contents.split("\n")
-        #print(f"TGND@36 @@@@@@@@@@ _split_the_file_contents  {len(lines)=}")
-        #print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines)=}")
-        #print(f"TGND@38 @@@@@@@@@@ _split_the_file_contents  {type(lines[0])=}")
         return lines
 
     def substitute_into_line(self, lno, processed_line):
@@ -80,10 +77,7 @@ class TemplateGrinder(ElemLoggerABC):
         if start_pos < 0:
             return None
 
-        #print(f"@57  {start_pos=}")
-
         end_pos = processed_line.find(END_MARKER, start_pos + len(START_MARKER))
-        #print(f"@59  {end_pos=}")
         if end_pos <= start_pos:
             return None
 
@@ -91,19 +85,13 @@ class TemplateGrinder(ElemLoggerABC):
         headb = processed_line[:start_pos]
         tailb = processed_line[end_pos + len(END_MARKER):]
 
-        #print(f"@@65  {len(symbol)=}  {symbol=} ")
         if len(symbol) <= 0:
             processed_line = "".join([headb, tailb])
-            #print(f"@@81 EMPTY SYMBOL:  {processed_line=}")
             return processed_line
-
-        #print(f"@@61 found line {lno}. {processed_line}")
-        #print(f"@@64 {len(headb)=}  {headb=}    {len(tailb)=} {tailb=}")
 
         value = self._fetch_value_for_symbol(symbol)
 
         processed_line = "".join([headb, value, tailb])
-        #print(f"@@84  {processed_line=}")
         return processed_line
 
 
@@ -125,8 +113,6 @@ class TemplateGrinder(ElemLoggerABC):
 
         for lno, line in enumerate(lines):
 
-            #if 0: print(f"@@@@ {lno} {line}")
-
             processed_line = self.grind_one_line(lno, line)
 
             processed_lines.append(processed_line)
@@ -144,7 +130,7 @@ class TemplateGrinder(ElemLoggerABC):
         elif isinstance(raw_file_contents, bytes):
             file_contents = raw_file_contents.decode("utf-8")
         else:
-            logi(f"RH@109 @@@@@@@@@@@@@@@@@@ UNEXPECTED FILE CONTENTS TYPE: {type(raw_file_contents)}")
+            logi(f"TG@133 @@@@@@@@@@@@@@@@@@ UNEXPECTED FILE CONTENTS TYPE: {type(raw_file_contents)}")
             return None
 
         raw_lines = self._split_the_file_contents(file_contents)

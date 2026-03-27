@@ -19,7 +19,6 @@ class HdrAccum(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"HdrAccum@22 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -27,16 +26,12 @@ class HdrAccum(ElemLoggerABC):
 
     def accum_header_line(self, line):
         log(f"ACCUMLINE@16 '{show_cc(line)}'")
-        ###self._lines.append(line)
-        ###print(f"  Lines: {self._lines}")
         self._mesg += line
-        #print(f" mesg: '{show_cc(self._mesg)} ")
         # found the end of the header?  
         pos = self._mesg.find("\r\n\r\n")
         if pos >= 0:
             # keep the two '\r\n' sequences
             self._end_of_hdr_pos = pos + 4
-            ###print(f"Found the end of header {self._end_of_hdr_pos=} ")
 
     def found_end_of_header(self):
         return self._end_of_hdr_pos >= 0

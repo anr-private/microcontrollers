@@ -25,7 +25,6 @@ class MwsSensors(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"MwsSensors@25 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -33,7 +32,7 @@ class MwsSensors(ElemLoggerABC):
 
     def start_the_task(self):
         """ creates,starts the coro. Returns task."""
-        print("WS.startup!")
+        logi("MwsSensors.start_the_task  STARTING THE SENSOR TASK!")
 
         self._data_board = DataBoard.get_instance()
 
@@ -46,13 +45,13 @@ class MwsSensors(ElemLoggerABC):
         while 1:
             if 0:
                 fss = get_fs_space_string()
-                print(f"SENSORS@.sensors_coro RUNNING: {fss}")
+                log(f"SENSORS@48.sensors_coro RUNNING: {fss}")
             if 0:
                 mss = get_memory_status_string(do_garbage_collect=False)
-                print(f"SENSORS@.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                log(f"SENSORS@51.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
                 gc.collect()
                 mss = get_memory_status_string(do_garbage_collect=False)
-                print(f"SENSORS@.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                log(f"SENSORS@54.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
             if 1:
                 ma_before = gc.mem_alloc()
                 mf_before = gc.mem_free()
@@ -61,8 +60,8 @@ class MwsSensors(ElemLoggerABC):
                 mf_after = gc.mem_free()
                 ma_diff = ma_after - ma_before
                 mf_diff = mf_after - mf_before
-                print(f"SENSOR@52  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++")
-                print(f"SENSOR@52  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++")
+                logi(f"SENSORS@63  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++")
+                logi(f"SENSORS@64  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++")
 
             self._get_internal_temps()
 
@@ -72,7 +71,7 @@ class MwsSensors(ElemLoggerABC):
     def _get_internal_temps(self):
         temperature_c = read_internal_temperature()
         temperature_f = celsius_to_fahrenheit(temperature_c)
-        print(f"SENSOR@73  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F")
+        logi(f"SENSORS@74  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F")
         self._data_board.set_internal_temps(temperature_f, temperature_c);
 
 
