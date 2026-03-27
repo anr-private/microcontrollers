@@ -140,5 +140,4 @@ class MaranrWateringSystem(ElemLoggerABC):
             led = machine.Pin(25, machine.Pin.OUT)
         return led
 
-
 ### end ###
