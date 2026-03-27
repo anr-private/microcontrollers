@@ -22,7 +22,6 @@ from utils import MWS_CONFIG
 from utils import get_formatted_local_time
 from utils import get_fs_space_string
 from utils import get_memory_status_string
-from utils import get_formatted_local_time
 
 from mws.MaranrWateringSystem import MaranrWateringSystem
 

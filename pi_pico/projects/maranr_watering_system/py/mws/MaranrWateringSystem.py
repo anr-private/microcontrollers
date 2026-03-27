@@ -16,6 +16,7 @@ from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
 from utils import determine_machine_type
+from utils import get_formatted_date_time_string
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -37,7 +38,7 @@ class MaranrWateringSystem(ElemLoggerABC):
 
 
     async def main_task(self):
-        logi(f"MWSMAIN@40  in main_task");
+        logi(f"MWSMAIN@40  MAIN TASK STARTED {get_formatted_date_time_string()}");
 
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
@@ -63,8 +64,16 @@ class MaranrWateringSystem(ElemLoggerABC):
         webserver_task = webserver.start_the_task()
         logi(f"MWSMAIN@64 {webserver_task=}")
     
+        logging_ctr = 999
         while 1:
+            logging_ctr += 1
+            if logging_ctr >= 30:
+                logging_ctr = 0
+                logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
+            logi(f"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ MWSMAIN@73     {logging_ctr=}")
+            logi(f"{get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
             log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
+
             webserver_done = webserver_task.done()
             sensors_done = sensors_task.done()
             displays_done = displays_task.done()
