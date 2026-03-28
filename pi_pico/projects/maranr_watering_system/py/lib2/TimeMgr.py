@@ -106,11 +106,11 @@ class TimeMgr(ElemLoggerABC):
         # Time to call NTP website and update?
         now = time.time()
         elapsed = now - self.latest_ntp_update_secs
-        logi(f"TimeMgr@109  Time for NTP update?  elapsed time {elapsed} / {NTP_UPDATE_INTERVAL_SECS} secs")
-        logi(f"TimeMgr@110  ... now: {now}  latest-ntp-update-secs {self.latest_ntp_update_secs} ")
+        log(f"TimeMgr@109  Time for NTP update?  elapsed time {elapsed} / {NTP_UPDATE_INTERVAL_SECS} secs")
+        log(f"TimeMgr@110  ... now: {now}  latest-ntp-update-secs {self.latest_ntp_update_secs} ")
     
         if elapsed < NTP_UPDATE_INTERVAL_SECS:
-            logi(f"TimeMgr@113  Not time yet for update. elapsed < INTERVAL:  {elapsed} < {NTP_UPDATE_INTERVAL_SECS}")
+            log(f"TimeMgr@113  Not time yet for update. elapsed < INTERVAL:  {elapsed} < {NTP_UPDATE_INTERVAL_SECS}")
             return
     
         logi(f"TimeMgr@116 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {NTP_UPDATE_INTERVAL_SECS=}")
@@ -131,7 +131,7 @@ class TimeMgr(ElemLoggerABC):
         self.latest_ntp_update_secs = now
         self.number_of_ntp_updates += 1
     
-        logi(f"TimeMgr@134  after update, elaspsed is {now-self.latest_ntp_update_secs} ")
+        ###log(f"TimeMgr@134  after update, elapsed is {now-self.latest_ntp_update_secs} ")
     
         # Did time jump by very much?
         jumped_secs = now - now_was
@@ -160,9 +160,8 @@ class TimeMgr(ElemLoggerABC):
         # weekday is 0=Sun, etc
         logi(f"TimeMgr@161 TIME FROM NTP: {current_time} ") # as tuple
         year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-        logi(f"TimeMgr@163 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  ")
         weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"TimeMgr@165   {weekday=}  {yearday=}   {weekday_stg=}")
+        logi(f"TimeMgr@164 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  {weekday=} {weekday_stg=}  {yearday=}")
     
 
 def main():

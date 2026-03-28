@@ -17,6 +17,9 @@ from displays.MwsDisplays import MwsDisplays
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
 from utils import determine_machine_type
+from utils import get_fs_space_string
+from utils import get_memory_status_string
+
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -64,15 +67,18 @@ class MaranrWateringSystem(ElemLoggerABC):
         webserver_task = webserver.start_the_task()
         logi(f"MWSMAIN@64 {webserver_task=}")
     
+        sleep_secs = 3
         logging_ctr = 999
+        logging_ctr_limit = 60 / sleep_secs  # log the time every 60 seconds
         while 1:
             log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
 
             logging_ctr += 1
-            if logging_ctr >= 30:
+            if logging_ctr >= logging_ctr_limit:
                 logging_ctr = 0
-                logi(f"{TimeMgr.get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
-            logi(f"{TimeMgr.get_formatted_date_time_string()} @@@@@@@@@@@@@@@@@@@@@@@@@@@=_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
+                fss = get_fs_space_string()
+                logi(f"{TimeMgr.get_formatted_date_time_string()} =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=  {fss}")
+            ####logi(f"{TimeMgr.get_formatted_date_time_string()} @@@@@@@@@@@@@@@@@@@@@@@@@@@=_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=")
 
             webserver_done = webserver_task.done()
             sensors_done = sensors_task.done()
@@ -103,7 +109,7 @@ class MaranrWateringSystem(ElemLoggerABC):
             """
 
             log(f"MWSMAIN@96  MAIN TASK running  SLEEP 3  ")
-            await asyncio.sleep(3)
+            await asyncio.sleep(sleep_secs)
             self._toggle_onboad_led()
 
 
