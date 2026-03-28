@@ -17,7 +17,6 @@ from lib2.TimeMgr import TimeMgr
 
 from .HttpParser import HttpParser
 from .ReplyBuilder import ReplyBuilder
-from .RequestHandlerLogControl import RequestHandlerLogControl
 from .TemplateGrinder import TemplateGrinder
 from .RHUtils import RHUtils
 
@@ -51,7 +50,7 @@ class RequestHandlerData(ElemLoggerABC):
     def handle_data_request(self, parsed_http):
         params = parsed_http.url_query_parameters
 
-        logi(f"RHD@122  DATA REQ  params={params}")
+        logi(f"RHDATA@54  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
@@ -71,7 +70,7 @@ class RequestHandlerData(ElemLoggerABC):
             data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
 
         json_stg = json.dumps(data_dict)
-        log(f"RHD@142 body: JSON-string:...")  
+        log(f"RHDATA@74 body: JSON-string:...")  
         log(json_stg)
 
         # Build a reply that provides the log lines
@@ -83,16 +82,16 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        m = f"RHD@154  HTTP REPLY to DATA REQUEST:"
+        m = f"RHDATA@86  HTTP REPLY to DATA REQUEST:"
         logi(m)
-        m = f"RHD@156 {reply.long_string()}"
+        m = f"RHDATA@88 {reply.long_string()}"
         logi(m)
 
         return reply
 
             
     def handle_echo_request(self, parsed_http):
-        log(f"RHD@163  _handle_echo_request  ph={parsed_http}")
+        log(f"RHDATA@95  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -134,9 +133,9 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RHD@205 HTTP REPLY to ECHO request "
+        m = f"RHDATA@137 HTTP REPLY to ECHO request "
         logi(m)
-        m = f"RHD@207  {reply.long_string()}"
+        m = f"RHDATA@139  {reply.long_string()}"
         logi(m)
         return reply
 
