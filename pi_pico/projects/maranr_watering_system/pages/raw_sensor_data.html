@@ -29,7 +29,7 @@
         const dataUrl = "data?sensors=ALL"
         let auto_refresh_enabled = true;
 
-        // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
+        // Use setInterval to fetch data every N milliseconds (60000 = 60 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // To pass an arg to the fetch function, using an anonymous go-between function.
         // () => { fff(); } - replaced by real function
@@ -43,19 +43,13 @@
             }
         }
 
-/* OLD        function do_fetch_data() {
-            fetchDataAndUpdate(dataUrl);
-            const statusElt = document.getElementById("refresh-status");
-            statusElt.style.color = "red";
-            statusElt.innerHTML = "Page is refreshing...";
-        }*/
         function do_fetch_data() {
             fetchDataAsync(dataUrl, handleFetchedDataCB);
             const statusElt = document.getElementById("refresh-status");
             statusElt.style.color = "red";
             statusElt.innerHTML = "Page is refreshing...";
         }
-        function handleFetchedDataCB(data) {  // invoked by fetchDataAndUpdate
+        function handleFetchedDataCB(data) {
             const statusElt = document.getElementById("refresh-status");
             statusElt.style.color = "black";
             statusElt.innerHTML = "Page refreshed.";

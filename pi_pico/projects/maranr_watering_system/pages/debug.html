@@ -25,63 +25,63 @@
     </p>
     <p id="refresh-status">refresh-status</p>
 
-    <script src="fetch_data_and_update.js"></script>
+    <script src="fetch_data_async.js"></script>
     <script>
-        const dataUrl = "data?debug=ALL"
-        // Use setInterval to call fetchDataAndUpdate every N millisecs
-        // Ex: 3000 milliseconds (3 seconds)
-        // This function will run repeatedly until the window is closed or clearInterval() is called.
-        // To pass an arg to the fetch function, using an anonymous go-between function.
-        // () => { fff(); } - replaced by real function
-        const intervalId = setInterval(do_fetch_data, 30000);
+    const dataUrl = "data?debug=ALL"
+    // Use setInterval to fetch data every N milliseconds (60000 = 60 seconds)
+    // This function will run repeatedly until the window is closed or clearInterval() is called.
+    // To pass an arg to the fetch function, using an anonymous go-between function.
+    // () => { fff(); } - replaced by real function
+    const intervalId = setInterval(do_fetch_data, 30000);
+
+    function do_fetch_data() {
+        fetchDataAsync(dataUrl, handleFetchedDataCB);
+        const statusElt = document.getElementById("refresh-status");
+        statusElt.style.color = "red";
+        statusElt.innerHTML = "Page is refreshing...";
+    }
+
+    function handleFetchedDataCB(data) {  // invoked by fetch_data_and_update.js
+        const statusElt = document.getElementById("refresh-status");
+        statusElt.style.color = "black";
+        statusElt.innerHTML = "Page refreshed.";
+
+        console.log("FETCHED DATA:...");
+        console.log(data);
+
+        var eltDatetime = document.getElementById('date_time');
+        eltDatetime.innerText = `${data.datetime}`;
+
+        var eltDbStatus = document.getElementById('db_status');
+        //console.log("eltDbStatus=" + eltDbStatus);
+        var dbstatus = `${data.databoard_status}`;
+        //console.log("DBstatus is ...");
+        //console.log(dbstatus)
+        eltDbStatus.innerHTML = dbstatus
+
+        var eltWifiStatus = document.getElementById('wifi_status');
+        var wifi_status = `${data.wifi_state}`;
+        eltWifiStatus.innerText = wifi_status
+    }
+
+    function handleRefreshDataBtnClick() {
+        do_fetch_data();
+    }
+    const refreshDataBtnElt = document.getElementById("refreshDataBtn");
+    refreshDataBtnElt.addEventListener("click", handleRefreshDataBtnClick);
+
+    function handleReloadPageBtnClick() {
+        window.location.reload()
+    }
+    const reloadPageBtnElt = document.getElementById("reloadPageBtn");
+    reloadPageBtnElt.addEventListener("click", handleReloadPageBtnClick);
 
 
-        function do_fetch_data() {
-            fetchDataAndUpdate(dataUrl);
-            const statusElt = document.getElementById("refresh-status");
-            statusElt.style.color = "red";
-            statusElt.innerHTML = "Page is refreshing...";
-        }
-
-        // Optional: Call the function immediately when the page loads for the first update
-        //console.log("FIRST CALL TO THE FETCH");
-        do_fetch_data(dataUrl);
-
-        function handleFetchedData(data) {  // invoked by fetch_data_and_update.js
-            const statusElt = document.getElementById("refresh-status");
-            statusElt.style.color = "black";
-            statusElt.innerHTML = "Page refreshed.";
-
-            console.log("FETCHED DATA:...");
-            console.log(data);
-
-            var eltDatetime = document.getElementById('date_time');
-            eltDatetime.innerText = `${data.datetime}`;
-
-            var eltDbStatus = document.getElementById('db_status');
-            //console.log("eltDbStatus=" + eltDbStatus);
-            var dbstatus = `${data.databoard_status}`;
-            //console.log("DBstatus is ...");
-            //console.log(dbstatus)
-            eltDbStatus.innerHTML = dbstatus
-
-            var eltWifiStatus = document.getElementById('wifi_status');
-            var wifi_status = `${data.wifi_state}`;
-            eltWifiStatus.innerText = wifi_status
-        }
-
-        function handleRefreshDataBtnClick() {
-            do_fetch_data();
-        }
-        const refreshDataBtnElt = document.getElementById("refreshDataBtn");
-        refreshDataBtnElt.addEventListener("click", handleRefreshDataBtnClick);
-
-        function handleReloadPageBtnClick() {
-            window.location.reload()
-        }
-        const reloadPageBtnElt = document.getElementById("reloadPageBtn");
-        reloadPageBtnElt.addEventListener("click", handleReloadPageBtnClick);
-
+    function myLoadedFunction() {
+      console.log("The entire page, including images and resources, has fully loaded.");
+      do_fetch_data();
+    }
+    window.addEventListener('load', myLoadedFunction);
 
     </script>
 </body>
