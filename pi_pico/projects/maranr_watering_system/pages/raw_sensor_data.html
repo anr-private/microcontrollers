@@ -33,7 +33,7 @@
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // To pass an arg to the fetch function, using an anonymous go-between function.
         // () => { fff(); } - replaced by real function
-        const intervalId = setInterval(auto_fetch_data, 10000);
+        const intervalId = setInterval(auto_fetch_data, 60000);
         function auto_fetch_data() {
             if (auto_refresh_enabled) {
                 console.log("AUTOREFRESH is ON!");
@@ -77,6 +77,15 @@
                 auto_refresh_enabled = true;
             }
             console.log("AUTOREFRESH state is " + auto_refresh_enabled);
+
+            const btnElt = document.getElementById("autoRefreshBtn");
+            if (auto_refresh_enabled) {
+                btnElt.style.color = "black";
+                btnElt.style.backgroundColor = "white";
+            } else {
+                btnElt.style.color = "red";
+                btnElt.style.backgroundColor = "yellow";
+            }
         }
         const autoRefreshBtnElt = document.getElementById("autoRefreshBtn");
         autoRefreshBtnElt.addEventListener("click", handleAutoRefreshBtnClick);
