@@ -44,13 +44,12 @@ class _State:
     state = None
 
     def __init__(self):
+        self.restarts_counter = 0
+
         self.state = 1
         self.wlan = None
         self.sleep_secs = 1
         self.status_retries = 0
-        self.restarts_counter = 0
-        self.latest_ntp_update_secs = 0 # 'a long time ago'
-        self.num_ntp_updates = 0
         self.check_connected_ctr = 0
 
     def nullify(self):
@@ -58,19 +57,15 @@ class _State:
         self.wlan = None
         self.sleep_secs = 1
         self.status_retries = 0
+        self.check_connected_ctr = 0
         
     def __str__(self):
-        ntp_elapsed = time.time() - self.latest_ntp_update_secs
-        elapsed_stg = f"{ntp_elapsed}/{NTP_UPDATE_INTERVAL_SECS}"
         s = []
         s.append("state=%s" % str(self.state))
         s.append("wlan=%s" % str(self.wlan))
         s.append("sleepSecs=%s" % str(self.sleep_secs))
         s.append("retries=%s" % str(self.status_retries))
         s.append("restarts_counter=%s" % str(self.restarts_counter))
-        s.append("latest_ntp_update_secs=%s" % str(self.latest_ntp_update_secs))
-        s.append("ntp_elapsed_secs=%s" % str(elapsed_stg))
-        s.append("num_ntp_updates=%s" % str(self.num_ntp_updates))
         s.append("check_connected_ctr=%s" % str(self.check_connected_ctr))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
@@ -167,7 +162,7 @@ class MwsWifi(ElemLoggerABC):
         return 2
 
     def _state_create_wlan_obj(self, st):
-        #@@@@@self._nullify_connection_state(st)
+        #@@@@@self._nullify_connection_state(st) TODO wtf?
         # Connect to WLAN
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
@@ -216,7 +211,6 @@ class MwsWifi(ElemLoggerABC):
         else:
             log(m)
 
-        #@@@@@@@@@@@self._wifi_set_time_from_ntp(st)
         self._time_mgr.set_time_clock_from_ntp()
 
         st.sleep_secs = 10
@@ -239,7 +233,7 @@ class MwsWifi(ElemLoggerABC):
         st.nullify()
         # Clean up if possible
         if wlan is not None:
-            #@@@@@@@@@@@@@@@@$$$$$$$$$$$$ ADD try/except
+            #@@@@@@@@@@@@@@@@$$$$$$$$$$$$ ADD try/except TODO
             m = "MwsWifi@231 DISCONNECT the wlan object."
             logi(m)
             wlan.active(False)

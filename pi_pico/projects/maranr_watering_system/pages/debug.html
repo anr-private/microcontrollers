@@ -19,9 +19,11 @@
         Wifi: <span id="wifi_status">wifi status </span>
     </div>
 
-    <p><a href="debug.html"> REFRESH </a> &nbsp; &nbsp; 
+    <p><button id="refreshDataBtn">REFRESH the DATA</button> &nbsp; &nbsp;
+       <button type="button" id="reloadPageBtn">Reload this Page</button> &nbsp; &nbsp;
        <a href="index.html"> BACK </a>
     </p>
+    <p id="refresh-status">refresh-status</p -->
 
     <script src="fetch_data_and_update.js"></script>
     <script>
@@ -30,17 +32,26 @@
         // Ex: 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // To pass an arg to the fetch function, using an anonymous go-between function.
-        const intervalId = setInterval(
-            () =>   {
-                        fetchDataAndUpdate(dataUrl);
-                    },
-            10000);
+        // () => { fff(); } - replaced by real function
+        const intervalId = setInterval(do_fetch_data, 30000);
+
+
+        function do_fetch_data() {
+            fetchDataAndUpdate(dataUrl);
+            const statusElt = document.getElementById("refresh-status");
+            statusElt.style.color = "red";
+            statusElt.innerHTML = "Page is refreshing...";
+        }
 
         // Optional: Call the function immediately when the page loads for the first update
         //console.log("FIRST CALL TO THE FETCH");
-        fetchDataAndUpdate(dataUrl);
+        do_fetch_data(dataUrl);
 
         function handleFetchedData(data) {  // invoked by fetch_data_and_update.js
+            const statusElt = document.getElementById("refresh-status");
+            statusElt.style.color = "black";
+            statusElt.innerHTML = "Page refreshed.";
+
             console.log("FETCHED DATA:...");
             console.log(data);
 
@@ -58,6 +69,19 @@
             var wifi_status = `${data.wifi_state}`;
             eltWifiStatus.innerText = wifi_status
         }
+
+        function handleRefreshDataBtnClick() {
+            do_fetch_data();
+        }
+        const refreshDataBtnElt = document.getElementById("refreshDataBtn");
+        refreshDataBtnElt.addEventListener("click", handleRefreshDataBtnClick);
+
+        function handleReloadPageBtnClick() {
+            window.location.reload()
+        }
+        const reloadPageBtnElt = document.getElementById("reloadPageBtn");
+        reloadPageBtnElt.addEventListener("click", handleReloadPageBtnClick);
+
 
     </script>
 </body>
