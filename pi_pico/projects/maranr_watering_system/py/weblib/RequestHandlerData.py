@@ -35,7 +35,7 @@ class RequestHandlerData(ElemLoggerABC):
     def __init__(self):
         self.default_file = "/pages/index.htmlp"
         self.default_subdir = "pages"
-        self._grinder = TemplateGrinder()
+        self._grinder = TemplateGrinder.get_instance()
         self._data_board = DataBoard.get_instance()
         self.__rhu = RHUtils()  # just to set up its logging
         super().__init__()

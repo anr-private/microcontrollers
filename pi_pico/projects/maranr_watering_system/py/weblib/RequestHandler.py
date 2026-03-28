@@ -37,7 +37,7 @@ class RequestHandler(ElemLoggerABC):
     def __init__(self):
         self.default_file = "/pages/index.htmlp"
         self.default_subdir = "pages"
-        self._grinder = TemplateGrinder()
+        self._grinder = TemplateGrinder.get_instance()
         self._data_board = DataBoard.get_instance()
         self._rh_data = RequestHandlerData()
         self._rh_log = RequestHandlerLog()

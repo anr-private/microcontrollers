@@ -27,11 +27,31 @@ BODY_SUBS = {
     "date-time": (TimeMgr.get_formatted_date_time_string, ()),
     }
 
-
+VALIDATE = 7020405
 
 class TemplateGrinder(ElemLoggerABC):
     
-    def __init__(self):
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is not None: return cls._instance
+        cls._instance = TemplateGrinder(VALIDATE)
+        return cls._instance
+
+    @classmethod
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        ElemLogControl._instance = None
+        # Remove any messages - unit test only
+        #ElemLogControl._clear_latest_messages()
+
+
+    def __init__(self, validate=None):
+        if validate != VALIDATE:
+            m = f"TG@52 CALLED CTOR use get_instance()"
+            raise RuntimeError(m)
+
         #self.num = num
         super().__init__()
 
@@ -86,7 +106,7 @@ class TemplateGrinder(ElemLoggerABC):
         return processed_line
 
 
-    def grind_one_line(self, lno, raw_line):
+    def _grind_one_line(self, lno, raw_line):
 
         processed_line = raw_line
         # repeat substitution - handles nested substitution items like [[my [[date]] bday]]
@@ -98,13 +118,13 @@ class TemplateGrinder(ElemLoggerABC):
         return processed_line
 
 
-    def grind_lines(self, lines):
+    def _grind_lines(self, lines):
 
         processed_lines = list()
 
         for lno, line in enumerate(lines):
 
-            processed_line = self.grind_one_line(lno, line)
+            processed_line = self._grind_one_line(lno, line)
 
             processed_lines.append(processed_line)
 
@@ -126,7 +146,7 @@ class TemplateGrinder(ElemLoggerABC):
 
         raw_lines = self._split_the_file_contents(file_contents)
 
-        processed_lines = self.grind_lines(raw_lines)
+        processed_lines = self._grind_lines(raw_lines)
 
         ###new_contents_by tes = b"\n".join(processed_lines)
         new_contents_stg = "\n".join(processed_lines)
