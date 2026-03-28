@@ -35,6 +35,10 @@ class DataBoard(ElemLoggerABC):
         self.webserver_active = False
         self.internal_temp_f = 0
         self.internal_temp_c = 0
+        self.time_mgr_latest_ntp_update_secs = 0
+        self.time_mgr_number_of_ntp_updates = 0
+        self.time_mgr_number_of_time_jumps = 0
+        self.time_mgr_maximum_time_jump_secs = 0
         super().__init__()
 
     @classmethod
@@ -63,6 +67,18 @@ class DataBoard(ElemLoggerABC):
         print(f"DataBoard@64  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
 
+    def post_time_mgr_status(self, 
+                        latest_ntp_update_secs,
+                        number_of_ntp_updates,
+                        number_of_time_jumps,
+                        maximum_time_jump_secs):
+
+        self.time_mgr_latest_ntp_update_secs = latest_ntp_update_secs
+        self.time_mgr_number_of_ntp_updates = number_of_ntp_updates
+        self.time_mgr_number_of_time_jumps = number_of_time_jumps
+        self.time_mgr_maximum_time_jump_secs = maximum_time_jump_secs
+
+
     def set_internal_temps(self, degsF, degsC):
         self.internal_temp_f = degsF
         self.internal_temp_c = degsC
@@ -82,6 +98,8 @@ class DataBoard(ElemLoggerABC):
     def status_lines(self):
         lines = []
         lines.append(f"DataBoard State:  {self.system_state}")
+        lines.append(f" NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates}")
+        lines.append(f" NTP Number-of-time-jumps: {self.time_mgr_number_of_time_jumps}  Max.time-jump-secs: {self.time_mgr_maximum_time_jump_secs}  ")
         lines.append(f" IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'}")
         lines.append(f" system.state={self.system_state} ")
         lines.append(f" Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")

@@ -106,6 +106,7 @@ class RequestHandlerLogControl(ElemLoggerABC):
 
         for line in lines:
             line = line.replace('\n', '')
+            line = line.replace('<br>', '')
             line += "<br>"
             html_lines.append(line)
         lines = None

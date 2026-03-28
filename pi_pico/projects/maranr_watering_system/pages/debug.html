@@ -19,20 +19,22 @@
         Wifi: <span id="wifi_status">wifi status </span>
     </div>
 
-    <p><a href="index.html"> BACK </a>
-
+    <p><a href="debug.html"> REFRESH </a> &nbsp; &nbsp; 
+       <a href="index.html"> BACK </a>
+    </p>
 
     <script src="fetch_data_and_update.js"></script>
     <script>
         const dataUrl = "data?debug=ALL"
-        // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
+        // Use setInterval to call fetchDataAndUpdate every N millisecs
+        // Ex: 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
-        // In order to pass an arg to the function, we use an anonymous go-between function.
+        // To pass an arg to the fetch function, using an anonymous go-between function.
         const intervalId = setInterval(
             () =>   {
                         fetchDataAndUpdate(dataUrl);
                     },
-            5000);
+            10000);
 
         // Optional: Call the function immediately when the page loads for the first update
         //console.log("FIRST CALL TO THE FETCH");

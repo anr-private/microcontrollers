@@ -18,6 +18,10 @@ except Exception as ex:
     import gc_FAKE as gc
     print(f"utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
+from logger_elem.ElemLoggerABC import ElemLoggerABC
+from lib2.DataBoard import DataBoard
+
+
 #TODO ADD table for daylight savings time changes
 
 NTP_UPDATE_INTERVAL_SECS = 60 # 3600 (once/hour) how often we update @@@@@@@@@@@@@@@@@@@TODO
@@ -56,11 +60,11 @@ class TimeMgr(ElemLoggerABC):
         self.number_of_ntp_updates = 0
         self.number_of_time_jumps = 0
         self.maximum_time_jump_secs = 0
+        self._data_board = None
         super().__init__()
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        prt(f"TimeMgr@34 _set_logger  logger is {logger}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -85,7 +89,7 @@ class TimeMgr(ElemLoggerABC):
 
     @staticmethod
     def get_formatted_local_time():
-        now = get_local_time()
+        now = TimeMgr.get_local_time()
         # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
         date_str = "{}-{}-{}".format(now[0], now[1], now[2])
         time_str = "{:02d}:{:02d}:{:02d}".format(now[3], now[4], now[5])
@@ -93,7 +97,7 @@ class TimeMgr(ElemLoggerABC):
 
     @staticmethod
     def get_formatted_date_time_string():
-        date_stg,time_stg = get_formatted_local_time()
+        date_stg,time_stg = TimeMgr.get_formatted_local_time()
         return f"{date_stg} {time_stg}"
 
 
@@ -102,54 +106,63 @@ class TimeMgr(ElemLoggerABC):
         # Time to call NTP website and update?
         now = time.time()
         elapsed = now - self.latest_ntp_update_secs
-        logi(f"TimeUtils@79  Time for NTP update?  elapsed time {elapsed} secs   {NTP_UPDATE_INTERVAL_SECS=}")
-        logi(f"TimeUtils@80  ... now: {now}  latest-ntp-update-secs {self.latest_ntp_update_secs} ")
+        logi(f"TimeMgr@109  Time for NTP update?  elapsed time {elapsed} / {NTP_UPDATE_INTERVAL_SECS} secs")
+        logi(f"TimeMgr@110  ... now: {now}  latest-ntp-update-secs {self.latest_ntp_update_secs} ")
     
         if elapsed < NTP_UPDATE_INTERVAL_SECS:
-            logi(f"TimeUtils@83  Not time yet for update. elapsed < INTERVAL:  {elapsed} < {NTP_UPDATE_INTERVAL_SECS}")
+            logi(f"TimeMgr@113  Not time yet for update. elapsed < INTERVAL:  {elapsed} < {NTP_UPDATE_INTERVAL_SECS}")
             return
     
-        logi(f"TimeUtils@86 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {NTP_UPDATE_INTERVAL_SECS=}")
+        logi(f"TimeMgr@116 TIME TO PERFORM NTP TIME UPDATE  {elapsed=} secs.  {NTP_UPDATE_INTERVAL_SECS=}")
     
         now_was = now
     
         try:
             ntptime.settime()
         except Exception as ex:
-            logi(f"TimeUtils@93 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}")
+            logi(f"TimeMgr@123 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}")
             return False
     
         now = time.time()
-        logi(f"TimeUtils@97 set_time_clock_from_ntp  Micropython epoch: {now} secs.  unix: {get_time_unix_seconds(now)}")
+        logi(f"TimeMgr@127 set_time_clock_from_ntp  Micropython epoch: {now} secs.  unix: {TimeMgr.get_time_unix_seconds(now)}")
         #print("Seconds since MicroPython epoch (2000):", micropython_timestamp)
         #print("Seconds since Unix epoch (1970):", unix_timestamp)
     
         self.latest_ntp_update_secs = now
         self.number_of_ntp_updates += 1
     
-        logi(f"TimeUtils@104  after update, elaspsed is {now-self.latest_ntp_update_secs} ")
+        logi(f"TimeMgr@134  after update, elaspsed is {now-self.latest_ntp_update_secs} ")
     
         # Did time jump by very much?
         jumped_secs = now - now_was
-        logi(f"TimeUtils@108  TIME-JUMP-DELTA secs {jumped_secs}")
-        self.maximum_time_jump_secs = max(jumped_secs, self.maximum_time_jump_secs)
-        if abs(jumped_secs) > 10:
+        logi(f"TimeMgr@138  TIME-JUMP-DELTA secs {jumped_secs}   prior-num-jumps: {self.number_of_time_jumps}  prior-max-jmp-secs: {self.maximum_time_jump_secs}")
+        if abs(jumped_secs) > 10 and jumped_secs < 1700:  # at startup the jump is big - ignore it
             self.number_of_time_jumps += 1
-            logi(f"TimeUtils@111  ***************** TIME JUMPED!   {jumped_secs} secs  *************************")
-            logi(f"TimeUtils@112  ***************** TIME JUMPED!   Number of jumps: {self.number_of_time_jumps}  *************************")
-            logi(f"TimeUtils@111  ***************** TIME JUMPED:   Max jump: {self.maximum_time_jump_secs} secs")
+            self.maximum_time_jump_secs = max(jumped_secs, self.maximum_time_jump_secs)
+            logi(f"TimeMgr@142  ***************** TIME JUMPED!   {jumped_secs} secs  *************************")
+            logi(f"TimeMgr@143  ***************** TIME JUMPED!   Number of jumps: {self.number_of_time_jumps}  *************************")
+            logi(f"TimeMgr@144  ***************** TIME JUMPED:   Max jump: {self.maximum_time_jump_secs} secs")
     
+        # Report our status
+        if self._data_board is None: self._data_board = DataBoard.get_instance()
+        self._data_board.post_time_mgr_status(
+                        self.latest_ntp_update_secs,
+                        self.number_of_ntp_updates,
+                        self.number_of_time_jumps,
+                        self.maximum_time_jump_secs)
+
+
         # verify the time
         current_time = time.localtime()
         
         # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
         # (year, month, mday, hour, minute, second, weekday, yearday)
         # weekday is 0=Sun, etc
-        logi(f"TimeUtils@121 TIME FROM NTP: {current_time} ") # as tuple
+        logi(f"TimeMgr@161 TIME FROM NTP: {current_time} ") # as tuple
         year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
-        logi(f"TimeUtils@123 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  ")
+        logi(f"TimeMgr@163 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  ")
         weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"TimeUtils@125   {weekday=}  {yearday=}   {weekday_stg=}")
+        logi(f"TimeMgr@165   {weekday=}  {yearday=}   {weekday_stg=}")
     
 
 def main():
