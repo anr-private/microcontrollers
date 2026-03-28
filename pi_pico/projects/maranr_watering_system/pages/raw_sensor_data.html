@@ -16,15 +16,15 @@
       <span id="internal_temp_C">internal_temp_C</span>
     </div>
     <p>
-       <button id="autoRefreshBtn">Auto Refresh</button> &nbsp; &nbsp;
-       <button id="refreshDataBtn">Refresh theData</button> &nbsp; &nbsp;
-       <button id="reloadPageBtn">Reload this Page</button> &nbsp; &nbsp;
+       <button type="button" id="autoRefreshBtn">Auto Refresh</button> &nbsp; &nbsp;
+       <button type="button" id="refreshDataBtn">Refresh theData</button> &nbsp; &nbsp;
+       <button type="button" id="reloadPageBtn">Reload this Page</button> &nbsp; &nbsp;
        <a href="index.html"> BACK </a>
     </p>
     <p id="refresh-status">refresh-status</p>
 
 
-    <script src="fetch_data_and_update.js"></script>
+    <script src="fetch_data_async.js"></script>
     <script>
         const dataUrl = "data?sensors=ALL"
         let auto_refresh_enabled = true;
@@ -43,13 +43,19 @@
             }
         }
 
-        function do_fetch_data() {
+/* OLD        function do_fetch_data() {
             fetchDataAndUpdate(dataUrl);
             const statusElt = document.getElementById("refresh-status");
             statusElt.style.color = "red";
             statusElt.innerHTML = "Page is refreshing...";
+        }*/
+        function do_fetch_data() {
+            fetchDataAsync(dataUrl, handleFetchedDataCB);
+            const statusElt = document.getElementById("refresh-status");
+            statusElt.style.color = "red";
+            statusElt.innerHTML = "Page is refreshing...";
         }
-        function handleFetchedData(data) {  // invoked by fetchDataAndUpdate
+        function handleFetchedDataCB(data) {  // invoked by fetchDataAndUpdate
             const statusElt = document.getElementById("refresh-status");
             statusElt.style.color = "black";
             statusElt.innerHTML = "Page refreshed.";
