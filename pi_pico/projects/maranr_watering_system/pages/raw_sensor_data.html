@@ -15,26 +15,45 @@
       Internal temps:&nbsp; <span id="internal_temp_F">internal_temp_F</span> &nbsp;&nbsp;
       <span id="internal_temp_C">internal_temp_C</span>
     </div>
-    <p><a href="index.html"> BACK </a>
+    <p>
+       <button id="autoRefreshBtn">Auto Refresh</button> &nbsp; &nbsp;
+       <button id="refreshDataBtn">Refresh theData</button> &nbsp; &nbsp;
+       <button id="reloadPageBtn">Reload this Page</button> &nbsp; &nbsp;
+       <a href="index.html"> BACK </a>
+    </p>
+    <p id="refresh-status">refresh-status</p>
 
 
     <script src="fetch_data_and_update.js"></script>
     <script>
         const dataUrl = "data?sensors=ALL"
+        let auto_refresh_enabled = true;
+
         // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
-        // In order to pass an arg to the function, we use an anonymous go-between function.
-        const intervalId = setInterval(
-            () =>   {
-                        fetchDataAndUpdate(dataUrl);
-                    },
-            5000);
+        // To pass an arg to the fetch function, using an anonymous go-between function.
+        // () => { fff(); } - replaced by real function
+        const intervalId = setInterval(auto_fetch_data, 10000);
+        function auto_fetch_data() {
+            if (auto_refresh_enabled) {
+                console.log("AUTOREFRESH is ON!");
+                do_fetch_data();
+            } else {
+                console.log("AUTOREFRESH is OFF!");
+            }
+        }
 
-        // Optional: Call the function immediately when the page loads for the first update
-        //console.log("FIRST CALL TO THE FETCH");
-        fetchDataAndUpdate(dataUrl);
+        function do_fetch_data() {
+            fetchDataAndUpdate(dataUrl);
+            const statusElt = document.getElementById("refresh-status");
+            statusElt.style.color = "red";
+            statusElt.innerHTML = "Page is refreshing...";
+        }
+        function handleFetchedData(data) {  // invoked by fetchDataAndUpdate
+            const statusElt = document.getElementById("refresh-status");
+            statusElt.style.color = "black";
+            statusElt.innerHTML = "Page refreshed.";
 
-        function handleFetchedData(data) {  // invoked by fetD
             console.log("FETCHED DATA:...");
             console.log(data);
             var eltDatetime = document.getElementById('date_time');
@@ -44,6 +63,37 @@
             var eltTempF = document.getElementById('internal_temp_F');
             eltTempF.innerText = `${data.internal_temp_f} °F`;
         }
+
+        function handleAutoRefreshBtnClick() {
+            if (auto_refresh_enabled) {
+                auto_refresh_enabled = false;
+            } else {
+                auto_refresh_enabled = true;
+            }
+            console.log("AUTOREFRESH state is " + auto_refresh_enabled);
+        }
+        const autoRefreshBtnElt = document.getElementById("autoRefreshBtn");
+        autoRefreshBtnElt.addEventListener("click", handleAutoRefreshBtnClick);
+
+        function handleRefreshDataBtnClick() {
+            do_fetch_data();
+        }
+        const refreshDataBtnElt = document.getElementById("refreshDataBtn");
+        refreshDataBtnElt.addEventListener("click", handleRefreshDataBtnClick);
+
+        function handleReloadPageBtnClick() {
+            window.location.reload()
+        }
+        const reloadPageBtnElt = document.getElementById("reloadPageBtn");
+        reloadPageBtnElt.addEventListener("click", handleReloadPageBtnClick);
+
+    // Define your function
+    function myLoadedFunction() {
+      console.log("The entire page, including images and resources, has fully loaded.");
+      do_fetch_data();
+    }
+    // Add an event listener to the window object
+    window.addEventListener('load', myLoadedFunction);
 
     </script>
 </body>
