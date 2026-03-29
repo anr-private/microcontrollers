@@ -53,7 +53,7 @@
       &nbsp; &nbsp; 
       <a href="debug.html">Debug</a>
      <br>
-       <a href="log?settings=ALL">LOG-settings</a> 
+       <a href="log_settings.html">LOG-settings</a> 
        &nbsp;
        <a href="log?linenumber=40&numlines=40">LOG-lines</a> 
     </p>

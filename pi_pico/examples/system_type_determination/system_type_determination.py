@@ -20,25 +20,32 @@ def determine_machine_name(verbose=False):
     os_uname = os.uname()
 
     if verbose:
+        print("\nos.name() values:...")        
         for x in os_uname:
             print(f"   {x}")
         ##print(os_uname["machine"])
-
+        print()
+        
     raw_machine_name = os_uname[4]
     raw_machine_name_lc = raw_machine_name.lower()
-    if verbose: print(f"  machine_name_lc={machine_name_lc}")
+    if verbose: print(f"  raw_machine_name_lc={raw_machine_name_lc}")
 
     if "pi pico w" in raw_machine_name_lc:
         machine_name = "pi pico w"
+    elif "pi pico 2 w" in raw_machine_name_lc:
+        machine_name = "pi pico 2 w"
     else:
         machine_name = "unknown"
     return machine_name
 
 def main():
-    machine_name = determine_machine_name()
+    machine_name = determine_machine_name(1)
     
+    print(f"\nMAIN:  got machine_name '{machine_name}'");    
     if "pi pico w" in machine_name:
         print(f"Machine is a Pi Pico W    machine_name='{machine_name}'")
+    elif "pi pico 2 w" in machine_name:
+        print(f"Machine is a Pi Pico 2 W    machine_name='{machine_name}'")
     else:
         print(f"Unknown system/hardware   machine_name='{machine_name}'")
     print()
