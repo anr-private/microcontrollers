@@ -147,7 +147,7 @@ class MaranrWateringSystem(ElemLoggerABC):
     def _get_onboard_led(self):
         this_machine = determine_machine_type()
 
-        if this_machine == "pi pico w":
+        if this_machine in ["pi pico w", "pi pico 2 w"]:
             # 'EXT_GPIO0'  GPIO zero on the wifi chip (not the Pico)
             led = machine.Pin("LED", machine.Pin.OUT)
         else:
