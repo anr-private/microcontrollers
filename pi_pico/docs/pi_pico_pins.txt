@@ -73,6 +73,14 @@ worse efficiency. The PFM mode can work well but the flipping between
 PFM  and PWM modes causes noise in the 3.3v supply.
 Under heavy load the switcher will be in PWM mode always, regardless of
 the PS pin state.
+ 
+- POWER SUPPLY MODES vs POWER / CURRENT DRAW
+                Typical
+Mode           Idle Current   Justification
+PFM (Default)  ~1.3 mA to 2.0 mA   
+PWM            ~7.0 mA to 12.0 mA  
+PFM mode optimizes battery life by reducing switching frequency.
+PWM mode / continuous switching adds a constant overhead of roughly 5–10 mA.
 
 
 POWER PINS  =====================================
