@@ -10,7 +10,7 @@
 # The default pin specified below is GPIO28, which is ADC2.
 # There are also pins GPIO26 (ADC0) and GPIO26 (ADC1).
 # There are 2 modes for sampling the data; they are 
-# controlled in get_scaled_raw_value_value(). One mode uses the data
+# controlled in get_scaled_raw_value(). One mode uses the data
 # as it comes directly from the pin; the other divides by 
 # 16 (shifts >>4), which reduces the noise seen in the lower bits.
 # See values SCALE_BY_xxx defined below.
@@ -49,8 +49,12 @@ import time
 # used to obtain the final input value.
 ADAPTIVE_MODE = True
 
-LOW_VALUE = 0
-HIGH_VALUE = 4095
+SLEEP_SECS = 0.33
+#SLEEP_SECS = 2
+
+
+LOW_LIMIT = None
+HIGH_LIMIT = None
 
 # If True, forces PWM mode.
 # Else allows the power supply to switch between PFM and PWM modes
@@ -76,7 +80,7 @@ def get_scaled_raw_value():
     raw_value = potentiometer.read_u16()
     if SCALE_BY_1:
         return raw_value
-    if SCALE_BY_16
+    if SCALE_BY_16:
         return raw_value >> 4  # div by 16
     raise RuntimeError("Line 65: no SCALE mode is specified")
 
@@ -92,11 +96,11 @@ def force_PWM_mode():
     # Initialize GPIO23 as an output
     # Using .on() or .value(1) sets it high (3.3V)
 
-    globalPS_MODE_CONTROL_PIN
+    global PS_MODE_CONTROL_PIN
 
     gp23 = machine.Pin(23, machine.Pin.OUT)
     gp23.on()  # or gp23.value(1)
-    print("PWM MODE is being forced to reduce power supply mode!")
+    print("PWM MODE is being forced to reduce power supply noise!")
     PS_MODE_CONTROL_PIN = None 
 
     return gp23
@@ -107,35 +111,35 @@ def get_gp23_value():
     return PS_MODE_CONTROL_PIN.value()
 
 
-def calibrate(gp23):
+def calibrate():
     # Originally an attempt to do scaling dynamically.
     # Now used as the main 'get some values' function
+
+    global LOW_LIMIT, HIGH_LIMIT
 
     gp23_value = get_gp23_value()
     
     print(f"=== CALIBRATE ============  GP23.value={gp23_value}")
     
-    # starting values
-    high = 0       # <= 0
-    low = 66000  # > 65535
-
     while True:
-        gp23_value = get_gp23_value(gp23)
+        gp23_value = get_gp23_value()
         
-        raw_val = get_scaled_raw_value_value()
+        raw_val = get_scaled_raw_value()
 
         if ADAPTIVE_MODE:
-            if raw_val > high: high = raw_val
-            if raw_val <  low:  low = raw_val
+            if raw_val > HIGH_LIMIT: HIGH_LIMIT = raw_val
+            if raw_val <  LOW_LIMIT:  LOW_LIMIT = raw_val
         
-        delta = high - low
+        delta = HIGH_LIMIT - LOW_LIMIT
         if delta > 0:
             curr_pct = raw_val * 100 / delta
         else:
             curr_pct = 0
         
-        print(f"  low={low:6d}  high={high:6d}   raw={raw_val:6d}  pct={curr_pct:5.2f}    gp23.value={gp23_value}")
-        time.sleep(0.33)
+
+        using_adaptive_mode = "(ADAPTIVE mode)" if ADAPTIVE_MODE else "(non-adaptive)"
+        print(f"  low={LOW_LIMIT:6d}  high={HIGH_LIMIT:6d}   raw={raw_val:6d}  pct={curr_pct:5.2f}  {using_adaptive_mode}  gp23.value={gp23_value}")
+        time.sleep(SLEEP_SECS)
         
 
 def run__NOTUSED(gp23):
@@ -144,7 +148,7 @@ def run__NOTUSED(gp23):
     # so this function is not currently used.
     while True:
         # Read raw 16-bit value (0 to 65535)
-        raw_value = get_scaled_raw_value_value()
+        raw_value = get_scaled_raw_value()
         
         # Convert raw value to voltage
         voltage = raw_value * conversion_factor
@@ -158,18 +162,18 @@ def run__NOTUSED(gp23):
         time.sleep(0.5)
 
 def main():
-    global LOW_VALUE
-    global HIGH_VALUE
+    global LOW_LIMIT
+    global HIGH_LIMIT
 
     if FORCE_PWM_MODE:
         force_PWM_mode()
 
     if SCALE_BY_16:
-        LOW_VALUE = 0
-        HIGH_VALUE = 4095
+        LOW_LIMIT = 0
+        HIGH_LIMIT = 4095
     elif SCALE_BY_1: 
-        LOW_VALUE = 0
-        HIGH_VALUE = 65535
+        LOW_LIMIT = 0
+        HIGH_LIMIT = 65535
     else:
         raise RuntimeError("Line 163: No SCALE_BY_xxx value has been selected.")
 
@@ -178,11 +182,14 @@ def main():
         # be adjusted adaptively as the program runs.
         # The adjustment values are just SWAG guesses so far...
         if SCALE_BY_16:
-            LOW_VALUE += 150
-            HIGH_VALUE -= 150
+            LOW_LIMIT += 50
+            HIGH_LIMIT -= 50
         elif SCALE_BY_1: 
-            LOW_VALUE += 500
-            HIGH_VALUE -= 500
+            LOW_LIMIT += 500
+            HIGH_LIMIT -= 500
+
+    print(f"MAIN:  starting values are {LOW_LIMIT=}  {HIGH_LIMIT=}  ")
+
 
     calibrate()
     ###run()
