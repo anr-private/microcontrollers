@@ -14,7 +14,8 @@ import utime
 # board pin 20 is GPIO 15
 #pin = 25
 #pin = 15
-pin=2
+#pin=2
+pin=15
 LED = machine.Pin(pin, machine.Pin.OUT)
 
 while True:

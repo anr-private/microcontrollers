@@ -29,14 +29,49 @@ BEST PINS for simple i/o and switching
     GP14/15 are used for UART1 default, but are freely available if not using UART1. 
 
 
+ADC PINs  ===========================================
+
+Potentiometer: use 10K on ADC pins:
+  * Optimal Input Impedance: The RP2040 chip's ADC is optimized for sources 
+      with an output impedance of 10kΩ or less. A 10kΩ potentiometer provides 
+      a good balance between accuracy and current draw.
+  * Low Power Consumption: keeps current draw low (approx 0.33mA at 3.3V) 
+      while allowing the Analog-to-Digital Converter's sampling capacitor 
+      to charge quickly enough for accurate readings.
+  * Standard Component: widely available, linear, and work perfectly with 
+     the 3.3V logic used by the Pico. Use the B / LINEAR pots, not the
+     A / AUDIO pots (logarithmic).
+  * Lower ohms (1K, 5K) may be a bit more accurate but draw more current.
+  * Higher (100K) do not allow the ADC's capacitor to charge fully,
+      so values are erratic.
+  * Connect outer pins of pot to +3.3v and GND. Center/wiper to ADC pin.
+
+- ADC VREF pin  (physical pin 35)
+
+ * Default Behavior: Without an external connection, the Pico uses the
+   3.3v supply (filtered through 200 ohm & 1uF as the reference. 
+   This can be noisy and vary depending on the power source.
+ * Improving Accuracy: For better performance, connect an external voltage 
+   reference (e.g. 3.0V ref) to stabilize ref voltage, gives more accuracy.
+ * Using 3.3v is not recommended but can work.
+ * Analog Ground: Use the separate AGND pin (Pin 33) as the ground 
+   for your analog sensors to reduce digital noise. 
+
+
 POWER PINS  =====================================
+
+POWER LIMITS
+  50ma max combined GPIO
+  3.3v pin can support 300mA (in addition to the 50mA on GPIO)
+  A single GPIO has 12 to 16mA max.
+  VBUS 5v  750mA max.
 
 These are not GPIO numbered - they use 'raw' hardware pin numbers (1-40)
 
 HW   NAME      FUNCTION
 PIN
 ---- -------- -----------------------------------------------------------
-40   VBUS     5v directly from USB
+40   VBUS     5v directly from USB  750mA max.
 39   VSYS     1.8 - 5.5v power to Pico  (See note below)
 38   GND
 37   3V3_EN   Connects to the board SMPS enable pin. It is a hardware power 
