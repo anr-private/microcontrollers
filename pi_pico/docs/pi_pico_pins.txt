@@ -57,6 +57,23 @@ Potentiometer: use 10K on ADC pins:
  * Analog Ground: Use the separate AGND pin (Pin 33) as the ground 
    for your analog sensors to reduce digital noise. 
 
+- STABLIZING THE POWER SUPPLY
+
+If you do not supply 3.0v to ADC VREF, Pico uses the 3.3v supply (physical 36).
+The voltage is not stable because the power supply (PS) uses 2 modes.
+GPIO23 controls the RT6150 PS (Power Save) pin. When PS is low (the default
+on Pico) the regulator is in Pulse Frequency Modulation mode.
+At light loads, this saves considerable power by only turning on the 
+switching MOSFETs occasionally to keep the output capacitor topped up. 
+Setting PS high forces the regulator into Pulse Width Modulation (PWM) mode
+constantly.
+PWM mode forces the SMPS to switch continuously, which reduces the 
+output ripple considerably at light loads but at the expense of much 
+worse efficiency. The PFM mode can work well but the flipping between
+PFM  and PWM modes causes noise in the 3.3v supply.
+Under heavy load the switcher will be in PWM mode always, regardless of
+the PS pin state.
+
 
 POWER PINS  =====================================
 
