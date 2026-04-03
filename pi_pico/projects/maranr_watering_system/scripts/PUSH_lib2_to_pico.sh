@@ -41,7 +41,7 @@ list_pico_filesystem_contents() {
 
 
 main() {
-    echo "PUSH_LIB2_FILES_TO_PICO -- MAIN"
+    echo "PUSH_LIB2_FILES_TO_PICO"
     clean_up_old_dirs_and_files
     copy_release_files_to_the_pico
     list_pico_filesystem_contents
