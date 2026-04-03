@@ -7,26 +7,6 @@ import _thread
 import asyncio
 ###from machine import idle 
 
-async def run_sync_in_thread(func, *args, **kwargs):
-    # 1. Create a flag for cross-thread synchronization
-    flag = asyncio.ThreadSafeFlag()
-    result = None
-
-    def thread_wrapper():
-        nonlocal result
-        # 2. Execute the legacy synchronous function
-        result = func(*args, **kwargs)
-        # 3. Signal the asyncio task that we are done
-        flag.set()
-
-    # 4. Start the blocking function in its own thread
-    _thread.start_new_thread(thread_wrapper, ())
-
-    # 5. Await the flag without stalling other asyncio tasks
-    await flag.wait()
-    return result
-
-
 def legacy_blocking_task_function(duration):
     # simulate a legacy function that would block the asyncio event loop
     # It gets run in a different thread than the asyncio loop runs.
@@ -39,12 +19,58 @@ def legacy_blocking_task_function(duration):
     print("@39  Legacy function has completed.")
     return "Task Complete"
 
+
+async def run_sync_in_thread(func, *args, **kwargs):
+    # Run a syncronous task using a second thread.
+    # This keeps the sync task from stalling the asyncio event loop.
+
+    # 1. Create a flag for cross-thread synchronization
+    flag = asyncio.ThreadSafeFlag()
+
+    # This var is used by the thread wrapper to return the 
+    # result from the simulated sync function.
+    # It is 'NONLOCAL' (hence the funky name, to underscore this fact).
+    # That means the thread_wrapper() function can access it,
+    # kinda like a global variable.
+    # It might be less confusing if we just used a Result class / obj
+    # that we would pass to thread_wrapper (via start_new_thread)
+    # But using a nonlocal is cheap and easy if somewhat icky.
+    NONLOCAL_result = None
+
+    def thread_wrapper():
+        # this function runs in the second thread
+        nonlocal NONLOCAL_result
+        # 2. Execute the legacy synchronous function
+        NONLOCAL_result = func(*args, **kwargs)
+        # 3. Signal the asyncio task that we are done
+        flag.set()
+
+    # 4. Start the blocking function in its own ('second') thread
+    _thread.start_new_thread(thread_wrapper, ())
+
+    # 5. Await the flag without stalling other asyncio tasks
+    # The flag is set from the 'second' thread, which is why 
+    # it must be a ThreadSafeFlag.
+    await flag.wait()
+
+    return NONLOCAL_result
+
+
 async def primary_work_function():
     # this is the 'main' worker thread - it uses the legacy function
     # but does not allow it to block the asyncio event loop.
     # So it uses a separate thread to call the legacy function.
     print(f"@46 primary_work_function has STARTED.")
-    await asyncio.sleep(5)
+    await asyncio.sleep(1) # pretend to do something
+
+    # Invoke the 'legacy' function by using the 'run it on a different thread'
+    # function.
+    print(f"@63    PRIMARY: invoke the 'legacy' function")
+    # We are performing this invocation, using the 'second' thread:
+    #    legacy_blocking_task_function(4)
+    res = await run_sync_in_thread(legacy_blocking_task_function, 4)
+    print(f"@72    PRIMARY legacy function result: {res}")
+
     print(f"@48 primary_work_function has COMPLETED.")
 
 
