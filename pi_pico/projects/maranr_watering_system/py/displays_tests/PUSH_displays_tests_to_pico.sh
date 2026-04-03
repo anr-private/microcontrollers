@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# PUSH_display_test_to_pico.sh
+# PUSH_displays_tests_to_pico.sh
 #
 # NOTE you do not need to do this
 # You can just run the test_XXX.py directly from the linux filesystem.
