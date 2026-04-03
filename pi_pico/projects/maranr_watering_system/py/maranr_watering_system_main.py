@@ -1,8 +1,7 @@
 # maranr_watering_system_main.py
 #
+# Main startup for MWS
 
-
-import asyncio
 import sys
 import platform
 import gc
