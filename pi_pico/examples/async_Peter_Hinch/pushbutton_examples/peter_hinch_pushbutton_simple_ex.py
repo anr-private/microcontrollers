@@ -1,6 +1,7 @@
 # peter_hinch_pushbutton_simple_ex.py
 #
 # basic example use of Peter Hinch async Pushbutton class
+# This is from Hinch's doc pages for the async library.
 #
 # https://github.com/peterhinch/micropython-async/blob/master/v3/docs/DRIVERS.md#46-suppress-mode
 
