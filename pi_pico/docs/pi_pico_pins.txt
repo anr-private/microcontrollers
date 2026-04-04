@@ -83,6 +83,12 @@ PFM mode optimizes battery life by reducing switching frequency.
 PWM mode / continuous switching adds a constant overhead of roughly 5–10 mA.
 
 
+SWITCH on a PIN  ===========================================
+
+Use 100nF cap to debounce.
+
+
+
 POWER PINS  =====================================
 
 POWER LIMITS

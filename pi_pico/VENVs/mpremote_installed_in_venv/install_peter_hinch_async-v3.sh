@@ -4,7 +4,7 @@
 # 
 # /home/art/git/microcontrollers/pi_pico/VENVs/mpremote_installed_in_venv/install_peter_hinch_async-v3.sh
 #
-# Use mpremote to install Peter Finch version of async (formerly uasync)
+# Use mpremote to install Peter Hinch version of async (formerly uasync)
 # NOTE THONNY MUST NOT BE RUNNING as it will 'own' the Pico and prevent
 # mpremote from accessing the pico  (/dev/ttyACM0)
 
