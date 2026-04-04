@@ -5,7 +5,7 @@
 #  PCF 8754 T  chip  and I2C interface.
 
 '''
-    mpy drive for I2C LCD1602
+    uPy drive for I2C LCD1602
     Author: shaoziyang
     Date:   2018.2
     http://www.micropython.org.cn
@@ -15,9 +15,10 @@ from machine import SoftI2C, Pin
 
 
 class LCD():
-    #@@@@$%$$$$$$$$ TODO fix this to work with async- esp the retries for finding the LCD
-    def __init__(self, i2c):
 
+    def __init__(self, i2c, logi_arg):
+        global logi
+        logi = logi_arg
 
         # board definition
         # P0: RS
@@ -29,20 +30,23 @@ class LCD():
         self.ok = False
 
         self.i2c = i2c
-        print('(Re)Initializing...')
-        scan_result = i2c.scan()
-        retry_ctr_max = 3 #@@@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$ TODO raise the limit; do more retries but don't hang the task
+
+        m = f"LIBLCD@32 Try to locate the LCD as an I2C device."
+        logi(m)
+        print(m)
+
+        retry_ctr_max = 3 #@@@@@@@@@@@@@@@$$$$$$$$$$$$$$$$$$$ TODO raise the limit? 
         retry_ctr = 0
         while 1:
+            scan_result = i2c.scan()
             if scan_result:
                 break
-            print("LCD@31 Cannot Locate I2C Device")
+            print("LIBLCD@39 Cannot Locate I2C Device")
             retry_ctr += 1
             if retry_ctr >= retry_ctr_max:
-                print("LCD@39 FAILED TO FIND the LCD - abandon i2c.scan()")
+                print("LIBLCD@342 FAILED TO FIND the LCD - abandoned trying to i2c.scan()")
                 return
             time.sleep_ms(10)
-            scan_result = i2c.scan()
 
         if scan_result:
             print("Found I2C devices at addresses:")

@@ -43,9 +43,35 @@ class MwsDisplays(ElemLoggerABC):
         logi = logger.logi
 
 
+    def locate_the_lcd(self):
+        # This can take several seconds and it ties up the
+        # thread.
+        # So it is done before we start the asyncio event loop.
+        print(f"MwsDisplays@49 locate_the_lcd: try to locate the LCD device...")
+         # SoftI2C is software I2C - works on ANY GPIO pins(!)
+         # 100K is default freq.  Can go higher ex 400K
+         # The LCD() ctor can take several seconds to decide if it has
+         # found the LCD.
+        i2c_driver = SoftI2C(scl=Pin(self.lcd1602_scl_pin), 
+                             sda=Pin(self.lcd1602_sda_pin), 
+                             freq=100000)
+        self.lcd = LCD(i2c_driver, logi)
+        
+        if self.lcd.ok:
+            print(f"MwsDisplays@94 locate_the_lcd: located the LCD device...")
+        else:
+            self.lcd = None
+            print(f"MwsDisplays@96 locate_the_lcd **ERROR**  failed to locate the LCD device!")
+        return self.lcd is not None
+
     def start_the_task(self):
         """ creates,starts the coro. Returns task."""
-        print("WD.startup!")
+        print("MwsDisplays@48 start_the_task!")
+
+        if not self.lcd:
+            m = "MwsDisplays@69 No LCD available - no attempt to send data to the LCD will occur."
+            logi(m)
+            print(m)
 
         task = asyncio.create_task(self.displays_coro())
         return task
@@ -53,24 +79,26 @@ class MwsDisplays(ElemLoggerABC):
 
     async def displays_coro(self):
 
-        self.locate_the_lcd()
-        if not self.lcd.ok:
-            m = f"MwsDisplays@58  CANNOT FIND THE lcd!"
+        if self.lcd is None:
+            m = f"MwsDisplays@80  DID NOT FIND THE lcd!"
             logi(m)
             print(m)
-            m = f"MwsDisplays@58  STOPPING THE displays TASK!!!!!!!!!!!!!!!!!!!!!!!"
+        elif not not self.lcd.ok:
+            self.lcd = None # disable
+            m = f"MwsDisplays@58  LCD is not OK!"
             logi(m)
             print(m)
-            return
-#@@@@@@@@@@@$$$$$$$$$$$$$ TODO handle searching for the LCD better!
+            #m = f"MwsDisplays@58  STOPPING THE displays TASK!!!!!!!!!!!!!!!!!!!!!!!"
+            #logi(m)
+            #print(m)
 
         ctr = 1
         while 1:
             if self.lcd:
-                self.just_show_some_hello_lines(ctr)
+                self._just_show_some_hello_lines(ctr)
                 ...
             else:
-                m = f"MwsDisplays@64 RUNNING idle! COULD NOT FIND LCD!"
+                m = f"MwsDisplays@64 TEMP: RUNNING idle! COULD NOT FIND LCD!  {ctr=}"
                 logi(m)
                 print(m)
                 await asyncio.sleep(120) # slow the logging rate
@@ -81,20 +109,20 @@ class MwsDisplays(ElemLoggerABC):
         ###print(f"MwsDisplays.displays_coro COMPLETED.  {result=}")
         ###return result
 
-    def locate_the_lcd(self):
-        print(f"WD.locate_the_lcd: try to locate the LCD device...")
-         # SoftI2C is software I2C - works on ANY GPIO pins(!)
-         # 100K is default freq.  Can go higher ex 400K
-        self.lcd = LCD(SoftI2C(scl=Pin(self.lcd1602_scl_pin), sda=Pin(self.lcd1602_sda_pin), freq=100000))
-        
-        if self.lcd:
-            print(f"WD.locate_the_lcd: located the LCD device...")
-        else:
-            print(f"WD.locate_the_lcd **ERROR**  failed to locate the LCD device!")
-    
-    
-    def just_show_some_hello_lines(self, ctr):
+    def _just_show_some_hello_lines(self, ctr):
+        print(f"MwsDisplays@100 SHOW HELLO LINES  self.lcd: {self.lcd}")
+
         if self.lcd is None: return
+
+        #line1 = "LINE 1 is BAD@@@!!!"
+        #try:
+        #    line1 = f"{self._dataBoard.ipaddr}:{self._dataBoard.port}"
+        #    print(f"@@@@@@@@@106  LINE1 is {line1}")
+        #except Exception as ex:
+        #    print(f"@@@@@@@@@@@@@@@@@@@ MwsDisplays@107  EX  {repr(ex)}  {str(ex)}  {ex}")
+        #
+        ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._dataBoard.ipaddr}:{self._dataBoard.port}"
+
         line1 = f"{self._dataBoard.ipaddr}:{self._dataBoard.port}"
         line2 = f"ctr={ctr}      "
         self.lcd.puts(line1, x=0,y=0)

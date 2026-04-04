@@ -39,6 +39,18 @@ class MaranrWateringSystem(ElemLoggerABC):
         logrt = logger.logrt
         logi = logger.logi
 
+    def perform_pre_asyncio_setups(self):
+        # Perform any setups that must be done before we start the
+        # main_task. These are typically setups that require
+        # relatively long time periods to get completed.
+        
+        displays = MwsDisplays()
+        ok = displays.locate_the_lcd()
+        if not ok:
+            m = "MWSMAIN@50 FAILED TO LOCATE THE LCD."
+            logi(m)
+            print(m)
+
 
     async def main_task(self):
         logi(f"MWSMAIN@40  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");

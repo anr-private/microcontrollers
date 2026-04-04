@@ -59,6 +59,7 @@ def main():
 
 
     mws = MaranrWateringSystem()
+    mws.perform_pre_asyncio_setups()
     mws.run_mws()
     
 
