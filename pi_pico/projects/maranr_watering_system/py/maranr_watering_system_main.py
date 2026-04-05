@@ -14,6 +14,8 @@ except Exception:
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
+from displays.MwsDisplays import MwsDisplays
+from displays.MwsWifi import MwsWifi
 
 #from displays.MwsDisplays import MwsDisplays
 #from sensors.MwsSensors import MwsSensors
@@ -31,32 +33,25 @@ from mws.MaranrWateringSystem import MaranrWateringSystem
 #    sys.path.append("../http")
 
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
-
-
-
+# Logging functions are NOT AVAILABLE: log,logrt,logi. Use log_control.xxx()
 
 
 def main():
     
     print("MAIN: MARANR Watering System starting...")
-
     print(f"MAIN@48  {MWS_CONFIG=}")
 
-    
+    # create these early on, in order. Pre-allocate to minimize heap frag.
     log_control = ElemLogControl.get_instance()
     log_control.remove_old_log_file()
-
-    # create these early on, in order
+    #
     DataBoard.get_instance()
     TimeMgr.get_instance()
-
+    MwsDisplays.get_instance()
+    Sensors.get_instance()
+    MwsWifi.get_instance()
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
-
 
     mws = MaranrWateringSystem()
     mws.perform_pre_asyncio_setups()

@@ -193,7 +193,7 @@ class RequestHandlerLog(ElemLoggerABC):
 #    if 1:
 #        mss = get_memory_status_string(do_garbage_collect=False)
 #        print(f"{where} MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
-#        gc.collect()
+#        gc.collect() OR USE lib/gc_collect()
 #        mss = get_memory_status_string(do_garbage_collect=False)
 #        print(f"{where} MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 

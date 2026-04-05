@@ -25,14 +25,32 @@ logi = None
 NUM_ROWS = 2
 #NUM_ROWS = 4
 
+VALIDATE = 857395
+
+
 
 class MwsDisplays(ElemLoggerABC):
-    def __init__(self):
+    def __init__(self,validate):
+        if validate != VALIDATE:
+            raise RuntimeError(f"MwsDisplays CTOR is private!")
         self._dataBoard = DataBoard.get_instance()
         self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
         self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
         super().__init__()
+
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is not None: return cls._instance
+        cls._instance = DataBoard(VALIDATE)
+        return cls._instance
+
+    @classmethod
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        DataBoard._instance = None
+        ###DataBoard._clear_latest_messages()
 
 
     def _set_logger(self, logger):

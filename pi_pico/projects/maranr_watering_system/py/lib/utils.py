@@ -59,6 +59,12 @@ def show_len(item):
         return f"ITEM-HAS-NO-LEN {item=} {ex=}"
 
 
+def gc_collect():
+    # per https://docs.micropython.org/en/latest/reference/constrained.html#the-heap
+    gc.collect()
+    gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
+
+
 def get_memory_status_string(do_garbage_collect=False):
     ### # prints memory map of block usage
     ###micropython.mem_info(1)

@@ -4,6 +4,7 @@ import asyncio
 import gc
 import json
 
+from lib import gc_collect
 from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
@@ -58,9 +59,9 @@ class RequestHandler(ElemLoggerABC):
 
         m = f"RH@59 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {TimeMgr.get_formatted_date_time_string()} ^^^^^^^^^^^^^"
         logi(m)
-        m = f"RH@61  -=-=-=  do gc.collect()  -=-=-= "
+        m = f"RH@61  -=-=-=  run lib/gc_collect()  -=-=-= "
         logi(m)
-        gc.collect()
+        gc_collect()
 
         httpParser = HttpParser()
 

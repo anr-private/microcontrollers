@@ -7,6 +7,7 @@ import machine
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.DataBoard import DataBoard
+from utils import gc_collect
 from utils import get_fs_space_string
 from utils import get_memory_status_string
 
@@ -50,7 +51,7 @@ class MwsSensors(ElemLoggerABC):
             if 0:
                 mss = get_memory_status_string(do_garbage_collect=False)
                 log(f"SENSORS@51.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
-                gc.collect()
+                gc_collect()
                 mss = get_memory_status_string(do_garbage_collect=False)
                 log(f"SENSORS@54.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 

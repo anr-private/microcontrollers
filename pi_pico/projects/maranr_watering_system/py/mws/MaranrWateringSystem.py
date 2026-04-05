@@ -44,7 +44,7 @@ class MaranrWateringSystem(ElemLoggerABC):
         # main_task. These are typically setups that require
         # relatively long time periods to get completed.
         
-        displays = MwsDisplays()
+        displays = MwsDisplays.get_instance()
         ok = displays.locate_the_lcd()
         if not ok:
             m = "MWSMAIN@50 FAILED TO LOCATE THE LCD."
@@ -67,15 +67,15 @@ class MaranrWateringSystem(ElemLoggerABC):
         wifi_task = asyncio.create_task(wifi.wifi_task())
         logi(f"MWSMAIN@52 wifi task is {wifi_task} ")
 
-        sensors = MwsSensors()
+        sensors = MwsSensors.get_instance()
         sensors_task = sensors.start_the_task()
         logi(f"MWSMAIN@56 {sensors_task=}")
         
-        displays = MwsDisplays()
+        displays = MwsDisplays.get_instance()
         displays_task = displays.start_the_task()
         logi(f"MWSMAIN@60 {displays_task=}")
 
-        webserver = MwsWebServer() 
+        webserver = MwsWebServer.get_instance()
         webserver_task = webserver.start_the_task()
         logi(f"MWSMAIN@64 {webserver_task=}")
     
@@ -106,7 +106,7 @@ class MaranrWateringSystem(ElemLoggerABC):
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
             pr int(f"MWSMAIN@80 FS: {get_fs_space_string()}")
             pr int(f"MWSMAIN@81 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
-            gc.collect()
+            gc_collect()
             pr int(f"MWSMAIN@83 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
             #log(f"   state: {sensors_task.state}")  # bool
@@ -132,7 +132,7 @@ class MaranrWateringSystem(ElemLoggerABC):
         #pr int(f"MWSMAIN@105 FS: {get_fs_space_string()}")
         #pr int(f"MWSMAIN@106 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
         #pr int(f"MWSMAIN@107  +++++ DO GC COLLECT   ++++++++++++++++++")
-        #gc.collect()
+        #gc.collect()@@@ OR gc_collect() from lib/
         #pr int(f"MWSMAIN@109 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
         ###@@@host,port = self.connect_to_wifi()

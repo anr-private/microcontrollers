@@ -3,6 +3,7 @@
 import asyncio
 import gc
 
+from lib import gc_collect
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
 from logger_elem.ElemLoggerABC import ElemLoggerABC
@@ -167,7 +168,7 @@ class MwsWebServer(ElemLoggerABC):
 
         m = f"WEBSVR@167 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         logi(m)
-        gc.collect()
+        gc_collect()
         mf = gc.mem_free()
         m = f"WEBSVR@171 AFTER GC  FREE MEMORY is {mf}"
         logi(m)
