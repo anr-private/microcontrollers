@@ -36,6 +36,12 @@ async def main():
         print(f"@36                                MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs")
         await asyncio.sleep(1)
 
-asyncio.run(main())
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    print("@42    KEYBOARD interrupt")
+finally:
+    print("@44 << Create a new event loop, as cleanup >>")
+    asyncio.new_event_loop()
 
 ###
