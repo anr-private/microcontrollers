@@ -13,14 +13,37 @@ import time
 from primitives import Pushbutton
 from primitives import set_global_exception
 
+TASK_1_CTR = 0
+
+SHORT_CTR = 0
+DOUBLE_CTR = 0
+LONG_CTR = 0
+
 async def handle_short(btn):
-    print(f"@15  handle_short SHORT PRESS  btn={btn}")
+    global SHORT_CTR
+    SHORT_CTR += 1
+    print(f"@15  SHORT PRESS  btn={btn}")
 
 async def handle_double(btn):
-    print(f"@18 handle_double DOUBLE PRESS  btn={btn}")
+    global DOUBLE_CTR
+    DOUBLE_CTR += 1
+    print(f"@18 DOUBLE PRESS  btn={btn}")
 
 async def handle_long(btn):
-    print(f"@21  handle_long LONG PRESS  btn={btn}")
+    global LONG_CTR
+    LONG_CTR += 1
+    print(f"@21  LONG PRESS  btn={btn}")
+
+
+async def task_1(): # fake task
+    global TASK_1_CTR
+    TASK_1_CTR = 0
+    while 1:
+        TASK_1_CTR += 1
+        if TASK_1_CTR % 500 == 0:
+            print(f"@10 task_1  ctr={TASK_1_CTR}")
+        await asyncio.sleep(0)
+
 
 async def main():
     print("MAIN@24 STARTed")
@@ -45,7 +68,7 @@ async def main():
     while elapsed < 60:  # Run for one minute
         elapsed += 1
         actual_elapsed = time.time() - start_time
-        print(f"@44                                MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs")
+        print(f"@44                     MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
         await asyncio.sleep(1)
 try:
     asyncio.run(main())
