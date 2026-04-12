@@ -1,0 +1,50 @@
+# relay_board.txt
+
+Teyleten Robot DC 1 Channel Optocoupler 3V/3.3V Relay High Level Driver Module Isolated Drive Control Board 3V/3.3V Relay Module for Arduino (Pack of 5) 
+$9.99 for 5
+Amazon  Order placed May 11, 2025  Order # 114-0753368-3254647 
+
+Use:
+Remove
+
+              |        |           
+ Vcc  *       |        |            *  NC
+               A  J1  B
+ IN   *                             *  COM
+              |        | 
+ GND  *       |        |            *  NO
+               A  J3  B
+
+There are 2 jumpers. I labeled them J1,J2 (top,bottom of board).
+
+They are used if you want the VCC to supply power to the relay coil
+from the same power supply as used to provide IN signal.
+(Probably don't need to do this - but it works).
+
+I used J1B as +3.3 v input to the coil, J2B as GND.
+(IE Connected them to the right-most pins of the jumper pads.)
+
+Input is to IN and GND screw terminals.
++3.3 from GPIO, GND to GND.
+
+Used the PICO 3v3 and GND (HW pins 36,38) to power the coil.
+Used GPIO16 (HW pin 21) and GND on HW pin 23 to provide input
+to IN,GND.
+
+Input at 3.3v uses 2.4 mA.
+Coil at 3.3v uses 110 mA.
+
+The LED on the module board turns on when the IN signal is provided.
+
+The input is connected to a PC817 optoisolator pins 1,2 (left side);
+output is on right side (pins 3,4). These likely go to small transistor
+SMD just to right of J1B (?). The PC817 is 50mA max output, and the
+coil draws 110 mA, so guessing the transistor is used as current switch
+to run the coil.
+
+
+
+
+
+:mode=txt:wrap=soft:
+###
