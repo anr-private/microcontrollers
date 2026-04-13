@@ -46,7 +46,7 @@ try:
         gp16.value(1)  # Turn on (set pin value to high)
         time.sleep(1)  # Pause for 1 seconds
         gp16.value(0)  # Turn off (set pin value to low)
-        time.sleep(1)  # Pause for 1 seconds
+        time.sleep(0.1)  # Pause 
 except (KeyboardInterrupt):
     gp16.value(0)
     print("... end of BLINK program ...")
