@@ -4,6 +4,17 @@ Teyleten Robot DC 1 Channel Optocoupler 3V/3.3V Relay High Level Driver Module I
 $9.99 for 5
 Amazon  Order placed May 11, 2025  Order # 114-0753368-3254647 
 
+Uses PC817C optoisolator chip to isolate input from relay control circuit.
+Board appears to have required resistor on input side to limit current.
+(220-1k, best is 330 or 470; recommended by data sheet for PC817)
+Output is limited to 50mA - so board appears to have a small transistor
+to raise the current to the needed 110 mA. (?)
+Datasheet: PC817 optoisolator IC is designed specifically to work with different voltages on the input and output sides. It provides galvanic isolation up to 5kV, meaning there is no direct electrical connection between the input (pins 1-2) and output (pins 3-4), allowing you to safely interface circuits operating at different voltage potentials and different grounds.
+Board has jumpers to allow completely separating input and relay coil sides 
+of the circuits.
+Max output side is 80V. Max power consumption 200mW.
+Alternative ICs: PC816, TLP421, SFH615A
+
 Use:
 Remove
 
@@ -44,7 +55,7 @@ to run the coil.
 
 
 
-
+Uses: Maranr Watering System for Pi Pico2
 
 :mode=txt:wrap=soft:
 ###
