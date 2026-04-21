@@ -15,6 +15,10 @@ import utime as time
 
 # board physical pin 18 13 8 3 are GND
 
+gpio06 =  6  # physical  9
+gpio07 =  7  # physical 10
+gpio08 =  8  # physical 11
+gpio09 =  9  # physical 12
 gpio10 = 10  # physical 14  
 gpio11 = 11  # physical 15  
 gpio12 = 12  # physical 16  
@@ -24,18 +28,23 @@ gpio14 = 14  # physical 19
 gpio15 = 15  # physical 20  (lower left corner)
 gpio16 = 16  # physical 21  (lower right corner)
 
+led06 = machine.Pin(gpio06, machine.Pin.OUT)
+led07 = machine.Pin(gpio07, machine.Pin.OUT)
+led08 = machine.Pin(gpio08, machine.Pin.OUT)
+led09 = machine.Pin(gpio09, machine.Pin.OUT)
 led10 = machine.Pin(gpio10, machine.Pin.OUT)
 led11 = machine.Pin(gpio11, machine.Pin.OUT)
-led12 = machine.Pin(gpio12, machine.Pin.OUT)
-led13 = machine.Pin(gpio13, machine.Pin.OUT)
-led14 = machine.Pin(gpio14, machine.Pin.OUT)
-led15 = machine.Pin(gpio15, machine.Pin.OUT)
-led16 = machine.Pin(gpio16, machine.Pin.OUT)
+#led12 = machine.Pin(gpio12, machine.Pin.OUT)
+#led13 = machine.Pin(gpio13, machine.Pin.OUT)
+#led14 = machine.Pin(gpio14, machine.Pin.OUT)
+#led15 = machine.Pin(gpio15, machine.Pin.OUT)
+#led16 = machine.Pin(gpio16, machine.Pin.OUT)
 
 builtin_led = machine.Pin("LED", machine.Pin.OUT)
 
 
-leds = (led11, led12, led13, led14, led15, led16)
+###leds = (led11, led12, led13, led14, led15, led16)
+leds = (led06, led07, led08, led09, led10, led11)
 
 
 def turn_all_off(leds):
@@ -82,9 +91,9 @@ def main():
         print("KeyboardInterrupt")
         turn_all_off(leds)
 
-#main()
+main()
 
 
-blink_one_led(led16)
+###blink_one_led(led16)
 
 ###
