@@ -22,14 +22,17 @@ print(f"  machine_name_lc={machine_name_lc}")
 if "pi pico w" in machine_name_lc:
     this_machine = "pi pico w"
     print(f"Machine is a Pi Pico W    this-machine='{this_machine}'")
+elif "pi pico 2 w" in machine_name_lc:
+    this_machine = "pi pico 2 w"
+    print(f"Machine is a Pi Pico 2 W    this-machine='{this_machine}'")
 else:
     print(f"Unknown system/hardware '{machine_name_lc}'")
+    this_machine = "UNKNOWN"
 print()
-
 
 # Initialize the built-in LED pin
 # For Pico W, the built-in LED is accessed using the string "LED"
-if this_machine == "pi pico w":
+if this_machine == "pi pico w" or this_machine == "pi pico 2 w":
     # 'EXT_GPIO0'  GPIO zero on the wifi chip (not the Pico)
     led = Pin("LED", Pin.OUT)
 else:
