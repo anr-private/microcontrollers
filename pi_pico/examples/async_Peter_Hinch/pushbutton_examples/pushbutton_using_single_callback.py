@@ -2,7 +2,7 @@
 #
 # Expansion of the 'simple' Peter Hinch async Pushbutton example.
 # Uses a single simple function to handle presses.
-# Does not uses coroutine(s) (coro's).
+# Does not uses coroutine(s) (coro's) - so handler STALLS THE MAIN LOOP!
 #
 # https://github.com/peterhinch/micropython-async/blob/master/v3/docs/DRIVERS.md#46-suppress-mode
 
@@ -10,6 +10,8 @@ from machine import Pin
 import asyncio
 from primitives import Pushbutton
 import time
+
+BUTTON_GPIO_PIN = 20  # 18
 
 def handle_btn(press_type, btn):
     print(f"@15  handle_btn  press_type={press_type}  btn={btn}")
@@ -20,8 +22,8 @@ def handle_btn(press_type, btn):
         time.sleep(3) # delays
 
 async def main():
-    print("MAIN@23 STARTed")
-    btn = Pin(18, Pin.IN, Pin.PULL_UP)  # Adapt for your hardware
+    print("MAIN@23 STARTed   BUTTON_GPIO_PIN={BUTTON_GPIO_PIN}")
+    btn = Pin(BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)  # Adapt for your hardware
 
     pb = Pushbutton(btn, suppress=True)
     pb.release_func(handle_btn, ("SHORT", btn) )

@@ -1,10 +1,23 @@
-# pushbutton_using_coro_ex.py
+# pushbutton_w_coro__5_btns_ex.py
 #
-# Expansion of the 'simple' Peter Hinch async Pushbutton example:
-#    peter_hinch_pushbutton_simple_ex.py
+# Test program for the 5 pushbuttons on the Maranr Watering System
+# prototype board/system/setup.
+# This is an expansion of this example: pushbutton_using_coro_ex.py
 #
-# Uses coroutines (coro's) instead of the 'print' builtin function
-# used by Hinch's example.
+# There are 5 pushbuttons connected like this and numbered as such:
+#          UP                       1
+#  LEFT  CENTER  RIGHT         2    3    4
+#         DOWN                      5
+#
+# Button     GPIO Pin
+#     1        14        U    up
+#     2        15        L    left
+#     3        20        C    center
+#     4        21        R    right
+#     5        22        D    down
+#
+#
+# Uses coroutines (coro's).
 # This allows the handler(s) to do things like await on a sleep()
 # and not stall the main loop (or other async tasks, for that matter.)
 #
@@ -17,7 +30,11 @@ import time
 from primitives import Pushbutton
 from primitives import set_global_exception
 
-BUTTON_GPIO_PIN = 20  # 18
+UP_BUTTON_GPIO_PIN     = 14
+LEFT_BUTTON_GPIO_PIN   = 15
+CENTER_BUTTON_GPIO_PIN = 20
+RIGHT_BUTTON_GPIO_PIN  = 21
+DOWN_BUTTON_GPIO_PIN   = 22
 
 
 TASK_1_CTR = 0
@@ -57,24 +74,47 @@ async def task_1(): # fake task
         await asyncio.sleep(0)
 
 
+def init_one_button(btn):
+    pb = Pushbutton(btn, suppress=True)
+    pb.release_func(handle_short, (btn,))
+    pb.double_func(handle_double, (btn,))
+    pb.long_func(handle_long, (btn,))
+    return pb
+
+
 async def main():
-    print(f"MAIN@24 STARTed    BUTTON_GPIO_PIN={BUTTON_GPIO_PIN}")
+    print(f"MAIN@24 STARTed  Buttons are:")
+    print(f"  UP      {UP_BUTTON_GPIO_PIN}")
+    print(f"  LEFT    {LEFT_BUTTON_GPIO_PIN}")
+    print(f"  CENTER  {CENTER_BUTTON_GPIO_PIN}")
+    print(f"  RIGHT   {RIGHT_BUTTON_GPIO_PIN}")
+    print(f"  DOWN    {DOWN_BUTTON_GPIO_PIN}")
     
     # set a global exception handler - for debugging an async program.
     # (not really needed for this simple test)
     ###set_global_exception()
     
-    btn = Pin(BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)
+    up_btn     = Pin(UP_BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)
+    left_btn   = Pin(LEFT_BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)
+    center_btn = Pin(CENTER_BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)
+    right_btn  = Pin(RIGHT_BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)
+    down_btn   = Pin(DOWN_BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)
 
     if 1:
         # slow down the polling
         Pushbutton.debounce_ms *= 2
     print(f"@32  Pushbutton.debounce_ms is {Pushbutton.debounce_ms}")
 
-    pb = Pushbutton(btn, suppress=True)
-    pb.release_func(handle_short, (btn,))
-    pb.double_func(handle_double, (btn,))
-    pb.long_func(handle_long, (btn,))
+    # pb = Pushbutton(btn, suppress=True)
+    # pb.release_func(handle_short, (btn,))
+    # pb.double_func(handle_double, (btn,))
+    # pb.long_func(handle_long, (btn,))
+
+    up_pb     = init_one_button(up_btn)
+    left_pb   = init_one_button(left_btn)
+    center_pb = init_one_button(center_btn)
+    right_pb  = init_one_button(right_btn)
+    down_pb   = init_one_button(down_btn)
 
     elapsed = 0
     start_time = time.time()

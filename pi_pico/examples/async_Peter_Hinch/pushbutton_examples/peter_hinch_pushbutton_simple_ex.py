@@ -9,7 +9,9 @@ from machine import Pin
 import asyncio
 from primitives import Pushbutton
 
-btn = Pin(18, Pin.IN, Pin.PULL_UP)  # Adapt for your hardware
+BUTTON_GPIO_PIN = 20  # 18
+
+btn = Pin(BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)  # Adapt for your hardware
 
 async def main():
     print("MAIN@14 STARTed")

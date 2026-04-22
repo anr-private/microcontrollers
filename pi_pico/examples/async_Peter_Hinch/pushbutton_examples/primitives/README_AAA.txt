@@ -4,6 +4,8 @@ README_AAA for
 ==== HEY!
  THIS APPEARS INCORRECT - this subdir contains symlink(s) and py files
  that are copies of the ones from ../../libraries/peter_hinch_async/...
+ BUT you can use Thonny to 'upload to /'  - and so get the primitives/
+ dir created on the Pico.
 =======
 
 This primitives/ subdir contains links to the primitives/*.py files 
