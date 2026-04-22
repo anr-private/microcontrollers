@@ -2,6 +2,12 @@
 
 This is a micropython library for using LCD1602 or LCD2004 screen with PCF8574 I2C chip attached. It is modified from a module of [micropython Chinese Community repository](https://github.com/micropython-Chinese-Community/mpy-lib/blob/master/lcd/I2C_LCD1602/mp_i2c_lcd1602.py), with the added feature of creating custom characters and increased efficiency (by about 5~10 times faster for LCD2004 screen).
 
+1602 LCD power - measured on Maranr Watering System MWS prototype board/system
+     Using VBUS  4.9 v  25mA
+           VSYS  4.5 v  21mA
+
+
+
 ## Usage
 ### Hardware connection
  * Connect your micropython device as follow (my tests uses WEMOS LOLIN32 Lite):

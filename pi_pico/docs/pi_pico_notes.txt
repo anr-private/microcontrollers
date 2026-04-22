@@ -266,6 +266,9 @@ Works for this:
  QAPASS LCD1602 Display
    uses PCF8754 I2C chip
    not compatible with Waveshare driver (?)
+  Using VBUS  4.9 v  25mA
+        VSYS  4.5 v  21mA
+
 
 Waveshare LCD1602 Display
   uses AiP31068L LCD driver: display

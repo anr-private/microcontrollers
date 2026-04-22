@@ -55,6 +55,7 @@ NUM_ROWS = 2
 #NUM_ROWS = 4
 
 def just_show_some_hello_lines(lcd, secs_total=9999999):
+    print(f"just_show_some_hello_lines   secs_total={secs_total}")
     secs_so_far = 0
     start_time = utime.time()
     while secs_so_far < secs_total:
@@ -88,6 +89,7 @@ def just_show_some_hello_lines(lcd, secs_total=9999999):
         
                 
 def show_star_running(lcd, secs_total=999999):
+    print(f"show_star_running   secs_total={secs_total}")
     row = 0
     col = 0
     prev_row = row
@@ -110,6 +112,7 @@ def show_star_running(lcd, secs_total=999999):
             
                 
 def show_alternating_rows_of_stars(lcd, secs_total=999999):
+    print(f"show_alternating_rows_of_stars   secs_total={secs_total}")
     # fewer calls to lcd.puts() - runs faster
     spaces = " " * 16
     stars  = "*" * 16
