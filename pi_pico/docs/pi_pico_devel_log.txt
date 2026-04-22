@@ -1,5 +1,9 @@
 PI PICO Development LOG
 
+Maranr Watering System notes: see
+ ~/git/microcontrollers/pi_pico/projects/...
+    maranr_watering_system/watering_controller_pico_project_notes.txt
+
 
 2026-02-02  LCD 1602 sample program 'ANR fancy'
 Put Pi Pico #5 on Freenove breakout box. Put on a wood backing along with
