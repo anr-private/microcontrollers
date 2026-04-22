@@ -43,25 +43,25 @@ SHORT_CTR = 0
 DOUBLE_CTR = 0
 LONG_CTR = 0
 
-async def handle_short(btn):
+async def handle_short(btn, btn_name):
     global SHORT_CTR
     SHORT_CTR += 1
-    print(f"@31  SHORT PRESS  btn={btn}")
+    print(f"@31  SHORT PRESS  btn={btn} {btn_name}")
     if 1:
-        print(f"@33  WAITing in handle_short() - should not stall the main loop!")
+        print(f"@33    WAITing in handle_short() - should not stall the main loop!")
         await asyncio.sleep(3)
-        print(f"@35  DONE-WAITing in handle_short()")
+        print(f"@35    DONE-WAITing in handle_short()")
         
 
-async def handle_double(btn):
+async def handle_double(btn, btn_name):
     global DOUBLE_CTR
     DOUBLE_CTR += 1
-    print(f"@18 DOUBLE PRESS  btn={btn}")
+    print(f"@18 DOUBLE PRESS  btn={btn} {btn_name}")
 
-async def handle_long(btn):
+async def handle_long(btn, btn_name):
     global LONG_CTR
     LONG_CTR += 1
-    print(f"@21  LONG PRESS  btn={btn}")
+    print(f"@21  LONG PRESS  btn={btn} {btn_name}")
 
 
 async def task_1(): # fake task
@@ -74,11 +74,11 @@ async def task_1(): # fake task
         await asyncio.sleep(0)
 
 
-def init_one_button(btn):
+def init_one_button(btn, btn_name):
     pb = Pushbutton(btn, suppress=True)
-    pb.release_func(handle_short, (btn,))
-    pb.double_func(handle_double, (btn,))
-    pb.long_func(handle_long, (btn,))
+    pb.release_func(handle_short, (btn, btn_name))
+    pb.double_func(handle_double, (btn, btn_name))
+    pb.long_func(handle_long, (btn, btn_name))
     return pb
 
 
@@ -110,11 +110,11 @@ async def main():
     # pb.double_func(handle_double, (btn,))
     # pb.long_func(handle_long, (btn,))
 
-    up_pb     = init_one_button(up_btn)
-    left_pb   = init_one_button(left_btn)
-    center_pb = init_one_button(center_btn)
-    right_pb  = init_one_button(right_btn)
-    down_pb   = init_one_button(down_btn)
+    up_pb     = init_one_button(up_btn, "Up")
+    left_pb   = init_one_button(left_btn, "Left")
+    center_pb = init_one_button(center_btn, "Center")
+    right_pb  = init_one_button(right_btn, "Right")
+    down_pb   = init_one_button(down_btn, "Down")
 
     elapsed = 0
     start_time = time.time()
