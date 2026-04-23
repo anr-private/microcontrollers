@@ -14,7 +14,7 @@ to raise the current to the needed 110 mA. (?)
 Datasheet: PC817 optoisolator IC is designed specifically to work with different voltages on the input and output sides. It provides galvanic isolation up to 5kV, meaning there is no direct electrical connection between the input (pins 1-2) and output (pins 3-4), allowing you to safely interface circuits operating at different voltage potentials and different grounds.
 Board has jumpers to allow completely separating input and relay coil sides 
 of the circuits.
-Max output side is 80V. Max power consumption 200mW.
+Optoisolator: max output side is 80V. Max power consumption 200mW.
 Alternative ICs: PC816, TLP421, SFH615A
 
               |        |           
@@ -71,8 +71,6 @@ to J1B (or to VCC if you leave J1 jumpered).
 
 See the diagram relay_module_3.3-5v.pdf.
 
-
-
 The LED on the module board turns on when the IN signal is provided.
 
 The input is connected to a PC817 optoisolator pins 1,2 (left side);
@@ -81,6 +79,7 @@ SMD just to right of J1B (?). The PC817 is 50mA max output, and the
 coil draws 110 mA, so guessing the transistor is used as current switch
 to run the coil.
 
+Relay can handle 10A at either 250VAC or 30VDC.
 
 
 Uses: Maranr Watering System for Pi Pico2
