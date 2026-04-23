@@ -44,7 +44,7 @@ Used the PICO 3v3 and GND (HW pins 36,38) to power the coil.
 Used GPIO16 (HW pin 21) and GND on HW pin 23 to provide input
 to IN,GND.
 
-Input at 3.3v uses 2.4 mA.
+Input for IN terminal (ie input to optoisolator): at 3.3v uses 2.4 mA.
 Coil at 3.3v uses 110 mA.
 
 === JUMPERS REMOVED config  ==========================

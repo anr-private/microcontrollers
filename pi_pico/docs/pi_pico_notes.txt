@@ -325,6 +325,32 @@ Important Notes
     function properly. ANR: seems unlikely - should be able to supply
     5v to the LCD and the HV side of the level shifter and should work ok.
 
+=== RELAY MODULE BOARD  ==================================
+
+See
+  ~/git/microcontrollers/components/relay_module_3.3v/relay_board.txt
+  ~/git/microcontrollers/components/relay_module_3.3v/relay_module_3.3-5v.pdf
+
+Use Pico GPIO pin (in output mode) to provide power to IN terminal.
+Connect Pico GND to the GND on the relay board.
+To power the board components (transistor, relay), use VCC.
+
+Power: 
+  Input for IN terminal (ie input to optoisolator): at 3.3v uses 2.4 mA.
+  Transistor+Coil at 3.3v uses 110 mA.
+
+Jumpers:
+Connect J1, J2 to power the board from Pico. Connect 3V3 to board's
+VCC terminal. Connect a GPIO pin to IN terminal.
+Connect a Pico GND to GND.
+
+If you remove J2, it isolates the optoisolator input from the rest of
+the board. Then provide signal from GPIO pin to IN terminal and Pico
+GND to the GND terminal. To power the board (ie the components incl.
+coil, transistor, output side of optoisolator), use VCC (or J1B if you
+remove J1) and use J2B to supply GND. This allows complete separation
+of the input and relay circuits.
+
 
 ====================================================================
 
