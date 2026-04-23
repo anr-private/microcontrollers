@@ -4,6 +4,8 @@ Teyleten Robot DC 1 Channel Optocoupler 3V/3.3V Relay High Level Driver Module I
 $9.99 for 5
 Amazon  Order placed May 11, 2025  Order # 114-0753368-3254647 
 
+See my diagram relay_module_3.3-5v.pdf 
+
 Uses PC817C optoisolator chip to isolate input from relay control circuit.
 Board appears to have required resistor on input side to limit current.
 (220-1k, best is 330 or 470; recommended by data sheet for PC817)
@@ -14,9 +16,6 @@ Board has jumpers to allow completely separating input and relay coil sides
 of the circuits.
 Max output side is 80V. Max power consumption 200mW.
 Alternative ICs: PC816, TLP421, SFH615A
-
-Use:
-Remove
 
               |        |           
  Vcc  *       |        |            *  NC
@@ -32,11 +31,14 @@ They are used if you want the VCC to supply power to the relay coil
 from the same power supply as used to provide IN signal.
 (Probably don't need to do this - but it works).
 
-I used J1B as +3.3 v input to the coil, J2B as GND.
+=== JUMPERS REMOVED config  ==========================
+
+Removed J1A,J2A.
+Then used J1B to provide +3.3 v input to the coil, J2B as GND.
 (IE Connected them to the right-most pins of the jumper pads.)
 
 Input is to IN and GND screw terminals.
-+3.3 from GPIO, GND to GND.
+Provide +3.3 using a GPIO. Pico GND to GND terminal on relay.
 
 Used the PICO 3v3 and GND (HW pins 36,38) to power the coil.
 Used GPIO16 (HW pin 21) and GND on HW pin 23 to provide input
@@ -44,6 +46,32 @@ to IN,GND.
 
 Input at 3.3v uses 2.4 mA.
 Coil at 3.3v uses 110 mA.
+
+=== JUMPERS REMOVED config  ==========================
+
+Putting J1, J2 back on - then provide 3.3v from Pico 3V3.
+Use any Pico GND connected to the board's GND.
+Connect a Pico GPIO pin (configure as output, of course) to 
+the IN terminal. 
+Removing J2 isolates the input side of the optoisolator.
+Removing J1 just disconnects the VCC terminal- does not seem like
+it is very useful(!?)
+
+=== Details  ===========================
+
+The J1 jumper just provides the VCC needed to run the board and
+the relay - it just connects the VCC terminal to J1B. J1B provides
+power to everything on the board.
+
+The J2 jumper connects the GND teriminal to the ground side of 
+all the components of the board that are 'past' the optoisolator.
+Removing J2 means you supply the control signal to terminals
+IN and GND. Then you must supply the 'operating power' voltage
+to J1B (or to VCC if you leave J1 jumpered).
+
+See the diagram relay_module_3.3-5v.pdf.
+
+
 
 The LED on the module board turns on when the IN signal is provided.
 
