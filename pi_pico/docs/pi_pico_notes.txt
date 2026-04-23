@@ -276,6 +276,55 @@ Waveshare LCD1602 Display
        PCA9633 RGB  I2C and RGB backlight
   ~/git/microcontrollers/pi_pico/examples/waveshare/LCD1602/...
 
+ +++ Using a level shifter between Pico and 1602 LCD
+
+Google search:
+  how to connect the Adafruit 4 channel I2C-safe bidirectional logic level 
+  converter BSS138 between the 3.3v I2C pins of a Pi Pico and the \
+  5.5v I2C pins of a 1602 LCD board
+
+Components:
+    Raspberry Pi Pico
+    1602 LCD with I2C Backpack
+    Adafruit 4-channel BSS138 Level Converter
+
+Wiring Connections
+Connect the components in the following manner, 
+ensuring ground is shared across all components. 
+  Converter
+  Pin          Connect to                 Description
+ --------      ----------------------  ---------------
+ LV            Pico 3.3V (Pin 36)      Low Voltage Reference
+ GND           Pico GND (Any GND)      Ground Reference
+ HV            Pico VBUS (5V, Pin 40)  High Voltage Reference
+ GND           LCD GND                 Ground Reference
+ L1 (SCL)      Pico GP5 (SCL0)         Low voltage I2C Clock
+ L2 (SDA)      Pico GP4 (SDA0)         Low voltage I2C Data
+ H1 (SCL)      LCD SCL                 High voltage I2C Clock
+ H2 (SDA)      LCD SDA                 High voltage I2C Data
+ HV (5V)       LCD VCC                 Power for LCD
+
+Step-by-Step Installation
+Shared Ground: Connect GND from the Pi Pico to both GND pins on the 
+  Adafruit level converter, and to the GND pin of the 1602 LCD.
+Power Connections:
+  Connect the 3.3V pin from the Pico to the LV (Low Voltage) side of the converter.
+  Connect the VBUS pin (5V) from the Pico to the HV (High Voltage) side of the converter.
+  Connect VBUS (5V) from the Pico to the VCC pin on the 1602 LCD.
+I2C Signal Connections:
+  Connect GP4 (SDA) of the Pico to L2 on the converter.
+  Connect GP5 (SCL) of the Pico to L1 on the converter.
+  Connect H2 on the converter to SDA on the 1602 LCD.
+  Connect H1 on the converter to SCL on the 1602 LCD. 
+
+Important Notes
+  I2C Address: The 1602 LCD typically operates on I2C address 0x27 or 0x3F.
+  Pull-up Resistors: The Adafruit BSS138 converter already includes 10K 
+     pull-up resistors on both sides, so no extra resistors are needed.
+  1602 VCC: The 1602 I2C backpack must be powered by 5V (VBUS) to 
+    function properly. ANR: seems unlikely - should be able to supply
+    5v to the LCD and the HV side of the level shifter and should work ok.
+
 
 ====================================================================
 
@@ -344,7 +393,7 @@ THREAD NUMBER
    _thread.get_ident() # gets thread number as int: 1,2, etc
 
 ENDING A THREAD
-	A thread's function can just return, thereby ending the thread.
+    A thread's function can just return, thereby ending the thread.
     So an alternative to locking is to just kick the second thread off
     and have it return ('quit') when it's done. Then start it again
     when you need it.
@@ -365,30 +414,30 @@ LOCK
    core0_thread()
 
    # WITH LOCK OBJ
-	def core0_thread():
-		global lock
-		while True:
-			# try to acquire lock - wait if in use
-			lock.acquire()
-			... work ...
-			lock.release()
-			# let the other guy go - is this needed?
-			time.sleep(0.1)
-		...
-	def core1_thread():
-		global lock
-		while True:
-			# try to acquire lock - wait if in use
-			lock.acquire()
-			... work ...
-			lock.release()
-			# let the other guy go - is this needed?
-			time.sleep(0.1)
-	lock = _thread.allocate_lock()
-	second_thread = _thread.start_new_thread(core1_thread, ())
-	core0_thread()
+    def core0_thread():
+        global lock
+        while True:
+            # try to acquire lock - wait if in use
+            lock.acquire()
+            ... work ...
+            lock.release()
+            # let the other guy go - is this needed?
+            time.sleep(0.1)
+        ...
+    def core1_thread():
+        global lock
+        while True:
+            # try to acquire lock - wait if in use
+            lock.acquire()
+            ... work ...
+            lock.release()
+            # let the other guy go - is this needed?
+            time.sleep(0.1)
+    lock = _thread.allocate_lock()
+    second_thread = _thread.start_new_thread(core1_thread, ())
+    core0_thread()
 To check the lock:
-	lock.locked()   # returns True if locked
+    lock.locked()   # returns True if locked
 
 
 
@@ -494,7 +543,7 @@ PICO-Timers
     import machine
     blue_led = machine.Pin(12,machine.Pin.OUT)
     def blue_handler(source_obj):
-    	blue_led.toggle()
+        blue_led.toggle()
     blue_timer = Timer(period=2000, mode=Timer.PERIODIC, callback=blue_handler)
     # run main until done
     # Do cleanup:
@@ -572,7 +621,7 @@ To provide space for doing so:
         self.led = led
         timer.callback(self.cb)
     def cb(self, tim):
-    	""" allows sharing the led attribute """
+        """ allows sharing the led attribute """
         self.led.toggle()
  red   = Foo(pyb.Timer(4, freq=1), pyb.LED(1))
  green = Foo(pyb.Timer(2, freq=0.8), pyb.LED(2))

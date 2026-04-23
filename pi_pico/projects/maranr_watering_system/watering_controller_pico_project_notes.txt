@@ -53,15 +53,22 @@ Pi Pico
  3v3(OUT) pin 36. Can provide 300mA max. 
 
 LCD POWER
- - Separate power source
+ See:  ~/git/microcontrollers/pi_pico/docs/pi_pico_notes.txt
+   Shows details for using a level shifter.
+
+ Separate power source
    Powering an LCD from VBUS works but the LCD will run its I2C at 5 V, too
    high for the 3.3v expected by Pico's GPIO pins (its I2C). So should use
    a level shifter on the I2C pins.
-   For now using VSYS, which is 4.5v (so better than the 4.9v on VSYS).
+   NOT NOW --- voltage is too high for Pico, will probably damage GPIO pins
+               after running for a while.
+     SO ... DO NOT DO THIS:
+     For now using VSYS, which is 4.5v (so better than the 4.9v on VSYS).
      Using VBUS  4.9 v  25mA
            VSYS  4.5 v  21mA
- - Using Pico 3v3 (physical pin 36). QAPASS works ok, a bit dim. Draws 45mA.
-   
+ TEMPORARILY:
+  * Using Pico 3v3 (physical pin 36). QAPASS works ok, a bit dim. Draws 45mA.
+     (45mA seems too high - need to re-measure)
 
 PUSHBUTTONS and ASYNCIO
 
