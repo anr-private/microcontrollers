@@ -27,6 +27,25 @@ Water pump candidates:
 
 ===  POWER   ==================================
 
+Deploymen power config
+  VBUS - provide 5vdc from a buck converter.
+    100 mA  Pico itself
+     60 mA  6 LEDs when all illuminated
+     <1 mA  Analog potentiometer 
+      -     Pushbuttons
+
+  5v isolated power
+    120 mA  Relay board
+    100 mA  LCD 
+
+  TBD:
+     temp/humidity sensor
+     soil moisture sensor(s)
+     water valve / pump
+
+
+=== POWER per component  ==========================
+
   LCD 1602 power:  1-2 mA for display. 30-40 mA if backlit; 100-120 mA possible.
       QAPASS actual (with backlight):  3.3v 46mA   5.0v 80mA
 
@@ -41,8 +60,9 @@ Pi Pico
                 Monitor using GPIO 24 (no physical pin).
 
  VSYS  pin 39. Main 'power in' feed.  1.8 - 5.5 V input. 
-               Whend USB provides power, VSYS is the input volts from VBUS
-               minus Schottky diode drop (usu. 5v - (0.15 to 0.45) or about 4.9v.
+               When USB provides power, VSYS is the input volts from VBUS
+               minus Schottky diode drop (usu. 5v - (0.15 to 0.45) or 
+               4.5-4.9v.
                This loss can be eliminated by shorting VSYS - VBUS but ONLY IF
                the power source is EXCLUSIVELY the USB / VBUS.
                If an external voltage is applied to VSYS, it should be through
@@ -54,7 +74,7 @@ Pi Pico
                A better way is to use a MOSFET ahead of VSYS.
                See raspberrypi.com Pi Pico data sheet for details.
                Also shows how to power using a battery and its charger.
- 3v3(OUT) pin 36. Can provide 300mA max. 
+ 3v3(OUT) pin 36. Can provide 300mA max (extra. in addition to powering the Pico)
 
 
 === LCD POWER
@@ -122,5 +142,10 @@ basic async framework: webserver, displays, sensors
 
 2026-2-19
 basic webserver working
+
+2026-4-23
+MWS prototype built. Includes Pico; board w/ 6 LEDs, 5 buttons, ADC pot.
+Also LCD 1602, Relay module.
+Need: level shifter for I2C for LCD.
 
 ### end ###

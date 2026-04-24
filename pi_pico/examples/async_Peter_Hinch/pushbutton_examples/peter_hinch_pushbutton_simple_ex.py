@@ -9,7 +9,8 @@ from machine import Pin
 import asyncio
 from primitives import Pushbutton
 
-BUTTON_GPIO_PIN = 20  # 18
+##BUTTON_GPIO_PIN = 20 
+BUTTON_GPIO_PIN = 18
 
 btn = Pin(BUTTON_GPIO_PIN, Pin.IN, Pin.PULL_UP)  # Adapt for your hardware
 
