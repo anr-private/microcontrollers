@@ -261,7 +261,19 @@ This is a driver for the LCD1604 (etc) that use PCF8754 I2C driver:
   https://github.com/liyuanhe211/Micropython_LCD1602_LCD2004_I2C_Lib
 See
   ~/git/microcontrollers/pi_pico/examples/lcd1602_drivers/
-     lcd1602_lcd2004_i2c_lib/Micropython_LCD1602_LCD2004_I2C_Lib
+     lcd1602_lcd2004_i2c_lib/Micropython_LCD1602_LCD2004_I2C_Lib/...
+       such as main_Hello_World_hardware_I2C.py
+  EX:  Using hardware I2C  I2C1 with GPIO 2,3
+    from machine import Pin
+    from lib_lcd1602_2004_with_i2c import LCD
+    sda_pin = 2
+    scl_pin = 3
+    i2c = machine.I2C(1, scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100_000)
+    print(i2c)
+    lcd = LCD(i2c)
+    lcd.puts("line 1", x=0, y=0)
+    lcd.puts("line 1", x=0, y=1)
+
 Works for this:
  QAPASS LCD1602 Display
    uses PCF8754 I2C chip
