@@ -128,7 +128,7 @@ class MwsDisplays(ElemLoggerABC):
             m = f"MwsDisplays@128  DID NOT FIND THE lcd!"
             logi(m)
             print(m)
-        elif not not self.lcd.ok:
+        elif not self.lcd.ok:
             self.lcd = None # disable
             m = f"MwsDisplays@133  LCD is not OK!"
             logi(m)
