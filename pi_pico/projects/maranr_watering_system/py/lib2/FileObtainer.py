@@ -34,7 +34,7 @@ class FileObtainer(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"FU@32 _set_logger: {repr(logger)}")
+        #print(f"FileObtainer@37 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -48,7 +48,7 @@ class FileObtainer(ElemLoggerABC):
             fpath, *, 
             binary=False, read_contents=False, prefix_dir=None,
             w="?WHO?"):
-        log(f"FU@46 obtain_input_file {fpath=}  {binary=}  {read_contents=}  {prefix_dir=}")
+        log(f"FileObtainer@51 obtain_input_file {fpath=}  {binary=}  {read_contents=}  {prefix_dir=}")
 
         # path is the path. On pico you typically see "/pages/some.html", starts with ./.
         # binary - if True, read as binary else read as text
@@ -68,64 +68,64 @@ class FileObtainer(ElemLoggerABC):
         actual_path = fpath
         if self._SIM_USING_PY3:
             actual_path = self._adjust_actual_path(actual_path)
-            log(f"FU@66:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
+            log(f"FileObtainer@71:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
     
         mode = "rb" if binary else "r"
     
         result = self._try_accessing_file(actual_path, mode, read_contents, w)
 
         if result is not None:
-            log(f"FU@73:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
+            log(f"FileObtainer@78:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
             if result is True:
-                log(f"FU@75:{w} ...  return TRUE - just checked for file exists, did not read contents.")
+                log(f"FileObtainer@80:{w} ...  return TRUE - just checked for file exists, did not read contents.")
             else:
-                log(f"FU@77:{w} ...  return file contents  LEN={len(result)}")
+                log(f"FileObtainer@82:{w} ...  return file contents  LEN={len(result)}")
             return result
 
         # Failed with simple fpath - try adding prefix_dir
         if prefix_dir is not None:
-            log(f"FU@82:{w}  Add {prefix_dir=} to {actual_path=} and try again")
+            log(f"FileObtainer@87:{w}  Add {prefix_dir=} to {actual_path=} and try again")
             actual_path = self._add_prefix_dir(fpath, prefix_dir, w)
             if self._SIM_USING_PY3:
                 old_actual = actual_path
                 actual_path = self._adjust_actual_path(actual_path)
-                log(f"FU@87:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
+                log(f"FileObtainer@92:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
 
             result = self._try_accessing_file(actual_path, mode, read_contents, w)
     
             if result is not None:
-                log(f"FU@92:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
+                log(f"FileObtainer@97:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
                 if result is True:
-                    log(f"FU@94:{w} ...  return TRUE - just checked for file exists, did not read contents.")
+                    log(f"FileObtainer@99:{w} ...  return TRUE - just checked for file exists, did not read contents.")
                 else:
-                    log(f"FU@96:{w} ...  return file contents  LEN={len(result)}")
+                    log(f"FileObtainer@101:{w} ...  return file contents  LEN={len(result)}")
                 return result
     
         # FAILED!
-        log(f"FU@100:{w}  obtain_input_file **FAILED** Return None!   {fpath=} {actual_path=}")
-        log(f"FU@101:{w}    ... {binary=}  {read_contents=}  {prefix_dir=}  who='{w}' ")
+        log(f"FileObtainer@105:{w}  obtain_input_file **FAILED** Return None!   {fpath=} {actual_path=}")
+        log(f"FileObtainer@106:{w}    ... {binary=}  {read_contents=}  {prefix_dir=}  who='{w}' ")
         return None
 
 
     def _try_accessing_file(self, actual_path, mode, read_contents, w):
-        log(f"FU@106:{w} Try accessing {actual_path=}  {mode=} ")
+        log(f"FileObtainer@111:{w} Try accessing {actual_path=}  {mode=} ")
         try:
             with open(actual_path, mode) as inf:
                 if read_contents:
-                    log(f"FU@110:{w}  read {actual_path=} contents.")
+                    log(f"FileObtainer@115:{w}  read {actual_path=} contents.")
                     contents = inf.read()
-                    log(f"FU@112:{w} from {actual_path=} len(contents)={len(contents)}")
+                    log(f"FileObtainer@117:{w} from {actual_path=} len(contents)={len(contents)}")
                     return contents
-                log(f"FU@114:{w} opened/closed {actual_path=} ok; return True")
+                log(f"FileObtainer@119:{w} opened/closed {actual_path=} ok; return True")
                 return True
         except OSError as ex:
-            log(f"FU@117:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
+            log(f"FileObtainer@122:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
         except Exception as ex:
-            log(f"FU@119:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
+            log(f"FileObtainer@124:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
     
 
     def _add_prefix_dir(self, fpath, prefix_dir, w):
-        log(f"FU@123:{w} Add {prefix_dir=} to {fpath=}")
+        log(f"FileObtainer@128:{w} Add {prefix_dir=} to {fpath=}")
         if not fpath or not prefix_dir: return fpath
 
         sep1 = ""
@@ -135,7 +135,7 @@ class FileObtainer(ElemLoggerABC):
         if fpath[0] != '/':
             sep2 = '/'
         new_fpath = sep1 + prefix_dir + sep2 + fpath
-        log(f"FU@133:{w} {new_fpath=} -- Added {prefix_dir=} to {fpath=}")
+        log(f"FileObtainer@138:{w} {new_fpath=} -- Added {prefix_dir=} to {fpath=}")
         return new_fpath
 
 

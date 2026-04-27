@@ -8,6 +8,8 @@ PYTHON_EXE=python3
 
 FDIR="displays"
 FNAME="MwsDisplays.py"
+TARGET='MwsDisplays@'
+
 
 FPATH="${FDIR}/${FNAME}"
 OUT_FPATH="${FPATH}.out"
@@ -30,7 +32,6 @@ if $DBG ; then
     echo '$$$   ls -l ' $(ls -l $FPATH)
 fi
 
-TARGET='MwsDisplays@'
 
 RENUM_LINES=/home/art/bin/renumber_line_numbers.py
 

@@ -56,7 +56,7 @@ class DataBoard(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"DataBoard@37 _set_logger: {repr(logger)}")
+        #print(f"DataBoard@59 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -65,7 +65,7 @@ class DataBoard(ElemLoggerABC):
     def set_ip_and_port(self, ipaddr, port):
         self.ipaddr = ipaddr
         self.port = port
-        print(f"DataBoard@64  SET IPADDR={self.ipaddr}  PORT={self.port} ")
+        print(f"DataBoard@68  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
 
     def post_time_mgr_status(self, 

@@ -1,15 +1,14 @@
 #!/bin/bash
 #
-# renumber_lines_file_utils.sh
+# renumber_lines_data_board.sh
 #
 # Renumber the line numbers in log and print calls
 
 PYTHON_EXE=python3
 
-FDIR="lib"
-FNAME="file_utils.py"
-TARGET='MwsDisplays@'
-
+FDIR="lib2"
+FNAME="FileObtainer.py"
+TARGET='FileObtainer@'
 
 FPATH="${FDIR}/${FNAME}"
 OUT_FPATH="${FPATH}.out"
@@ -31,6 +30,7 @@ if $DBG ; then
     echo '$$$   INPUT FILE: ' $FPATH
     echo '$$$   ls -l ' $(ls -l $FPATH)
 fi
+
 
 RENUM_LINES=/home/art/bin/renumber_line_numbers.py
 
