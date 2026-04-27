@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# renumber_lines_mws_displays.sh
+# renumber_lines_file_utils.sh
 #
 # Renumber the line numbers in log and print calls
 
 PYTHON_EXE=python3
 
-FDIR="displays"
-FNAME="MwsDisplays.py"
+FDIR="lib"
+FNAME="file_utils.py"
 
 FPATH="${FDIR}/${FNAME}"
 OUT_FPATH="${FPATH}.out"
