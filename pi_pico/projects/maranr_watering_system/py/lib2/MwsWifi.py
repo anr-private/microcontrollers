@@ -82,13 +82,13 @@ class MwsWifi(ElemLoggerABC):
             MwsWifi._instance = MwsWifi(1234567)
         return MwsWifi._instance
 
-
     @classmethod
     def get_ip_and_port(cls):
         obj = MwsWifi._instance
         if not obj._instance: return "IP-PORT-?!"
         if not obj._ipaddr: return "IP:PORT-unknown"
         return f"{obj._ipaddr}:{obj._port}"
+
 
     def __init__(self, do_not_call_directly):
         if do_not_call_directly != 1234567:

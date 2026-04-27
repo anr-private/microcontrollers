@@ -3,7 +3,7 @@
 import asyncio
 import gc
 
-from lib import gc_collect
+from utils import gc_collect
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
 from logger_elem.ElemLoggerABC import ElemLoggerABC
@@ -18,11 +18,29 @@ log = None
 logrt = None
 logi = None
 
+VALIDATE = 743520
+
 
 class MwsWebServer(ElemLoggerABC):
-    #  top-level Server class 
+    #  top-level webserver class 
 
-    def __init__(self):
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is not None: return cls._instance
+        cls._instance = MwsWebServer(VALIDATE)
+        return cls._instance
+
+    @classmethod
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        MwsWebServer._instance = None
+
+
+    def __init__(self, validate):
+        if validate != VALIDATE:
+            raise RuntimeError(f"MwsWebServer CTOR is private!")
         self._ipaddr = None
         self._port = 0
         self._dataBoard = DataBoard.get_instance()

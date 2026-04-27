@@ -15,11 +15,29 @@ log = None
 logrt = None
 logi = None
 
+VALIDATE = 804146
+
 
 class MwsSensors(ElemLoggerABC):
     """ sensors and effectors """
 
-    def __init__(self, *args):
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is not None: return cls._instance
+        cls._instance = MwsSensors(VALIDATE)
+        return cls._instance
+
+    @classmethod
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        MwsSensors._instance = None
+
+
+    def __init__(self, validate):
+        if validate != VALIDATE:
+            raise RuntimeError(f"MwsSensors CTOR is private!")
         self._data_board = None
         super().__init__()
 

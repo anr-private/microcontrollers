@@ -14,13 +14,9 @@ except Exception:
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
+from lib2.MwsWifi import MwsWifi
 from displays.MwsDisplays import MwsDisplays
-from displays.MwsWifi import MwsWifi
-
-#from displays.MwsDisplays import MwsDisplays
-#from sensors.MwsSensors import MwsSensors
-#from lib2.MwsWifi import MwsWifi
-#from weblib.MwsWebServer import MwsWebServer
+from sensors.MwsSensors import MwsSensors
 from utils import MWS_CONFIG
 from utils import get_fs_space_string
 from utils import get_memory_status_string
@@ -48,7 +44,7 @@ def main():
     DataBoard.get_instance()
     TimeMgr.get_instance()
     MwsDisplays.get_instance()
-    Sensors.get_instance()
+    MwsSensors.get_instance()
     MwsWifi.get_instance()
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")

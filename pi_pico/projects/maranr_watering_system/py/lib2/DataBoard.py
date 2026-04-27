@@ -26,6 +26,19 @@ class DataBoard(ElemLoggerABC):
 
     _instance = None
 
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is not None: return cls._instance
+        cls._instance = DataBoard(VALIDATE)
+        return cls._instance
+
+    @classmethod
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        DataBoard._instance = None
+        ###DataBoard._clear_latest_messages()
+
+
     def __init__(self, validate):
         if validate != VALIDATE:
             raise RuntimeError(f"DataBoard CTOR is private!")
@@ -40,18 +53,6 @@ class DataBoard(ElemLoggerABC):
         self.time_mgr_number_of_time_jumps = 0
         self.time_mgr_maximum_time_jump_secs = 0
         super().__init__()
-
-    @classmethod
-    def get_instance(cls):
-        if cls._instance is not None: return cls._instance
-        cls._instance = DataBoard(VALIDATE)
-        return cls._instance
-
-    @classmethod
-    def _nullify_instance(cls):
-        # UNIT TEST ONLY
-        DataBoard._instance = None
-        ###DataBoard._clear_latest_messages()
 
     def _set_logger(self, logger):
         global log, logrt, logi

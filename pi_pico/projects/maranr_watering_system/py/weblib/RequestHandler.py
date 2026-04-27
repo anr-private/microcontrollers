@@ -4,7 +4,7 @@ import asyncio
 import gc
 import json
 
-from lib import gc_collect
+from utils import gc_collect
 from utils import show_len
 from utils import get_fs_space_string
 from utils import get_memory_status_string
