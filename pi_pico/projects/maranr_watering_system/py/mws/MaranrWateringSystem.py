@@ -53,11 +53,11 @@ class MaranrWateringSystem(ElemLoggerABC):
 
 
     async def main_task(self):
-        logi(f"MWSMAIN@40  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
+        logi(f"MWSMAIN@56  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
 
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
-        logi(f"MWSMAIN@44 Created DataBoard. state=...\n{dataBoard.long_string()} ")
+        logi(f"MWSMAIN@60 Created DataBoard. state=...\n{dataBoard.long_string()} ")
 
         self._onboard_led = self._get_onboard_led()
         self._toggle_onboad_led()
@@ -65,25 +65,25 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         wifi = MwsWifi.get_instance()
         wifi_task = asyncio.create_task(wifi.wifi_task())
-        logi(f"MWSMAIN@52 wifi task is {wifi_task} ")
+        logi(f"MWSMAIN@68 wifi task is {wifi_task} ")
 
         sensors = MwsSensors.get_instance()
         sensors_task = sensors.start_the_task()
-        logi(f"MWSMAIN@56 {sensors_task=}")
+        logi(f"MWSMAIN@72 {sensors_task=}")
         
         displays = MwsDisplays.get_instance()
         displays_task = displays.start_the_task()
-        logi(f"MWSMAIN@60 {displays_task=}")
+        logi(f"MWSMAIN@76 {displays_task=}")
 
         webserver = MwsWebServer.get_instance()
         webserver_task = webserver.start_the_task()
-        logi(f"MWSMAIN@64 {webserver_task=}")
+        logi(f"MWSMAIN@80 {webserver_task=}")
     
         sleep_secs = 3
         logging_ctr = 999
         logging_ctr_limit = 60 / sleep_secs  # log the time every 60 seconds
         while 1:
-            log(f"MWSMAIN@67 MAIN TASK running TopOfLoop   ")
+            log(f"MWSMAIN@86 MAIN TASK running TopOfLoop   ")
 
             logging_ctr += 1
             if logging_ctr >= logging_ctr_limit:
@@ -104,10 +104,10 @@ class MaranrWateringSystem(ElemLoggerABC):
             _=""" #$$$$$ TODO finish this
             log(f"  Who is done:  web={webserver_task.done()}  "+\
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
-            pr int(f"MWSMAIN@80 FS: {get_fs_space_string()}")
-            pr int(f"MWSMAIN@81 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+            pr int(f"MWSMAIN@107 FS: {get_fs_space_string()}")
+            pr int(f"MWSMAIN@108 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
             gc_collect()
-            pr int(f"MWSMAIN@83 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+            pr int(f"MWSMAIN@110 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
             #log(f"   state: {sensors_task.state}")  # bool
             #log(f"   data: {sensors_task.data}")    # None
@@ -116,11 +116,11 @@ class MaranrWateringSystem(ElemLoggerABC):
             ###done, pending = await asyncio.wait(tasks, timeout=1)
     
             if webserver_done and sensors_done and displays_done:
-                log("MWSMAIN@92  MAIN_TASK: all tasks are done!")
+                log("MWSMAIN@119  MAIN_TASK: all tasks are done!")
                 break
             """
 
-            log(f"MWSMAIN@96  MAIN TASK running  SLEEP 3  ")
+            log(f"MWSMAIN@123  MAIN TASK running  SLEEP 3  ")
             await asyncio.sleep(sleep_secs)
             self._toggle_onboad_led()
 
@@ -129,14 +129,14 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         logi("--- MaranrWateringSystem --- BEGIN run_mws()  =======================")
 
-        #pr int(f"MWSMAIN@105 FS: {get_fs_space_string()}")
-        #pr int(f"MWSMAIN@106 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
-        #pr int(f"MWSMAIN@107  +++++ DO GC COLLECT   ++++++++++++++++++")
+        #pr int(f"MWSMAIN@132 FS: {get_fs_space_string()}")
+        #pr int(f"MWSMAIN@133 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+        #pr int(f"MWSMAIN@134  +++++ DO GC COLLECT   ++++++++++++++++++")
         #gc.collect()@@@ OR gc_collect() from lib/
-        #pr int(f"MWSMAIN@109 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+        #pr int(f"MWSMAIN@136 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
         ###@@@host,port = self.connect_to_wifi()
-        logi("MWSMAIN@112  START THE MAIN TASK")
+        logi("MWSMAIN@139  START THE MAIN TASK")
         try:
             # Start the event loop and run the main server coroutine
             asyncio.run(self.main_task())
@@ -144,9 +144,9 @@ class MaranrWateringSystem(ElemLoggerABC):
         except KeyboardInterrupt:
             #@@@@@@@@ TODO Handle keyboard in MWS main
             #date_stg, time_stg = get_formatted_local_time()
-            #m = f"MWSMAIN@120 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+            #m = f"MWSMAIN@147 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             #logi(m)
-            print("MWSMAIN@122 interrupt from keyboard")
+            print("MWSMAIN@149 interrupt from keyboard")
 
         finally:
             # Clean up the event loop (optional, but good practice)
