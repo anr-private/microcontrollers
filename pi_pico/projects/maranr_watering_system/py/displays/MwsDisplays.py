@@ -5,7 +5,7 @@ try:
     import utime as time
 except Exception:
     import time
-from machine import Pin, SoftI2C
+from machine import Pin  ###, SoftI2C
 
 ###@@@from lib import *
 #from lib import utils
@@ -63,11 +63,11 @@ class MwsDisplays(ElemLoggerABC):
 
 
     def _locate_lcd_soft_i2c(self):
+        from machine import SoftI2C
         # Find the LCD. Use software-based I2C.
         # This can take several seconds and it ties up the
-        # thread.
-        # So it is done before we start the asyncio event loop.
-        print(f"MwsDisplays@70 locate_the_lcd: try to locate the LCD device...")
+        # thread. So it is done before we start the asyncio event loop.
+        print(f"MwsDisplays@70 _locate_lcd_soft_i2c: try to locate the LCD device...")
          # SoftI2C is software I2C - works on ANY GPIO pins(!)
          # 100K is default freq.  Can go higher ex 400K
          # The LCD() ctor can take several seconds to decide if it has
@@ -78,36 +78,34 @@ class MwsDisplays(ElemLoggerABC):
         self.lcd = LCD(i2c_driver, logi)
         
         if self.lcd.ok:
-            print(f"MwsDisplays@81 locate_the_lcd: located the LCD device...")
+            print(f"MwsDisplays@81 _locate_lcd_soft_i2c: located the LCD device...")
         else:
             self.lcd = None
-            print(f"MwsDisplays@84 locate_the_lcd **ERROR**  failed to locate the LCD device!")
+            print(f"MwsDisplays@84 _locate_lcd_soft_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
     def _locate_lcd_hw_i2c(self):
-        # Find the LCD. Use software-based I2C.
+        from machine import I2C
+        # Find the LCD. Use hardware-based I2C.
         # This can take several seconds and it ties up the
-        # thread.
-        # So it is done before we start the asyncio event loop.
-        print(f"MwsDisplays@92 locate_the_lcd: try to locate the LCD device...")
-         # SoftI2C is software I2C - works on ANY GPIO pins(!)
-         # 100K is default freq.  Can go higher ex 400K
-         # The LCD() ctor can take several seconds to decide if it has
-         # found the LCD.
-        i2c_driver = SoftI2C(scl=Pin(self.lcd1602_scl_pin), 
-                             sda=Pin(self.lcd1602_sda_pin), 
-                             freq=100000)
+        # thread. So it is done before we start the asyncio event loop.
+        print(f"MwsDisplays@92 _locate_lcd_hw_i2c: try to locate the LCD device...")
+        i2c_driver = I2C(1,
+                         scl=Pin(self.lcd1602_scl_pin), 
+                         sda=Pin(self.lcd1602_sda_pin), 
+                         freq=100000)
         self.lcd = LCD(i2c_driver, logi)
         
         if self.lcd.ok:
-            print(f"MwsDisplays@103 locate_the_lcd: located the LCD device...")
+            print(f"MwsDisplays@103 _locate_lcd_hw_i2c: located the LCD device...")
         else:
             self.lcd = None
-            print(f"MwsDisplays@106 locate_the_lcd **ERROR**  failed to locate the LCD device!")
+            print(f"MwsDisplays@106 _locate_lcd_hw_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
     # Which to use? Hardware or Soft I2C?
-    locate_the_lcd = _locate_lcd_soft_i2c
+    ####locate_the_lcd = _locate_lcd_soft_i2c
+    locate_the_lcd = _locate_lcd_hw_i2c
 
     def start_the_task(self):
         """ creates,starts the coro. Returns task."""
