@@ -65,13 +65,13 @@ class MwsSensors(ElemLoggerABC):
         while 1:
             if 0:
                 fss = get_fs_space_string()
-                log(f"SENSORS@48.sensors_coro RUNNING: {fss}")
+                log(f"SENSORS@68.sensors_coro RUNNING: {fss}")
             if 0:
                 mss = get_memory_status_string(do_garbage_collect=False)
-                log(f"SENSORS@51.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                log(f"SENSORS@71.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
                 gc_collect()
                 mss = get_memory_status_string(do_garbage_collect=False)
-                log(f"SENSORS@54.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                log(f"SENSORS@74.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 
             # Reduce logging volume/freq
             log_limit_ctr += 1
@@ -89,8 +89,8 @@ class MwsSensors(ElemLoggerABC):
                 mf_after = gc.mem_free()
                 ma_diff = ma_after - ma_before
                 mf_diff = mf_after - mf_before
-                m1 = f"SENSORS@63  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
-                m2 = f"SENSORS@64  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
+                m1 = f"SENSORS@92  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
+                m2 = f"SENSORS@93  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
                 if use_logi:
                     logi(m1); logi(m2)
                 else:
@@ -106,7 +106,7 @@ class MwsSensors(ElemLoggerABC):
         temperature_f = celsius_to_fahrenheit(temperature_c)
         self._data_board.set_internal_temps(temperature_f, temperature_c);
 
-        m = f"SENSORS@74  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F"
+        m = f"SENSORS@109  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F"
         if use_logi:
             logi(m)
         else:
