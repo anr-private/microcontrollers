@@ -25,7 +25,7 @@ class HdrAccum(ElemLoggerABC):
 
 
     def accum_header_line(self, line):
-        log(f"ACCUMLINE@16 '{show_cc(line)}'")
+        log(f"HdrAccum@28 '{show_cc(line)}'")
         self._mesg += line
         # found the end of the header?  
         pos = self._mesg.find("\r\n\r\n")

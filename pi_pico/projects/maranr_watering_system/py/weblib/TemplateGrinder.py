@@ -141,7 +141,7 @@ class TemplateGrinder(ElemLoggerABC):
         elif isinstance(raw_file_contents, bytes):
             file_contents = raw_file_contents.decode("utf-8")
         else:
-            logi(f"TG@133 @@@@@@@@@@@@@@@@@@ UNEXPECTED FILE CONTENTS TYPE: {type(raw_file_contents)}")
+            logi(f"TG@144 @@@@@@@@@@@@@@@@@@ UNEXPECTED FILE CONTENTS TYPE: {type(raw_file_contents)}")
             return None
 
         raw_lines = self._split_the_file_contents(file_contents)

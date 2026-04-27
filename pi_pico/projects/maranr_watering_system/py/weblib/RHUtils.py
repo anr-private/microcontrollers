@@ -48,9 +48,9 @@ class RHUtils(ElemLoggerABC):
         elif ext in ["json",]:
             t = "application/json"
         else:
-            log(r"RHUtils@52 **ERROR** Unknow Content-Type for file '{file_path}'")
+            log(r"RHUtils@51 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
-        log(f"RHUtils@54 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+        log(f"RHUtils@53 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
 
