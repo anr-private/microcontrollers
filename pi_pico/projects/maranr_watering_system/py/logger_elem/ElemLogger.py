@@ -30,18 +30,18 @@ class ElemLogger:
 
     def log(self, mesg):
         if self.log_enabled:
-            #print(f"ELOG@31.log '{mesg=}' ")
+            #print(f"ELOG@33.log '{mesg=}' ")
             print(f"LOG: {mesg}")
             self._log_control.log_one_line(mesg)
 
     def logrt(self, mesg):
-        ###print(f"ELOG@35.logrt '{mesg=}' ")
+        ###print(f"ELOG@38.logrt '{mesg=}' ")
         print(f"LOGRT: {mesg}")
         self._log_control.log_one_line(mesg)
         raise RuntimeError(mesg)
 
     def logi(self, mesg):
-        #print(f"ELOG@40.logi '{mesg=}' ")
+        #print(f"ELOG@44.logi '{mesg=}' ")
         print(mesg)
         self._log_control.log_one_line(mesg)
 
