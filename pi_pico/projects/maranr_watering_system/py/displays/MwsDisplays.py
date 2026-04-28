@@ -5,7 +5,9 @@ try:
     import utime as time
 except Exception:
     import time
-from machine import Pin  ###, SoftI2C
+from machine import Pin
+from machine import I2C    # hardware driver
+###from machine import SoftI2C # software driver
 
 ###@@@from lib import *
 #from lib import utils
@@ -48,9 +50,21 @@ class MwsDisplays(ElemLoggerABC):
         if validate != VALIDATE:
             raise RuntimeError(f"MwsDisplays CTOR is private!")
         self._dataBoard = DataBoard.get_instance()
+        # LCD 1602                           
         self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
         self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
+        # LEDs
+        self.led_red1   = Pin( 6, Pin.OUT)
+        self.led_green1 = Pin( 7, Pin.OUT)
+        self.led_white1 = Pin( 8, Pin.OUT)
+        self.led_red2   = Pin( 9, Pin.OUT)
+        self.led_green2 = Pin(10, Pin.OUT)
+        self.led_white2 = Pin(11, Pin.OUT)
+        self.leds = (
+            self.led_red1, self.led_green1, self.led_white1,
+            self.led_red2, self.led_green2, self.led_white2) 
+
         super().__init__()
 
 
@@ -59,11 +73,10 @@ class MwsDisplays(ElemLoggerABC):
         #print(f"MwsDisplays@59 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
-        logi = logger.logi
+        logi = logger.logi                 
 
 
     def _locate_lcd_soft_i2c(self):
-        from machine import SoftI2C
         # Find the LCD. Use software-based I2C.
         # This can take several seconds and it ties up the
         # thread. So it is done before we start the asyncio event loop.
@@ -85,7 +98,6 @@ class MwsDisplays(ElemLoggerABC):
         return self.lcd is not None
 
     def _locate_lcd_hw_i2c(self):
-        from machine import I2C
         # Find the LCD. Use hardware-based I2C.
         # This can take several seconds and it ties up the
         # thread. So it is done before we start the asyncio event loop.
@@ -135,24 +147,66 @@ class MwsDisplays(ElemLoggerABC):
             #logi(m)
             #print(m)
 
-        ctr = 1
+        lcd_secs_next = 0
+        led_idx = 0
+        secs = 0
         while 1:
+            lcd_secs_next = self._update_lcd(secs, lcd_secs_next)
+
+            # if secs >= lcd_secs_next:
+                # lcd_secs_next += 5  # every 5 secs
+                # 
+                # if self.lcd:
+                    # self._just_show_some_hello_lines(secs)
+                    # ...
+                # else:
+                    # m = f"MwsDisplays@146 TEMP: RUNNING idle! COULD NOT FIND LCD!  {secs=}"
+                    # logi(m)
+                    # print(m)
+                    # ###await asyncio.sleep(120) # slow the logging rate
+
+            led_idx = self._update_leds(led_idx)
+
+            # self.leds[led_idx].value(0)
+            # led_idx =+ 1
+            # if led_idx >= len(self.leds): led_idx = 0
+            # self.leds[led_idx].value(1)
+
+            await asyncio.sleep(1)
+            secs += 1
+
+    def _update_lcd(self, secs, lcd_secs_next):
             if self.lcd:
-                self._just_show_some_hello_lines(ctr)
+                if secs < lcd_secs_next:
+                    return lcd_secs_next
+                lcd_secs_next += 5  # every 5 secs
+
+                self._just_show_some_hello_lines(secs)
                 ...
+                return lcd_secs_next
             else:
-                m = f"MwsDisplays@146 TEMP: RUNNING idle! COULD NOT FIND LCD!  {ctr=}"
+                m = f"MwsDisplays@146 TEMP: RUNNING idle! COULD NOT FIND LCD!  {secs=}"
                 logi(m)
                 print(m)
-                await asyncio.sleep(120) # slow the logging rate
-            await asyncio.sleep(5)
-            ctr += 1
+                ###await asyncio.sleep(120) # slow the logging rate
+
+    def _update_leds(self, led_idx):
+        self.leds[led_idx].value(0)
+        led_idx += 1
+        if led_idx >= len(self.leds): led_idx = 0
+        self.leds[led_idx].value(1)
+        return led_idx
+
+
+
+
+
 
         ###result = "NO RESULT YET from displays_coro"
         ###print(f"MwsDisplays.displays_coro COMPLETED.  {result=}")
         ###return result
 
-    def _just_show_some_hello_lines(self, ctr):
+    def _just_show_some_hello_lines(self, secs):
         print(f"MwsDisplays@158 SHOW HELLO LINES  self.lcd: {self.lcd}")
 
         if self.lcd is None: return
@@ -167,7 +221,7 @@ class MwsDisplays(ElemLoggerABC):
         ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._dataBoard.ipaddr}:{self._dataBoard.port}"
 
         line1 = f"{self._dataBoard.ipaddr}:{self._dataBoard.port}"
-        line2 = f"ctr={ctr}      "
+        line2 = f"secs={secs}      "
         self.lcd.puts(line1, x=0,y=0)
         self.lcd.puts(line2, x=0,y=1)
 
