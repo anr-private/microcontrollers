@@ -16,6 +16,7 @@ from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
 from lib2.MwsWifi import MwsWifi
 from displays.MwsDisplays import MwsDisplays
+from sensors.MwsButtons import MwsButtons
 from sensors.MwsSensors import MwsSensors
 from utils import MWS_CONFIG
 from utils import get_fs_space_string
@@ -44,6 +45,7 @@ def main():
     DataBoard.get_instance()
     TimeMgr.get_instance()
     MwsDisplays.get_instance()
+    MwsButtons.get_instance()
     MwsSensors.get_instance()
     MwsWifi.get_instance()
 
