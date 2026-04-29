@@ -77,9 +77,14 @@ Pi Pico
  3v3(OUT) pin 36. Can provide 300mA max (extra. in addition to powering the Pico)
 
 
-=== LCD POWER
- See:  ~/git/microcontrollers/pi_pico/docs/pi_pico_notes.txt
-   Shows details for using a level shifter.
+=== LCD ======================================
+
+ See:
+  ~/git/microcontrollers/pi_pico/docs/pi_pico_notes.txt
+    Shows details for using a level shifter.
+  ~/git/microcontrollers/components/...
+         level_shifter_4channel/adafruit_4channel_logic_level_shifter.txt
+     Shows details of Adafruit 757 4 channel shifter.
 
  Separate power source
    Powering an LCD from VBUS works but the LCD will run its I2C at 5 V, too

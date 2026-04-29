@@ -1,0 +1,29 @@
+adafruit_4channel_logic_level_shifter.txt
+
+https://www.adafruit.com/product/757
+
+The Adafruit 4-bit Level Converter (#757) is a bidirectional shifter using BSS138 FETs to connect devices operating at different voltages (e.g., 5V Arduino to 3.3V sensors). It shifts low-voltage (LV) signals up to high-voltage (HV) levels, and vice-versa, by referencing power rails. It supports I2C, SPI, and UART, but is not recommended for high-speed signals like NeoPixels
+
+Connections
+
+    HV (High Voltage): Connect to the higher voltage power rail (e.g., 5V).
+    LV (Low Voltage): Connect to the lower voltage power rail (e.g., 3.3V).
+    GND: Connect to the ground (common) for both power supplies.
+    A1-A4 (LV Side): Connect to your 3.3V device pins 
+          (e.g., Raspberry Pi, ESP32).
+    B1-B4 (HV Side): Connect to your 5V device pins (e.g., Arduino Uno). 
+
+Typical Applications
+
+    I2C Communications: Connect SCA/SCL from a 3.3V sensor to LV1/LV2, and connect 5V microcontroller pins to HV1/HV2.
+    Serial Communication (UART): Connect TX (3.3V) to LV1, RX (3.3V) to LV2, then HV1 to RX (5V) and HV2 to TX (5V).
+    General Input/Output: Any signal applied to A pins is outputted at HV level on the corresponding B pin, and vice-versa. 
+
+Key Tips
+
+    Bi-directional: The converter automatically senses the data direction.
+    Pull-up Resistors: The board includes 10K pull-up resistors on both sides, which is perfect for I2C.
+    Common Ground: The most critical step is ensuring the ground of both the 5V and 3.3V systems are connected together. 
+
+:wrap=soft:
+###
