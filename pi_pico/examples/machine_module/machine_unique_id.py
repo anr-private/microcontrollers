@@ -23,7 +23,15 @@ def show_machine_id():
     print(f"Hexified raw id: '{hex_id}'")
     hex_stg = hex_id.decode("utf-8")
     print(f"    UTF-8 decoded: '{hex_stg}'")
+    
+    matches_a226 = hex_stg == '77bb8ee1849fa226'
+    print(f"  is decoded hex_stg == '77bb8ee1849fa226'?  {matches_a226}")
 
+    matches_ae91 = hex_stg == 'f5cb56b9936fae91'
+    print(f"  is decoded hex_stg == 'f5cb56b9936fae91'?  {matches_ae91}")
+    
+    
+    'f5cb56b9936fae91'
 def show_machine_module_attributes():
     ##print(machine.unique_id().decode("utf-8"))
     ###print(dir(machine))
