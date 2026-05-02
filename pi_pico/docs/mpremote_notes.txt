@@ -1,0 +1,116 @@
+MPREMOTE NOTES  
+
+mpremote_notes.txt
+
+See also pi_pico_notes.txt.
+
+Ubuntu version:   0.4.0
+VENV install:  1.26.0
+   ~/git/microcontrollers/pi_pico/VENVs/mpremote_installed_in_venv
+
+See: 
+  ~/git/microcontrollers/pi_pico/examples/aliases_for_examples
+
+NOTE:
+The mpremote documentation calls the development host (Linux host)
+the 'local' host. It calls the Pico a 'remote device' or similar.
+
+=== COMMANDS  ==================================
+
+mpremote soft-reset  # clear Python heap; restart the interpreter
+mpremote hard-reset  # same as machine.reset()
+
+mpremote bootloader  # enter boot loader (to install a new UF / UF2 file)
+
+mpremote repl  [options]
+  --escape-non-printable  Print non-printable bytes/characters as hex
+  --capture <file>  Capture output of the REPL session to a file
+  --inject-code <string>  String to insert when  Ctrl-J is pressed.
+  --inject-file <file>  Inject a file to inject Ctrl-K is pressed. 
+ To exit repl, use Ctrl-] or Ctrl-x to exit.
+
+mpremote resume     # 
+
+mpremote eval <string>  Eval a Python expr
+mpremote exec <string>  Exec Python code
+
+mpremote run <file.py>  Run a file from host file w/o copying to Pico.
+   --no-follow  - return immediately, leaving the script running
+
+mpremote fs   # see below
+mpremote df   # show filesystem stats
+
+mpremote rtc   # get the realtime clock 
+   --set       # set the RTC to host system's clock
+
+mpremote mip   # install packages from micropython-lib or GitHub
+                   See doc for detail: click link Package Management
+                   under the 'mips' command description.
+
+
+=== FILESYSTEM COMMAND  ======================
+
+mpremote fs <cmd...>
+
+  cat <file..>  Show the contents of a file or files on the device
+
+  ls            List the current directory on Pico (usu same as ':/')
+
+  ls <dirs...>  List the given directories
+
+  cp [-rf] <src...> <dest>   Copy files
+
+  rm [-r] <src...>    Remove files or folders on the device
+
+  mkdir <dirs...>     Create directories on the device
+
+  rmdir <dirs...>     Remove directories on the device
+
+  touch <file..>      Create the files (if they don’t already exist)
+
+  sha256sum <file..>  Calculate the SHA256 sum of files
+
+  tree [-vsh] <dirs...> to print a tree of the given directories
+
+The cp command uses a convention where a leading : represents a path on Pico.
+  No leading ':' means 'local host' 
+
+FS EXAMPLES:
+  mpremote fs cp main.py :main.py  Copy main.py devel host to Pico
+  mpremote fs cp :main.py main.py  Copy main.py from Pico to devel host.
+
+
+
+=== SHORTCUTS  =================================
+
+~/mpremote/config.py     # config containing shortcuts
+   See the mpremote doc on MicroPython website.
+
+
+
+
+######################################################################
+SAMPLE ALIASES
+
+# aliases_for_examples     - from git/microcontrollers/pi_pico/examples/
+#
+# SOURCE THIS - do not execute
+alias USE_A0='export PREM_DEVICE="a0"'
+alias USE_A1='export PREM_DEVICE="a1"'
+alias USE_A2='export PREM_DEVICE="a2"'
+alias USE_A3='export PREM_DEVICE="a3"'
+alias USE_a0='export PREM_DEVICE="a0"'
+alias USE_a1='export PREM_DEVICE="a1"'
+alias USE_a2='export PREM_DEVICE="a2"'
+alias USE_a3='export PREM_DEVICE="a3"'
+alias USE_='echo PREM_DEVICE: ${PREM_DEVICE}'
+
+alias mpremote='mpremote ${PREM_DEVICE}'
+alias mpremote
+alias mpremote_devices='/usr/bin/mpremote connect list | grep -v None'
+alias mpremote_devices
+
+###
+
+
+###

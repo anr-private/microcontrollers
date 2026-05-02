@@ -1,0 +1,19 @@
+# aliases_for_examples
+#
+# SOURCE THIS - do not execute
+alias USE_A0='export PREM_DEVICE="a0"'
+alias USE_A1='export PREM_DEVICE="a1"'
+alias USE_A2='export PREM_DEVICE="a2"'
+alias USE_A3='export PREM_DEVICE="a3"'
+alias USE_a0='export PREM_DEVICE="a0"'
+alias USE_a1='export PREM_DEVICE="a1"'
+alias USE_a2='export PREM_DEVICE="a2"'
+alias USE_a3='export PREM_DEVICE="a3"'
+alias USE_='echo PREM_DEVICE: ${PREM_DEVICE}'
+
+alias mpremote='mpremote ${PREM_DEVICE}'
+alias mpremote
+alias mpremote_devices='/usr/bin/mpremote connect list | grep -v None'
+alias mpremote_devices
+
+###
