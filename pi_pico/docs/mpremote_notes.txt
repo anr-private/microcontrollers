@@ -47,6 +47,7 @@ mpremote mip   # install packages from micropython-lib or GitHub
                    See doc for detail: click link Package Management
                    under the 'mips' command description.
 
+mpremote mount  # mount a host dir on the Pico
 
 === FILESYSTEM COMMAND  ======================
 

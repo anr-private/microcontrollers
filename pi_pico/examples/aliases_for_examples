@@ -16,4 +16,6 @@ alias mpremote
 alias mpremote_devices='/usr/bin/mpremote connect list | grep -v None'
 alias mpremote_devices
 
+mpremote --version
+
 ###
