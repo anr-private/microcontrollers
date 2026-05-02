@@ -1,4 +1,4 @@
-#
+# uart_simple_loopback_ex.py
 #
 # Uses a single UART as a loopback: sends out the TX pin and receives on the RX pin.
 
