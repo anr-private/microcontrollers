@@ -25,6 +25,9 @@ from machine import UART, Pin
 # VERBOSE
 V = False
 
+TX_SLEEP_SECS = 1
+
+
 # Sample code showed this alternative:
 ####  uart = UART(0, baudrate=9600, tx=0, rx=1, timeout=0)
 
@@ -41,7 +44,7 @@ async def uart_sender(writer):
         await writer.drain()  # Ensure data is sent
         if V: print("Sent message")
         #await asyncio.sleep(1)
-        await asyncio.sleep(0.2)
+        await asyncio.sleep(TX_SLEEP_SECS)
 
 async def uart_receiver(reader):
     while True:
@@ -63,5 +66,6 @@ try:
     asyncio.run(main())
 except KeyboardInterrupt:
     print("Stopped")
+
 
 ###
