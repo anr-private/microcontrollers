@@ -26,6 +26,22 @@ MWS_CONFIG = {
 #TODO ADD table for daylight savings time changes
 
 
+def seconds_to_hhmmss_string(secs):
+    hhmmss = seconds_to_hhmmss(secs)
+    hours = hhmmss[0]
+    mins = hhmmss[1]
+    secs = hhmmss[2]
+    stg = f"{hours}:{mins:02d}:{secs:02d}"
+    return stg
+
+def seconds_to_hhmmss(secs):
+    minutes = secs // 60
+    s = secs - minutes*60
+    hours = minutes // 60
+    m = minutes - hours * 60 
+    return (hours, m, s)
+
+
 def string_to_int(s):
     try:
         return int(s)
