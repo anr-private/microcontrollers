@@ -43,7 +43,7 @@ class MwsWebServer(ElemLoggerABC):
             raise RuntimeError(f"MwsWebServer CTOR is private!")
         self._ipaddr = None
         self._port = 0
-        self._dataBoard = DataBoard.get_instance()
+        self._databoard = DataBoard.get_instance()
         super().__init__()
 
     def _set_logger(self, logger):
@@ -65,8 +65,8 @@ class MwsWebServer(ElemLoggerABC):
         server = None
 
         while True:
-            ipaddr = self._dataBoard.ipaddr
-            port   = self._dataBoard.port
+            ipaddr = self._databoard.ipaddr
+            port   = self._databoard.port
             log(f"WEBSVR@70 webserver_coro MONITOR CONNECTION STATUS: IP:PORT  {ipaddr} {port}")
 
             # default sleep time - assuming nothing has changed...
@@ -91,7 +91,7 @@ class MwsWebServer(ElemLoggerABC):
                     server = None
                     self._ipaddr = None
                     self._port = 0
-                    self._dataBoard.webserver_active = False
+                    self._databoard.webserver_active = False
                     sleep_secs = 10 #@@@$$$$$
                 else:
                     logi(f"WEBSVR@97 STOP THE SERVER - except there is no server running")
@@ -109,7 +109,7 @@ class MwsWebServer(ElemLoggerABC):
 
                 self._ipaddr = ipaddr
                 self._port = port
-                self._dataBoard.webserver_active = True
+                self._databoard.webserver_active = True
                 sleep_secs = 10
                 logi(f"WEBSVR@114 (RE)STARTED THE SERVER  {self._ipaddr} {self._port}")
 

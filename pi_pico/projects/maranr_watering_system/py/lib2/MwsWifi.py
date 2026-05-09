@@ -94,7 +94,7 @@ class MwsWifi(ElemLoggerABC):
         if do_not_call_directly != 1234567:
             raise RuntimeError("MwsWifi.init DO NOT CALL")
         #@@@@@$$$$$self.wlan = None
-        self._dataBoard = DataBoard.get_instance()
+        self._databoard = DataBoard.get_instance()
         self._time_mgr = TimeMgr.get_instance()
         self._ipaddr = None
         self._port = 0
@@ -228,7 +228,7 @@ class MwsWifi(ElemLoggerABC):
         log(f"MwsWifi@228  NULLIFY - STARTING OVER")
         self._ipaddr = None
         self._port = 0
-        self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
+        self._databoard.set_ip_and_port(self._ipaddr, self._port)
         wlan = st.wlan
         st.nullify()
         # Clean up if possible
@@ -244,7 +244,7 @@ class MwsWifi(ElemLoggerABC):
         info = wlan.ifconfig()
         self._ipaddr = info[0]
         self._port = OUR_PORT_NUMBER
-        self._dataBoard.set_ip_and_port(self._ipaddr, self._port)
+        self._databoard.set_ip_and_port(self._ipaddr, self._port)
         logi(f"MwsWifi@248  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
 
 

@@ -52,6 +52,8 @@ class DataBoard(ElemLoggerABC):
         self.time_mgr_number_of_ntp_updates = 0
         self.time_mgr_number_of_time_jumps = 0
         self.time_mgr_maximum_time_jump_secs = 0
+        self.lcd_active_display = 1
+
         super().__init__()
 
     def _set_logger(self, logger):
