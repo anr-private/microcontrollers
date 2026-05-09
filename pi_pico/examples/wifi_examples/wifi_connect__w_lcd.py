@@ -149,8 +149,10 @@ def monitor_wifi(wlan, led, lcd):
             secs = ctr >> 1  # 2 counts per second
             ###ctr_shown = ctr >> 3
             print(f"Connected: {ok}      {secs=}  loop-ctr={ctr} ")
-            is_conn = "conn " if ok else "NOCONN"
-            lcd.puts(f"{is_conn} secs={secs}  ")
+            is_conn = "OK" if ok else "NOT"
+            hhmmss = seconds_to_hhmmss(secs)
+            #lcd.puts(f"{is_conn} secs={secs}  ")
+            lcd.puts(f"{is_conn} {hhmmss}  ", y=0)
 
         if ok:
             info = wlan.ifconfig()
@@ -168,6 +170,18 @@ def monitor_wifi(wlan, led, lcd):
             lcd.puts(ipaddr+"      ", y=1)
 
         time.sleep(0.5)
+
+def seconds_to_hhmmss(secs):
+    minutes = secs // 60
+
+    s = secs - minutes*60
+
+    hours = minutes // 60
+
+    m = minutes - hours * 60 
+
+    stg = f"{hours}:{m:02d}:{s:02d}"
+    return stg
 
 
 def main(args):
