@@ -44,6 +44,16 @@ class DataBoard(ElemLoggerABC):
     def __init__(self, validate):
         if validate != VALIDATE:
             raise RuntimeError(f"DataBoard CTOR is private!")
+        # All classes use these to access the various classes.
+        # This enxures the order of creation does not cause 
+        # problems. The classes are first created in
+        # maranr_watering_system_main.py:main()
+        self.time_mgr = None  # TimeMgr
+        self.displays = None    # MwsDisplays
+        self.buttons = None     # MwsButtons
+        self.sensors = None     # MwsSensors
+        self.wifi - Non         # MwsWifi
+        # 
         self.system_state = self.SYS_STATE_STARTUP
         self.ipaddr = None
         self.port = 0
@@ -54,7 +64,6 @@ class DataBoard(ElemLoggerABC):
         self.time_mgr_number_of_ntp_updates = 0
         self.time_mgr_number_of_time_jumps = 0
         self.time_mgr_maximum_time_jump_secs = 0
-        self.lcd_active_display = 0
 
         super().__init__()
 
@@ -92,22 +101,6 @@ class DataBoard(ElemLoggerABC):
         degs_f = f"{self.internal_temp_f:.1f}"
         degs_c = f"{self.internal_temp_c:.1f}"
         return degs_f, degs_c
-
-
-    def get_lcd_active_display(self):
-        return self.lcd_active_display
-
-    def set_lcd_active_display(self,v):
-        # v is an int 0..n
-        if not isinstance(v, int):
-            logi("DataBoard@98 set_active_lcd_display BAD VALUE: {v}  type={type(v)}")
-            v = 0
-
-        if v < 0 or v > self.LCD_ACTIVE_DISPLAY_MAX:
-            logi("DataBoard@98 set_active_lcd_display OUT-OF-RANGE: {v}  type={type(v)}")
-            v = 0
-
-        self.lcd_active_display = v
 
 
     def __str__(self):

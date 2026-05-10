@@ -41,13 +41,16 @@ def main():
     # create these early on, in order. Pre-allocate to minimize heap frag.
     log_control = ElemLogControl.get_instance()
     log_control.remove_old_log_file()
-    #
-    DataBoard.get_instance()
-    TimeMgr.get_instance()
-    MwsDisplays.get_instance()
-    MwsButtons.get_instance()
-    MwsSensors.get_instance()
-    MwsWifi.get_instance()
+    # The goal is to call get_instance() just once.
+    # DataBoard is created first - it contains refs to all the other
+    # major objects.
+    databoard = DataBoard.get_instance()
+    databoard.time_mgr = TimeMgr.get_instance()
+    databoard.displays = MwsDisplays.get_instance()
+    databoard.buttons = MwsButtons.get_instance()
+    databoard.sensors = MwsSensors.get_instance()
+    databoard.wifi = MwsWifi.get_instance()
+    databoard.web_server = MwsWebServer.get_instance()
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 

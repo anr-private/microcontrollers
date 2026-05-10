@@ -48,10 +48,13 @@ class MwsDisplays(ElemLoggerABC):
         if validate != VALIDATE:
             raise RuntimeError(f"MwsDisplays CTOR is private!")
         self._databoard = DataBoard.get_instance()
+
         # LCD 1602                           
         self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
         self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
+        self._lcd_active_display = 0
+
         # LEDs
         self.led_red1   = Pin( 6, Pin.OUT)
         self.led_green1 = Pin( 7, Pin.OUT)
@@ -113,6 +116,31 @@ class MwsDisplays(ElemLoggerABC):
             print(f"MwsDisplays@112 _locate_lcd_hw_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
+    def get_lcd_active_display(self):
+        return self._lcd_active_display
+
+    def set_lcd_active_display(self,v):
+        # v is an int 0..n
+        if not isinstance(v, int):
+            logi("DataBoard@98 set_active_lcd_display BAD VALUE: {v}  type={type(v)}")
+            v = 0
+
+        if v < 0 or v > self.LCD_ACTIVE_DISPLAY_MAX:
+            logi("DataBoard@98 set_active_lcd_display OUT-OF-RANGE: {v}  type={type(v)}")
+            v = 0
+
+        self._lcd_active_display = v
+
+
+
+
+
+
+
+
+
+
+
     # Which to use? Hardware or Soft I2C?
     ####locate_the_lcd = _locate_lcd_soft_i2c
     locate_the_lcd = _locate_lcd_hw_i2c
@@ -148,13 +176,17 @@ class MwsDisplays(ElemLoggerABC):
         lcd_secs_next = 0
         led_idx = 0
         secs = 0
+        half_sec = 0
         while 1:
             lcd_secs_next = self._update_lcd(secs, lcd_secs_next)
 
             led_idx = self._update_leds(led_idx)
 
-            await asyncio.sleep(1)
-            secs += 1
+            await asyncio.sleep(0.5)
+            half_sec += 1
+            if half_sec >= 2:
+                half_sec = 0
+                secs += 1
 
     def _update_leds(self, led_idx):
         self.leds[led_idx].value(0)
@@ -199,8 +231,8 @@ class MwsDisplays(ElemLoggerABC):
         #
         ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
 
-        if self._databoard.lcd_active_display > 1:
-            d = self._databoard.lcd_active_display
+        if self._lcd_active_display > 1:
+            d = self._lcd_active_display
             self.lcd.puts(f"ACTIVE DISPLAY {d}", y=0)
             self.lcd.puts("ACTIVE DISPLAY=1", y=1)
             

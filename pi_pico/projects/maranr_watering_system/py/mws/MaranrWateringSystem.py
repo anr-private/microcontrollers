@@ -48,21 +48,29 @@ class MaranrWateringSystem(ElemLoggerABC):
         displays = MwsDisplays.get_instance()
         ok = displays.locate_the_lcd()
         if not ok:
-            m = "MWSMAIN@50 FAILED TO LOCATE THE LCD."
+            m = "MWSMAIN@51 FAILED TO LOCATE THE LCD."
             logi(m)
             print(m)
 
 
     async def main_task(self):
-        logi(f"MWSMAIN@56  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
+        logi(f"MWSMAIN@57  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
 
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@ TODO enable global exception handler
         # set a global exception handler - for debugging an async program.
         ###set_global_exception()
 
+        # *** NOTE *******
+        # These are currently first created in 
+        #   maranr_watering_system_main.py:main()
+        # The DataBoard has a ref to each one.
+        # The calls to get_instance() below can be replaced
+        # by getting the object refs from DataBoard.
+        #
+        #
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
-        logi(f"MWSMAIN@64 Created DataBoard. state=...\n{dataBoard.long_string()} ")
+        logi(f"MWSMAIN@73 Created DataBoard. state=...\n{dataBoard.long_string()} ")
 
         self._onboard_led = self._get_onboard_led()
         self._toggle_onboad_led()
@@ -70,29 +78,29 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         wifi = MwsWifi.get_instance()
         wifi_task = asyncio.create_task(wifi.wifi_task())
-        logi(f"MWSMAIN@72 wifi task is {wifi_task} ")
+        logi(f"MWSMAIN@81 wifi task is {wifi_task} ")
 
         sensors = MwsSensors.get_instance()
         sensors_task = sensors.start_the_task()
-        logi(f"MWSMAIN@76 {sensors_task=}")
+        logi(f"MWSMAIN@85 {sensors_task=}")
         
         displays = MwsDisplays.get_instance()
         displays_task = displays.start_the_task()
-        logi(f"MWSMAIN@80 {displays_task=}")
+        logi(f"MWSMAIN@89 {displays_task=}")
 
         buttons = MwsButtons.get_instance()
         buttons_task = buttons.start_the_task()
-        logi(f"MWSMAIN@76 {buttons_task=}")
+        logi(f"MWSMAIN@93 {buttons_task=}")
         
         webserver = MwsWebServer.get_instance()
         webserver_task = webserver.start_the_task()
-        logi(f"MWSMAIN@84 {webserver_task=}")
+        logi(f"MWSMAIN@97 {webserver_task=}")
     
         sleep_secs = 3
         logging_ctr = 999
         logging_ctr_limit = 60 / sleep_secs  # log the time every 60 seconds
         while 1:
-            log(f"MWSMAIN@90 MAIN TASK running TopOfLoop   ")
+            log(f"MWSMAIN@103 MAIN TASK running TopOfLoop   ")
 
             logging_ctr += 1
             if logging_ctr >= logging_ctr_limit:
@@ -113,10 +121,10 @@ class MaranrWateringSystem(ElemLoggerABC):
             _=""" #$$$$$ TODO finish this
             log(f"  Who is done:  web={webserver_task.done()}  "+\
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
-            pr int(f"MWSMAIN@111 FS: {get_fs_space_string()}")
-            pr int(f"MWSMAIN@112 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+            pr int(f"MWSMAIN@124 FS: {get_fs_space_string()}")
+            pr int(f"MWSMAIN@125 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
             gc_collect()
-            pr int(f"MWSMAIN@114 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+            pr int(f"MWSMAIN@127 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
             #log(f"   state: {sensors_task.state}")  # bool
             #log(f"   data: {sensors_task.data}")    # None
@@ -125,11 +133,11 @@ class MaranrWateringSystem(ElemLoggerABC):
             ###done, pending = await asyncio.wait(tasks, timeout=1)
     
             if webserver_done and sensors_done and displays_done:
-                log("MWSMAIN@123  MAIN_TASK: all tasks are done!")
+                log("MWSMAIN@136  MAIN_TASK: all tasks are done!")
                 break
             """
 
-            log(f"MWSMAIN@127  MAIN TASK running  SLEEP 3  ")
+            log(f"MWSMAIN@140  MAIN TASK running  SLEEP 3  ")
             await asyncio.sleep(sleep_secs)
             self._toggle_onboad_led()
 
@@ -138,14 +146,14 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         logi("--- MaranrWateringSystem --- BEGIN run_mws()  =======================")
 
-        #pr int(f"MWSMAIN@136 FS: {get_fs_space_string()}")
-        #pr int(f"MWSMAIN@137 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
-        #pr int(f"MWSMAIN@138  +++++ DO GC COLLECT   ++++++++++++++++++")
+        #pr int(f"MWSMAIN@149 FS: {get_fs_space_string()}")
+        #pr int(f"MWSMAIN@150 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+        #pr int(f"MWSMAIN@151  +++++ DO GC COLLECT   ++++++++++++++++++")
         #gc.collect()@@@ OR gc_collect() from lib/
-        #pr int(f"MWSMAIN@140 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+        #pr int(f"MWSMAIN@153 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
         ###@@@host,port = self.connect_to_wifi()
-        logi("MWSMAIN@143  START THE MAIN TASK")
+        logi("MWSMAIN@156  START THE MAIN TASK")
         try:
             # Start the event loop and run the main server coroutine
             asyncio.run(self.main_task())
@@ -153,9 +161,9 @@ class MaranrWateringSystem(ElemLoggerABC):
         except KeyboardInterrupt:
             #@@@@@@@@ TODO Handle keyboard in MWS main
             #date_stg, time_stg = get_formatted_local_time()
-            #m = f"MWSMAIN@151 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+            #m = f"MWSMAIN@164 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             #logi(m)
-            print("MWSMAIN@153 interrupt from keyboard")
+            print("MWSMAIN@166 interrupt from keyboard")
 
         finally:
             # Clean up the event loop (optional, but good practice)
