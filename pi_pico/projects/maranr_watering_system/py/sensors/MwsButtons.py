@@ -64,7 +64,7 @@ class MwsButtons(ElemLoggerABC):
         self.right_pb  = None
         self.down_pb   = None
                               
-        self._data_board = None
+        self._databoard = None
         super().__init__()
 
 
@@ -79,7 +79,7 @@ class MwsButtons(ElemLoggerABC):
         """ creates,starts the coro. Returns task."""
         logi("MwsButtons.start_the_task  STARTING THE BUTTONS TASK!")
 
-        self._data_board = DataBoard.get_instance()
+        self._databoard = DataBoard.get_instance()
 
         task = asyncio.create_task(self.buttons_coro())
         return task
@@ -109,12 +109,16 @@ class MwsButtons(ElemLoggerABC):
         global SHORT_CTR
         SHORT_CTR += 1
         print(f"BTNS@106  SHORT PRESS  btn={btn} {btn_name}")
-        if 1:
+        if 0:
             print(f"BTNS@108    WAITing in handle_short() - should not stall the main loop!")
             await asyncio.sleep(3)
             print(f"BTNS@110    DONE-WAITing in handle_short()")
-            
+        v = self._databoard.get_lcd_active_display()
+        v += 1
+        self._databoard.set_lcd_active_display(v)
+        print(f"BTNS@111 set_lcd_active_display to {v}")
     
+
     async def handle_double(self, btn, btn_name):
         global DOUBLE_CTR
         DOUBLE_CTR += 1

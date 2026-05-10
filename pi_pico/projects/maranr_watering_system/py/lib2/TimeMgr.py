@@ -60,7 +60,7 @@ class TimeMgr(ElemLoggerABC):
         self.number_of_ntp_updates = 0
         self.number_of_time_jumps = 0
         self.maximum_time_jump_secs = 0
-        self._data_board = None
+        self._databoard = None
         super().__init__()
 
     def _set_logger(self, logger):
@@ -144,8 +144,8 @@ class TimeMgr(ElemLoggerABC):
             logi(f"TimeMgr@144  ***************** TIME JUMPED:   Max jump: {self.maximum_time_jump_secs} secs")
     
         # Report our status
-        if self._data_board is None: self._data_board = DataBoard.get_instance()
-        self._data_board.post_time_mgr_status(
+        if self._databoard is None: self._databoard = DataBoard.get_instance()
+        self._databoard.post_time_mgr_status(
                         self.latest_ntp_update_secs,
                         self.number_of_ntp_updates,
                         self.number_of_time_jumps,

@@ -39,7 +39,7 @@ class RequestHandler(ElemLoggerABC):
         self.default_file = "/pages/index.htmlp"
         self.default_subdir = "pages"
         self._grinder = TemplateGrinder.get_instance()
-        self._data_board = DataBoard.get_instance()
+        self._databoard = DataBoard.get_instance()
         self._rh_data = RequestHandlerData()
         self._rh_log = RequestHandlerLog()
         self.__rhu = RHUtils()  # just to set up its logging
@@ -129,12 +129,12 @@ class RequestHandler(ElemLoggerABC):
 #        data_dict = {"age": 1, "name": "Bob", "datetime": TimeMgr.get_formatted_date_time_string() }
 #
 #        if "sensors" in params:
-#            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@self._data_board.set_internal_temps(123.5,87.1)
-#            degs_f, degs_c = self._data_board.get_internal_temps_one_dec_place()
+#            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@self._databoard.set_internal_temps(123.5,87.1)
+#            degs_f, degs_c = self._databoard.get_internal_temps_one_dec_place()
 #            data_dict["internal_temp_f"] = degs_f
 #            data_dict["internal_temp_c"] = degs_c
 #        if "debug" in params:
-#            lines = self._data_board.status_lines()
+#            lines = self._databoard.status_lines()
 #            hlines = "<br>\n".join(lines)
 #            data_dict["databoard_status"] = hlines
 #            data_dict["wifi_state"] = str(MwsWifi.state)

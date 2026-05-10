@@ -38,7 +38,7 @@ class MwsSensors(ElemLoggerABC):
     def __init__(self, validate):
         if validate != VALIDATE:
             raise RuntimeError(f"MwsSensors CTOR is private!")
-        self._data_board = None
+        self._databoard = None
         super().__init__()
 
 
@@ -53,7 +53,7 @@ class MwsSensors(ElemLoggerABC):
         """ creates,starts the coro. Returns task."""
         logi("MwsSensors.start_the_task  STARTING THE SENSOR TASK!")
 
-        self._data_board = DataBoard.get_instance()
+        self._databoard = DataBoard.get_instance()
 
         task = asyncio.create_task(self.sensors_coro())
         return task
@@ -104,7 +104,7 @@ class MwsSensors(ElemLoggerABC):
     def _get_internal_temps(self, use_logi):
         temperature_c = read_internal_temperature()
         temperature_f = celsius_to_fahrenheit(temperature_c)
-        self._data_board.set_internal_temps(temperature_f, temperature_c);
+        self._databoard.set_internal_temps(temperature_f, temperature_c);
 
         m = f"SENSORS@109  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F"
         if use_logi:

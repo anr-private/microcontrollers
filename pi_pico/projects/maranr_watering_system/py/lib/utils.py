@@ -35,6 +35,9 @@ def seconds_to_hhmmss_string(secs):
     return stg
 
 def seconds_to_hhmmss(secs):
+    # converts secs to hours,mins,seconds
+    # For use with counters that count seconds,
+    # NOT FOR USE with date-time expressed as seconds
     minutes = secs // 60
     s = secs - minutes*60
     hours = minutes // 60

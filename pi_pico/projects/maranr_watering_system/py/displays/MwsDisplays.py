@@ -10,6 +10,7 @@ from machine import I2C    # hardware driver
 ###from machine import SoftI2C # software driver
 
 from lib.utils import MWS_CONFIG
+from lib.utils import seconds_to_hhmmss_string
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.DataBoard import DataBoard
 
@@ -198,13 +199,15 @@ class MwsDisplays(ElemLoggerABC):
         #
         ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
 
-        if self._databoard.lcd_active_display == 1:
-            self.lcd.puts("ACTIVE DISPLAY 1", y=0)
+        if self._databoard.lcd_active_display > 1:
+            d = self._databoard.lcd_active_display
+            self.lcd.puts(f"ACTIVE DISPLAY {d}", y=0)
             self.lcd.puts("ACTIVE DISPLAY=1", y=1)
             
         else:
+            hhmmss = seconds_to_hhmmss_string(secs)
             line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
-            line2 = f"secs={secs}      "
+            line2 = f"{hhmmss:<16}"
             self.lcd.puts(line1, x=0,y=0)
             self.lcd.puts(line2, x=0,y=1)
 
