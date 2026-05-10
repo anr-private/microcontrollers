@@ -23,9 +23,6 @@ class DataBoard(ElemLoggerABC):
     SYS_STATE_OFF     = 3
     SYS_STATE_OFF     = 4
 
-    LCD_ACTIVE_DISPLAY_MAX = 5 #@@@@@@@@@@@@@@@@ UPDATE?
-
-
     _instance = None
 
     @classmethod
@@ -52,7 +49,7 @@ class DataBoard(ElemLoggerABC):
         self.displays = None    # MwsDisplays
         self.buttons = None     # MwsButtons
         self.sensors = None     # MwsSensors
-        self.wifi - Non         # MwsWifi
+        self.wifi = None        # MwsWifi
         # 
         self.system_state = self.SYS_STATE_STARTUP
         self.ipaddr = None

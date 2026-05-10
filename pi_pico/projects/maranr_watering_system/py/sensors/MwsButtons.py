@@ -114,12 +114,12 @@ class MwsButtons(ElemLoggerABC):
             await asyncio.sleep(3)
             print(f"BTNS@115    DONE-WAITing in handle_short()")
 
-        displays = self._databoard.displays()
+        displays = self._databoard.displays
 
-        v = displays.get_lcd_active_display()
-        v += 1
+        prev_v = displays.get_lcd_active_display()
+        v = prev_v + 1
+        print(f"BTNS@122 set_lcd_active_display to {v}   prev={prev_v}")
         displays.set_lcd_active_display(v)
-        print(f"BTNS@122 set_lcd_active_display to {v}")
     
 
     async def handle_double(self, btn, btn_name):

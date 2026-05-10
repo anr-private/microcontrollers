@@ -32,6 +32,9 @@ class MwsDisplays(ElemLoggerABC):
 
     _instance = None
 
+    LCD_ACTIVE_DISPLAY_MAX = 5 #@@@@@@@@@@@@@@@@ UPDATE?
+
+
     @classmethod
     def get_instance(cls):
         if cls._instance is not None: return cls._instance
@@ -122,13 +125,14 @@ class MwsDisplays(ElemLoggerABC):
     def set_lcd_active_display(self,v):
         # v is an int 0..n
         if not isinstance(v, int):
-            logi("DataBoard@98 set_active_lcd_display BAD VALUE: {v}  type={type(v)}")
+            logi("MwsDisplays@98 set_active_lcd_display BAD VALUE: {v}  type={type(v)}")
             v = 0
 
         if v < 0 or v > self.LCD_ACTIVE_DISPLAY_MAX:
-            logi("DataBoard@98 set_active_lcd_display OUT-OF-RANGE: {v}  type={type(v)}")
+            logi("MwsDisplays@98 set_active_lcd_display OUT-OF-RANGE: {v}  type={type(v)}")
             v = 0
 
+        print(f"MwsDisplays@124 set_lcd_active_display SET LCD ACTIVE DISPLAY to {v}.  Was {self._lcd_active_display}")
         self._lcd_active_display = v
 
 
@@ -231,10 +235,10 @@ class MwsDisplays(ElemLoggerABC):
         #
         ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
 
-        if self._lcd_active_display > 1:
+        if self._lcd_active_display >= 1:
             d = self._lcd_active_display
             self.lcd.puts(f"ACTIVE DISPLAY {d}", y=0)
-            self.lcd.puts("ACTIVE DISPLAY=1", y=1)
+            self.lcd.puts(f"ACTIVE DISPLAY={d}", y=1)
             
         else:
             hhmmss = seconds_to_hhmmss_string(secs)
