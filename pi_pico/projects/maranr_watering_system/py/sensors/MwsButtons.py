@@ -118,7 +118,7 @@ class MwsButtons(ElemLoggerABC):
 
         prev_v = displays.get_lcd_active_display()
         v = prev_v + 1
-        print(f"BTNS@122 set_lcd_active_display to {v}   prev={prev_v}")
+        print(f"BTNS@121 set_lcd_active_display to {v}   prev={prev_v}")
         displays.set_lcd_active_display(v)
     
 
