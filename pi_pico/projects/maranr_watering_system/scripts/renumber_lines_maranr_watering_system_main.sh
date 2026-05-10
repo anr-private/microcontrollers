@@ -6,7 +6,7 @@
 
 PYTHON_EXE=python3
 
-FDIR="mws"
+FDIR="."
 FNAME="maranr_watering_system_main.py"
 TARGET='MAIN@'
 

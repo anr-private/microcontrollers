@@ -36,7 +36,7 @@ from mws.MaranrWateringSystem import MaranrWateringSystem
 def main():
     
     print("MAIN: MARANR Watering System starting...")
-    print(f"MAIN@48  {MWS_CONFIG=}")
+    print(f"MAIN@39  {MWS_CONFIG=}")
 
     # create these early on, in order. Pre-allocate to minimize heap frag.
     log_control = ElemLogControl.get_instance()
