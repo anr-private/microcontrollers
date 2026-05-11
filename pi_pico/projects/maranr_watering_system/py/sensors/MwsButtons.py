@@ -116,21 +116,29 @@ class MwsButtons(ElemLoggerABC):
 
         displays = self._databoard.displays
 
-        prev_v = displays.get_lcd_active_display()
-        v = prev_v + 1
-        print(f"BTNS@121 set_lcd_active_display to {v}   prev={prev_v}")
-        displays.set_lcd_active_display(v)
-    
+        if btn_name == "Down":
+            prev_v = displays.get_lcd_active_display()
+            v = prev_v + 1
+            print(f"BTNS@122 DOWN-BTN  set_lcd_active_display to {v}   prev={prev_v}")
+            displays.set_lcd_active_display(v)
+
+        elif btn_name == "Up":
+            prev_v = displays.get_lcd_active_display()
+            v = prev_v - 1
+            print(f"BTNS@128 UP-BTN set_lcd_active_display to {v}   prev={prev_v}")
+            displays.set_lcd_active_display(v)
+        else:
+            print(f"BTNS@131 {btn_name}-BTN  has NO ACTION attached to it yet")
 
     async def handle_double(self, btn, btn_name):
         global DOUBLE_CTR
         DOUBLE_CTR += 1
-        print(f"BTNS@128 DOUBLE PRESS  btn={btn} {btn_name}")
+        print(f"BTNS@136 DOUBLE PRESS  btn={btn} {btn_name}")
     
     async def handle_long(self, btn, btn_name):
         global LONG_CTR
         LONG_CTR += 1
-        print(f"BTNS@133  LONG PRESS  btn={btn} {btn_name}")
+        print(f"BTNS@141  LONG PRESS  btn={btn} {btn_name}")
     
 
     def init_one_button(self, pin, btn_name):
@@ -146,7 +154,7 @@ class MwsButtons(ElemLoggerABC):
 ###        while elapsed < 60:  # Run for one minute
 ###            elapsed += 1
 ###            actual_elapsed = time.time() - start_time
-###            print(f"BTNS@149                     MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
+###            print(f"BTNS@157                     MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
 ###            await asyncio.sleep(1)
 
 ###        use_logi = True
@@ -154,13 +162,13 @@ class MwsButtons(ElemLoggerABC):
 ###        while 1:
 ###            if 0:
 ###                fss = get_fs_space_string()
-###                log(f"BTNS@157.buttons_coro RUNNING: {fss}")
+###                log(f"BTNS@165.buttons_coro RUNNING: {fss}")
 ###            if 0:
 ###                mss = get_memory_status_string(do_garbage_collect=False)
-###                log(f"BTNS@160.buttons_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+###                log(f"BTNS@168.buttons_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
 ###                gc_collect()
 ###                mss = get_memory_status_string(do_garbage_collect=False)
-###                log(f"BTNS@163.buttons_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+###                log(f"BTNS@171.buttons_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 ###
 ###            # Reduce logging volume/freq
 ###            if 0:
@@ -179,8 +187,8 @@ class MwsButtons(ElemLoggerABC):
 ###                mf_after = gc.mem_free()
 ###                ma_diff = ma_after - ma_before
 ###                mf_diff = mf_after - mf_before
-###                m1 = f"BTNS@182  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
-###                m2 = f"BTNS@183  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
+###                m1 = f"BTNS@190  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
+###                m2 = f"BTNS@191  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
 ###                if use_logi:
 ###                    logi(m1); logi(m2)
 ###                else:
@@ -195,7 +203,7 @@ class MwsButtons(ElemLoggerABC):
         # while 1:
             # TASK_1_CTR += 1
             # if TASK_1_CTR % 500 == 0:
-                # print(f"BTNS@198 task_1  ctr={TASK_1_CTR}")
+                # print(f"BTNS@206 task_1  ctr={TASK_1_CTR}")
             # await asyncio.sleep(0)
 
 

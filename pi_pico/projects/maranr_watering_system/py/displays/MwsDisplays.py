@@ -213,7 +213,7 @@ class MwsDisplays(ElemLoggerABC):
 
 
     def _update_lcd(self, elapsed_secs):
-        print(f"MwsDisplays@216 UPDATE LCD LINES  {elapsed_secs=} {self._lcd_active_display=} ")
+        ###print(f"MwsDisplays@216 UPDATE LCD LINES  {elapsed_secs=} {self._lcd_active_display=} ")
 
         #line1 = "LINE 1 is BAD@@@!!!"
         #try:
@@ -224,17 +224,39 @@ class MwsDisplays(ElemLoggerABC):
         #
         ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
 
-        if self._lcd_active_display >= 1:
-            d = self._lcd_active_display
-            self.lcd.puts(f"ACTIVE DISPLAY {d}", y=0)
-            self.lcd.puts(f"ACTIVE DISPLAY={d}", y=1)
-            
-        else:
+        if self._lcd_active_display == 0:
+            # 123456789.123456
             hhmmss = seconds_to_hhmmss_string(elapsed_secs)
             line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
-            line2 = f"{hhmmss:<16}"
-            self.lcd.puts(line1, x=0,y=0)
-            self.lcd.puts(line2, x=0,y=1)
+            line2 = f"{hhmmss}"
+            ###self.lcd.puts(line1, x=0,y=0)
+            ###self.lcd.puts(line2, x=0,y=1)
 
+        elif self._lcd_active_display == 1:
+            line1 = f"{self._databoard.time_mgr.get_formatted_local_YYYYMMDD()}"
+            line2 = f"{self._databoard.time_mgr.get_formatted_local_HHMMSS()}"
+
+        elif self._lcd_active_display == 2:
+            degs_f, degs_c = self._databoard.get_internal_temps_one_dec_place()
+            #         123456789.123456
+            #         Pico temp 123F  "
+            line1 = f"Pico temp {degs_f}F"
+            line2 = f"Pico temp {degs_c}C"
+
+        elif self._lcd_active_display == 3:
+            # NTP Latest update:
+            line1 = f"{self._databoard.time_mgr_latest_ntp_update_secs} secs"
+            line2 = f"{self._databoard.time_mgr_number_of_ntp_updates} NTP update"
+
+        else:
+            d = self._lcd_active_display
+            line1 = f"ACTIVE DISPLAY {d}"
+            line2 = f"ACTIVE DISPLAY={d}"
+            ###self.lcd.puts(f"ACTIVE DISPLAY {d}", y=0)
+            ###self.lcd.puts(f"ACTIVE DISPLAY={d}", y=1)
+        s1 = f"{line1:<16}"
+        s2 = f"{line2:<16}"
+        self.lcd.puts(s1, y=0)
+        self.lcd.puts(s2, y=1)
 
 ###

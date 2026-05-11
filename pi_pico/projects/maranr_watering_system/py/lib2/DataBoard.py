@@ -100,12 +100,6 @@ class DataBoard(ElemLoggerABC):
         return degs_f, degs_c
 
 
-    def __str__(self):
-        s = []
-        s.append("x=%s" % str(self.x))
-        return ("%s[%s]" % 
-            (self.__class__.__name__, ",".join(s)))
-
     def status_lines(self):
         lines = []
         lines.append(f"DataBoard State:  {self.system_state}")
@@ -115,6 +109,12 @@ class DataBoard(ElemLoggerABC):
         lines.append(f" system.state={self.system_state} ")
         lines.append(f" Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
         return lines
+
+    def __str__(self):
+        s = []
+        s.append("x=%s" % str(self.x))
+        return ("%s[%s]" % 
+            (self.__class__.__name__, ",".join(s)))
 
     def long_string(self):
         return "\n".join(self.status_lines())

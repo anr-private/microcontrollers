@@ -88,6 +88,20 @@ class TimeMgr(ElemLoggerABC):
         return local_time
 
     @staticmethod
+    def get_formatted_local_YYYYMMDD():
+        now = TimeMgr.get_local_time()
+        # Format the date as "YYYY-MM-DD" 
+        date_str = "{}-{}-{}".format(now[0], now[1], now[2])
+        return date_str
+
+    @staticmethod
+    def get_formatted_local_HHMMSS():
+        now = TimeMgr.get_local_time()
+        # Format the time as "HH:MM:SS"
+        time_str = "{:02d}:{:02d}:{:02d}".format(now[3], now[4], now[5])
+        return time_str
+
+    @staticmethod
     def get_formatted_local_time():
         now = TimeMgr.get_local_time()
         # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
