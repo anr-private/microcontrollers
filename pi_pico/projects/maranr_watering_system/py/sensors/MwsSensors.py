@@ -38,7 +38,7 @@ class MwsSensors(ElemLoggerABC):
     def __init__(self, validate):
         if validate != VALIDATE:
             raise RuntimeError(f"MwsSensors CTOR is private!")
-        self._databoard = None
+        self._databoard = None        
         super().__init__()
 
 
@@ -81,24 +81,28 @@ class MwsSensors(ElemLoggerABC):
             else:
                 use_logi = False
 
-            if 1:
-                ma_before = gc.mem_alloc()
-                mf_before = gc.mem_free()
-                gc.collect()
-                ma_after = gc.mem_alloc()
-                mf_after = gc.mem_free()
-                ma_diff = ma_after - ma_before
-                mf_diff = mf_after - mf_before
-                m1 = f"SENSORS@92  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
-                m2 = f"SENSORS@93  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
-                if use_logi:
-                    logi(m1); logi(m2)
-                else:
-                    log(m1); log(m2)
+            self._accum_memory_stats(use_logi)
 
             self._get_internal_temps(use_logi)
 
             await asyncio.sleep(10)
+
+
+    def _accum_memory_stats(self, use_logi):
+        ma_before = gc.mem_alloc()
+        mf_before = gc.mem_free()
+        gc.collect()
+        ma_after = gc.mem_alloc()
+        mf_after = gc.mem_free()
+        self._databoard.set_memory_alloc_and_free(ma_after, mf_after)
+        ma_diff = ma_after - ma_before
+        mf_diff = mf_after - mf_before
+        m1 = f"SENSORS@92  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
+        m2 = f"SENSORS@93  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
+        if use_logi:
+            logi(m1); logi(m2)
+        else:
+            log(m1); log(m2)
 
 
     def _get_internal_temps(self, use_logi):

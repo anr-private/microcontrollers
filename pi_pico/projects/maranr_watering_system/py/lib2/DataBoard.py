@@ -55,12 +55,25 @@ class DataBoard(ElemLoggerABC):
         self.ipaddr = None
         self.port = 0
         self.webserver_active = False
+        # CPU/Pico board temp
         self.internal_temp_f = 0
+        self.internal_min_temp_f = 9999
+        self.internal_max_temp_f = 0
         self.internal_temp_c = 0
+        self.internal_min_temp_c = 9999
+        self.internal_max_temp_c = 0
+        #
         self.time_mgr_latest_ntp_update_secs = 0
         self.time_mgr_number_of_ntp_updates = 0
         self.time_mgr_number_of_time_jumps = 0
         self.time_mgr_maximum_time_jump_secs = 0
+        #
+        self.memory_alloc = 0
+        self.memory_alloc_min = 9999999
+        self.memory_alloc_max = 0
+        self.memory_free = 0
+        self.memory_free_min = 9999999
+        self.memory_free_max = 0
 
         super().__init__()
 
@@ -90,15 +103,38 @@ class DataBoard(ElemLoggerABC):
         self.time_mgr_maximum_time_jump_secs = maximum_time_jump_secs
 
 
-    def set_internal_temps(self, degsF, degsC):
-        self.internal_temp_f = degsF
-        self.internal_temp_c = degsC
+    def set_internal_temps(self, degs_f, degs_c):
+        self.internal_temp_f = degs_f
+        self.internal_min_temp_f = min(self.internal_min_temp_f, degs_f)
+        self.internal_max_temp_f = max(self.internal_max_temp_f, degs_f)
+        #
+        self.internal_temp_c = degs_c
+        self.internal_min_temp_c = min(self.internal_min_temp_c, degs_c)
+        self.internal_max_temp_c = max(self.internal_max_temp_c, degs_c)
 
     def get_internal_temps_one_dec_place(self):
         degs_f = f"{self.internal_temp_f:.1f}"
         degs_c = f"{self.internal_temp_c:.1f}"
         return degs_f, degs_c
 
+    def get_internal_min_temps_one_dec_place(self):
+        degs_f = f"{self.internal_min_temp_f:.1f}"
+        degs_c = f"{self.internal_min_temp_c:.1f}"
+        return degs_f, degs_c
+
+    def get_internal_max_temps_one_dec_place(self):
+        degs_f = f"{self.internal_max_temp_f:.1f}"
+        degs_c = f"{self.internal_max_temp_c:.1f}"
+        return degs_f, degs_c
+
+
+    def set_memory_alloc_and_free(self, mem_alloc, mem_free):
+        self.memory_alloc = mem_alloc
+        self.memory_alloc_min = min(self.memory_alloc_min, mem_alloc)
+        self.memory_alloc_max = max(self.memory_alloc_max, mem_alloc)
+        self.memory_free = mem_free
+        self.memory_free_min = min(self.memory_free_min, mem_free)
+        self.memory_free_max = max(self.memory_free_max, mem_free)
 
     def status_lines(self):
         lines = []

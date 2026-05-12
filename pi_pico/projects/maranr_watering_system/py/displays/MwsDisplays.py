@@ -1,6 +1,7 @@
 # MwsDisplays.py
 
 import asyncio
+import gc
 try:
     import utime as time
 except Exception:
@@ -9,8 +10,9 @@ from machine import Pin
 from machine import I2C    # hardware driver
 ###from machine import SoftI2C # software driver
 
-from lib.utils import MWS_CONFIG
-from lib.utils import seconds_to_hhmmss_string
+from utils import MWS_CONFIG
+from utils import seconds_to_hhmmss_string
+from utils import get_flash_space
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.DataBoard import DataBoard
 
@@ -32,7 +34,7 @@ class MwsDisplays(ElemLoggerABC):
 
     _instance = None
 
-    LCD_ACTIVE_DISPLAY_MAX = 5 #@@@@@@@@@@@@@@@@ UPDATE?
+    LCD_ACTIVE_DISPLAY_MAX = 10 #@@@@@@@@@@@@@@@@ UPDATE?
 
 
     @classmethod
@@ -138,8 +140,12 @@ class MwsDisplays(ElemLoggerABC):
             logi("MwsDisplays@138 set_active_lcd_display BAD VALUE: {v}  type={type(v)}")
             v = 0
 
-        if v < 0 or v > self.LCD_ACTIVE_DISPLAY_MAX:
-            logi("MwsDisplays@142 set_active_lcd_display OUT-OF-RANGE: {v}  type={type(v)}")
+        # Roll over if request is too big or too small
+        if v < 0 :
+            logi("MwsDisplays@142 set_active_lcd_display TOO SMALL: {v}  type={type(v)}")
+            v = self.LCD_ACTIVE_DISPLAY_MAX
+        elif v > self.LCD_ACTIVE_DISPLAY_MAX:
+            logi("MwsDisplays@142 set_active_lcd_display TOO LARGE: {v}  type={type(v)}")
             v = 0
 
         print(f"MwsDisplays@145 set_lcd_active_display SET LCD ACTIVE DISPLAY to {v}.  Was {self._lcd_active_display}")
@@ -236,17 +242,60 @@ class MwsDisplays(ElemLoggerABC):
             line1 = f"{self._databoard.time_mgr.get_formatted_local_YYYYMMDD()}"
             line2 = f"{self._databoard.time_mgr.get_formatted_local_HHMMSS()}"
 
-        elif self._lcd_active_display == 2:
-            degs_f, degs_c = self._databoard.get_internal_temps_one_dec_place()
-            #         123456789.123456
-            #         Pico temp 123F  "
-            line1 = f"Pico temp {degs_f}F"
-            line2 = f"Pico temp {degs_c}C"
 
-        elif self._lcd_active_display == 3:
+        elif self._lcd_active_display == 2:
             # NTP Latest update:
             line1 = f"{self._databoard.time_mgr_latest_ntp_update_secs} secs"
             line2 = f"{self._databoard.time_mgr_number_of_ntp_updates} NTP update"
+
+        elif self._lcd_active_display == 3:
+            # Temp-F
+            degs_f = self._databoard.internal_temp_f
+            min_degs_f = self._databoard.internal_min_temp_f
+            max_degs_f = self._databoard.internal_max_temp_f
+            #         123456789.123456
+            #         Pico temp 123.1F"
+            line1 = f"Pico temp {degs_f:.1f}F"
+            line2 = f"{min_degs_f:.1f} {max_degs_f:.1f} MinMx"
+
+        elif self._lcd_active_display == 4:
+            # Temp-C
+            degs_c = self._databoard.internal_temp_c
+            min_degs_c = self._databoard.internal_min_temp_c
+            max_degs_c = self._databoard.internal_max_temp_c
+            #         123456789.123456
+            #         Pico temp 123.1C"
+            line1 = f"Pico temp {degs_c:.1f}C"
+            line2 = f"{min_degs_c:.1f} {max_degs_c:.1f} MinMx"
+
+        elif self._lcd_active_display == 5:
+            # memory
+            mem_free = self._databoard.memory_free
+            mem_alloc = self._databoard.memory_alloc
+            line1 = f"{mem_free} FreeMem"
+            line2 = f"{mem_alloc} AllocMem"
+
+        elif self._lcd_active_display == 6:
+            # memory free
+            mem_free = self._databoard.memory_free
+            mem_free_min = self._databoard.memory_free_min
+            mem_free_max = self._databoard.memory_free_max
+            line1 = f"{mem_free} FreeMinMx"
+            line2 = f"{mem_free_min} {mem_free_max}"
+
+        elif self._lcd_active_display == 7:
+            # memory alloc
+            mem_alloc = self._databoard.memory_alloc
+            mem_alloc_min = self._databoard.memory_alloc_min
+            mem_alloc_max = self._databoard.memory_alloc_max
+            line1 = f"{mem_alloc} AllocMnMx"
+            line2 = f"{mem_alloc_min} {mem_alloc_max}"
+
+        elif self._lcd_active_display == 8:
+            # file space
+            total_space, free_space = get_flash_space()
+            line1 = f"{free_space} FreeFS"
+            line2 = f"{total_space} TotalFS"
 
         else:
             d = self._lcd_active_display

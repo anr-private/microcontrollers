@@ -119,118 +119,25 @@ class RequestHandler(ElemLoggerABC):
         return reply
 
 
-#    def _handle_data_request(self, parsed_http):
-#        params = parsed_http.url_query_parameters
-#
-#        logi(f"RH@125  DATA REQ  params={params}")
-#
-#        #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
-#        ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
-#        data_dict = {"age": 1, "name": "Bob", "datetime": TimeMgr.get_formatted_date_time_string() }
-#
-#        if "sensors" in params:
-#            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@self._databoard.set_internal_temps(123.5,87.1)
-#            degs_f, degs_c = self._databoard.get_internal_temps_one_dec_place()
-#            data_dict["internal_temp_f"] = degs_f
-#            data_dict["internal_temp_c"] = degs_c
-#        if "debug" in params:
-#            lines = self._databoard.status_lines()
-#            hlines = "<br>\n".join(lines)
-#            data_dict["databoard_status"] = hlines
-#            data_dict["wifi_state"] = str(MwsWifi.state)
-#        if "settings" in params:
-#            data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
-#
-#        json_stg = json.dumps(data_dict)
-#        log(f"RH@145 body: JSON-string:...")  
-#        log(json_stg)
-#
-#        # Build a reply that provides the log lines
-#        rb = ReplyBuilder()
-#
-#        # use html's content type
-#        content_type = RHUtils.guess_file_content_type("X.json")
-#
-#        # content type: use 
-#        reply = rb.build_textual_file_reply(content_type, json_stg)
-#
-#        m = f"RH@157  HTTP REPLY to DATA REQUEST:"
-#        logi(m)
-#        m = f"RH@159 {reply.long_string()}"
-#        logi(m)
-#
-#        return reply
-#
-#            
-#    def _handle_echo_request(self, parsed_http):
-#        log(f"RH@166  _handle_echo_request  ph={parsed_http}")
-#
-#        params = parsed_http.url_query_parameters
-#
-#        html_lines = [
-#        "<!DOCTYPE html>",
-#        "<html>",
-#        "<head>",
-#        "  <meta charset=\"UTF-8\">",
-#        "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">",
-#        "  <title>Echoes the Query Parameters</title>",
-#        "</head>",
-#        "<body>",
-#        f"<h2>Echoed Query Parameters:</h2>",
-#        "<p> ",
-#            ]
-#        html_tail = [
-#        "  </p>",
-#        " <p><a href=\"index.htmlp\">BACK</a></p>",
-#        "</body>",
-#        "</html>",
-#            ]
-#
-#        params_lines = []
-#        for k,v in params.items():
-#            line = f" &nbsp; {k}  {v}  <br>"
-#            params_lines.append(line)
-#       
-#        html_lines.extend(params_lines)
-#        html_lines.extend(html_tail)
-#        body_string = "\n".join(html_lines)
-#        del html_lines
-#
-#        # Build a reply that provides the log lines
-#        rb = ReplyBuilder()
-#
-#        # use html's content type
-#        content_type = RHUtils.guess_file_content_type("X.html")
-#
-#        # content type: use 
-#        reply = rb.build_textual_file_reply(content_type, body_string)
-#
-#        m = f"RH@208 HTTP REPLY to ECHO request "
-#        logi(m)
-#        m = f"RH@210  {reply.long_string()}"
-#        logi(m)
-#        return reply
-
-
     def _handle_file_request(self, parsed_http):
         """ """
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@220 Default file requested") 
+            log(f"RH@127 Default file requested") 
             file_path = self.default_file
         
-        log(f"RH@223 {file_path=}")
+        log(f"RH@130 {file_path=}")
 
         # See if file exists - maybe in /pages/ or etc
         # Don't worry about what type of file yet - do binary read.
         # Try the default_subdir as well.
         fu = FileObtainer()
-        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@229"):
+        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@136"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"RH@233 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@140 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
 
@@ -241,7 +148,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"RH@244 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@151 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -253,8 +160,8 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to build a Reply."
             reply = rb.build_reply_404(m)
-            log(f"RH@256 REPLY WITH 404.  {file_path=}  {content_type=}")
-            log(f"RH@257 {m=}")
+            log(f"RH@163 REPLY WITH 404.  {file_path=}  {content_type=}")
+            log(f"RH@164 {m=}")
             return reply
 
         return reply
@@ -265,17 +172,17 @@ class RequestHandler(ElemLoggerABC):
         # Read the file
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@268")
+                prefix_dir=self.default_subdir, w="RH@175")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@274 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@275 {m=}")
+            log(f"RH@181 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@182 {m=}")
             return reply
 
-        log(f"RH@278  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@185  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
             updated_file_contents = self._grinder.grind_file_contents(file_contents)
@@ -298,17 +205,17 @@ class RequestHandler(ElemLoggerABC):
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, 
                 binary=True, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@301")
+                prefix_dir=self.default_subdir, w="RH@208")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@307 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
-            log(f"RH@308 {m=}")
+            log(f"RH@214 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@215 {m=}")
             return reply
 
-        log(f"RH@311  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@218  {file_path=} {content_type=}  len={show_len(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()

@@ -24,7 +24,7 @@ from lib2.DataBoard import DataBoard
 
 #TODO ADD table for daylight savings time changes
 
-NTP_UPDATE_INTERVAL_SECS = 60 # 3600 (once/hour) how often we update @@@@@@@@@@@@@@@@@@@TODO
+NTP_UPDATE_INTERVAL_SECS = 3600  # (once/hour) how often we update
 
 # offset between Unix and Micropython epochs (secs between 1970 and 2000)
 UNIX_EPOCH_OFFSET = 946684800
