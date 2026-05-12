@@ -77,6 +77,20 @@ Pi Pico
  3v3(OUT) pin 36. Can provide 300mA max (extra. in addition to powering the Pico)
 
 
+=== MEMORY and FILE SYSTEM ======================================
+
+2026-5-12  
+MinMax memory 101296 111344.  
+ LCD, buttons working. No webpage use.
+MinMax FileSys 1576960 / 2621440 free/total    
+ Some web page use
+MinMax mem 101296 116032
+ Updated debug.html; use firefox to fetch it
+ Also ran FireFox and Chrome at same time, requested several pages
+  including debug, sensors, log settings, etc.
+
+
+
 === LCD ======================================
 
  See:

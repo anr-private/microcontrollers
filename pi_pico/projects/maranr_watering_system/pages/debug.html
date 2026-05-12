@@ -28,11 +28,12 @@
     <script src="fetch_data_async.js"></script>
     <script>
     const dataUrl = "data?debug=ALL"
-    // Use setInterval to fetch data every N milliseconds (60000 = 60 seconds)
+    // Use setInterval to fetch data every N milliseconds (60_000 = 60 seconds)
     // This function will run repeatedly until the window is closed or clearInterval() is called.
     // To pass an arg to the fetch function, using an anonymous go-between function.
     // () => { fff(); } - replaced by real function
-    const intervalId = setInterval(do_fetch_data, 30000);
+    const refreshIntervalMillisecs = 30000
+    const intervalId = setInterval(do_fetch_data, refreshIntervalMillisecs);
 
     function do_fetch_data() {
         fetchDataAsync(dataUrl, handleFetchedDataCB);
@@ -44,7 +45,8 @@
     function handleFetchedDataCB(data) {  // invoked by fetch_data_and_update.js
         const statusElt = document.getElementById("refresh-status");
         statusElt.style.color = "black";
-        statusElt.innerHTML = "Page refreshed.";
+        secs = Math.trunc(refreshIntervalMillisecs / 1000)
+        statusElt.innerHTML = "Page refreshed.  Refresh interval: "+secs+" secs.";
 
         console.log("FETCHED DATA:...");
         console.log(data);
