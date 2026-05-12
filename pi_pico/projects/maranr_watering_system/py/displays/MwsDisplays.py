@@ -86,7 +86,7 @@ class MwsDisplays(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"MwsDisplays@87 _set_logger: {repr(logger)}")
+        #print(f"MwsDisplays@89 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi                 
@@ -96,7 +96,7 @@ class MwsDisplays(ElemLoggerABC):
         # Find the LCD. Use software-based I2C.
         # This can take several seconds and it ties up the
         # thread. So it is done before we start the asyncio event loop.
-        print(f"MwsDisplays@97 _locate_lcd_soft_i2c: try to locate the LCD device...")
+        print(f"MwsDisplays@99 _locate_lcd_soft_i2c: try to locate the LCD device...")
          # SoftI2C is software I2C - works on ANY GPIO pins(!)
          # 100K is default freq.  Can go higher ex 400K
          # The LCD() ctor can take several seconds to decide if it has
@@ -107,17 +107,17 @@ class MwsDisplays(ElemLoggerABC):
         self.lcd = LCD(i2c_driver, logi)
         
         if self.lcd.ok:
-            print(f"MwsDisplays@108 _locate_lcd_soft_i2c: located the LCD device...")
+            print(f"MwsDisplays@110 _locate_lcd_soft_i2c: located the LCD device...")
         else:
             self.lcd = None
-            print(f"MwsDisplays@111 _locate_lcd_soft_i2c **ERROR**  failed to locate the LCD device!")
+            print(f"MwsDisplays@113 _locate_lcd_soft_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
     def _locate_lcd_hw_i2c(self):
         # Find the LCD. Use hardware-based I2C.
         # This can take several seconds and it ties up the
         # thread. So it is done before we start the asyncio event loop.
-        print(f"MwsDisplays@118 _locate_lcd_hw_i2c: try to locate the LCD device...")
+        print(f"MwsDisplays@120 _locate_lcd_hw_i2c: try to locate the LCD device...")
         i2c_driver = I2C(1,
                          scl=Pin(self.lcd1602_scl_pin), 
                          sda=Pin(self.lcd1602_sda_pin), 
@@ -125,32 +125,48 @@ class MwsDisplays(ElemLoggerABC):
         self.lcd = LCD(i2c_driver, logi)
         
         if self.lcd.ok:
-            print(f"MwsDisplays@126 _locate_lcd_hw_i2c: located the LCD device...")
+            print(f"MwsDisplays@128 _locate_lcd_hw_i2c: located the LCD device...")
         else:
             self.lcd = None
-            print(f"MwsDisplays@129 _locate_lcd_hw_i2c **ERROR**  failed to locate the LCD device!")
+            print(f"MwsDisplays@131 _locate_lcd_hw_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
-    def get_lcd_active_display(self):
-        return self._lcd_active_display
 
-    def set_lcd_active_display(self,v):
-        # v is an int 0..n
-        if not isinstance(v, int):
-            logi("MwsDisplays@138 set_active_lcd_display BAD VALUE: {v}  type={type(v)}")
-            v = 0
+    def notify_btn_short_press(self, btn_name):
+        # button was pressed - short press
+        print(f"MwsDisplays@137 BTN SHORT: {btn_name}")
+        if btn_name == "Down":
+            v = self._lcd_active_display + 1
+            self._set_lcd_active_display(v)
+        elif btn_name == "Up":
+            v = self._lcd_active_display - 1
+            self._set_lcd_active_display(v)
 
+    def handle_long(self, btn_name):
+        # button was pressed - short press
+        print(f"MwsDisplays@147 BTN LONG: {btn_name}")
+
+    def notify_btn_double_press(self, btn_name):
+        # button was pressed - short press
+        print(f"MwsDisplays@151 BTN DOUBLE: {btn_name}")
+
+
+    #def get_lcd_active_display(self):
+    #    return self._lcd_active_display
+    #
+
+    def _set_lcd_active_display(self,v):
         # Roll over if request is too big or too small
         if v < 0 :
-            logi("MwsDisplays@142 set_active_lcd_display TOO SMALL: {v}  type={type(v)}")
+            logi(f"MwsDisplays@161 set_active_lcd_display TOO SMALL: {v}  type={type(v)}")
             v = self.LCD_ACTIVE_DISPLAY_MAX
         elif v > self.LCD_ACTIVE_DISPLAY_MAX:
-            logi("MwsDisplays@142 set_active_lcd_display TOO LARGE: {v}  type={type(v)}")
+            logi(f"MwsDisplays@164 set_active_lcd_display TOO LARGE: {v}  type={type(v)}")
             v = 0
 
-        print(f"MwsDisplays@145 set_lcd_active_display SET LCD ACTIVE DISPLAY to {v}.  Was {self._lcd_active_display}")
+        print(f"MwsDisplays@167 set_lcd_active_display SET LCD ACTIVE DISPLAY to {v}.  Was {self._lcd_active_display}")
         self._lcd_active_display = v
-        print(f"MwsDisplays@147 set_lcd_active_display FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
+        print(f"MwsDisplays@169 set_lcd_active_display FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
         self._lcd_next_update_tick = 1  # 'many ticks in the past'
 
 
@@ -160,10 +176,10 @@ class MwsDisplays(ElemLoggerABC):
 
     def start_the_task(self):
         """ creates,starts the coro. Returns task."""
-        print("MwsDisplays@157 start_the_task!")
+        print("MwsDisplays@179 start_the_task!")
 
         if not self.lcd:
-            m = "MwsDisplays@160 No LCD available - no attempt to send data to the LCD will occur."
+            m = "MwsDisplays@182 No LCD available - no attempt to send data to the LCD will occur."
             logi(m)
             print(m)
 
@@ -174,15 +190,15 @@ class MwsDisplays(ElemLoggerABC):
     async def displays_coro(self):
 
         if self.lcd is None:
-            m = f"MwsDisplays@171  DID NOT FIND THE lcd!"
+            m = f"MwsDisplays@193  DID NOT FIND THE lcd!"
             logi(m)
             print(m)
         elif not self.lcd.ok:
             self.lcd = None # disable
-            m = f"MwsDisplays@176  LCD is not OK! DISABLED the LCD"
+            m = f"MwsDisplays@198  LCD is not OK! DISABLED the LCD"
             logi(m)
             print(m)
-            #m = f"MwsDisplays@179  STOPPING THE displays TASK!!!!!!!!!!!!!!!!!!!!!!!"
+            #m = f"MwsDisplays@201  STOPPING THE displays TASK!!!!!!!!!!!!!!!!!!!!!!!"
             #logi(m)
             #print(m)
 
@@ -198,7 +214,7 @@ class MwsDisplays(ElemLoggerABC):
                 else:
                     # LCD is disabled. (slow the logging rate)
                     self._lcd_next_update_tick += (5*60) <<1 #  5 mins
-                    m = f"MwsDisplays@195  RUNNING idle! COULD NOT FIND LCD!  {elapsed_secs=}"
+                    m = f"MwsDisplays@217  RUNNING idle! COULD NOT FIND LCD!  {elapsed_secs=}"
                     logi(m)
                     print(m)
 
@@ -219,14 +235,14 @@ class MwsDisplays(ElemLoggerABC):
 
 
     def _update_lcd(self, elapsed_secs):
-        ###print(f"MwsDisplays@216 UPDATE LCD LINES  {elapsed_secs=} {self._lcd_active_display=} ")
+        ###print(f"MwsDisplays@238 UPDATE LCD LINES  {elapsed_secs=} {self._lcd_active_display=} ")
 
         #line1 = "LINE 1 is BAD@@@!!!"
         #try:
         #    line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
         #    print(f"@@@@@@@@@106  LINE1 is {line1}")
         #except Exception as ex:
-        #    print(f"@@@@@@@@@@@@@@@@@@@ MwsDisplays@223  EX  {repr(ex)}  {str(ex)}  {ex}")
+        #    print(f"@@@@@@@@@@@@@@@@@@@ MwsDisplays@245  EX  {repr(ex)}  {str(ex)}  {ex}")
         #
         ###@@@@@@@@@@@@@@@@@@@@@line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
 
