@@ -34,7 +34,7 @@ class MwsDisplays(ElemLoggerABC):
 
     _instance = None
 
-    LCD_ACTIVE_DISPLAY_MAX = 10 #@@@@@@@@@@@@@@@@ UPDATE?
+    LCD_ACTIVE_DISPLAY_MAX = 8 #@@@@@@@@@@@@@@@@ UPDATE?
 
 
     @classmethod
@@ -299,8 +299,8 @@ class MwsDisplays(ElemLoggerABC):
 
         else:
             d = self._lcd_active_display
-            line1 = f"ACTIVE DISPLAY {d}"
-            line2 = f"ACTIVE DISPLAY={d}"
+            line1 = f"ACTIVE DISP {d}"
+            line2 = f"ACTIVE DISP={d}"
             ###self.lcd.puts(f"ACTIVE DISPLAY {d}", y=0)
             ###self.lcd.puts(f"ACTIVE DISPLAY={d}", y=1)
         s1 = f"{line1:<16}"
