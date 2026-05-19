@@ -91,6 +91,81 @@ MinMax mem 101296 116032
 
 
 
+=== SparkFun Soil Moisture Sensor ======================================
+
+
+Github repo:
+  https://github.com/sparkfun/qwiic_cy8cmbr3_py
+  ~/git_not_mine/sparkfun_capacitive_soil_sensor/qwiic_cy8cmbr3_py
+   .git/config:
+            [core]
+                repositoryformatversion = 0
+                filemode = true
+                bare = false
+                logallrefupdates = true
+            [remote "origin"]
+                url = git@github.com:sparkfun/qwiic_cy8cmbr3_py.git
+                fetch = +refs/heads/*:refs/remotes/origin/*
+            [branch "master"]
+                remote = origin
+                merge = refs/heads/master
+            
+
+SparkFun Qwiic Soil Moisture Sensor (Capacitive)
+   SKU: SEN-30480 
+QWIIC:  https://www.sparkfun.com/qwiic
+   https://learn.adafruit.com/qwiik-stemma-qt-5-port-hub/pinouts
+
+https://www.sparkfun.com/sparkfun-qwiic-soil-moisture-sensor-capacitive.html
+
+ --- QWIIC PINOUT  -----
+
+Qwiic Pinout & Wire Colors
+Pin Wire Color   Signal Name  Description
+ 1 Black  GND (Ground)  Reference ground
+ 2 Red   3.3V  Power in (regulated 3.3V)
+ 3 Blue   SDA  (Data) I2C Serial Data
+ 4 Yellow SCL  (Clock) I2C Serial Clock
+Orientation
+When looking directly into a female Qwiic connector on a board 
+(or facing the locking tab up), the pins typically map from left to right 
+as: Black (GND)   Red (3.3V)   Blue (SDA)   Yellow (SCL)
+
+ --- I2C ---------------------
+
+1. The Cable's Capacitance
+ Standard limit: Total bus capacitance (including the devices and the cable) 
+must stay under 400 pF.
+Rule of thumb: Capacitance varies by wire type (standard shielded cables 
+usually range from 100 to 240 pF per meter. Therefore, a 2 to 3-meter 
+cable typically hits this limit.
+Best practice: Use unshielded twisted pair (UTP) or low-capacitance wire, 
+and always keep it as short as possible.
+
+2. Clock Speed
+ At standard I2C clock speeds (like \(100 \text{ kHz}\)), you may only get about 1 to 2 meters.Dropping the clock speed to \(10 \text{ kHz}\) or \(5 \text{ kHz}\) reduces the signal's rise-time requirements, letting you reach up to 10 meters.
+
+3. Pull-Up Resistors
+ You can sometimes improve signal reliability over longer cables (up to 2–3 meters) by using physically stronger pull-up resistors (e.g., \(2.4 \text{ k}\Omega\) instead of \(10 \text{ k}\Omega\)). This helps overcome the inherent capacitance of the wire
+
+How to achieve longer distances (10+ meters)
+
+If your application requires distances greater than 10 meters, 
+standard I2C is not suitable without hardware additions. 
+You can bypass length limits by using:I2C Bus Extenders / Active Terminators: 
+Use specialized ICs like the Adafruit LTC4311 I2C Extender to actively drive 
+the bus over longer distances.
+Differential Extenders: 
+Use specialized chips (like the NXP P82B96) that convert the single-ended 
+I2C signal into a differential signal, allowing lengths of up to 
+hundreds of meters.
+
+Alternative Protocols: If you need to span long distances (10+ meters), 
+it is usually more reliable to use a protocol designed for it, 
+such as CAN bus or RS-485.
+
+
+
 === LCD ======================================
 
  See:
