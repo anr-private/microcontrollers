@@ -10,6 +10,8 @@ from file_utils import read_last_n_lines
 
 from .ElemLogger import ElemLogger
 
+LOG_FILE_PATH = "mws_log.txt"
+
 VALIDATE = 13524690
 
 PRT=False
@@ -35,8 +37,10 @@ class ElemLogControl:
 
     @classmethod
     def _nullify_instance(cls):
+        print(f"ELC@39  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         ElemLogControl._instance = None
+        ElemLogControl.registry = {}
         # Remove any messages - unit test only
         #ElemLogControl._clear_latest_messages()
 
@@ -45,7 +49,7 @@ class ElemLogControl:
         if validate != VALIDATE:
             m = f"ELC@46 CALLED CTOR use get_instance()"
             raise RuntimeError(m)
-        self._log_file_path = "mws_log.txt"
+        self._log_file_path = LOG_FILE_PATH
         config_fpath = MWS_CONFIG.get("log_file_path")
         if config_fpath:
             self._log_file_path = config_fpath
@@ -77,7 +81,7 @@ class ElemLogControl:
 
     def enable_logging(self, class_name, enabled):
         logger = self.registry.get(class_name)
-        print(f"@@@@ ELC@80 logger is {logger}  {enabled=}")
+        print(f"ELC@80 logger is {logger}  {enabled=}")
         logger.enable_log(enabled)
 
 
