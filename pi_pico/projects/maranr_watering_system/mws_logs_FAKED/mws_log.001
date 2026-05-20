@@ -1,0 +1,23 @@
+FAKE LOG FILE 001
+===  MARANR WATERINGSYSTEM  -- MWS -- BEGIN EXECUTION  =======================
+LIBLCD@32 Try to locate the LCD as an I2C device.
+--- MaranrWateringSystem --- BEGIN run_mws()  =======================
+MWSMAIN@156  START THE MAIN TASK
+MWSMAIN@57  MAIN TASK STARTED 2020-12-31 19:00:02
+MWSMAIN@73 Created DataBoard. state=...
+DataBoard State:  0
+ NTP Latest update: 0  number-of-NTP-updates 0
+ NTP Number-of-time-jumps: 0  Max.time-jump-secs: 0  
+ IP:port None:0   Webserver:Inactive
+ system.state=0 
+ Internal temp: 0 F  0 C 
+MWSMAIN@81 wifi task is <Task> 
+MwsSensors.start_the_task  STARTING THE SENSOR TASK!
+MWSMAIN@85 sensors_task=<Task>
+MWSMAIN@89 displays_task=<Task>
+MwsButtons.start_the_task  STARTING THE BUTTONS TASK!
+MWSMAIN@93 buttons_task=<Task>
+MWSMAIN@97 webserver_task=<Task>
+2020-12-31 19:00:03 =_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_==_=_=_=  TOTAL SPACE 2,621,440 bytes, 2560.00 KB, 2.50 MB   FREE SPACE 2,056,192 bytes, 2008.00 KB, 1.96 MB
+MwsWifi@158  (RE) INITIALIZE   _State[state=1,wlan=None,sleepSecs=1,retries=0,restarts_counter=0,check_connected_ctr=0]
+MwsWifi@170   Connect to wifi: ssid='bundhang'
