@@ -158,6 +158,7 @@ class MwsWifi(ElemLoggerABC):
         logi(f"MwsWifi@158  (RE) INITIALIZE   {st}")
         self._nullify_connection_state(st)
         st.restarts_counter += 1
+        self._databoard.set_wifi_restarts_counter(st.restarts_counter)
         st.sleep_secs = 0
         return 2
 

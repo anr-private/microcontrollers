@@ -32,16 +32,16 @@ VALIDATE = 857395
 LCD_MENU_ROW_MAX = 5
 
 LCD_MENU_COL_MAX = {
-    0: 1,
-    1: 1,
-    2: 1,
-    3: 2,
-    4: 4,
-    5: 1,
-    6: 1,
-    7: 1,
-    8: 1,
-    9: 1,
+    0: 3,   # network
+    1: 1,   # date time
+    2: 1,   # NTP status
+    3: 2,   # Pico board temperature
+    4: 4,   # memory
+    5: 1,   # filesys 
+    6: 1,   #
+    7: 1,   #
+    8: 1,   #
+    9: 1,   # 
 }
 
 # non-menu display
@@ -392,13 +392,17 @@ class MwsDisplays(ElemLoggerABC):
         if which == 0:
             line1 = "Network"
             line2 = ""
-        else:
-            # 123456789.123456
+        elif which == 1:
             hhmmss = seconds_to_hhmmss_string(elapsed_secs)
             line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
             line2 = f"{hhmmss}"
-            ###self.lcd.puts(line1, x=0,y=0)
-            ###self.lcd.puts(line2, x=0,y=1)
+        elif which == 2:
+            hhmmss = seconds_to_hhmmss_string(elapsed_secs)
+            line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
+            line2 = f"{self._databoard.wifi_restarts_counter} Wifi Restarts"
+        else:
+            line1 = f"{self._databoard.ipaddr}"
+            line2 = f"Port: {self._databoard.port}"
         self._show_lcd_lines(line1,line2)
 
     def _lcd_show_date_time(self, which):

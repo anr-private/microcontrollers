@@ -31,7 +31,7 @@ def seconds_to_hhmmss_string(secs):
     hours = hhmmss[0]
     mins = hhmmss[1]
     secs = hhmmss[2]
-    stg = f"{hours}:{mins:02d}:{secs:02d}"
+    stg = f"{hours:02d}:{mins:02d}:{secs:02d}"
     return stg
 
 def seconds_to_hhmmss(secs):

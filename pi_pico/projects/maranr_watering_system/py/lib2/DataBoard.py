@@ -55,6 +55,7 @@ class DataBoard(ElemLoggerABC):
         self.ipaddr = None
         self.port = 0
         self.webserver_active = False
+        self.wifi_restarts_counter = 0
         # CPU/Pico board temp
         self.internal_temp_f = 0
         self.internal_min_temp_f = 9999
@@ -89,6 +90,10 @@ class DataBoard(ElemLoggerABC):
         self.ipaddr = ipaddr
         self.port = port
         print(f"DataBoard@78  SET IPADDR={self.ipaddr}  PORT={self.port} ")
+
+    def set_wifi_restarts_counter(self, new_restarts_counter):
+        self.wifi_restarts_counter = new_restarts_counter
+        print(f"DataBoard.set_wifi_restarts_counter  ctr={self.wifi_restarts_counter}")
 
 
     def post_time_mgr_status(self, 
@@ -142,6 +147,7 @@ class DataBoard(ElemLoggerABC):
         lines.append(f" NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates}")
         lines.append(f" NTP Number-of-time-jumps: {self.time_mgr_number_of_time_jumps}  Max.time-jump-secs: {self.time_mgr_maximum_time_jump_secs}  ")
         lines.append(f" IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'}")
+        lines.append(f" Wifi restartsCtr: {self.wifi_restarts_counter}")
         lines.append(f" system.state={self.system_state} ")
         lines.append(f" Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
         return lines
