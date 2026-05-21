@@ -42,9 +42,7 @@ class TemplateGrinder(ElemLoggerABC):
     @classmethod
     def _nullify_instance(cls):
         # UNIT TEST ONLY
-        ElemLogControl._instance = None
-        # Remove any messages - unit test only
-        #ElemLogControl._clear_latest_messages()
+        TemplateGrinder._instance = None
 
 
     def __init__(self, validate=None):

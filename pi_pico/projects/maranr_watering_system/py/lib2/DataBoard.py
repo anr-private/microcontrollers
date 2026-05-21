@@ -154,7 +154,7 @@ class DataBoard(ElemLoggerABC):
 
     def __str__(self):
         s = []
-        s.append("x=%s" % str(self.x))
+        s.append("system_state=%s" % str(self.system_state))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 
