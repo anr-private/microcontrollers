@@ -1,4 +1,4 @@
-# FileTailer.py
+# file_utils.py
 
 import os
 
@@ -101,6 +101,47 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
         print(f"FU@271 read_last_n_lines  EX={str(ex)}")
         return []
 
+
+def filter_directory_contents(dir_path:str, file_filter:str) -> bool:
+    # Filter the filenames in a directory.
+    # Returns a list of the filenames selected by file_filter.
+    # Arg file_filter is a function:
+    #   file_filter: Callable[ [str, int], bool ]
+    #   file_filter(fname:str, fsize:int) -> bool
+    # Sample call made by this filter_directory_contents function:
+    #    selected = file_filter("some-filename', 123) 
+    # It is asking: do you want this file? Its name is 'some-filename'
+    # and its size is 123 bytes. Return True if you want it,
+    # False to exclude from the list returned by filter_directory_contents.
+    #
+    # It uses os.ilistdir(dir-path), which returns an
+    # iterator that returns tuple (name, type, inode, [size])
+    # type is 0x4000 (16384) for dir, 0x8000 (32768) for a file
+    # size is #bytes for a file (zero for a dir)
+    # inode is always zero on Micropython on Pico.
+    selected_items = []
+    for item in os.ilistdir(dir_path):
+        name = item[0]
+        itype = item[1]
+        # inode = item[2]
+        size = item[3]
+        if itype == 0x4000:
+            # a dir - skip
+            continue
+        if itype == 0x8000:
+            # a file
+            #print(f"  {"'"+name+"'":<14}   {inode=}   {size=}  ")
+            print(f"  {"'"+name+"'":<14}     {size=}  ")
+            if file_filter is None:
+                keep_it = True
+            else:
+                keep_it = file_filter(name, size)
+            if keep_it:
+                selected_items.append( (name, size) )
+            continue
+        m = f"@@43 Unknown file-item-type: 0x{itype:04X}"
+        print(m)
+    return selected_items
 
 
 

@@ -15,23 +15,25 @@ import os
     # #print(f" {}")
     # print(f" {dir_contents}")
 
-def filter_directory_contents(dir_path, file_filter):
+def filter_directory_contents(dir_path:str, file_filter:str) -> bool:
+    # Filter the filenames in a directory.
+    # Returns a list of the filenames selected by file_filter.
+    # Arg file_filter is a function:
+    #   file_filter: Callable[ [str, int], bool ]
+    #   file_filter(fname:str, fsize:int) -> bool
+    # Sample call made by this filter_directory_contents function:
+    #    selected = file_filter("some-filename', 123) 
+    # It is asking: do you want this file? Its name is 'some-filename'
+    # and its size is 123 bytes. Return True if you want it,
+    # False to exclude from the list returned by filter_directory_contents.
+    #
+    # It uses os.ilistdir(dir-path), which returns an
     # iterator that returns tuple (name, type, inode, [size])
     # type is 0x4000 (16384) for dir, 0x8000 (32768) for a file
     # size is #bytes for a file (zero for a dir)
-    # inode is always zero
+    # inode is always zero on Micropython on Pico.
     selected_items = []
     for item in os.ilistdir(dir_path):
-        #print(f" {type(item)}  {len(item)}")
-        #print(f" {item}")
-        # micropython seems to always provide the 'size' element
-        #name, itype, inode, size = item
-        #if inode != 0:
-        #    m = f"@@29 **ERROR** list-dir-item has non-zero inode value: {item}"
-        #    print(m)
-        #    continue
-        #    #raise RuntimeError(m)
-        ###type_stg = f"unknown {hex(itype)}"
         name = item[0]
         itype = item[1]
         # inode = item[2]
