@@ -60,6 +60,9 @@ for fp in ${LOCAL_DIR}/* ; do
 
 done
 
+rm -f ${TMP_DIR}/*QPUSH_MARKER*
+rm -f ${TMP_DIR}/*DEPRECATED
+
 
 #cp -p ${LOCAL_DIR}/* ${TMP_DIR}/
 
