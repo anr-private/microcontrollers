@@ -20,6 +20,14 @@ for fp in ${LOCAL_DIR}/* ; do
     if [ "$fn" = "__pycache__" ] ; then
         continue
     fi
+    if [[ "$fn" == *DEPRECATED ]] ; then
+        if $DBG ; then echo ' SKIP THIS ' $fn ; fi
+        continue
+    fi
+    if [[ "$fn" == *QPUSH_MARK* ]] ; then
+        if $DBG ; then echo ' SKIP THIS ' $fn ; fi
+        continue
+    fi
 
     fn_extension="${fn##*.}"
     if $DBG ; then echo "extension of $fn is $fn_extension" ; fi

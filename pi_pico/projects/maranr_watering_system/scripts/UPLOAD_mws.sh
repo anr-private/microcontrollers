@@ -20,6 +20,14 @@ for fp in ${LOCAL_DIR}/* ; do
     if [ "$fn" = "__pycache__" ] ; then
         continue
     fi
+    if [[ "$fn" == *DEPRECATED ]] ; then
+        if $DBG ; then echo ' SKIP THIS ' $fn ; fi
+        continue
+    fi
+    if [[ "$fn" == *QPUSH_MARK* ]] ; then
+        if $DBG ; then echo ' SKIP THIS ' $fn ; fi
+        continue
+    fi
 
     TMP_F="${TMP_DIR}/${fn}"
 

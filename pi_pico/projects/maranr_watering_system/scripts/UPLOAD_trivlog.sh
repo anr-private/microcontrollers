@@ -14,6 +14,14 @@ for fp in trivlog/* ; do
     if [ "$fn" = "__pycache__" ] ; then
         continue
     fi
+    if [[ "$fn" == *DEPRECATED ]] ; then
+        if $DBG ; then echo ' SKIP THIS ' $fn ; fi
+        continue
+    fi
+    if [[ "$fn" == *QPUSH_MARK* ]] ; then
+        if $DBG ; then echo ' SKIP THIS ' $fn ; fi
+        continue
+    fi
 
     if $DBG ; then echo \
     "diff -q trivlog/$fn  /tmp/TRIVLOG/$fn" ; fi
