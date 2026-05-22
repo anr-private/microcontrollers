@@ -110,9 +110,10 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
             lines_returned = lines[-relative_line_number:]
             #print(f"@@268 len(lines_returned): {len(lines_returned)}  {relative_line_number=}")
             return lines_returned
-    except OSError:
+    except OSError as ex:
         print(f"FU@114 read_last_n_lines  EX={repr(ex)}")
         print(f"FU@115 read_last_n_lines  EX={str(ex)}")
+        print(f"FU@116 read_last_n_lines  errno={ex.errno}")
         return []
 
 
@@ -149,17 +150,17 @@ def filter_dir_contents(dir_path:str, file_filter:str) -> bool:
 
     dir_contents = list_dir_contents(dir_path)
 
-    print(f"FU@152 dir_contents={dir_contents}")
+    print(f"FU@153 dir_contents={dir_contents}")
 
     selected_items = []
 
     for item in dir_contents:
         (fname, ftype, fsize) = item
-        print(f"FU@158  {fname=}  {ftype=}  {fsize=} ")
+        print(f"FU@159  {fname=}  {ftype=}  {fsize=} ")
 
         ok = file_filter(fname, ftype, fsize)
 
-        print(f"FU@162  {fname=}  {ftype=}  {fsize=} ")
+        print(f"FU@163  {fname=}  {ftype=}  {fsize=} ")
 
         if ok is not None:
             selected_items.append( (fname, ftype, fsize, ok) )
@@ -179,14 +180,14 @@ def list_dir_python(dir_path): # 'real' python
     results = []
     for fname in os.listdir(dir_path):
         fpath = dir_path + "/" + fname
-        print(f"FU@182 {fname=}  {fpath=}")
+        print(f"FU@183 {fname=}  {fpath=}")
         fsize = os.path.getsize(fpath)
         results.append ( (fname, "f", fsize) )
     return results
 
 
 def list_dir_micropython(dir_path):
-    print(f"FU@189  USING list_dir_micropython  {dir_path}")
+    print(f"FU@190  USING list_dir_micropython  {dir_path}")
 
     results = []
 
@@ -202,16 +203,16 @@ def list_dir_micropython(dir_path):
     
             if entry_type == 0x8000:
                 ftype = "f"
-                ###print(f"FU@205 File: {fname}")
+                ###print(f"FU@206 File: {fname}")
             elif entry_type == 0x4000:
                 ftype = "d"
-                ###print(f"FU@208 Directory: {fname}")
+                ###print(f"FU@209 Directory: {fname}")
             else:
                 ftype = "?"
     
             results.append ( (fname, ftype, fsize) )
     except Exception as ex:
-        print(f"FU@214 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        print(f"FU@215 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
 
     return results
 
@@ -229,7 +230,7 @@ def remove_subdir_py3(path):
     except FileNotFoundError as ex:
         pass
     except Exception as ex:
-        print(f"FU@232 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+        print(f"FU@233 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
 def remove_subdir_micropython(path):
     # Micropython version
@@ -249,7 +250,7 @@ def remove_subdir_micropython(path):
         os.rmdir(path)
     except OSError:
         # Handle cases where the path doesn't exist or permissions fail
-        print("FU@252 Failed to remove:", path)
+        print("FU@253 Failed to remove:", path)
 
 
 

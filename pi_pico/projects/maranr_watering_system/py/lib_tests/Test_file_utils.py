@@ -38,7 +38,7 @@ class Test_file_utils:
         lines = read_last_n_lines(fpath, relative_line_number, nlines)
 
         print(f"Result is {type(lines)}")
-        assert len(lines) == nlines
+        assert len(lines) == nlines, f"len(lines)={len(lines)}  {nlines=}"
         exp_first_line = f"This is line {50-relative_line_number+1}"
         exp_last_line = f"This is line {50-relative_line_number+nlines}"
         assert exp_first_line == "This is line 41"
@@ -157,6 +157,7 @@ class Test_file_utils:
 
         subdir = "test__filter_dir_contents"
 
+        upy_fix = 1
         exp_items = {
             "mws_log.001": ("mws_log.001", "f", 53,   1),
             "mws_log.010": ("mws_log.010", "f", 54,  10),
@@ -164,14 +165,16 @@ class Test_file_utils:
             "mws_log.012": ("mws_log.012", "f", 56,  12),
             "mws_log.250": ("mws_log.250", "f", 57, 250),
         }
-        fnames = list(exp_items.keys())
+        # Keep the fnames in order - else _create_test_subdir()
+        # writes different lines into each file under py vs upy.
+        fnames = list(sorted(exp_items.keys()))
         # add some junk
         fnames.extend([ "mws_log.txt", "mws_log.0250", "mws_log.26", 
                         "mws_log.000", ###"mws_log.999",
                         "mws_log.1000", "mws_log.0100",
                         "other.txt", "another.txt", "no-extention",
                         "has.extra.dots.txt"])
-        print(f"@@T@174  fnames: {fnames}")
+        print(f"@@T@177  fnames: {fnames}")
 
         _create_test_subdir(subdir, fnames)
 
@@ -188,7 +191,7 @@ class Test_file_utils:
 
         def _file_filt(fname, ftype, fsize):
             # returns None to exclude the file
-            print(f"@@T@191  _file_filt  {fname=}  {ftype=}  {fsize=} " )
+            print(f"@@T@194  _file_filt  {fname=}  {ftype=}  {fsize=} " )
             if ftype != "f": return None
             #
             parts = fname.rsplit('.',1)
@@ -200,13 +203,13 @@ class Test_file_utils:
             #
             if fpart != "mws_log": return None
             ext_val = is_3_digit_int(ext_part)
-            print(f"@@T@203   extension is_3_digit_int('{ext_part}') is {ext_val}")
+            print(f"@@T@206   extension is_3_digit_int('{ext_part}') is {ext_val}")
             if ext_val is None: return None
             return ext_val
 
         got_items = filter_dir_contents(subdir, _file_filt)
 
-        print(f"@@T@209 filtered-got_items = {got_items}")
+        print(f"@@T@212 filtered-got_items = {got_items}")
 
         assert len(got_items) == len(exp_items)
 
@@ -219,7 +222,7 @@ class Test_file_utils:
             exp_item = exp_items[got_fname]
             assert got_fname == exp_item[0], got_item
             assert got_ftype == exp_item[1], got_item
-            assert got_fsize == exp_item[2], got_item
+            assert got_fsize == exp_item[2], f"{exp_item=} {got_item=}"
             assert got_ext_val == exp_item[3], got_item
 
 
@@ -256,11 +259,44 @@ if pytest is None:
         print("===  end of TEST 2   ================================================\n")
     
     
+    def test_3():
+        print("===  TEST 3   ================================================")
+        t = Test_file_utils()
+        t.test_filter_dir_contents()
+        print("===  end of TEST 3   ================================================\n")
+    
+    
+    def test_4():
+        print("===  TEST 4   ================================================")
+        t = Test_file_utils()
+        t.test_read_last_n_lines_1()
+        print("===  end of TEST 4   ================================================\n")
+    
+    
+    def test_5():
+        print("===  TEST 5   ================================================")
+        t = Test_file_utils()
+        t.test_read_last_n_lines_2()
+        print("===  end of TEST 5   ================================================\n")
+    
+    
+    def test_6():
+        print("===  TEST 6   ================================================")
+        t = Test_file_utils()
+        t.test_read_last_n_lines_3()
+        print("===  end of TEST 6   ================================================\n")
+    
+    
     def main():
-        print("MAIN @ 230 starting -- RUNNING UNDER MICROPYTHON ---")
+        print("MAIN @@T@291 starting -- RUNNING UNDER MICROPYTHON ---")
         test_1()
+        test_2()
+        test_3()
+        test_4()
+        test_5()
+        test_6()
         
-        print("MAIN @ 232 finished")
+        print("MAIN @@T@299 finished")
         
     main()
 
