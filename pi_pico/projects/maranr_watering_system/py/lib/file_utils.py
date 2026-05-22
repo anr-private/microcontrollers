@@ -2,6 +2,20 @@
 
 import os
 
+# Which 'list dir' method is available
+try:
+    _=os.ilistdir # micropython
+    use_os_ilistdir = True
+except AttributeError:
+    # 'real' Python3
+    use_os_ilistdir = False
+
+# how to support remove_subdir()
+try:
+    import shutil
+except ImportError:
+    shutil = None
+
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
 logrt = None
@@ -102,46 +116,115 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
         return []
 
 
-def filter_directory_contents(dir_path:str, file_filter:str) -> bool:
+def filter_dir_contents(dir_path:str, file_filter:str) -> bool:
     # Filter the filenames in a directory.
-    # Returns a list of the filenames selected by file_filter.
-    # Arg file_filter is a function:
+    # Returns a collection of tuples:
+    #   (fname, ftype, fsize, result-value)
+    # Where 
+    #  fname is the filename (incl extension, but no path info)
+    #    (it is the dir name if ftype is 'd')
+    #  ftype is 'd', 'f', '?'
+    #  fsize is an int value, size in bytes
+    #  result-value is the result of the file_filter() function
+    #    called like this:
+    #      file_filter(fname, ftype, fsize)
+    # If the file_filter returns None, the fname (and its info)
+    # is dropped and not included in the result collection.
+    # The result-value allows the file_filter() function to 
+    # add info to the tuples that are returned in the collection.
+    #
+    # **NOTE** If the filter returns False, the file info is
+    # INCLUDED!!  This allows the extra info 'result-value'
+    # to be provided as True or False.
+    # The file_filter MUST RETURN None to exclude the item.
+    #
+    # Details: the file_filter is a function:
     #   file_filter: Callable[ [str, int], bool ]
     #   file_filter(fname:str, fsize:int) -> bool
-    # Sample call made by this filter_directory_contents function:
+    # Sample call made by this filter_dir_contents function:
     #    selected = file_filter("some-filename', 123) 
     # It is asking: do you want this file? Its name is 'some-filename'
     # and its size is 123 bytes. Return True if you want it,
-    # False to exclude from the list returned by filter_directory_contents.
-    #
-    # It uses os.ilistdir(dir-path), which returns an
-    # iterator that returns tuple (name, type, inode, [size])
-    # type is 0x4000 (16384) for dir, 0x8000 (32768) for a file
-    # size is #bytes for a file (zero for a dir)
-    # inode is always zero on Micropython on Pico.
+    # False to exclude from the list returned by filter_dir_contents.
+
+    dir_contents = list_dir_contents(dir_path)
+
+    print(f"FU@133 dir_contents={dir_contents}")
+
     selected_items = []
-    for item in os.ilistdir(dir_path):
-        name = item[0]
-        itype = item[1]
-        # inode = item[2]
-        size = item[3]
-        if itype == 0x4000:
-            # a dir - skip
-            continue
-        if itype == 0x8000:
-            # a file
-            #print(f"  {"'"+name+"'":<14}   {inode=}   {size=}  ")
-            print(f"  {"'"+name+"'":<14}     {size=}  ")
-            if file_filter is None:
-                keep_it = True
-            else:
-                keep_it = file_filter(name, size)
-            if keep_it:
-                selected_items.append( (name, size) )
-            continue
-        m = f"@@43 Unknown file-item-type: 0x{itype:04X}"
-        print(m)
-    return selected_items
+
+    for item in dir_contents:
+        (fname, ftype, fsize) = item
+        print(f"FU@138  {fname=}  {ftype=}  {fsize=} ")
+
+        ok = file_filter(fname, ftype, fsize)
+
+        print(f"FU@138  {fname=}  {ftype=}  {fsize=} ")
+
+        if ok is not None:
+            selected_items.append( (fname, ftype, fsize, ok) )
+
+    return  selected_items
+
+
+def list_dir_contents(dir_path):
+    # Returns dir contents as tuples (in no particular order):
+    #   (fname, ftype, fsize)
+    # fname is filename (no path info)
+    # ftype is 'd' for a dir, 'f' for a file, '?' otherwise
+    if use_os_ilistdir: return list_dir_micropython(dir_path)
+    return list_dir_python(dir_path)
+
+def list_dir_python(dir_path): # 'real' python
+    results = []
+    for fname in os.listdir(dir_path):
+        fpath = dir_path + "/" + fname
+        print(f"FU@163 {fname=}  {fpath=}")
+        fsize = os.path.getsize(fpath)
+        results.append ( (fname, "f", fsize) )
+    return results
+
+def list_dir_micropython(dir_path):
+    for item in os.listdir(dir_path):
+        print(f"FU@163 ITEM is {item}")
+
+    return "XXXX"
+
+
+def remove_subdir(path):
+    if shutil is None:
+        remove_subdir_micropython(path)
+    else:
+        remove_subdir_py3(path)
+
+def remove_subdir_py3(path):
+    # Python3 version
+    try:
+        shutil.rmtree(path)
+    except FileNotFoundError as ex:
+        pass
+    except Exception as ex:
+        print(f"@@T@153 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+
+def remove_subdir_micropython(path):
+    # Micropython version
+    # Check if path is a file or directory
+    try:
+        # Get list of items in the directory
+        for entry in os.ilistdir(path):
+            name, type = entry[0], entry[1]
+            full_path = f"{path}/{name}"
+            
+            if type == 0x8000: # It's a file
+                os.remove(full_path)
+            elif type == 0x4000: # It's a directory
+                rm_recursive(full_path) # Recurse into subdirectory
+        
+        # Finally, remove the now-empty directory
+        os.rmdir(path)
+    except OSError:
+        # Handle cases where the path doesn't exist or permissions fail
+        print("Failed to remove:", path)
 
 
 
