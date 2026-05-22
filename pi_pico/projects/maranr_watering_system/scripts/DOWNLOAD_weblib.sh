@@ -38,6 +38,12 @@ for fp in ${LOCAL_DIR}/* ; do
         if $DBG ; then echo '@25 SKIP THIS: ' $fn ; fi
         continue
     fi
+    if [[ $fn == *QPUSH_MARK* ]] ; then
+        continue
+    fi
+    if [[ $fn == *DEPRECATED ]] ; then
+        continue
+    fi
 
     if $DBG ; then echo \
     "diff -q ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn" ; fi

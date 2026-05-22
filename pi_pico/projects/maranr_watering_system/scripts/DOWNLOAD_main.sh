@@ -27,6 +27,13 @@ for fp in $FILES ; do
     fn=$(basename $fp)
     if $DBG ; then echo fn is $fn ; fi
 
+    if [[ $fn == *QPUSH_MARK* ]] ; then
+        continue
+    fi
+    if [[ $fn == *DEPRECATED ]] ; then
+        continue
+    fi
+
     if $DBG ; then echo \
     "diff -q $fn  ${TMP_DIR}/$fn" ; fi
     diff  -q $fn  ${TMP_DIR}/$fn

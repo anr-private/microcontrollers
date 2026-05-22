@@ -23,6 +23,13 @@ for fp in ${TMP_DIR}/* ; do
     fn=$(basename $fp)
     if $DBG ; then echo fn is $fn ; fi
 
+    if [[ $fn == *QPUSH_MARK* ]] ; then
+        continue
+    fi
+    if [[ $fn == *DEPRECATED ]] ; then
+        continue
+    fi
+
     if $DBG ; then echo \
     "diff -q  ${TMP_DIR}/$fn  ${LOCAL_DIR}/$fn  " ; fi
     diff  -q  ${TMP_DIR}/$fn  ${LOCAL_DIR}/$fn  
