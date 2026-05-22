@@ -8,7 +8,7 @@ PYTHON_EXE=python3
 
 FDIR="lib"
 FNAME="file_utils.py"
-TARGET='MwsDisplays@'
+TARGET='FU@'
 
 
 FPATH="${FDIR}/${FNAME}"

@@ -55,12 +55,12 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
 
                 chunk = f.read(file_size-position if position == 0 else chunk_size)
 
-                #print(f"FU@219  READ got {len(chunk)} bytes")
+                #print(f"FU@58  READ got {len(chunk)} bytes")
 
                 file_size = position # Update file_size for next iteration if needed
                 #print(f"@223  new file size {file_size}")
                 fbytes = chunk + fbytes # Prepend the new chunk to the fbytes
-                print(f"FU@219  combined bytes {len(fbytes)} bytes")
+                print(f"FU@63  combined bytes {len(fbytes)} bytes")
                 
                 # Count newlines in the fbytes
                 while b'\n' in fbytes and lines_found < relative_line_number:
@@ -111,8 +111,8 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
             #print(f"@@268 len(lines_returned): {len(lines_returned)}  {relative_line_number=}")
             return lines_returned
     except OSError:
-        print(f"FU@270 read_last_n_lines  EX={repr(ex)}")
-        print(f"FU@271 read_last_n_lines  EX={str(ex)}")
+        print(f"FU@114 read_last_n_lines  EX={repr(ex)}")
+        print(f"FU@115 read_last_n_lines  EX={str(ex)}")
         return []
 
 
@@ -149,17 +149,17 @@ def filter_dir_contents(dir_path:str, file_filter:str) -> bool:
 
     dir_contents = list_dir_contents(dir_path)
 
-    print(f"FU@133 dir_contents={dir_contents}")
+    print(f"FU@152 dir_contents={dir_contents}")
 
     selected_items = []
 
     for item in dir_contents:
         (fname, ftype, fsize) = item
-        print(f"FU@138  {fname=}  {ftype=}  {fsize=} ")
+        print(f"FU@158  {fname=}  {ftype=}  {fsize=} ")
 
         ok = file_filter(fname, ftype, fsize)
 
-        print(f"FU@138  {fname=}  {ftype=}  {fsize=} ")
+        print(f"FU@162  {fname=}  {ftype=}  {fsize=} ")
 
         if ok is not None:
             selected_items.append( (fname, ftype, fsize, ok) )
@@ -179,16 +179,41 @@ def list_dir_python(dir_path): # 'real' python
     results = []
     for fname in os.listdir(dir_path):
         fpath = dir_path + "/" + fname
-        print(f"FU@163 {fname=}  {fpath=}")
+        print(f"FU@182 {fname=}  {fpath=}")
         fsize = os.path.getsize(fpath)
         results.append ( (fname, "f", fsize) )
     return results
 
-def list_dir_micropython(dir_path):
-    for item in os.listdir(dir_path):
-        print(f"FU@163 ITEM is {item}")
 
-    return "XXXX"
+def list_dir_micropython(dir_path):
+    print(f"FU@189  USING list_dir_micropython  {dir_path}")
+
+    results = []
+
+    try:
+        for entry in os.ilistdir(dir_path):
+            fname = entry[0] # may be the dir name
+            entry_type = entry[1]
+            # inode = entry[2]
+    
+            fsize = 0
+            if len(entry) >= 4:
+                fsize = entry[3]
+    
+            if entry_type == 0x8000:
+                ftype = "f"
+                ###print(f"FU@205 File: {fname}")
+            elif entry_type == 0x4000:
+                ftype = "d"
+                ###print(f"FU@208 Directory: {fname}")
+            else:
+                ftype = "?"
+    
+            results.append ( (fname, ftype, fsize) )
+    except Exception as ex:
+        print(f"FU@214 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+
+    return results
 
 
 def remove_subdir(path):
@@ -204,7 +229,7 @@ def remove_subdir_py3(path):
     except FileNotFoundError as ex:
         pass
     except Exception as ex:
-        print(f"@@T@153 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+        print(f"FU@232 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
 def remove_subdir_micropython(path):
     # Micropython version
@@ -224,7 +249,7 @@ def remove_subdir_micropython(path):
         os.rmdir(path)
     except OSError:
         # Handle cases where the path doesn't exist or permissions fail
-        print("Failed to remove:", path)
+        print("FU@252 Failed to remove:", path)
 
 
 
