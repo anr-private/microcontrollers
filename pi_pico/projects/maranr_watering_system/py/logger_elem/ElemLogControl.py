@@ -5,18 +5,33 @@
 import os
 import sys
 
-from utils import MWS_CONFIG
-from file_utils import read_last_n_lines
+from file_utils import read_last_n_lines, filter_dir_contents
 
 from .ElemLogger import ElemLogger
 
-LOG_FILE_PATH = "mws_log.txt"
+# subdir in which log files are found
+LOG_FILES_SUBDIR = "logs"
 
-VALIDATE = 13524690
+# log files are this base name plus '.' plus '000', '001', etc
+BASE_LOG_FNAME = "mws_log"
 
-PRT=False
+# Starting point for creating the extensions for log files
+FNAME_STARTING_EXTENSION_VALUE = 10
+
+# nominal max size of a log file  in bytes
+# it may be slightly larger due to 'hint keep-lines'
+MAX_LOG_FILE_SIZE = 20_000
+
+# If keep-lines hint has been requested, we'll allow a log file to get 
+# bigger than MAX_LOG_FILE_SIZE by this amount:
+KEEP_LINES_HINT_ADDED_SIZE = 1000
+
+
+
+VALIDATE = 13524687
+
 def prt(s):
-    if PRT: print (s)
+    print(s)
 
 
 class ElemLogControl:
@@ -25,10 +40,11 @@ class ElemLogControl:
 
     _instance = None
 
+    #@@@@@@@@@@@@@@@@@@@@ move this into the instance?  why is it at the class level?
     # key: simplified class name   value: ElemLogger for that class
     registry = {}
 
-    
+
     @classmethod
     def get_instance(cls):
         if cls._instance is not None: return cls._instance
@@ -37,37 +53,65 @@ class ElemLogControl:
 
     @classmethod
     def _nullify_instance(cls):
-        print(f"ELC@40  NULLIFY INSTANCE  =======================================")
+        #print(f"ELC@56  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         ElemLogControl._instance = None
         ElemLogControl.registry = {}
         # Remove any messages - unit test only
         #ElemLogControl._clear_latest_messages()
 
+    @classmethod
+    def _set_max_log_file_size(cls, new_max_size):
+        # unit test ONLY
+        print(f"ELC@66  _set_max_log_file_size to {new_max_size} =======================================")
+        global MAX_LOG_FILE_SIZE
+        MAX_LOG_FILE_SIZE = new_max_size
+
 
     def __init__(self, validate=None):
         if validate != VALIDATE:
-            m = f"ELC@50 CALLED CTOR use get_instance()"
+            m = f"ELC@73 CALLED CTOR use get_instance()"
             raise RuntimeError(m)
-        self._log_file_path = LOG_FILE_PATH
-        config_fpath = MWS_CONFIG.get("log_file_path")
-        if config_fpath:
-            self._log_file_path = config_fpath
-        print(f"ELC@56  log_file_path='{self._log_file_path}' ")
+        ###@@@@@self._log_file_path = LOG_FILE_PATH
+        ###@@@@@config_fpath = MWS_CONFIG.get("log_file_path")
+        ###@@@@@if config_fpath:
+        ###@@@@@    self._log_file_path = config_fpath
+        ###@@@@@print(f"ELC@79  log_file_path='{self._log_file_path}' ")
+
+        # int value of the file extention of the next log file that
+        # will be created. The value is converted into 3 decimal digits
+        # and used as the file extension on BASE_LOG_FNAME.
+        self._fname_next_ctr = 0
+
+        # log files that have been created and are now closed
+        # List contains tuples: (log-filename:str, fsize: int)
+        self._log_file_table = []
+
+        # path of currently-open log file
+        self._current_log_fpath = None
+        # file descriptor for currently-open logfile
+        self._logf = None
+        # current log file size (bytes)
+        self._current_log_fsize = 0
+
+
+
+
+
 
 
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses ElemLogControlABC
         # Returns a logger obj the caller should use
 
-        prt(f"ELC@63   obj is {repr(obj_instance)} ")
+        prt(f"ELC@107   obj is {repr(obj_instance)} ")
 
         simplified_class_name = extract_simplified_classname(obj_instance)
-        prt(f"ELC@66 {simplified_class_name=}")
+        prt(f"ELC@110 {simplified_class_name=}")
 
         # does this class have a logger assigned?
         logger = self.registry.get(simplified_class_name)
-        prt(f"ELC@70  logger of {simplified_class_name} is {logger}")
+        prt(f"ELC@114  logger of {simplified_class_name} is {logger}")
         if logger is None:
             logger = ElemLogger(self, simplified_class_name)
             self.registry[simplified_class_name] = logger
@@ -81,19 +125,8 @@ class ElemLogControl:
 
     def enable_logging(self, class_name, enabled):
         logger = self.registry.get(class_name)
-        print(f"ELC@84 logger is {logger}  {enabled=}")
+        print(f"ELC@128 logger is {logger}  {enabled=}")
         logger.enable_log(enabled)
-
-
-    def remove_old_log_file(self):
-        # remove old log if any
-        fpath = self._log_file_path
-        try:
-            os.remove(fpath)
-            print(f"ELC@93 Old log file '{fpath}' deleted.")
-        except OSError as ex:
-            print(f"ELC@95 FAILED to delete log '{fpath}': {repr(ex)}")
-            print(f"ELC@96 ex='{str(ex)}' ")
 
 
     def log_and_print_one_line(self, line):
@@ -101,36 +134,156 @@ class ElemLogControl:
         print(line)
 
     def log_one_line(self, line):
-        need_to_remove = self._log_this_line(line)
-        if need_to_remove:
-            print(f"ELC@106 REMOVING the current log file: error occurred, maybe out of space?")
-            self.remove_old_log_file()
-            self._log_this_line("ELC@108 REMOVED THE PREVIOUS LOGFILE - logger got an error")
-
-    def _log_this_line(self, line):
-        # write to file
         if line is None: line = ""
-        fname = self._log_file_path
-        remove_the_logfile = False
+        if self._logf is None:
+            self._open_the_next_logfile()
+
         try:
-            with open(fname, "a") as f:
-                f.write(line)
-                f.write("\n")
+            self._logf.write(line)
+            self._logf.write("\n")
+            self._logf.flush()
+            self._current_log_fsize += len(line)+1
+            print(f"ELC@154  @@@@@ curr log size {self._current_log_fsize}  {line=}")
+
         except OSError as ex:
             # see examples/file_and_dirs_io/errno_show_all.py to see all errno values
-            print(f"ELC@121  Error writing '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
-            #print(f"ELC@122  ex.dir: {dir(ex)} ")
+            print(f"ELC@276  Error writing '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
             # 28 is 'out of space'
-            print(f"ELC@124 {ex.errno=}")
-            print(f"ELC@125  TEMP FIX: REMOVE THE logfile ")
-            remove_the_logfile = True
+            print(f"ELC@279 {ex.errno=}")
         except Exception as ex:
-            print(f"ELC@128: Error writing to file '{fname}': {repr(ex)}")
-            print(f"ELC@129: Error writing to file '{fname}': {str(ex)}")
-            remove_the_logfile = True
+            print(f"ELC@283: Error writing to file '{fname}': {repr(ex)}")
+            print(f"ELC@284: Error writing to file '{fname}': {str(ex)}")
 
-        return remove_the_logfile
+        if self._current_log_fsize > MAX_LOG_FILE_SIZE:
+            print(f"ELC@157  @@@@@ curr log size > MAX {self._current_log_fsize} max={MAX_LOG_FILE_SIZE}")
+            self._rotate_to_next_file()
 
+    def _rotate_to_next_file(self):
+        # close the current file
+        self._close_current_log_file("_rotate_to_next_file")
+
+
+    def _open_the_next_logfile(self):
+        # open it
+
+        if self._logf is not None:
+            m = f"ECL@144 _open_the_next_logfile OLD LOG FILE IS NOT CLOSED!"
+            print(m)
+            raise RuntimeError(m)
+
+        try:
+            os.mkdir(LOG_FILES_SUBDIR)
+        except OSError as ex:
+            if ex.errno == 17: # already exists
+                pass
+                #print(f"ELC@185  Subdir '{LOG_FILES_SUBDIR}' already exists")
+            else:
+                print(f"ELC@187 *ERROR* {LOG_FILES_SUBDIR} errno={ex.errno} dir  cannot be created")
+
+        new_log_fpath = self._make_new_log_fpath()
+
+        try:
+            logf = open(new_log_fpath, "w")
+        except Exception as ex:
+            print(f"@@@@@@@@@@@@@ CANNOT OPEN LOGFILE '{new_log_fpath}'  ex={ex}  {str(ex)}")
+        self._logf = logf
+        self._current_log_fpath = new_log_fpath
+        self._current_log_fsize = 0
+        print(f"ELC@198  OPENED NEW LOG {self._current_log_fpath}")
+
+
+    def _make_new_log_fpath(self):
+        # Init if we have no value yet
+        if self._fname_next_ctr <= 0:
+            self._fname_next_ctr = FNAME_STARTING_EXTENSION_VALUE
+
+        self._determine_starting_fname_extension()
+
+
+        fpath = f"{LOG_FILES_SUBDIR}/{BASE_LOG_FNAME}.{self._fname_next_ctr:03d}"
+        self._fname_next_ctr += 1
+        #@@@@@@@@@ TODO what if > 999?
+        print(f"ELC@212 @@@@@@@@@@@@@@@ new fpath='{fpath}'")
+        return fpath
+
+    def _determine_starting_fname_extension(self):
+        # Look for old log files. 
+        # Pick the one with the highest value 000-900 as its extension.
+        # Move up to the next higher value MOD 10
+        # Set the _fname_next_ctr value to that.
+
+        old_log_fnames = filter_dir_contents(LOG_FILES_SUBDIR, _log_file_filter)
+
+        print(f"ELC@223 _determine_starting_fname_extension old_log_fnames={old_log_fnames}")
+
+
+    def close_logging(self):
+        # close the logger
+
+        self._close_current_log_file("close_logging")
+
+
+    def _close_current_log_file(self, who):
+        if self._logf is not None:
+            print(f"ELC@234 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}'")
+            try:
+                self._logf.close()
+            except Exception as ex:
+                m = f"ELC@238 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
+            self._logf = None
+            fname = self._current_log_fpath
+            fsize = self._current_log_fsize
+            self._current_log_fpath = None
+            self._current_log_fsize = 0
+            # track all files
+            log_file_info = (fname, fsize)
+            print(f"ELC@246 Closed current log. Saving log info: {log_file_info}")
+            self._log_file_table.append(log_file_info)
+            print(f"ELC@248 Closed current log. LOG TABLE: {self._log_file_table}")
+
+
+#############################################################################
+#############################################################################
+#############################################################################
+#############################################################################
+#############################################################################
+# OLD STUFF
+###
+###    def log_one_line(self, line):
+###        need_to_remove = self._log_this_line(line)
+###        if need_to_remove:
+###            print(f"ELC@261 REMOVING the current log file: error occurred, maybe out of space?")
+###            self.remove_old_log_file()
+###            self._log_this_line("ELC@263 REMOVED THE PREVIOUS LOGFILE - logger got an error")
+###
+###    def _log_this_line(self, line):
+###        # write to file
+###        if line is None: line = ""
+###        fname = self._log_file_path
+###        remove_the_logfile = False
+###        try:
+###            with open(fname, "a") as f:
+###                f.write(line)
+###                f.write("\n")
+###        except OSError as ex:
+###            # see examples/file_and_dirs_io/errno_show_all.py to see all errno values
+###            print(f"ELC@276  Error writing '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
+###            #print(f"ELC@277  ex.dir: {dir(ex)} ")
+###            # 28 is 'out of space'
+###            print(f"ELC@279 {ex.errno=}")
+###            print(f"ELC@280  TEMP FIX: REMOVE THE logfile ")
+###            remove_the_logfile = True
+###        except Exception as ex:
+###            print(f"ELC@283: Error writing to file '{fname}': {repr(ex)}")
+###            print(f"ELC@284: Error writing to file '{fname}': {str(ex)}")
+###            remove_the_logfile = True
+###
+###        return remove_the_logfile
+
+
+############ KEEP THIS STUFF BELOW  ################################
+############ KEEP THIS STUFF BELOW  ################################
+############ KEEP THIS STUFF BELOW  ################################
 
     def get_lines_from_log_file(self, relative_line_number, number_of_lines):
         # get lines from the log file
@@ -139,14 +292,14 @@ class ElemLogControl:
         # number_of_lines is the number of lines
         # So (1,1) gets the last line in the file,
         # (10,2) gets the 10th and 9th lines from the end of file.
-        lines = read_last_n_lines(self._log_file_path, 
+        lines = read_last_n_lines(self._current_log_fpath,
                                   relative_line_number,
                                   number_of_lines)
         return lines
 
 
     def dump_registered_loggers(self, registry):
-        m = "ELC@149  Classes registered in ElemLogControl:"
+        m = "ELC@308  Classes registered in ElemLogControl:"
         prt(m)
         self.log_one_line(m)
         for k,v in self.registry.items():
@@ -154,17 +307,22 @@ class ElemLogControl:
             prt(m)
             self.log_one_line(m)
 
+def _log_file_filter(fname, ftype, fsize):
+    ok = True
+    print(f"ELC@318 _log_file_filter  fname='{fname}'  {fsize=}  {ok=}")
+
+
 
 def extract_simplified_classname(obj_instance):
     # given a full class name string like "abc.def.MyClass"; return "MyClass"
     # Obtain the string using  str(obj.__class__)
     obj_repr = repr(obj_instance)
-    prt(f"ELC@162 extract_simplified_classname   {obj_repr=}")
+    prt(f"ELC@326 extract_simplified_classname   {obj_repr=}")
     parts = obj_repr.rsplit(".", 1)
-    prt(f"ELC@164  {parts=}")
+    prt(f"ELC@328  {parts=}")
     name_and_addr = parts[-1]
     parts = name_and_addr.split(None, 1)
-    prt(f"ELC@167  {parts=}")
+    prt(f"ELC@331  {parts=}")
 
     simplified_class_name = parts[0]
     simplified_class_name = simplified_class_name.replace("<", "")
