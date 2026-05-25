@@ -384,7 +384,7 @@ class MwsDisplays(ElemLoggerABC):
             self._lcd_show_filesys(1)
 
         elif self._lcd_active_display == 9:
-            self._lcd_show_filesys(1)
+            self._lcd_show_logs_info(2)
 
         else:
             d = self._lcd_active_display
