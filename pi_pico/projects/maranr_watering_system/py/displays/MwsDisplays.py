@@ -14,6 +14,7 @@ from utils import MWS_CONFIG
 from utils import seconds_to_hhmmss_string
 from utils import get_flash_space
 from logger_elem.ElemLoggerABC import ElemLoggerABC
+from logger_elem.ElemLogControl import ElemLogControl
 from lib2.DataBoard import DataBoard
 
 from displays.lib_lcd1602_2004_with_i2c import LCD
@@ -29,16 +30,17 @@ NUM_ROWS = 2
 
 VALIDATE = 857395
 
-LCD_MENU_ROW_MAX = 5
+# biggest row index 0..(rows-1)
+LCD_MENU_ROW_MAX = 6
 
 LCD_MENU_COL_MAX = {
     0: 3,   # network
     1: 1,   # date time
     2: 1,   # NTP status
     3: 2,   # Pico board temperature
-    4: 4,   # memory
+    4: 3,   # memory
     5: 1,   # filesys 
-    6: 1,   #
+    6: 2,   # logs info
     7: 1,   #
     8: 1,   #
     9: 1,   # 
@@ -50,7 +52,6 @@ LCD_ACTIVE_DISPLAY_MAX = 8 #@@@@@@@@@@@@@@@@ UPDATE?
 class MwsDisplays(ElemLoggerABC):
 
     _instance = None
-
 
 
     @classmethod
@@ -346,6 +347,8 @@ class MwsDisplays(ElemLoggerABC):
             self._lcd_show_memory(self._menu_col)
         elif self._menu_row == 5:
             self._lcd_show_filesys(self._menu_col)
+        elif self._menu_row == 6:
+            self._lcd_show_logs_info(self._menu_col)
         else:
             line1 = "menu bad col"
             line2 = f"{self._menu_row}  {self._menu_col}"
@@ -378,6 +381,9 @@ class MwsDisplays(ElemLoggerABC):
             self._lcd_show_memory(3)
 
         elif self._lcd_active_display == 8:
+            self._lcd_show_filesys(1)
+
+        elif self._lcd_active_display == 9:
             self._lcd_show_filesys(1)
 
         else:
@@ -478,7 +484,7 @@ class MwsDisplays(ElemLoggerABC):
             line1 = f"{mem_free} FreeMem"
             line2 = f"{mem_alloc} AllocMem"
         else:
-            line1 = f"UNKNOWN MEMORY {which=}"
+            line1 = f"UNKNOWN {which=}"
             line2 = ""
         self._show_lcd_lines(line1,line2)
 
@@ -486,6 +492,29 @@ class MwsDisplays(ElemLoggerABC):
         if which == 0:
             line1 = "File Space"
             line2 = ""
+        else:
+            # file space
+            total_space, free_space = get_flash_space()
+            line1 = f"{free_space} FreeFS"
+            line2 = f"{total_space} TotalFS"
+        self._show_lcd_lines(line1,line2)
+
+
+    def _lcd_show_logs_info(self, which):
+        if which == 0:
+            line1 = "Logs Info"
+            line2 = ""
+        elif which == 1:
+            elc = ElemLogControl.get_instance()
+            line1 = f"{elc._current_log_fpath}"
+            line2 = f"{elc._current_log_fsize}"
+        elif which == 2:
+            elc = ElemLogControl.get_instance()
+            totals = elc.get_logs_totals()
+            num_logs  = totals[0]
+            total_size = totals[1]
+            line1 = f"{num_logs} logs"
+            line2 = f"{total_size} bytes"
         else:
             # file space
             total_space, free_space = get_flash_space()

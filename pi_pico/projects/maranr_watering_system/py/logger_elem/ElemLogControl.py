@@ -90,6 +90,16 @@ class ElemLogControl:
         self._current_log_fsize = 0
 
 
+    def get_logs_totals(self, include_currently_open_file=True):
+        # get the total values / stats 
+        num_logs = len(self._log_file_table)
+        total_size = sum(fitem[1] for fitem in self._log_file_table)
+        if include_currently_open_file:
+            num_logs += 1
+            total_size += self._current_log_fsize
+        return (num_logs, total_size)
+
+
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses ElemLogControlABC
         # Returns a logger obj the caller should use
@@ -253,10 +263,12 @@ class ElemLogControl:
             prt(m)
             self.log_one_line(m)
 
+
+### FUNCTIONS  ###########################################################
+
 def _log_file_filter(fname, ftype, fsize):
     ok = True
     print(f"ELC@258 _log_file_filter  fname='{fname}'  {fsize=}  {ok=}")
-
 
 
 def extract_simplified_classname(obj_instance):
