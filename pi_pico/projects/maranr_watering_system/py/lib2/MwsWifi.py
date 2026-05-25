@@ -10,12 +10,28 @@
 #  before main.py, as is standard practice for MicroPython devices. 
 # Run machine.reset() to reboot
 
-import network
 import asyncio
 try:
     import time
 except ModuleNotFoundError:
     import utime as time
+
+import platform
+if "micropython" in platform.platform().lower():
+    PLATFORM = "micropython"
+else:
+    PLATFORM = "cpython"
+
+if PLATFORM == "cpython":   # Py3
+    from cpython_test_support import CpythonTestSupport
+    cpyt = CpythonTestSupport.get_instance()
+    NETWORK_WLAN = cpyt.fake_network_wlan
+    NETWORK_STA_IF = "fake-network-sta-if"
+else:
+    # use the 'real' filespace info
+    import network
+    NETWORK_WLAN = network.WLAN
+    NETWORK_STA_IF = network.STA_IF
 
 from lib.utils import MWS_CONFIG
 from lib2.DataBoard import DataBoard
@@ -109,7 +125,7 @@ class MwsWifi(ElemLoggerABC):
 
 
     async def wifi_task(self):
-        log(f"nMwsWifi@112 TASK STARTED!")
+        log(f"nMwsWifi@128 TASK STARTED!")
 
         st = _State()
 
@@ -126,7 +142,7 @@ class MwsWifi(ElemLoggerABC):
 
 
         while 1:
-            log(f"\nMwsWifi@129 STATE: {st}")
+            log(f"\nMwsWifi@145 STATE: {st}")
 
             state_callable = states.get(st.state, self._no_such_state)
 
@@ -135,27 +151,27 @@ class MwsWifi(ElemLoggerABC):
             # Zero means repeat the state
             if next_state == 0: next_state = st.state
 
-            log(f"MwsWifi@138  next_state={next_state}")
+            log(f"MwsWifi@154  next_state={next_state}")
             if next_state not in states:
-                log(f"MwsWifi@140  No such state {next_state}  - RESTART!")
+                log(f"MwsWifi@156  No such state {next_state}  - RESTART!")
                 self._nullify_connection_state(st)
                 next_state = 1
 
             st.state = next_state
 
             if st.sleep_secs > 0:
-                log(f"MwsWifi@147 task sleeping {st.sleep_secs} secs   {st}")
+                log(f"MwsWifi@163 task sleeping {st.sleep_secs} secs   {st}")
                 await asyncio.sleep(st.sleep_secs)
                 # set back to default
                 st.sleep_secs = 1
 
 
     def _state_zero(self, st):
-        logi(f"MwsWifi@154  SHOULD NEVER ENTER STATE ZERO!  {st}")
+        logi(f"MwsWifi@170  SHOULD NEVER ENTER STATE ZERO!  {st}")
         return 1
 
     def _state_init(self, st):
-        logi(f"MwsWifi@158  (RE) INITIALIZE   {st}")
+        logi(f"MwsWifi@174  (RE) INITIALIZE   {st}")
         self._nullify_connection_state(st)
         st.restarts_counter += 1
         self._databoard.set_wifi_restarts_counter(st.restarts_counter)
@@ -165,10 +181,11 @@ class MwsWifi(ElemLoggerABC):
     def _state_create_wlan_obj(self, st):
         #@@@@@self._nullify_connection_state(st) TODO wtf?
         # Connect to WLAN
-        wlan = network.WLAN(network.STA_IF)
+        # On pico:  wlan = network.WLAN(network.STA_IF)
+        NETWORK_WLAN(NETWORK_STA_IF)
         wlan.active(True)
         # Connect
-        logi(f"MwsWifi@170   Connect to wifi: ssid='{ssid}'")
+        logi(f"MwsWifi@188   Connect to wifi: ssid='{ssid}'")
         wlan.connect(ssid, password)
         st.wlan = wlan
         st.status_retries = 30
@@ -182,7 +199,7 @@ class MwsWifi(ElemLoggerABC):
             return 1
 
         status = st.wlan.status()
-        log(f"MwsWifi@184  wlan.status = {status} ")
+        log(f"MwsWifi@202  wlan.status = {status} ")
 
         if status != 3:
             st.sleep_secs = 5
@@ -190,7 +207,7 @@ class MwsWifi(ElemLoggerABC):
             return 0
 
         # Got a good status. Move to the next state
-        logi(f"MwsWifi@192  Status-Wait GOT GOOD-CONNECTION STATUS  {st}")
+        logi(f"MwsWifi@210  Status-Wait GOT GOOD-CONNECTION STATUS  {st}")
         self._set_ipaddr_and_port(st.wlan)
         st.status_retries = 0
         st.sleep_secs = 1
@@ -199,12 +216,12 @@ class MwsWifi(ElemLoggerABC):
     def _state_check_connected(self, st):
         # See if still connected
         if not st.wlan.isconnected():
-            logi(f"MwsWifi@201 *** LOST OUR CONNECTION  ****  {st}")
+            logi(f"MwsWifi@219 *** LOST OUR CONNECTION  ****  {st}")
             return 1
 
         # Reduce the routine 'connected' mesg when logging is not enabled
         # on this class (ie when only logi() actually logs)
-        m = f"MwsWifi@206 STILL CONNECTED  {self._ipaddr} {self._port}"
+        m = f"MwsWifi@224 STILL CONNECTED  {self._ipaddr} {self._port}"
         st.check_connected_ctr += 1
         if st.check_connected_ctr >= 10:
             st.check_connected_ctr = 0
@@ -219,14 +236,14 @@ class MwsWifi(ElemLoggerABC):
 
 
     def _no_such_state(self, st):
-        logi(f"MwsWifi@221 ILLEGAL STATE! {st}")
+        logi(f"MwsWifi@239 ILLEGAL STATE! {st}")
         ###$$$$$$$ return 1  TODO fix this
-        ###raise RuntimeError(f"MwsWifi@223 ILLEGAL STATE {st}")
+        ###raise RuntimeError(f"MwsWifi@241 ILLEGAL STATE {st}")
         ###sys.exit(1) #$$$$$$$$$$$$$$$$$$
 
 
     def _nullify_connection_state(self, st):
-        log(f"MwsWifi@228  NULLIFY - STARTING OVER")
+        log(f"MwsWifi@246  NULLIFY - STARTING OVER")
         self._ipaddr = None
         self._port = 0
         self._databoard.set_ip_and_port(self._ipaddr, self._port)
@@ -235,7 +252,7 @@ class MwsWifi(ElemLoggerABC):
         # Clean up if possible
         if wlan is not None:
             #@@@@@@@@@@@@@@@@$$$$$$$$$$$$ ADD try/except TODO
-            m = "MwsWifi@237 DISCONNECT the wlan object."
+            m = "MwsWifi@255 DISCONNECT the wlan object."
             logi(m)
             wlan.active(False)
             wlan.disconnect()
@@ -246,7 +263,7 @@ class MwsWifi(ElemLoggerABC):
         self._ipaddr = info[0]
         self._port = OUR_PORT_NUMBER
         self._databoard.set_ip_and_port(self._ipaddr, self._port)
-        logi(f"MwsWifi@248  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
+        logi(f"MwsWifi@266  CONNECTED: IP={self._ipaddr} PORT={self._port} ")
 
 
 

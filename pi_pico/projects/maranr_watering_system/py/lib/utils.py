@@ -12,11 +12,24 @@ try:
     import gc
     _ = gc.mem_free
 except Exception as ex:
-    print(f"utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
-    del gc
+    print(f"UTILS@15 utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
+    del gc   
     import gc_FAKE as gc
-    print(f"utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(f"UTILS@18 utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+#@@@@@@@@@@ TODO fake the GC using CpythonTestSupport  see TestElemLogControl.py
 
+if "micropython" in platform.platform().lower():
+    PLATFORM = "micropython"
+else:
+    PLATFORM = "cpython"
+
+if PLATFORM == "cpython":   # Py3
+    from cpython_test_support import CpythonTestSupport
+    cpyt = CpythonTestSupport.get_instance()
+    GET_FLASH_SPACE = cpyt.fake_get_flash_space
+else:
+    # use the 'real' filespace info
+    GET_FLASH_SPACE = None
 
 MWS_CONFIG = {
     "lcd1602_sda_pin": 2,
@@ -49,10 +62,10 @@ def string_to_int(s):
     try:
         return int(s)
     except (ValueError,TypeError) as ex:
-        print(f"string_to_int  NOT AN INT: '{s}'  ex={ex}")
+        print(f"UTILS@65 string_to_int  NOT AN INT: '{s}'  ex={ex}")
         return None
     except Exception  as ex:
-        print(f"string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
+        print(f"UTILS@68 string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
         return None
 
 def show_cc(line):
@@ -91,9 +104,16 @@ def get_memory_status_string(do_garbage_collect=False):
     return f" {gc.mem_alloc()=}   {gc.mem_free()=}"
 
 def get_flash_space():
+
+    if  GET_FLASH_SPACE is not None:
+        print(f"UTILS@109 Using FAKE for get_flash_space(): {GET_FLASH_SPACE} ")
+        return GET_FLASH_SPACE()
+
     # Get filesystem statistics for the root directory ("/")
-    stat = os.statvfs("/")
-    
+    # On uPy it is os.statvfs("/"); on CPy it uses faker CpythonTestSupport
+    print(f"UTILS@114 Using 'real' filespace info")
+    stat = OS_STATVFS("/")
+
     # Block size
     block_size = stat[0]
     # Total number of blocks
@@ -115,8 +135,8 @@ def convert_fs_space_to_string(fs_space):
 
     # Total space ex:  868,352 bytes, 848.00 KB, 0.83 MB
     # Free space ex:   507,904 bytes, 496.00 KB, 0.48 MB
-    #print(f"Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
-    #print(f"Free space:  {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
+    #print(f"UTILS@138 Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
+    #print(f"UTILS@139 Free space:  {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
     space_stg = f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
     return space_stg
 
@@ -150,8 +170,8 @@ def determine_machine_type():
 
 
 def main():
-    print(f"FS SPACE: {get_fs_space_string()}")
-    print(f"MEMORY: {get_memory_status_string()} ")
+    print(f"UTILS@173 FS SPACE: {get_fs_space_string()}")
+    print(f"UTILS@174 MEMORY: {get_memory_status_string()} ")
 
 if __name__ == "__main__":
     main()
