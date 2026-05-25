@@ -112,7 +112,7 @@ def get_flash_space():
     # Get filesystem statistics for the root directory ("/")
     # On uPy it is os.statvfs("/"); on CPy it uses faker CpythonTestSupport
     print(f"UTILS@114 Using 'real' filespace info")
-    stat = OS_STATVFS("/")
+    stat = os.statvfs("/")
 
     # Block size
     block_size = stat[0]

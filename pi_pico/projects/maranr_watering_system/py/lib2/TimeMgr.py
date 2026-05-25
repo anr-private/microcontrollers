@@ -28,7 +28,7 @@ if PLATFORM == "cpython":   # Py3
     NTP_TIME_SET_TIME = cpyt.fake_ntp_set_time
 else:
     import ntptime
-    NTP_TIME_SET_TIME = ntp.settime
+    NTP_TIME_SET_TIME = ntptime.settime
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.DataBoard import DataBoard

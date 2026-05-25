@@ -41,7 +41,7 @@ def main():
 
     # create these early on, in order. Pre-allocate to minimize heap frag.
     log_control = ElemLogControl.get_instance()
-    log_control.remove_old_log_file()
+    ###@@@@@@@ DO SOMETHING HERE?  WAS  log_control.remove_old_log_file()
     # The goal is to call get_instance() just once.
     # DataBoard is created first - it contains refs to all the other
     # major objects.

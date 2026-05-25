@@ -182,7 +182,7 @@ class MwsWifi(ElemLoggerABC):
         #@@@@@self._nullify_connection_state(st) TODO wtf?
         # Connect to WLAN
         # On pico:  wlan = network.WLAN(network.STA_IF)
-        NETWORK_WLAN(NETWORK_STA_IF)
+        wlan = NETWORK_WLAN(NETWORK_STA_IF)
         wlan.active(True)
         # Connect
         logi(f"MwsWifi@188   Connect to wifi: ssid='{ssid}'")
