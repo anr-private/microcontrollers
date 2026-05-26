@@ -17,9 +17,9 @@ except ImportError:
     shutil = None
 
 # Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+###log = None
+###logrt = None
+###logi = None
 
 # os module does not define these (unlike Py3)
 SEEK_SET = 0  # relative to the start of file
@@ -156,15 +156,16 @@ def filter_dir_contents(dir_path:str, file_filter:str) -> bool:
 
     for item in dir_contents:
         (fname, ftype, fsize) = item
-        print(f"FU@159  {fname=}  {ftype=}  {fsize=} ")
+        #print(f"FU@159  {fname=}  {ftype=}  {fsize=} ")
 
         ok = file_filter(fname, ftype, fsize)
 
-        print(f"FU@163  {fname=}  {ftype=}  {fsize=} ")
+        print(f"FU@163 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
 
         if ok is not None:
             selected_items.append( (fname, ftype, fsize, ok) )
 
+    print(f"FU@168  {selected_items=}  {dir_path=} ")
     return  selected_items
 
 
@@ -181,16 +182,16 @@ def list_dir_python(dir_path): # 'real' python
     try:
         for fname in os.listdir(dir_path):
             fpath = dir_path + "/" + fname
-            print(f"FU@184 {fname=}  {fpath=}")
+            print(f"FU@185 {fname=}  {fpath=}")
             fsize = os.path.getsize(fpath)
             results.append ( (fname, "f", fsize) )
     except FileNotFoundError as ex:
-        print(f"FU@188 Cannot find dir='{dir_path}'")
+        print(f"FU@189 Cannot find dir='{dir_path}'")
     return results
 
 
 def list_dir_micropython(dir_path):
-    print(f"FU@193  USING list_dir_micropython  {dir_path}")
+    print(f"FU@194  USING list_dir_micropython  {dir_path}")
 
     results = []
 
@@ -206,16 +207,16 @@ def list_dir_micropython(dir_path):
     
             if entry_type == 0x8000:
                 ftype = "f"
-                ###print(f"FU@209 File: {fname}")
+                ###print(f"FU@210 File: {fname}")
             elif entry_type == 0x4000:
                 ftype = "d"
-                ###print(f"FU@212 Directory: {fname}")
+                ###print(f"FU@213 Directory: {fname}")
             else:
                 ftype = "?"
     
             results.append ( (fname, ftype, fsize) )
     except Exception as ex:
-        print(f"FU@218 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        print(f"FU@219 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
 
     return results
 
@@ -233,7 +234,7 @@ def remove_subdir_py3(path):
     except FileNotFoundError as ex:
         pass
     except Exception as ex:
-        print(f"FU@236 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+        print(f"FU@237 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
 def remove_subdir_micropython(path):
     # Micropython version
@@ -253,7 +254,7 @@ def remove_subdir_micropython(path):
         os.rmdir(path)
     except OSError:
         # Handle cases where the path doesn't exist or permissions fail
-        print("FU@256 Failed to remove:", path)
+        print("FU@257 Failed to remove:", path)
 
 
 
