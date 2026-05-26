@@ -519,8 +519,8 @@ class MwsDisplays(ElemLoggerABC):
             elc = ElemLogControl.get_instance()
             first_item = elc.get_log_table_item(0)
             if first_item is None:
-                line1 = "No logs found"
-                line2 = "in logs-table"
+                line1 = "No first logfile"
+                line2 = " in logs-table"
             else:
                 fname = first_item[0]
                 fsize = first_item[1]
@@ -530,8 +530,8 @@ class MwsDisplays(ElemLoggerABC):
             elc = ElemLogControl.get_instance()
             last_item = elc.get_log_table_item(-1)
             if last_item is None:
-                line1 = "No logs found"
-                line2 = "in logs-table"
+                line1 = "No last logfile"
+                line2 = " in logs-table"
             else:
                 fname = last_item[0]
                 fsize = last_item[1]
