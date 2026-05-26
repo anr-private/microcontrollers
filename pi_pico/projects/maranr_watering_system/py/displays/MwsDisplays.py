@@ -40,7 +40,7 @@ LCD_MENU_COL_MAX = {
     3: 2,   # Pico board temperature
     4: 3,   # memory
     5: 1,   # filesys 
-    6: 2,   # logs info
+    6: 5,   # logs info
     7: 1,   #
     8: 1,   #
     9: 1,   # 
@@ -507,7 +507,7 @@ class MwsDisplays(ElemLoggerABC):
         elif which == 1:
             elc = ElemLogControl.get_instance()
             line1 = f"{elc._current_log_fpath}"
-            line2 = f"{elc._current_log_fsize}"
+            line2 = f"{elc._current_log_fsize} bytes"
         elif which == 2:
             elc = ElemLogControl.get_instance()
             totals = elc.get_logs_totals()
@@ -515,11 +515,31 @@ class MwsDisplays(ElemLoggerABC):
             total_size = totals[1]
             line1 = f"{num_logs} logs"
             line2 = f"{total_size} bytes"
+        elif which == 3:
+            elc = ElemLogControl.get_instance()
+            first_item = elc.get_log_table_item(0)
+            if first_item is None:
+                line1 = "No logs found"
+                line2 = "in logs-table"
+            else:
+                fname = first_item[0]
+                fsize = first_item[1]
+                line1 = f"{fname}"
+                line2 = f"{fsize} 1st"
+        elif which == 4:
+            elc = ElemLogControl.get_instance()
+            last_item = elc.get_log_table_item(-1)
+            if last_item is None:
+                line1 = "No logs found"
+                line2 = "in logs-table"
+            else:
+                fname = last_item[0]
+                fsize = last_item[1]
+                line1 = f"{fname}"
+                line2 = f"{fsize} last"
         else:
-            # file space
-            total_space, free_space = get_flash_space()
-            line1 = f"{free_space} FreeFS"
-            line2 = f"{total_space} TotalFS"
+            line1 = f"logs info"
+            line2 = f"bad col# {which}"
         self._show_lcd_lines(line1,line2)
 
 

@@ -99,6 +99,12 @@ class ElemLogControl:
             total_size += self._current_log_fsize
         return (num_logs, total_size)
 
+    def get_log_table_item(self, item_index):
+        try:
+            return self._log_file_table[item_index]
+        except IndexError:
+            return None
+
 
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses ElemLogControlABC
