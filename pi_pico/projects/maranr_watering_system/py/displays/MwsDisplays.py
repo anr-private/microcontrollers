@@ -506,11 +506,12 @@ class MwsDisplays(ElemLoggerABC):
             line2 = ""
         elif which == 1:
             elc = ElemLogControl.get_instance()
-            line1 = f"{elc._current_log_fpath}"
-            line2 = f"{elc._current_log_fsize} bytes"
+            line1 = f"{elc.get_current_log_fpath()}"
+            line2 = f"{elc.get_current_log_fsize()} bytes"
         elif which == 2:
             elc = ElemLogControl.get_instance()
-            totals = elc.get_logs_totals()
+            include_currently_open_file = True
+            totals = elc.get_logs_totals(include_currently_open_file)
             num_logs  = totals[0]
             total_size = totals[1]
             line1 = f"{num_logs} logs"

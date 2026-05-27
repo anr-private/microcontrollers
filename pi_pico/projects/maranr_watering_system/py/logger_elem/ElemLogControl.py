@@ -64,58 +64,17 @@ class ElemLogControl:
         self._log_file_table = ElemLogFileTable()
 
 
-    def get_logs_totals__OLD(self, include_currently_open_file=True):#@@@@@@@@@@@@@@@@@@@@@@@
-        # get the total values / stats 
-        # Returns a tuple of these values:
-        # 1. The number of extant log files (ie ones that have not
-        #    been removed to reclaim file space)
-        # 2. The total size (bytes) of all extant log files
-        #    (obviously excluding logfiles that have been removed)
-        # #. The size of the log file table (ie the total number
-        #    of files that have been created during this session so far)
-        # NOTE if include_currently_open_file is True, 
-        #  items 1 and 2 include the currently-open file.
-        #  I.e, item 1 will be 1 larger and item 2 will have the
-        #  size of the currently-open logfile added to it.
+    def get_current_log_fpath(self):
+        return self._log_file_table.get_current_log_fpath()
 
-        num_extant_files = self.get_number_of_extant_logfiles()
-        extant_logfile_fsize = self.get_fsize_of_extant_logfiles()
-        table_size = len(self._log_file_table)
+    def get_current_log_fsize(self):
+        return self._log_file_table.get_current_log_fsize()
 
-        if include_currently_open_file:
-            num_extant_files += 1
-            extant_logfile_fsize += self._current_log_fsize
-        return (num_extant_files, extant_logfile_fsize, table_size)
+    def get_logs_totals(self, include_currently_open_file):
+        return self._log_file_table.get_logs_totals(include_currently_open_file)
 
-    # def get_total_logs_fspace(self):
-        # # Get the total size (bytes) of all logfiles, whether
-        # currently extant or already-been-deleted
-        # if len(self._log_file_table) == 0:
-            # return 0
-        # total_size = sum(fitem[1] for fitem in self._log_file_table)
-
-    def get_number_of_extant_logfiles__OLD(self):#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        # Get the number of all extant (non-deleted) logfiles
-        # IE ignores files whose 'extant-flag' is False-y.
-        if len(self._log_file_table) == 0: return 0
-        total_size = sum(1 for fitem in self._log_file_table
-                            if fitem[2])
-
-    def get_fsize_of_extant_logfiles__OLD(self):#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        # Get the total size of all extant (non-deleted) logfiles
-        # IE ignores files whose 'extant-flag' is False-y.
-        if len(self._log_file_table) == 0: return 0
-        total_size = sum(fitem[1] for fitem in self._log_file_table
-                                   if fitem[2])
-
-
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@2
-    # def get_log_table_item(self, item_index):
-        # try:
-            # return self._log_file_table[item_index]
-        # except IndexError:
-            # return None
-
+    def get_log_table_item(self, item_index):
+        return self._log_file_table.get_log_table_item(item_index)
 
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses ElemLogControlABC

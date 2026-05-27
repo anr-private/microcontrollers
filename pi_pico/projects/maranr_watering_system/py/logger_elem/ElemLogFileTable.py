@@ -79,8 +79,14 @@ class ElemLogFileTable:
         global MAX_LOG_FILE_SIZE
         MAX_LOG_FILE_SIZE = new_max_size
 
+    def get_current_log_fpath(self):
+        return self._current_log_fpath
 
-    def get_logs_totals(self, include_currently_open_file=True):
+    def get_current_log_fsize(self):
+        return self._current_log_fsize
+
+
+    def get_logs_totals(self, include_currently_open_file):
         # get the total values / stats 
         # Returns a tuple of these values:
         # 1. The number of extant log files (ie ones that have not
@@ -128,7 +134,6 @@ class ElemLogFileTable:
         return total_size
 
 
-    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ make this internal??? dunder???
     def get_log_table_item(self, item_index):
         try:
             return self._log_file_table[item_index]
