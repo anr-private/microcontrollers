@@ -156,15 +156,15 @@ class ElemLogControl:
 
         except OSError as ex:
             # see examples/file_and_dirs_io/errno_show_all.py to see all errno values
-            print(f"ELC@159  Error writing '{fname}' EX={repr(ex)}  EX='{str(ex)}' ")
+            print(f"ELC@159  Error writing '{self._current_log_fpath}' EX={repr(ex)}  EX='{str(ex)}' ")
             # 28 is 'out of space'
             print(f"ELC@161 {ex.errno=}")
         except Exception as ex:
-            print(f"ELC@163: Error writing to file '{fname}': {repr(ex)}")
-            print(f"ELC@164: Error writing to file '{fname}': {str(ex)}")
+            print(f"ELC@163: Error writing to file '{self._current_log_fpath}': {repr(ex)}")
+            print(f"ELC@164: Error writing to file '{self._current_log_fpath}': {str(ex)}")
 
         if self._current_log_fsize > MAX_LOG_FILE_SIZE:
-            print(f"ELC@167  @@@@@ curr log size > MAX {self._current_log_fsize} max={MAX_LOG_FILE_SIZE}")
+            print(f"ELC@167  @@@@@ curr log size > MAX curr={self._current_log_fsize} max={MAX_LOG_FILE_SIZE}")
             self._close_current_log_file("log_one_line")
 
     def _start_a_new_logfile(self):
