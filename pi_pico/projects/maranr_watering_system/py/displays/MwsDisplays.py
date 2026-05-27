@@ -33,6 +33,7 @@ VALIDATE = 857395
 # biggest row index 0..(rows-1)
 LCD_MENU_ROW_MAX = 6
 
+# max col number 0..N-1
 LCD_MENU_COL_MAX = {
     0: 3,   # network
     1: 1,   # date time
@@ -40,14 +41,14 @@ LCD_MENU_COL_MAX = {
     3: 2,   # Pico board temperature
     4: 3,   # memory
     5: 1,   # filesys 
-    6: 5,   # logs info
+    6: 4,   # logs info
     7: 1,   #
     8: 1,   #
     9: 1,   # 
 }
 
 # non-menu display
-LCD_ACTIVE_DISPLAY_MAX = 8 #@@@@@@@@@@@@@@@@ UPDATE?
+LCD_ACTIVE_DISPLAY_MAX = 9 #@@@@@@@@@@@@@@@@ UPDATE?
 
 class MwsDisplays(ElemLoggerABC):
 
@@ -239,10 +240,6 @@ class MwsDisplays(ElemLoggerABC):
         
 
 
-    #def get_lcd_active_display(self):
-    #    return self._lcd_active_display
-    #
-
     def _set_lcd_active_display(self,v):
         # Roll over if request is too big or too small
         if v < 0 :
@@ -387,6 +384,9 @@ class MwsDisplays(ElemLoggerABC):
             self._lcd_show_logs_info(2)
 
         else:
+            # This should not get displayed unless debugging,
+            # when LCD_ACTIVE_DISPLAY_MAX is set to a larger number
+            # than there are cases above
             d = self._lcd_active_display
             line1 = f"ACTIVE DISP {d}"
             line2 = f"ACTIVE DISP={d}"
