@@ -110,7 +110,7 @@ class MwsDisplays(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"MwsDisplays@110 _set_logger: {repr(logger)}")
+        #print(f"MwsDisplays@113 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi                 
@@ -120,7 +120,7 @@ class MwsDisplays(ElemLoggerABC):
         # Find the LCD. Use software-based I2C.
         # This can take several seconds and it ties up the
         # thread. So it is done before we start the asyncio event loop.
-        print(f"MwsDisplays@120 _locate_lcd_soft_i2c: try to locate the LCD device...")
+        print(f"MwsDisplays@123 _locate_lcd_soft_i2c: try to locate the LCD device...")
          # SoftI2C is software I2C - works on ANY GPIO pins(!)
          # 100K is default freq.  Can go higher ex 400K
          # The LCD() ctor can take several seconds to decide if it has
@@ -131,17 +131,17 @@ class MwsDisplays(ElemLoggerABC):
         self.lcd = LCD(i2c_driver, logi)
         
         if self.lcd.ok:
-            print(f"MwsDisplays@131 _locate_lcd_soft_i2c: located the LCD device...")
+            print(f"MwsDisplays@134 _locate_lcd_soft_i2c: located the LCD device...")
         else:
             self.lcd = None
-            print(f"MwsDisplays@134 _locate_lcd_soft_i2c **ERROR**  failed to locate the LCD device!")
+            print(f"MwsDisplays@137 _locate_lcd_soft_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
     def _locate_lcd_hw_i2c(self):
         # Find the LCD. Use hardware-based I2C.
         # This can take several seconds and it ties up the
         # thread. So it is done before we start the asyncio event loop.
-        print(f"MwsDisplays@141 _locate_lcd_hw_i2c: try to locate the LCD device...")
+        print(f"MwsDisplays@144 _locate_lcd_hw_i2c: try to locate the LCD device...")
         i2c_driver = I2C(1,
                          scl=Pin(self.lcd1602_scl_pin), 
                          sda=Pin(self.lcd1602_sda_pin), 
@@ -149,16 +149,16 @@ class MwsDisplays(ElemLoggerABC):
         self.lcd = LCD(i2c_driver, logi)
         
         if self.lcd.ok:
-            print(f"MwsDisplays@149 _locate_lcd_hw_i2c: located the LCD device...")
+            print(f"MwsDisplays@152 _locate_lcd_hw_i2c: located the LCD device...")
         else:
             self.lcd = None
-            print(f"MwsDisplays@152 _locate_lcd_hw_i2c **ERROR**  failed to locate the LCD device!")
+            print(f"MwsDisplays@155 _locate_lcd_hw_i2c **ERROR**  failed to locate the LCD device!")
         return self.lcd is not None
 
 
     def notify_btn_short_press(self, btn_name):
         # button was pressed - short press
-        print(f"MwsDisplays@158 BTN SHORT: {btn_name}")
+        print(f"MwsDisplays@161 BTN SHORT: {btn_name}")
         if self._menu_active:
             if btn_name == "Down":
                 new_row = self._menu_row + 1
@@ -188,29 +188,29 @@ class MwsDisplays(ElemLoggerABC):
 
     def notify_btn_long_press(self, btn_name):
         # button was pressed - long press
-        print(f"MwsDisplays@188 BTN LONG: {btn_name}")
+        print(f"MwsDisplays@191 BTN LONG: {btn_name}")
         if btn_name == "Center":
             if self._menu_active:
                 self._menu_row = 0
                 self._menu_col = 0
             else:
                 pass # nothing in no-menu mode yet
-            print(f"MwsDisplays@195 notify_btn_long_press FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
+            print(f"MwsDisplays@198 notify_btn_long_press FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
             self._force_lcd_update()  # 'many ticks in the past'
 
     def notify_btn_double_press(self, btn_name):
         # button was pressed - double press
-        print(f"MwsDisplays@200 BTN DOUBLE: {btn_name}")
+        print(f"MwsDisplays@203 BTN DOUBLE: {btn_name}")
 
 
     def _update_menu_state(self, active):
        if active:
-           print(f"MwsDisplays@205 ACTIVATE MENU")
+           print(f"MwsDisplays@208 ACTIVATE MENU")
            self._menu_active = True
            ###self._menu_row = 0
            ###self._menu_col = 0
        else:
-           print(f"MwsDisplays@210 DEACTIVATE MENU")
+           print(f"MwsDisplays@213 DEACTIVATE MENU")
            self._menu_active = False
        self._force_lcd_update()
 
@@ -220,22 +220,22 @@ class MwsDisplays(ElemLoggerABC):
             new_row = LCD_MENU_ROW_MAX
         elif new_row > LCD_MENU_ROW_MAX:
             new_row = 0
-        print(f"MwsDisplays@220 _set_lcd_menu_row SET MENU ROW to {new_row}.  Was {self._menu_row}")
+        print(f"MwsDisplays@223 _set_lcd_menu_row SET MENU ROW to {new_row}.  Was {self._menu_row}")
         self._menu_row = new_row
-        print(f"MwsDisplays@222 _set_lcd_menu_row FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
+        print(f"MwsDisplays@225 _set_lcd_menu_row FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
         self._force_lcd_update()  # 'many ticks in the past'
         
 
     def _set_lcd_menu_col(self, new_col):
         max_col = LCD_MENU_COL_MAX.get(self._menu_row, 1)
-        print(f"MwsDisplays@228  row={self._menu_row}  {max_col=}")
+        print(f"MwsDisplays@231  row={self._menu_row}  {max_col=}")
         if new_col < 0:
             new_col = max_col
         elif new_col > max_col:
             new_col = 0
-        print(f"MwsDisplays@232 _set_lcd_menu_col SET MENU COL to {new_col}.  Was {self._menu_col}")
+        print(f"MwsDisplays@236 _set_lcd_menu_col SET MENU COL to {new_col}.  Was {self._menu_col}")
         self._menu_col = new_col
-        print(f"MwsDisplays@234 _set_lcd_menu_col FORCE LCD UPDATE. ")
+        print(f"MwsDisplays@238 _set_lcd_menu_col FORCE LCD UPDATE. ")
         self._force_lcd_update()  # 'many ticks in the past'
         
 
