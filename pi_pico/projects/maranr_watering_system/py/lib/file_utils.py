@@ -256,6 +256,20 @@ def remove_subdir_micropython(path):
         # Handle cases where the path doesn't exist or permissions fail
         print("FU@257 Failed to remove:", path)
 
+def remove_file(fpath):
+    print(f"FU@260 Remove file '{fpath}'")
+    try:
+        os.remove(fpath)
+        return True
+    except OSError as ex:
+        m = f"FU@264 remove_file '{fpath}' FAILED. OSError={ex} {str(ex)}"
+        print(m)
+        m = f"FU@264 remove_file '{fpath}' FAILED. errno={ex.errno}"
+        print(m)
+    except Exception as ex:
+        m = f"FU@2672 remove_file '{fpath}' FAILED. EX={ex} {str(ex)}"
+        print(m)
+    return False
 
 
 ###
