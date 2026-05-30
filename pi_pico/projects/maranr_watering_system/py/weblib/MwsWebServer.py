@@ -132,12 +132,12 @@ class MwsWebServer(ElemLoggerABC):
         ###return result
 
     async def handle_new_client(self, reader, writer):
-        m = f"-----=====-----=====-----===== NEW CLIENT =====-----====="
+        #m = f"WEBSVR@135 -----=====-----=====-----===== NEW CLIENT =====-----====="
+        #logi(m)
+        m = f"WEBSVR@137 =====___ NEW CLIENT  ___+++++___  {TimeMgr.get_formatted_date_time_string()}  ___+++++====="
         logi(m)
-        m = f"WEBSVR@137 =====___ NEW CLIENT  ___+++++___  {TimeMgr.get_formatted_date_time_string()}  ___+++++=====__________=====+++++-----+++++====="
-        logi(m)
-        m = f"\nWEBSVR@139 handle_new_client  reader={repr(reader)} writer={repr(writer)}  "
-        logi(m)
+        #m = f"WEBSVR@139 handle_new_client  reader={repr(reader)} writer={repr(writer)}  "
+        #logi(m)
 
         try:
             request_stg = await self._read_the_request(reader)

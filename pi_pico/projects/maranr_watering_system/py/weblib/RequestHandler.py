@@ -72,7 +72,8 @@ class RequestHandler(ElemLoggerABC):
             logi(f"RH@72 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error TODO
         m1 = f"RH@74 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
-        m2 = f"RH@75 {parsed_http.long_string()}"
+        m2a = parsed_http.long_str(sep="\nRH@79")
+        m2 = f"RH@75 {m2a}"
         logi(m1); logi(m2)
 
         if parsed_http.method == "GET":

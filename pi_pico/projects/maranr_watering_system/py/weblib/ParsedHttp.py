@@ -140,7 +140,7 @@ class ParsedHttp:
             (self.__class__.__name__, ",".join(s)))
 
 
-    def long_str(self):
+    def long_str(self, sep="\n"):
         lines = []
         lines.append(f"{self.__class__.__name__}:")
 
@@ -162,7 +162,7 @@ class ParsedHttp:
             s = f"   {field_name}: '{self._fields[field_name]}'"
             lines.append(s)
 
-        return "\n".join(lines)
+        return sep.join(lines)
     long_string = long_str
 
 
