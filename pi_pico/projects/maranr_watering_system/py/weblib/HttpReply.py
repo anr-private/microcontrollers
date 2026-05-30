@@ -47,11 +47,10 @@ class HttpReply(ElemLoggerABC):
 
 
     def get_loggable_header_str(self, prefix):
-        # for logging. prefix is "MwsWebServer@DDD "
+        # for logging. Typical prefix is "MwsWebServer@DDD "
         if not self._header:
             return f"{prefix}HttpReply has NO HEADER"
         lines = self._header.split("\r\n")
-        print(f"@@@@@@@@@@@@@@@@@@@@@@@  HR@54")
         newlines = []
         for line in lines:
             newline = f"{prefix}   {line}"
