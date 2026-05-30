@@ -141,15 +141,15 @@ class DataBoard(ElemLoggerABC):
         self.memory_free_min = min(self.memory_free_min, mem_free)
         self.memory_free_max = max(self.memory_free_max, mem_free)
 
-    def status_lines(self):
+    def get_status_lines(self, prefix=""):
         lines = []
-        lines.append(f"DataBoard State:  {self.system_state}")
-        lines.append(f" NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates}")
-        lines.append(f" NTP Number-of-time-jumps: {self.time_mgr_number_of_time_jumps}  Max.time-jump-secs: {self.time_mgr_maximum_time_jump_secs}  ")
-        lines.append(f" IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'}")
-        lines.append(f" Wifi restartsCtr: {self.wifi_restarts_counter}")
-        lines.append(f" system.state={self.system_state} ")
-        lines.append(f" Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
+        lines.append(f"{prefix}DataBoard State:  {self.system_state}")
+        lines.append(f"{prefix} NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates}")
+        lines.append(f"{prefix} NTP Number-of-time-jumps: {self.time_mgr_number_of_time_jumps}  Max.time-jump-secs: {self.time_mgr_maximum_time_jump_secs}  ")
+        lines.append(f"{prefix} IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'}")
+        lines.append(f"{prefix} Wifi restartsCtr: {self.wifi_restarts_counter}")
+        lines.append(f"{prefix} system.state={self.system_state} ")
+        lines.append(f"{prefix} Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
         return lines
 
     def __str__(self):
