@@ -176,9 +176,9 @@ class ElemLogFileTable:
         # Suitable for display on a webpage
         lines = []
         lines.append(f"Current log: {self._current_log_fpath} &nbsp; {self._current_log_fsize} bytes")
-        lines.append(f"Extant: {self.get_number_of_extant_logfiles()} files. &nbsp; {self.get_fsize_of_extant_logfiles()} bytes")
-        lines.append(f"Removed: {self.get_number_of_removed_logfiles()} files. &nbsp;  {self.get_fsize_of_removed_logfiles()}")
-        lines.append(f"Watermarks: &nbsp; high={LOG_FSPACE_HIGH_WATERMARK} &nbsp; low={LOG_FSPACE_LOW_WATERMARK} &nbsp; MAX-filesize={MAX_LOG_FILE_SIZE}")
+        lines.append(f"Logs Extant: {self.get_number_of_extant_logfiles()} files. &nbsp; {self.get_fsize_of_extant_logfiles()} bytes")
+        lines.append(f"Logs Removed: {self.get_number_of_removed_logfiles()} files. &nbsp;  {self.get_fsize_of_removed_logfiles()}")
+        lines.append(f"Log Watermarks: &nbsp; high={LOG_FSPACE_HIGH_WATERMARK} &nbsp; low={LOG_FSPACE_LOW_WATERMARK} &nbsp; MAX-filesize={MAX_LOG_FILE_SIZE}")
         return tuple(lines)
 
 
