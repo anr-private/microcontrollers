@@ -170,6 +170,18 @@ class ElemLogFileTable:
         except IndexError:
             return None
 
+    def get_status_lines(self):
+        # Returns a collection of str values that describe
+        # the state of the log files and table.
+        # Suitable for display on a webpage
+        lines = []
+        lines.append(f"Current log: {self._current_log_fpath} &nbsp; {self._current_log_fsize} bytes")
+        lines.append(f"Extant: {self.get_number_of_extant_logfiles()} files. &nbsp; {self.get_fsize_of_extant_logfiles()} bytes")
+        lines.append(f"Removed: {self.get_number_of_removed_logfiles()} files. &nbsp;  {self.get_fsize_of_removed_logfiles()}")
+        lines.append(f"Watermarks: &nbsp; low={LOG_FSPACE_HIGH_WATERMARK} &nbsp; high={LOG_FSPACE_LOW_WATERMARK} &nbsp; MAX-filesize={MAX_LOG_FILE_SIZE}")
+        return tuple(lines)
+
+
     def get_lines_from_log_file(self, relative_line_number, number_of_lines):
         # get lines from the log file
         # relative_line_number is the line number of the first line

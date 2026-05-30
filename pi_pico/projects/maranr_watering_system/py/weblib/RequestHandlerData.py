@@ -65,6 +65,11 @@ class RequestHandlerData(ElemLoggerABC):
             hlines = "<br>\n".join(lines)
             data_dict["databoard_status"] = hlines
             data_dict["wifi_state"] = str(MwsWifi.state)
+            # log file table
+            elc = ElemLogControl.get_instance()
+            lft_lines = elc.get_log_table_status_lines()
+            hlines = "<br>\n".join(lft_lines)
+            data_dict["log_file_table_status"] = hlines
         if "settings" in params:
             data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
 

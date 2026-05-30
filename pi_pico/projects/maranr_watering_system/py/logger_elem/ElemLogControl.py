@@ -76,6 +76,10 @@ class ElemLogControl:
     def get_log_table_item(self, item_index):
         return self._log_file_table.get_log_table_item(item_index)
 
+    def get_log_table_status_lines(self):
+        return self._log_file_table.get_status_lines()
+
+
     def register_user_class(self, obj_instance):
         # obj is a user obj that subclasses ElemLogControlABC
         # Returns a logger obj the caller should use
