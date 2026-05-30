@@ -5,7 +5,7 @@
 
 import asyncio
 import time
-from . import launch, Delay_ms
+from . import launch, Delay_ms  # launch is in __init__.py
 
 try:
     from machine import TouchPad
