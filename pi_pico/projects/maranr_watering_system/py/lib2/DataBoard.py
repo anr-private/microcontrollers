@@ -141,15 +141,16 @@ class DataBoard(ElemLoggerABC):
         self.memory_free_min = min(self.memory_free_min, mem_free)
         self.memory_free_max = max(self.memory_free_max, mem_free)
 
-    def get_status_lines(self, prefix=""):
+    def get_loggable_lines(self, prefix="", suffix=""):
+        # for logging, prefix is usu 'RHDATA@99', suffix is '<br>\n'
         lines = []
-        lines.append(f"{prefix}DataBoard State:  {self.system_state}")
-        lines.append(f"{prefix} NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates}")
-        lines.append(f"{prefix} NTP Number-of-time-jumps: {self.time_mgr_number_of_time_jumps}  Max.time-jump-secs: {self.time_mgr_maximum_time_jump_secs}  ")
-        lines.append(f"{prefix} IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'}")
-        lines.append(f"{prefix} Wifi restartsCtr: {self.wifi_restarts_counter}")
-        lines.append(f"{prefix} system.state={self.system_state} ")
-        lines.append(f"{prefix} Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C")
+        lines.append(f"{prefix}DataBoard State:  {self.system_state} {suffix}")
+        lines.append(f"{prefix} NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates} {suffix}")
+        lines.append(f"{prefix} NTP Number-of-time-jumps: {self.time_mgr_number_of_time_jumps}  Max.time-jump-secs: {self.time_mgr_maximum_time_jump_secs}   {suffix}")
+        lines.append(f"{prefix} IP:port {self.ipaddr}:{self.port}   Webserver:{'Active' if self.webserver_active else 'Inactive'} {suffix}")
+        lines.append(f"{prefix} Wifi restartsCtr: {self.wifi_restarts_counter} {suffix}")
+        lines.append(f"{prefix} system.state={self.system_state}  {suffix}")
+        lines.append(f"{prefix} Internal temp: {self.internal_temp_f} F  {self.internal_temp_c} C {suffix}")
         return lines
 
     def __str__(self):
@@ -157,9 +158,6 @@ class DataBoard(ElemLoggerABC):
         s.append("system_state=%s" % str(self.system_state))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
-
-    def long_string(self):
-        return "\n".join(self.status_lines())
 
 
 ###

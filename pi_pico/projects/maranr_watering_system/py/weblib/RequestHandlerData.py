@@ -61,9 +61,9 @@ class RequestHandlerData(ElemLoggerABC):
             data_dict["internal_temp_f"] = degs_f
             data_dict["internal_temp_c"] = degs_c
         if "debug" in params:
-            lines = self._databoard.status_lines(prefix="RHDATA@64")
-            hlines = "<br>\n".join(lines)
-            data_dict["databoard_status"] = hlines
+            dblines = self._databoard.get_loggable_lines(prefix="<RHDATA@64",
+                                                         suffix = "<br>\n")
+            data_dict["databoard_status"] = dblines
             data_dict["wifi_state"] = str(MwsWifi.state)
             # log file table
             elc = ElemLogControl.get_instance()
@@ -88,14 +88,15 @@ class RequestHandlerData(ElemLoggerABC):
 
         m = f"RHDATA@89  HTTP REPLY to DATA REQUEST:"
         logi(m)
-        m = f"RHDATA@91 {reply.long_string()}"
-        logi(m)
+        mlines = reply.get_loggable_lines(prefix="RHDATA@91")
+        for m in mlines:
+            logi(m)
 
         return reply
 
             
     def handle_echo_request(self, parsed_http):
-        log(f"RHDATA@98  _handle_echo_request  ph={parsed_http}")
+        log(f"RHDATA@99  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -137,9 +138,9 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RHDATA@140 HTTP REPLY to ECHO request "
+        m = f"RHDATA@141 HTTP REPLY to ECHO request "
         logi(m)
-        m = f"RHDATA@142  {reply.long_string()}"
+        m = f"RHDATA@143  {reply.long_string()}"
         logi(m)
         return reply
 

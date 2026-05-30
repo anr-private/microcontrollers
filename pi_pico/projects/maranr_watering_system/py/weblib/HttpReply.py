@@ -46,12 +46,23 @@ class HttpReply(ElemLoggerABC):
         return self._body
 
 
-    def get_loggable_header_str(self, prefix):
+    def get_loggable_header_lines(self, prefix):
         # for logging. prefix is "MwsWebServer@DDD "
         if not self._header:
             return f"{prefix}HttpReply has NO HEADER"
         lines = self._header.split("\r\n")
-        print(f"@@@@@@@@@@@@@@@@@@@@@@@  HR@54")
+        newlines = []
+        for line in lines:
+            newline = f"{prefix}   {line}"
+            newlines.append(newline)
+        return newlines
+
+
+    def get_loggable_body_lines(self, prefix):
+        # for logging. prefix is "MwsWebServer@DDD "
+        if not self._body:
+            return f"{prefix}HttpReply has NO BODY"
+        lines = self._body.split("\r\n")
         newlines = []
         for line in lines:
             newline = f"{prefix}   {line}"
@@ -82,21 +93,19 @@ class HttpReply(ElemLoggerABC):
             (self.__class__.__name__, ",".join(s)))
 
 
-    def long_str(self):
+    def get_loggable_lines(self, prefix=""):
         hdr_len_stg  = str(len(self._header)) if self._header is not None else "NULL HEADER!"
         body_len_stg = str(len(self._body)) if self._body is not None else "NULL BODY"
 
         lines = []
-        lines.append(f"{self.__class__.__name__}:")
-        lines.append(f"hdr.len={hdr_len_stg}  body.len={body_len_stg}")
+        lines.append(f"{prefix}{self.__class__.__name__}:")
+        lines.append(f"{prefix}hdr.len={hdr_len_stg}  body.len={body_len_stg}")
         if self._header is not None:
-            lines.append("   --- reply header --- ");
-            lines.append(self._header)
+            lines.append("{prefix}   --- reply header --- ");
+            lines.extend(self.get_loggable_header_lines(prefix))
         if self._body is not None:
-            lines.append("   --- reply body --- ");
-            lines.append(self._body)
-
-        return "\n".join(lines)
-    long_string = long_str
+            lines.append("{prefix}   --- reply body --- ");
+            lines.extend(self.get_loggable_body_lines(prefix))
+        return lines
 
 ###

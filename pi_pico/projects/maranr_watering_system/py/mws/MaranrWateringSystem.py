@@ -70,7 +70,11 @@ class MaranrWateringSystem(ElemLoggerABC):
         #
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
-        logi(f"MWSMAIN@73 Created DataBoard. state=...\n{dataBoard.long_string()} ")
+        logi(f"MWSMAIN@73 Created DataBoard. state=...")
+        mlines = dataBoard.get_loggable_lines(prefix="MWSMAIN@999 ", suffix="")
+        for m in mlines:
+            logi(m)
+        del m,mlines
 
         self._onboard_led = self._get_onboard_led()
         self._toggle_onboad_led()
