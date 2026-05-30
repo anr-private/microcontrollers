@@ -62,12 +62,28 @@ class HttpReply(ElemLoggerABC):
         # for logging. prefix is "MwsWebServer@DDD "
         if not self._body:
             return f"{prefix}HttpReply has NO BODY"
-        lines = self._body.split("\r\n")
+        lines = self._body.split("\n")
         newlines = []
         for line in lines:
             newline = f"{prefix}   {line}"
             newlines.append(newline)
         return newlines
+
+
+    def get_loggable_lines(self, prefix=""):
+        hdr_len_stg  = str(len(self._header)) if self._header is not None else "NULL HEADER!"
+        body_len_stg = str(len(self._body)) if self._body is not None else "NULL BODY"
+
+        lines = []
+        lines.append(f"{prefix}{self.__class__.__name__}:")
+        lines.append(f"{prefix}hdr.len={hdr_len_stg}  body.len={body_len_stg}")
+        if self._header is not None:
+            lines.append(f"{prefix}   --- reply header --- ");
+            lines.extend(self.get_loggable_header_lines(prefix))
+        if self._body is not None:
+            lines.append(f"{prefix}   --- reply body --- ");
+            lines.extend(self.get_loggable_body_lines(prefix))
+        return lines
 
 
     def __str__(self):
@@ -92,20 +108,5 @@ class HttpReply(ElemLoggerABC):
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))
 
-
-    def get_loggable_lines(self, prefix=""):
-        hdr_len_stg  = str(len(self._header)) if self._header is not None else "NULL HEADER!"
-        body_len_stg = str(len(self._body)) if self._body is not None else "NULL BODY"
-
-        lines = []
-        lines.append(f"{prefix}{self.__class__.__name__}:")
-        lines.append(f"{prefix}hdr.len={hdr_len_stg}  body.len={body_len_stg}")
-        if self._header is not None:
-            lines.append("{prefix}   --- reply header --- ");
-            lines.extend(self.get_loggable_header_lines(prefix))
-        if self._body is not None:
-            lines.append("{prefix}   --- reply body --- ");
-            lines.extend(self.get_loggable_body_lines(prefix))
-        return lines
 
 ###
