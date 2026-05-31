@@ -44,8 +44,6 @@ class ParsedHttp:
         #         POST /api/users HTTP/1.1
         # Reply ex: HTTP/1.0 200 OK 
 
-        self.start_line = None
-
         # True if this is a request; False if a reply
         # None if not yet set; if so, accessing raises exception
         self.request_flag = None
