@@ -8,6 +8,16 @@ wsp_log.txt
 logs/
 
 mws_log.txt*
+mws_log.0??
+mws_log.1??
+mws_log.2??
+mws_log.3??
+mws_log.4??
+mws_log.5??
+mws_log.6??
+mws_log.7??
+mws_log.8??
+mws_log.9??
 
 __QPUSH_MARKER__
 

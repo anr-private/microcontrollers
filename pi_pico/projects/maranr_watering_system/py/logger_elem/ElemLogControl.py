@@ -68,6 +68,10 @@ class ElemLogControl:
     def is_enabled(self):
         return self._log_enabled
 
+    def close_all_logging(self):
+        # close logging - program is terminating
+        print(f"ELC@73 CLOSE ALL LOGGING")
+        self._log_file_table.close_logging()
 
     def get_current_log_fpath(self):
         return self._log_file_table.get_current_log_fpath()
@@ -89,14 +93,14 @@ class ElemLogControl:
         # obj is a user obj that subclasses ElemLogControlABC
         # Returns a logger obj the caller should use
 
-        self.LOG(f"ELC@92 register_user_class  obj is {repr(obj_instance)} ")
+        self.LOG(f"ELC@96 register_user_class  obj is {repr(obj_instance)} ")
 
         simplified_class_name = extract_simplified_classname(obj_instance)
-        self.LOG(f"ELC@95 register_user_class {simplified_class_name=}")
+        self.LOG(f"ELC@99 register_user_class {simplified_class_name=}")
 
         # does this class have a logger assigned?
         logger = self.registry.get(simplified_class_name)
-        self.LOG(f"ELC@99 register_user_class logger of {simplified_class_name} is {logger}")
+        self.LOG(f"ELC@103 register_user_class logger of {simplified_class_name} is {logger}")
         if logger is None:
             logger = ElemLogger(self, simplified_class_name)
             self.registry[simplified_class_name] = logger
@@ -119,7 +123,7 @@ class ElemLogControl:
     def enable_logging(self, class_name, enabled):
         # enable/disable logging for the specified class
         logger = self.registry.get(class_name)
-        m = f"ELC@122 logger is {logger}  {enabled=}"
+        m = f"ELC@126 logger is {logger}  {enabled=}"
         print(m)
         self.log_one_line(m)
         # may enable ourself(!) if class_name is this class
@@ -141,7 +145,7 @@ class ElemLogControl:
 
 
     def dump_registered_loggers(self):
-        m = "ELC@144  Classes registered in ElemLogControl:"
+        m = "ELC@148  Classes registered in ElemLogControl:"
         print(m)
         self.log_one_line(m)
         for k,v in self.registry.items():
@@ -167,7 +171,7 @@ def is_3_digit_int(s):
 def _log_file_filter(fname, ftype, fsize):
     # Returns None if the file is not chosen.
     # Returns the filename extention value (an int) if chosen
-    print(f"ELC@170 _log_file_filter  fname='{fname}'  {fsize=}")
+    print(f"ELC@174 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None
     #
@@ -179,7 +183,7 @@ def _log_file_filter(fname, ftype, fsize):
     #
     if fpart != "mws_log": return None
     ext_val = is_3_digit_int(ext_part)
-    ###print(f"ELC@182   extension is_3_digit_int('{ext_part}') is {ext_val}")
+    ###print(f"ELC@186   extension is_3_digit_int('{ext_part}') is {ext_val}")
     if ext_val is None: return None
     return ext_val
 
@@ -188,12 +192,12 @@ def extract_simplified_classname(obj_instance):
     # given a full class name string like "abc.def.MyClass"; return "MyClass"
     # Obtain the string using  str(obj.__class__)
     obj_repr = repr(obj_instance)
-    #print(f"ELC@191 extract_simplified_classname   {obj_repr=}")
+    #print(f"ELC@195 extract_simplified_classname   {obj_repr=}")
     parts = obj_repr.rsplit(".", 1)
-    #print(f"ELC@193  {parts=}")
+    #print(f"ELC@197  {parts=}")
     name_and_addr = parts[-1]
     parts = name_and_addr.split(None, 1)
-    #print(f"ELC@196  {parts=}")
+    #print(f"ELC@200  {parts=}")
 
     simplified_class_name = parts[0]
     simplified_class_name = simplified_class_name.replace("<", "")

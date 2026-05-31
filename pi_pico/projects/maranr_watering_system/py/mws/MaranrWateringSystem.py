@@ -172,6 +172,9 @@ class MaranrWateringSystem(ElemLoggerABC):
         finally:
             # Clean up the event loop (optional, but good practice)
             asyncio.new_event_loop()
+            print(f"MWSMAIN@175 CLOSE THE LOGGING / LOGGER")
+            elc = ElemLogControl.get_instance()
+            elc.close_all_logging()
 
     def _toggle_onboad_led(self):
         if self._onboard_led is not None:
