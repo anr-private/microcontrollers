@@ -55,26 +55,31 @@ class RequestHandlerData(ElemLoggerABC):
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
         data_dict = {"age": 1, "name": "Bob", "datetime": TimeMgr.get_formatted_date_time_string() }
-
+        
+        include_databoard_status = False
         if "sensors" in params:
             degs_f, degs_c = self._databoard.get_internal_temps_one_dec_place()
             data_dict["internal_temp_f"] = degs_f
             data_dict["internal_temp_c"] = degs_c
         if "debug" in params:
-            dblines = self._databoard.get_loggable_lines(prefix="<RHDATA@64",
-                                                         suffix = "<br>\n")
-            data_dict["databoard_status"] = dblines
-            data_dict["wifi_state"] = str(MwsWifi.state)
+            include_databoard_status = True
             # log file table
             elc = ElemLogControl.get_instance()
             lft_lines = elc.get_log_table_status_lines()
             hlines = "<br>\n".join(lft_lines)
             data_dict["log_file_table_status"] = hlines
         if "settings" in params:
+            include_databoard_status = True
             data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
+        if include_databoard_status:
+            dblines = self._databoard.get_loggable_lines(prefix="",
+                                                         suffix = "<br>\n")
+            dbdata = "".join(dblines)
+            data_dict["databoard_status"] = dbdata
+            data_dict["wifi_state"] = str(MwsWifi.state)
 
         json_stg = json.dumps(data_dict)
-        log(f"RHDATA@77 body: JSON-string:...")  
+        log(f"RHDATA@82 body: JSON-string:...")  
         log(json_stg)
 
         # Build a reply that provides the log lines
@@ -86,9 +91,9 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        m = f"RHDATA@89  HTTP REPLY to DATA REQUEST:"
+        m = f"RHDATA@94  HTTP REPLY to DATA REQUEST:"
         logi(m)
-        mlines = reply.get_loggable_lines(prefix="RHDATA@91")
+        mlines = reply.get_loggable_lines(prefix="RHDATA@96")
         for m in mlines:
             logi(m)
 
@@ -96,7 +101,7 @@ class RequestHandlerData(ElemLoggerABC):
 
             
     def handle_echo_request(self, parsed_http):
-        log(f"RHDATA@99  _handle_echo_request  ph={parsed_http}")
+        log(f"RHDATA@104  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -138,9 +143,9 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RHDATA@141 HTTP REPLY to ECHO request "
+        m = f"RHDATA@146 HTTP REPLY to ECHO request "
         logi(m)
-        m = f"RHDATA@143  {reply.long_string()}"
+        m = f"RHDATA@148  {reply.long_string()}"
         logi(m)
         return reply
 

@@ -155,11 +155,12 @@ class MwsWebServer(ElemLoggerABC):
                 log(mesg)
                 return
 
-            m1 = f"WEBSVR@158 HTTP-REPY is {str(httpReply)} "
-            m2 = f"WEBSVR@159 ... reply header... --------------------"
-            m3 = f"{httpReply.get_header()}"
-            m4 = f"WEBSVR@161  --- end of REPLY HEADER ---"  ###  {len(httpReply.get_header())}  -------------------"
-            logi(m1); logi(m2); logi(m3); logi(m4)
+            m = f"WEBSVR@158 HTTP-REPY is ... "
+            logi(m)
+            mlines = httpReply.get_loggable_lines(prefix="WEBSVR@159")
+            for m in mlines:
+                logi(m)
+            del m, mlines
 
             self._write_the_reply(httpReply, writer)
 

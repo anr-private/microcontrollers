@@ -24,7 +24,7 @@
 
     <script src="fetch_data_and_update.js"></script>
     <script>
-        const dataUrl = "data?settings=ALL"
+        const dataUrl = "data?settings=ALL";
         // Use setInterval to call fetchDataAndUpdate every 3000 milliseconds (3 seconds)
         // This function will run repeatedly until the window is closed or clearInterval() is called.
         // In order to pass an arg to the function, we use an anonymous go-between function.
@@ -45,12 +45,12 @@
             var eltDatetime = document.getElementById('date_time');
             eltDatetime.innerText = `${data.datetime}`;
 
-            //var eltDbStatus = document.getElementById('db_status');
+            var eltDbStatus = document.getElementById('db_status');
             //console.log("eltDbStatus=" + eltDbStatus);
-            //var dbstatus = `${data.databoard_status}`;
+            var dbstatus = `${data.databoard_status}`;
             //console.log("DBstatus is ...");
-            //console.log(dbstatus)
-            //eltDbStatus.innerHTML = dbstatus
+            //console.log(dbstatus);
+            eltDbStatus.innerHTML = dbstatus;
 
             var eltWifiIp = document.getElementById('wifi_ip_and_port');
             var wifi_ip = `${data.wifi_ip_and_port}`;

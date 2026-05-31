@@ -62,7 +62,10 @@ class HttpReply(ElemLoggerABC):
         # for logging. prefix is "MwsWebServer@DDD "
         if not self._body:
             return f"{prefix}HttpReply has NO BODY"
-        lines = self._body.split("\n")
+        try:
+            lines = self._body.split("\n")
+        except TypeError:
+            lines = [self._body,] # only 1 line
         newlines = []
         for line in lines:
             newline = f"{prefix}   {line}"

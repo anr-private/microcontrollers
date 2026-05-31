@@ -183,8 +183,9 @@ class RequestHandlerLog(ElemLoggerABC):
 
         m = f"RHLOG@184  HTTP REPLY to DATA REQUEST:"
         logi(m)
-        m = f"RHLOG@186 {reply.long_string()}"
-        logi(m)
+        mlines = reply.get_loggable_lines(prefix="RHLOG@186")
+        for m in mlines:
+            logi(m)
 
         return reply
 
