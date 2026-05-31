@@ -51,7 +51,10 @@ class RequestHandlerLog(ElemLoggerABC):
 
 
     def handle_log_request(self, parsed_http):
-        log(f"RHLOG@54  _handle_log_request  ph={parsed_http}")
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
+        log(f"RHLOG@57  _handle_log_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -68,17 +71,17 @@ class RequestHandlerLog(ElemLoggerABC):
             relative_line_number = int(rel_line_number_stg)
             numlines = int(num_lines_stg)
         except (TypeError,ValueError) as ex:
-            m = f"RHLOG@71 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
+            m = f"RHLOG@74 Failed to convert params {params=} to int {parsed_http.request_url} ex={ex}"
             logi(m)
             #return None
             # use some defaults
             relative_line_number = 20
             numlines = 20
-        log(f"RHLOG@77  {relative_line_number=}  {numlines=}")
+        log(f"RHLOG@80  {relative_line_number=}  {numlines=}")
         elc = self._get_control_instance()
 
         lines = elc.get_lines_from_log_file(relative_line_number, numlines)
-        log(f"RHLOG@81 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
+        log(f"RHLOG@84 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
         if lines is None: return None
 
 
@@ -114,7 +117,7 @@ class RequestHandlerLog(ElemLoggerABC):
         body_string = "\n".join(html_lines)
         del html_lines
 
-        log(f"RHLOG@117 body_string:...")  
+        log(f"RHLOG@120 body_string:...")  
         log(body_string)
 
         # Build a reply that provides the log lines
@@ -126,38 +129,41 @@ class RequestHandlerLog(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RHLOG@129 HTTP REPLY to LOG request "
-        logi(m)
-        m = f"RHLOG@131  {reply.long_string()}"
-        logi(m)
+        m = f"RHLOG@132 HTTP REPLY to LOG request "
+        LL(m)
+        m = f"RHLOG@134  {reply.long_string()}"
+        LL(m)
 
         return reply
 
 
     def _handle_log_settings_request(self, parsed_http, params):
         # JSON request  EX: /log?settings&whatever=123
-        print(f"RHLOG@139 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RHLOG@140 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RHLOG@141 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RHLOG@142 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
-        print(f"RHLOG@143 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
+        print(f"RHLOG@145 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RHLOG@146 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RHLOG@147 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RHLOG@148 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
+        print(f"RHLOG@149 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ LOG SETTINGS")
 
         # Ex: params = {'settings': '', 'DataBoardID': '0'}
-        print(f"RHLOG@146  LOG-SETTINGS-REQ  params={params}")
-        logi(f"RHLOG@147  LOG-SETTINGS-REQ  params={params}")
+        print(f"RHLOG@152  LOG-SETTINGS-REQ  params={params}")
+        LL(f"RHLOG@153  LOG-SETTINGS-REQ  params={params}")
         for raw_cls_name,state_stg in params.items():
             if raw_cls_name == "settings":
-                log(f"RHLOG@150 SKIP THIS: {raw_cls_name} = '{state_stg}' ")
+                log(f"RHLOG@156 SKIP THIS: {raw_cls_name} = '{state_stg}' ")
                 continue
             cls_name = raw_cls_name;
             if cls_name.endswith("ID"): cls_name = cls_name[:-2]
             enable_requested = state_stg != "0"
             # find the logger for the class
             logger = self._elc.registry.get(cls_name)
-            log(f"RHLOG@157 {cls_name} {enable_requested=}  logger={logger}")
+            log(f"RHLOG@163 {cls_name} {enable_requested=}  logger={logger}")
             if logger is not None:
                 logger.enable_log(enable_requested)
-                logi(f"RHLOG@160 LOGGER {cls_name} IS NOW {enable_requested=}")
+                logi(f"RHLOG@166 LOGGER {cls_name} IS NOW {enable_requested=}")
 
         # Assemble the response
 
@@ -169,7 +175,7 @@ class RequestHandlerLog(ElemLoggerABC):
         data_dict["classes"] = classes_dict
 
         json_stg = json.dumps(data_dict)
-        log(f"RHLOG@172 body: JSON-string:...")  
+        log(f"RHLOG@178 body: JSON-string:...")  
         log(json_stg)
 
         # Build a reply that provides the log lines
@@ -181,11 +187,11 @@ class RequestHandlerLog(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        m = f"RHLOG@184  HTTP REPLY to DATA REQUEST:"
-        logi(m)
-        mlines = reply.get_loggable_lines(prefix="RHLOG@186")
+        m = f"RHLOG@190  HTTP REPLY to DATA REQUEST:"
+        LL(m)
+        mlines = reply.get_loggable_lines(prefix="RHLOG@192")
         for m in mlines:
-            logi(m)
+            LL(m)
 
         return reply
 

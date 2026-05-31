@@ -84,14 +84,14 @@ class ElemLogControl:
         # obj is a user obj that subclasses ElemLogControlABC
         # Returns a logger obj the caller should use
 
-        prt(f"ELC@83   obj is {repr(obj_instance)} ")
+        prt(f"ELC@87   obj is {repr(obj_instance)} ")
 
         simplified_class_name = extract_simplified_classname(obj_instance)
-        prt(f"ELC@86 {simplified_class_name=}")
+        prt(f"ELC@90 {simplified_class_name=}")
 
         # does this class have a logger assigned?
         logger = self.registry.get(simplified_class_name)
-        prt(f"ELC@90  logger of {simplified_class_name} is {logger}")
+        prt(f"ELC@94  logger of {simplified_class_name} is {logger}")
         if logger is None:
             logger = ElemLogger(self, simplified_class_name)
             self.registry[simplified_class_name] = logger
@@ -105,7 +105,7 @@ class ElemLogControl:
 
     def enable_logging(self, class_name, enabled):
         logger = self.registry.get(class_name)
-        print(f"ELC@104 logger is {logger}  {enabled=}")
+        print(f"ELC@108 logger is {logger}  {enabled=}")
         logger.enable_log(enabled)
 
 
@@ -121,7 +121,7 @@ class ElemLogControl:
         # self._log_a_line(line)
 # 
         # if self._current_log_fsize > MAX_LOG_FILE_SIZE:
-            # print(f"ELC@120  @@@@@ curr log size > MAX curr={self._current_log_fsize} max={MAX_LOG_FILE_SIZE}")
+            # print(f"ELC@124  @@@@@ curr log size > MAX curr={self._current_log_fsize} max={MAX_LOG_FILE_SIZE}")
             # self._close_current_log_file("log_one_line")
 
 ###    def _log_a_line(self, line):
@@ -133,16 +133,16 @@ class ElemLogControl:
 ###            self._logf.write("\n")
 ###            self._logf.flush()
 ###            self._current_log_fsize += len(line)+1
-###            print(f"ELC@132  @@@@@ curr log size {self._current_log_fsize}  {line=}")
+###            print(f"ELC@136  @@@@@ curr log size {self._current_log_fsize}  {line=}")
 ###    
 ###        except OSError as ex:
 ###            # see examples/file_and_dirs_io/errno_show_all.py to see all errno values
-###            print(f"ELC@136  Error writing '{self._current_log_fpath}' EX={repr(ex)}  EX='{str(ex)}' ")
+###            print(f"ELC@140  Error writing '{self._current_log_fpath}' EX={repr(ex)}  EX='{str(ex)}' ")
 ###            # 28 is 'out of space'
-###            print(f"ELC@138 {ex.errno=}")
+###            print(f"ELC@142 {ex.errno=}")
 ###        except Exception as ex:
-###            print(f"ELC@140: Error writing to file '{self._current_log_fpath}': {repr(ex)}")
-###            print(f"ELC@141: Error writing to file '{self._current_log_fpath}': {str(ex)}")
+###            print(f"ELC@144: Error writing to file '{self._current_log_fpath}': {repr(ex)}")
+###            print(f"ELC@145: Error writing to file '{self._current_log_fpath}': {str(ex)}")
 ###
 ###
 ###
@@ -179,7 +179,7 @@ class ElemLogControl:
 ###        self._logf = logf
 ###        self._current_log_fpath = new_log_fpath
 ###        self._current_log_fsize = 0
-###        print(f"ELC@178  OPENED NEW LOG {self._current_log_fpath}")
+###        print(f"ELC@182  OPENED NEW LOG {self._current_log_fpath}")
 ###
 ###
 ###    def _make_new_log_fpath(self):
@@ -198,7 +198,7 @@ class ElemLogControl:
 ###
 ###        fpath = f"{LOG_FILES_SUBDIR}/{BASE_LOG_FNAME}.{new_extension_value:03d}"
 ###        #@@@@@@@@@ TODO what if > 999?
-###        print(f"ELC@197 new log-fpath='{fpath}'")
+###        print(f"ELC@201 new log-fpath='{fpath}'")
 ###        return fpath
 ###
 ###
@@ -221,17 +221,17 @@ class ElemLogControl:
 ###        if not biggest_existing_extension_value:
 ###            return DEFAULT_FNAME_STARTING_EXTENSION_VALUE
 ###
-###        print(f"ELC@220 {biggest_existing_extension_value=}")
+###        print(f"ELC@224 {biggest_existing_extension_value=}")
 ###
 ###        if biggest_existing_extension_value is None:
 ###            # Use a fake biggest if there are no extant logfiles
 ###            biggest_existing_extension_value = DEFAULT_FNAME_STARTING_EXTENSION_VALUE
-###            print(f"ELC@225 USED DEFAULT TO FAKE THIS: {biggest_existing_extension_value=}")
+###            print(f"ELC@229 USED DEFAULT TO FAKE THIS: {biggest_existing_extension_value=}")
 ###
 ###        new_extension_value = \
 ###          self._determine_new_starting_extension_value(biggest_existing_extension_value)
 ###
-###        print(f"ELC@230 {new_extension_value=}")
+###        print(f"ELC@234 {new_extension_value=}")
 ###
 ###        return new_extension_value
 ###
@@ -244,14 +244,14 @@ class ElemLogControl:
 ###        # gets (fname, ftype, fsize, file-extension-int-value) 
 ###        existing_logs_info = filter_dir_contents(LOG_FILES_SUBDIR, _log_file_filter)
 ###
-###        print(f"ELC@243 _determine_starting_fname_extension_value fname_ext_values={existing_logs_info}")
+###        print(f"ELC@247 _determine_starting_fname_extension_value fname_ext_values={existing_logs_info}")
 ###
 ###        if len(existing_logs_info) == 0: 
 ###            return None
 ###
 ###        biggest = max([fitem[3] for fitem in existing_logs_info])
 ###
-###        print(f"ELC@250 max _determine_starting_fname_extension_value is {biggest=}")
+###        print(f"ELC@254 max _determine_starting_fname_extension_value is {biggest=}")
 ###
 ###        return biggest
 ###
@@ -267,7 +267,7 @@ class ElemLogControl:
 ###
 ###        ###units = biggest_existing_extension_value - ((biggest_existing_extension_value // 10) * 10)
 ###        units = biggest_existing_extension_value % 10
-###        print(f"ELC@266  {biggest_existing_extension_value=}  {units=}")
+###        print(f"ELC@270  {biggest_existing_extension_value=}  {units=}")
 ###
 ###        # Pick an increment based on the lowest-order digit of the 
 ###        # biggest previous file extension.
@@ -281,7 +281,7 @@ class ElemLogControl:
 ###        # See if filespace is running low. If so, remove some old logs.
 ###        num_logs, total_fsize = self.get_logs_totals(include_currently_open_file=False)
 ###        if total_fsize < LOG_FSPACE_HIGH_WATERMARK:
-###            m = f"ELC@280 NO NEED TO REMOVE LOGFILES yet.  total_log_size={total_fsize}  {LOG_FSPACE_HIGH_WATERMARK=}"
+###            m = f"ELC@284 NO NEED TO REMOVE LOGFILES yet.  total_log_size={total_fsize}  {LOG_FSPACE_HIGH_WATERMARK=}"
 ###            print(m)
 ###            self._log_a_line(m)
 ###            return
@@ -295,7 +295,7 @@ class ElemLogControl:
 ###                break
 ###            self._remove_the_oldest_extant_logfile()
 ###            num_files_removed += 1
-###        m = f"ELC@294 Extant filespace < LOG_MARK:  {extant_fsize=}  {LOG_FSPACE_LOW_WATERMARK=} num_files_removed{num_files_removed=}"
+###        m = f"ELC@298 Extant filespace < LOG_MARK:  {extant_fsize=}  {LOG_FSPACE_LOW_WATERMARK=} num_files_removed{num_files_removed=}"
 ###        print(m)
 ###        self._log_a_line(m)
 ###
@@ -311,7 +311,7 @@ class ElemLogControl:
 ###                return
 ###            if fitem[2]:
 ###                oldest_extant_idx = j
-###                print(f"ELC@310 Found oldest extant logfile item: {oldest_extant_idx=} {fitem=}")
+###                print(f"ELC@314 Found oldest extant logfile item: {oldest_extant_idx=} {fitem=}")
 ###                break
 ###        return oldest_extant_idx
 ###
@@ -327,25 +327,25 @@ class ElemLogControl:
 ###        except OSError as ex:
 ###            if ex.errno == 17: # already exists
 ###                pass
-###                #print(f"ELC@326  Subdir '{LOG_FILES_SUBDIR}' already exists")
+###                #print(f"ELC@330  Subdir '{LOG_FILES_SUBDIR}' already exists")
 ###            else:
-###                print(f"ELC@328 *ERROR* {LOG_FILES_SUBDIR} errno={ex.errno} dir  cannot be created")
+###                print(f"ELC@332 *ERROR* {LOG_FILES_SUBDIR} errno={ex.errno} dir  cannot be created")
 ###
 ###
 ###    def _close_current_log_file(self, who):
 ###        if self._logf is not None:
-###            print(f"ELC@333 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}'")
+###            print(f"ELC@337 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}'")
 ###            try:
 ###                self._logf.close()
 ###            except Exception as ex:
-###                m = f"ELC@337 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
+###                m = f"ELC@341 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
 ###            # Keep track of every log file as it is closed.
 ###            fname = self._current_log_fpath
 ###            fsize = self._current_log_fsize
 ###            log_file_info = (fname, fsize, LOGFILE_IS_EXTANT)
-###            print(f"ELC@342 Closed current log. Saving log info: {log_file_info}")
+###            print(f"ELC@346 Closed current log. Saving log info: {log_file_info}")
 ###            self._log_file_table.append(log_file_info)
-###            print(f"ELC@344 Closed current log. LOG TABLE: {self._log_file_table}")
+###            print(f"ELC@348 Closed current log. LOG TABLE: {self._log_file_table}")
 ###        # We have no open logfile.
 ###        self._logf = None
 ###        self._current_log_fpath = None
@@ -371,7 +371,7 @@ class ElemLogControl:
 
 
     def dump_registered_loggers(self, registry):
-        m = "ELC@370  Classes registered in ElemLogControl:"
+        m = "ELC@374  Classes registered in ElemLogControl:"
         prt(m)
         self.log_one_line(m)
         for k,v in self.registry.items():
@@ -397,7 +397,7 @@ def is_3_digit_int(s):
 def _log_file_filter(fname, ftype, fsize):
     # Returns None if the file is not chosen.
     # Returns the filename extention value (an int) if chosen
-    print(f"ELC@396 _log_file_filter  fname='{fname}'  {fsize=}")
+    print(f"ELC@400 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None
     #
@@ -419,12 +419,12 @@ def extract_simplified_classname(obj_instance):
     # given a full class name string like "abc.def.MyClass"; return "MyClass"
     # Obtain the string using  str(obj.__class__)
     obj_repr = repr(obj_instance)
-    prt(f"ELC@418 extract_simplified_classname   {obj_repr=}")
+    prt(f"ELC@422 extract_simplified_classname   {obj_repr=}")
     parts = obj_repr.rsplit(".", 1)
-    prt(f"ELC@420  {parts=}")
+    prt(f"ELC@424  {parts=}")
     name_and_addr = parts[-1]
     parts = name_and_addr.split(None, 1)
-    prt(f"ELC@423  {parts=}")
+    prt(f"ELC@427  {parts=}")
 
     simplified_class_name = parts[0]
     simplified_class_name = simplified_class_name.replace("<", "")
