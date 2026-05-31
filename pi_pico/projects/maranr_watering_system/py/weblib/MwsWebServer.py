@@ -157,7 +157,7 @@ class MwsWebServer(ElemLoggerABC):
 
             m = f"WEBSVR@158 HTTP-REPY is ... "
             logi(m)
-            mlines = httpReply.get_loggable_lines(prefix="WEBSVR@159")
+            mlines = httpReply.get_loggable_lines(prefix="WEBSVR@160")
             for m in mlines:
                 logi(m)
             del m, mlines
@@ -169,29 +169,29 @@ class MwsWebServer(ElemLoggerABC):
             await writer.drain()
 
         except Exception as ex:
-            print("WEBSVR@171 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            m = f"WEBSVR@172 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print("WEBSVR@172 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"WEBSVR@173 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
             print(m)
             logi(m)
             raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         finally:
-            log("WEBSVR@177 handle_new_client Closing client writer connection")
+            log("WEBSVR@178 handle_new_client Closing client writer connection")
             writer.close()
             await writer.wait_closed() # Wait until the stream is fully closed
-            log("WEBSVR@180 handle_new_client CLIENT WRITER is CLOSED")
+            log("WEBSVR@181 handle_new_client CLIENT WRITER is CLOSED")
             
-            log(f"WEBSVR@182 handle_new_client CLOSING THE CLIENT reader")
+            log(f"WEBSVR@183 handle_new_client CLOSING THE CLIENT reader")
             reader.close()
             await reader.wait_closed()
-            log("WEBSVR@185 handle_new_client CLIENT READER is CLOSED")
+            log("WEBSVR@186 handle_new_client CLIENT READER is CLOSED")
 
-        m = f"WEBSVR@187 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        m = f"WEBSVR@188 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         logi(m)
         gc_collect()
         mf = gc.mem_free()
-        m = f"WEBSVR@191 AFTER GC  FREE MEMORY is {mf}"
+        m = f"WEBSVR@192 AFTER GC  FREE MEMORY is {mf}"
         logi(m)
-        logi(f"WEBSVR@193 handle_new_client done with this client!")
+        logi(f"WEBSVR@194 handle_new_client done with this client!")
 
 
     async def _read_the_request(self, reader):
@@ -201,12 +201,12 @@ class MwsWebServer(ElemLoggerABC):
         header = None
         try:
             while 1:
-                #log(f"WEBSVR@203 read_the_request  ======  READ A LINE  =================================")
+                #log(f"WEBSVR@204 read_the_request  ======  READ A LINE  =================================")
                 new_bytes = await reader.readline()
 
                 if not new_bytes:
                     # Client disconnected
-                    log(f"WEBSVR@208 handle_client_by_lines GOT NO MORE BYTES, client disconnected")
+                    log(f"WEBSVR@209 handle_client_by_lines GOT NO MORE BYTES, client disconnected")
                     break
                 line_num += 1
     
@@ -214,33 +214,33 @@ class MwsWebServer(ElemLoggerABC):
 
                 hdrAccum.accum_header_line(line)
                 if hdrAccum.found_end_of_header():
-                    log(f"WEBSVR@216 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
+                    log(f"WEBSVR@217 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
                     header = hdrAccum.get_header()
                     mesg_tail = hdrAccum.get_tail()
-                    log(f"WEBSVR@219 {header if header else 'NULL'}")
-                    log(f"WEBSVR@220 {mesg_tail if mesg_tail else 'NULL'}")
+                    log(f"WEBSVR@220 {header if header else 'NULL'}")
+                    log(f"WEBSVR@221 {mesg_tail if mesg_tail else 'NULL'}")
                     if mesg_tail:
-                        ###raise RuntimeError("WEBSVR@222  WE HAVE A mesg_tail: '{mesg_tail}'")
-                        logi(f"WEBSVR@223 __WARNING__ we have a mesg_tail {type(mesg_tail)}")
+                        ###raise RuntimeError("WEBSVR@223  WE HAVE A mesg_tail: '{mesg_tail}'")
+                        logi(f"WEBSVR@224 __WARNING__ we have a mesg_tail {type(mesg_tail)}")
                     #@@TODO@@  Need to handle a leftover tail string - in case of packet breakup by network
                     break
             return header
 
         except Exception as ex:
-            print("WEBSVR@229 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            m = f"WEBSVR@230 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print("WEBSVR@230 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"WEBSVR@231 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
             print(m)
             logi(m)
             raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             ### return None
 
     def _handle_the_request(self, request_stg):
-        log(f"WEBSVR@237 handle_the_request  {len(request_stg)=}")
+        log(f"WEBSVR@238 handle_the_request  {len(request_stg)=}")
 
         reqHandler = RequestHandler()
         httpReply = reqHandler.handle_client_request(request_stg)
 
-        m = f"WEBSVR@242 httpReply: {str(httpReply)}"
+        m = f"WEBSVR@243 httpReply: {str(httpReply)}"
         logi(m)
 
         return httpReply
@@ -257,8 +257,8 @@ class MwsWebServer(ElemLoggerABC):
             ###await writer.wait_closed()
 
         except Exception as ex:
-            print("WEBSVR@259 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            m = f"WEBSVR@260 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print("WEBSVR@260 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"WEBSVR@261 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
             print(m)
             logi(m)
             raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TODO fix all the try/except
