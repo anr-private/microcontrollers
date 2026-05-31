@@ -48,7 +48,8 @@ LCD_MENU_COL_MAX = {
 }
 
 # non-menu display
-LCD_ACTIVE_DISPLAY_MAX = 9 #@@@@@@@@@@@@@@@@ UPDATE?
+LCD_ACTIVE_DISPLAY_MAX = 12 #@@@@@@@@@@@@@@@@ UPDATE?
+NON_MENU_ROTATE_DELAY_SECS = 3
 
 class MwsDisplays(ElemLoggerABC):
 
@@ -76,7 +77,7 @@ class MwsDisplays(ElemLoggerABC):
         self.lcd1602_sda_pin = MWS_CONFIG.get("lcd1602_sda_pin")
         self.lcd1602_scl_pin = MWS_CONFIG.get("lcd1602_scl_pin")
         self.lcd = None
-        # display (when menu is not active)
+        # display (when menu is not active) -1 means 'rotate periodically'
         self._lcd_active_display = 0
         # menu
         self._menu_active = False
@@ -93,6 +94,7 @@ class MwsDisplays(ElemLoggerABC):
         # Currently: 1 sec is 4 ticks
         self._timer_ticks = 0
         self._lcd_next_update_tick = 0
+        self._elapsed_secs = 0
 
         # LEDs
         self.led_red1   = Pin( 6, Pin.OUT)
@@ -178,10 +180,10 @@ class MwsDisplays(ElemLoggerABC):
         else: # menu not active
             if btn_name == "Down":
                 v = self._lcd_active_display + 1
-                self._set_lcd_active_display(v)
+                self._set_lcd_active_display(v, force_update=True)
             elif btn_name == "Up":
                 v = self._lcd_active_display - 1
-                self._set_lcd_active_display(v)
+                self._set_lcd_active_display(v, force_update=True)
             elif btn_name == "Center":
                 self._update_menu_state(True)
 
@@ -240,7 +242,10 @@ class MwsDisplays(ElemLoggerABC):
         
 
 
-    def _set_lcd_active_display(self,v):
+    def _set_lcd_active_display(self, v, force_update):
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
         # Roll over if request is too big or too small
         if v < 0 :
             logi(f"MwsDisplays@246 set_active_lcd_display TOO SMALL: {v}  type={type(v)}")
@@ -248,10 +253,11 @@ class MwsDisplays(ElemLoggerABC):
         elif v > LCD_ACTIVE_DISPLAY_MAX:
             logi(f"MwsDisplays@249 set_active_lcd_display TOO LARGE: {v}  type={type(v)}")
             v = 0
-        print(f"MwsDisplays@251 set_lcd_active_display SET LCD ACTIVE DISPLAY to {v}.  Was {self._lcd_active_display}")
+        LL(f"MwsDisplays@251 set_lcd_active_display SET LCD ACTIVE DISPLAY to {v}.  Was {self._lcd_active_display}")
         self._lcd_active_display = v
-        print(f"MwsDisplays@253 set_lcd_active_display FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
-        self._force_lcd_update()  # 'many ticks in the past'
+        if force_update:
+            print(f"MwsDisplays@253 set_lcd_active_display FORCE LCD UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
+            self._force_lcd_update()  # 'many ticks in the past'
 
 
     # Which to use? Hardware or Soft I2C?
@@ -287,18 +293,16 @@ class MwsDisplays(ElemLoggerABC):
             #print(m)
 
         led_idx = 0
-        elapsed_secs = 0
-        ###self._timer_ticks = 0
         while 1:
             # Handle the LCD update
             if self._timer_ticks >= self._lcd_next_update_tick:
                 if self.lcd is not None:
                     self._lcd_next_update_tick = self._timer_ticks + (5 <<2) #  5 secs (20 ticks)
-                    self._update_lcd(elapsed_secs)
+                    self._update_lcd()
                 else:
                     # LCD is disabled. (slow the logging rate)
                     self._lcd_next_update_tick += (5*60) <<1 #  5 mins
-                    m = f"MwsDisplays@301  RUNNING idle! COULD NOT FIND LCD!  {elapsed_secs=}"
+                    m = f"MwsDisplays@301  RUNNING idle! COULD NOT FIND LCD!  {self._elapsed_secs=}"
                     logi(m)
                     print(m)
 
@@ -307,9 +311,10 @@ class MwsDisplays(ElemLoggerABC):
             # tick the time
             await asyncio.sleep(0.25)
             self._timer_ticks += 1
-            elapsed_secs = self._timer_ticks >>2
+            self._elapsed_secs = self._timer_ticks >>2
 
     def _force_lcd_update(self):
+        # force the LCD to be updated, even if it's not time for an update yet
         print(f"MwsDisplays@313 _force_lcd_update FORCE UPDATE.  prev_tick_upd={self._lcd_next_update_tick}")
         self._lcd_next_update_tick = 1 # 'many ticks in the past'
 
@@ -322,18 +327,18 @@ class MwsDisplays(ElemLoggerABC):
         return led_idx
 
 
-    def _update_lcd(self, elapsed_secs):
-        ###print(f"MwsDisplays@326 UPDATE LCD LINES  {elapsed_secs=} {self._lcd_active_display=} ")
+    def _update_lcd(self):
+        ###print(f"MwsDisplays@326 UPDATE LCD LINES  {self._elapsed_secs=} {self._lcd_active_display=} ")
         if self._menu_active:
-            self._update_lcd_menu_active(elapsed_secs)
+            self._update_lcd_menu_active()
         else:
-            self._update_lcd_no_menu(elapsed_secs)
+            self._update_lcd_no_menu()
 
 
-    def _update_lcd_menu_active(self, elapsed_secs):
+    def _update_lcd_menu_active(self):
        # Menu col > 0
         if self._menu_row == 0:
-            self._lcd_show_network(self._menu_col, elapsed_secs)
+            self._lcd_show_network(self._menu_col)
         elif self._menu_row == 1:
             self._lcd_show_date_time(self._menu_col)
         elif self._menu_row == 2:
@@ -352,36 +357,53 @@ class MwsDisplays(ElemLoggerABC):
             self._show_lcd_lines(line1,line2)
 
 
-    def _update_lcd_no_menu(self, elapsed_secs):
-        if self._lcd_active_display == 0:
-            self._lcd_show_network(1, elapsed_secs)
+    def _update_lcd_no_menu(self):
+        disp_num = self._lcd_active_display
 
-        elif self._lcd_active_display == 1:
+        # # if no button has been pressed (lately),
+        # # rotate the active display
+        # if disp_num < 0:
+            # disp_num = self._elapsed_secs % 10  # 0..9
+
+        if disp_num == 0:
+            self._lcd_show_network(1)
+
+        elif disp_num == 1:
             self._lcd_show_date_time(1)
 
-        elif self._lcd_active_display == 2:
+        elif disp_num == 2:
             self._lcd_show_ntp_status(1)
 
-        elif self._lcd_active_display == 3:
+        elif disp_num == 3:
             self._lcd_show_temperatures(1)
 
-        elif self._lcd_active_display == 4:
+        elif disp_num == 4:
             self._lcd_show_temperatures(2)
 
-        elif self._lcd_active_display == 5:
+        elif disp_num == 5:
             self._lcd_show_memory(1)
 
-        elif self._lcd_active_display == 6:
+        elif disp_num == 6:
             self._lcd_show_memory(2)
 
-        elif self._lcd_active_display == 7:
+        elif disp_num == 7:
             self._lcd_show_memory(3)
 
-        elif self._lcd_active_display == 8:
+        elif disp_num == 8:
             self._lcd_show_filesys(1)
 
-        elif self._lcd_active_display == 9:
+        elif disp_num == 9:
+            self._lcd_show_logs_info(1)
+
+        elif disp_num == 10:
             self._lcd_show_logs_info(2)
+
+        elif disp_num == 11:
+            self._lcd_show_logs_info(3)
+
+        elif disp_num == 12:
+            self._lcd_show_logs_info(4)
+
 
         else:
             # This should not get displayed unless debugging,
@@ -394,16 +416,19 @@ class MwsDisplays(ElemLoggerABC):
             ###self.lcd.puts(f"ACTIVE DISPLAY={d}", y=1)
             self._show_lcd_lines(line1, line2)
 
-    def _lcd_show_network(self, which, elapsed_secs):
+        ###self._set_lcd_active_display(disp_num+1, force_update=False)
+
+
+    def _lcd_show_network(self, which):
         if which == 0:
             line1 = "Network"
             line2 = ""
         elif which == 1:
-            hhmmss = seconds_to_hhmmss_string(elapsed_secs)
+            hhmmss = seconds_to_hhmmss_string(self._elapsed_secs)
             line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
             line2 = f"{hhmmss}"
         elif which == 2:
-            hhmmss = seconds_to_hhmmss_string(elapsed_secs)
+            hhmmss = seconds_to_hhmmss_string(self._elapsed_secs)
             line1 = f"{self._databoard.ipaddr}:{self._databoard.port}"
             line2 = f"{self._databoard.wifi_restarts_counter} Wifi Restarts"
         else:

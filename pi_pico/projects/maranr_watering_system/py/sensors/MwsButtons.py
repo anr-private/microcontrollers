@@ -17,15 +17,10 @@ log = None
 logrt = None
 logi = None
 
-###UP_BUTTON_GPIO_PIN     = 14
-###LEFT_BUTTON_GPIO_PIN   = 15
-###CENTER_BUTTON_GPIO_PIN = 20
-###RIGHT_BUTTON_GPIO_PIN  = 21
-###DOWN_BUTTON_GPIO_PIN   = 22
 
 VALIDATE = 804146
 
-#@@@@ DEBUG ONLY ??
+#@@@@ TODO  count button presses - disable?  or DEBUG ONLY ??
 SHORT_CTR = 0
 DOUBLE_CTR = 0
 LONG_CTR = 0
@@ -88,6 +83,7 @@ class MwsButtons(ElemLoggerABC):
     async def buttons_coro(self):
 
         # Buttons are connected to these GPIO pins
+        # They connect the pin to ground when pressed, so need PULL_UP
         self.up_pin     = Pin(14, Pin.IN, Pin.PULL_UP)
         self.left_pin   = Pin(15, Pin.IN, Pin.PULL_UP)
         self.center_pin = Pin(20, Pin.IN, Pin.PULL_UP)
