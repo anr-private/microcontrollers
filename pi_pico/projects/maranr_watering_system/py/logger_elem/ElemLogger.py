@@ -11,6 +11,7 @@ def prt(s):
     if PRT: print (s)
 
 
+#@@@@@@@@@@@@ TODO better handling of enabling log, logi?
 
 class ElemLogger:
 
@@ -25,6 +26,8 @@ class ElemLogger:
         return self.log_enabled
 
     def enable_log(self, enabled):
+        # control whether the class using this logger generates log mesgs 
+        # affects only the log() method so far
         self.log_enabled = not not enabled
             
 

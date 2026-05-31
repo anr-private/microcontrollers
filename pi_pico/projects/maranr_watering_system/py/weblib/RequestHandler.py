@@ -57,10 +57,13 @@ class RequestHandler(ElemLoggerABC):
         # header is str containing the header lines """
         # returns a reply, suitable for sending back to the client
 
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
         m = f"RH@60 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {TimeMgr.get_formatted_date_time_string()} ^^^^^^^^^^^^^"
-        logi(m)
+        LL(m)
         m = f"RH@62  -=-=-=  run lib/gc_collect()  -=-=-= "
-        logi(m)
+        LL(m)
         gc_collect()
 
         httpParser = HttpParser()
@@ -74,7 +77,7 @@ class RequestHandler(ElemLoggerABC):
         m1 = f"RH@74 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
         m2a = parsed_http.long_str(sep="\nRH@75")
         m2 = f"RH@76 {m2a}"
-        logi(m1); logi(m2)
+        LL(m1); LL(m2)
 
         if parsed_http.method == "GET":
             reply = self._handle_get_request(parsed_http)

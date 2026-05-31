@@ -9,6 +9,9 @@ logrt = None
 logi = None
 
 
+#@@@@@@@@@@@@@@ TODO replace with just a function
+
+
 class RHUtils(ElemLoggerABC):
     def __init__(self):
         super().__init__()

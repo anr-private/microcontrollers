@@ -30,7 +30,6 @@ log = None
 logrt = None
 logi = None
 
-
 class RequestHandlerData(ElemLoggerABC):
     def __init__(self):
         self.default_file = "/pages/index.htmlp"
@@ -48,9 +47,12 @@ class RequestHandlerData(ElemLoggerABC):
 
 
     def handle_data_request(self, parsed_http):
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
         params = parsed_http.url_query_parameters
 
-        logi(f"RHDATA@53  DATA REQ  params={params}")
+        LL(f"RHDATA@53  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
@@ -92,15 +94,17 @@ class RequestHandlerData(ElemLoggerABC):
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
         m = f"RHDATA@94  HTTP REPLY to DATA REQUEST:"
-        logi(m)
+        LL(m)
         mlines = reply.get_loggable_lines(prefix="RHDATA@96")
         for m in mlines:
-            logi(m)
+            LL(m)
 
         return reply
 
             
     def handle_echo_request(self, parsed_http):
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
         log(f"RHDATA@104  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
@@ -144,9 +148,9 @@ class RequestHandlerData(ElemLoggerABC):
         reply = rb.build_textual_file_reply(content_type, body_string)
 
         m = f"RHDATA@146 HTTP REPLY to ECHO request "
-        logi(m)
+        LL(m)
         m = f"RHDATA@148  {reply.long_string()}"
-        logi(m)
+        LL(m)
         return reply
 
 

@@ -2,10 +2,14 @@ T
 T.sh
 TT
 TT.sh
+
 wsp_log.txt
 
-
+logs/
 
 mws_log.txt*
 
 __QPUSH_MARKER__
+
+
+

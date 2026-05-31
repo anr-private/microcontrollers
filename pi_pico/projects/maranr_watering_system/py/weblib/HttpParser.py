@@ -132,6 +132,9 @@ class HttpParser(ElemLoggerABC):
             Request ex: GET / HTTP/1.1
                         POST /api/users HTTP/1.1
         """
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
         log(f"HP@135 {start_line=}")
 
         parts = start_line.split()
@@ -165,13 +168,13 @@ class HttpParser(ElemLoggerABC):
         ph.set_as_request(method_stg, request_url, 
                           url_path, url_query_parameters, url_bookmark, 
                           got_version)
-        logi( "HP@168 ##################################################################################")
-        logi( "HP@169 ##################################################################################")
-        logi(f"HP@170 ###  {method_stg}  {request_url}  ")
-        logi(f"HP@171 ###  path='{url_path}'    bookmark='{url_bookmark}' ")
-        logi(f"HP@172 ###  params={url_query_parameters} ")
-        logi( "HP@173 ##################################################################################")
-        logi( "HP@174 ##################################################################################")
+        LL( "HP@168 ##################################################################################")
+        LL( "HP@169 ##################################################################################")
+        LL(f"HP@170 ###  {method_stg}  {request_url}  ")
+        LL(f"HP@171 ###  path='{url_path}'    bookmark='{url_bookmark}' ")
+        LL(f"HP@172 ###  params={url_query_parameters} ")
+        LL( "HP@173 ##################################################################################")
+        LL( "HP@174 ##################################################################################")
         return True
 
 
@@ -258,14 +261,18 @@ class HttpParser(ElemLoggerABC):
             return f"HttpParser.parse_element_line Error in field {line}. ex={ex}"
         return ""
 
+
     def parse_url(self, full_url):
         """ https://blog.example.com:443/page.html?id=10#section
         Scheme: https  Subdomain: blog  Domain: example.com  Port: :443
         Path: /page.html  Query: ?id=10  Fragment: #section 
-        """
-        # assumes we have just the 'page.html?...#...' part
+        """                               
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
+        # assumes we have just the 'page.html?...#...' part       
         url_stg = full_url
-        logi(f"HP@268  {url_stg=}")
+        LL(f"HP@268  {url_stg=}")
 
         parts = url_stg.rsplit("#")
         log(f"HP@271 parts[#]  {parts}")

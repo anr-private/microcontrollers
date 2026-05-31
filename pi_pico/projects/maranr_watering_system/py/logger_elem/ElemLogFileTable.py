@@ -592,7 +592,7 @@ def is_3_digit_int(s):
 def _log_file_filter(fname, ftype, fsize):
     # Returns None if the file is not chosen.
     # Returns the filename extention value (an int) if chosen
-    print(f"ELC@392 _log_file_filter  fname='{fname}'  {fsize=}")
+    print(f"ELFT@392 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None
     #

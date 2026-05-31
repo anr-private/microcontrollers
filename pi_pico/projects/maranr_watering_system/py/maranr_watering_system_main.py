@@ -39,10 +39,10 @@ def main():
     print("MAIN: MARANR Watering System starting...")
     print(f"MAIN@39  {MWS_CONFIG=}")
 
-    # create these early on, in order. Pre-allocate to minimize heap frag.
     log_control = ElemLogControl.get_instance()
-    ###@@@@@@@ DO SOMETHING HERE?  WAS  log_control.remove_old_log_file()
-    # The goal is to call get_instance() just once.
+
+    # Create these early on, in order. Pre-allocate to minimize heap frag.
+    # The goal is to call get_instance() just once.  HUH??
     # DataBoard is created first - it contains refs to all the other
     # major objects.
     databoard = DataBoard.get_instance()
@@ -54,6 +54,8 @@ def main():
     databoard.web_server = MwsWebServer.get_instance()
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
+
+    log_control.dump_registered_loggers()
 
     mws = MaranrWateringSystem()
     mws.perform_pre_asyncio_setups()

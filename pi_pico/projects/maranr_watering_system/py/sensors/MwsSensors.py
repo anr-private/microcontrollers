@@ -17,6 +17,8 @@ logi = None
 
 VALIDATE = 804146
 
+#@@@@@@@@@@@@ TODO redo control over how much logging is done. see use_logi var
+
 
 class MwsSensors(ElemLoggerABC):
     """ sensors and effectors """
@@ -89,6 +91,9 @@ class MwsSensors(ElemLoggerABC):
 
 
     def _accum_memory_stats(self, use_logi):
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
         ma_before = gc.mem_alloc()
         mf_before = gc.mem_free()
         gc.collect()
@@ -100,19 +105,22 @@ class MwsSensors(ElemLoggerABC):
         m1 = f"SENSORS@92  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
         m2 = f"SENSORS@93  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
         if use_logi:
-            logi(m1); logi(m2)
+            LL(m1); LL(m2)
         else:
             log(m1); log(m2)
 
 
     def _get_internal_temps(self, use_logi):
+        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        LL=log
+
         temperature_c = read_internal_temperature()
         temperature_f = celsius_to_fahrenheit(temperature_c)
         self._databoard.set_internal_temps(temperature_f, temperature_c);
 
         m = f"SENSORS@109  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F"
         if use_logi:
-            logi(m)
+            LL(m)
         else:
             log(m)
 
