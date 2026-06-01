@@ -165,6 +165,29 @@ it is usually more reliable to use a protocol designed for it,
 such as CAN bus or RS-485.
 
 
+=== SOIL MOISTURE SENSOR  I2C  ===============================
+
+Downloaded the driver library and associated I2C driver using:
+    mpremote mip install github:sparkfun/qwiic_soil_moisture_sensor_py
+
+It installed in the lib/ dir on the pico:
+   lib/
+     qwiic_soil_moisture_sensor.py
+     qwiic_i2c/
+        __init__.py
+        i2c_driver.py
+        micropython_i2c.py
+
+Also cloned the two github repos:
+  ~/git_not_mine/qwiic_i2c_SPARKFUN
+  ~/git_not_mine/qwiic_soil_moisture_sensor_py_SPARKFUN
+
+See notes here:
+  ~/git/microcontrollers/components/qwiic_soil_moisture_sensor__SPARKFUN
+
+Put bookmarks for the doc webpages in Firefox in this folder:
+  A__micropython
+
 
 === LCD ======================================
 
