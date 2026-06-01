@@ -6,7 +6,7 @@ Downloaded library, examples, etc from Sparkfun
 Install using mpremote:
     mpremote mip install github:sparkfun/qwiic_soil_moisture_sensor_py
 
---- GITHUB  ---------------------------------------
+--- GITHUB soil moisture sensor ---------------------------------------
 
 git clone  git@github.com:sparkfun/qwiic_soil_moisture_sensor_py.git
 
@@ -18,6 +18,18 @@ It lists these links (see docs_web_pages/ subdir for copies of the pages):
 
   https://docs.sparkfun.com/qwiic_soil_moisture_sensor_py/classqwiic__soil__moisture__sensor_1_1_qwiic_soil_moisture_sensor.html#a9799401c60ab796e346a49718a98f601
 
+--- GITHUB qwiic I2C  --------------------------------------------
+
+git clone git@github.com:sparkfun/Qwiic_I2C_Py.git
+
+Saved here:
+  ~/git_not_mine/qwiic_i2c
+
+mpremote install
+   mpremote mip install github:sparkfun/qwiic_i2c_py
+
+
+--- QWIIC CABLE and wiring
 
 QWIIC cable 
   VCC 3.3v      RED
