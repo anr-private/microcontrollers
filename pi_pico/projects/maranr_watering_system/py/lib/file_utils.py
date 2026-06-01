@@ -60,7 +60,7 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
                 file_size = position # Update file_size for next iteration if needed
                 #print(f"@223  new file size {file_size}")
                 fbytes = chunk + fbytes # Prepend the new chunk to the fbytes
-                print(f"FU@63  combined bytes {len(fbytes)} bytes")
+                ###print(f"FU@63 read_last_n_lines combined bytes {len(fbytes)} bytes")
                 
                 # Count newlines in the fbytes
                 while b'\n' in fbytes and lines_found < relative_line_number:
@@ -160,12 +160,12 @@ def filter_dir_contents(dir_path:str, file_filter:str) -> bool:
 
         ok = file_filter(fname, ftype, fsize)
 
-        print(f"FU@163 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
+        #print(f"FU@163 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
 
         if ok is not None:
             selected_items.append( (fname, ftype, fsize, ok) )
 
-    print(f"FU@168  {selected_items=}  {dir_path=} ")
+    #print(f"FU@168  {selected_items=}  {dir_path=} ")
     return  selected_items
 
 
@@ -182,7 +182,7 @@ def list_dir_python(dir_path): # 'real' python
     try:
         for fname in os.listdir(dir_path):
             fpath = dir_path + "/" + fname
-            print(f"FU@185 {fname=}  {fpath=}")
+            #print(f"FU@185 {fname=}  {fpath=}")
             fsize = os.path.getsize(fpath)
             results.append ( (fname, "f", fsize) )
     except FileNotFoundError as ex:
@@ -191,7 +191,7 @@ def list_dir_python(dir_path): # 'real' python
 
 
 def list_dir_micropython(dir_path):
-    print(f"FU@194  USING list_dir_micropython  {dir_path}")
+    #print(f"FU@194  USING list_dir_micropython  {dir_path}")
 
     results = []
 
@@ -257,7 +257,7 @@ def remove_subdir_micropython(path):
         print("FU@257 Failed to remove:", path)
 
 def remove_file(fpath):
-    print(f"FU@260 Remove file '{fpath}'")
+    #print(f"FU@260 Remove file '{fpath}'")
     try:
         os.remove(fpath)
         return True
