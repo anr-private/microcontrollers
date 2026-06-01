@@ -3,12 +3,28 @@ Downloaded library, examples, etc from Sparkfun
   https://docs.sparkfun.com/qwiic_soil_moisture_sensor_py/
   https://docs.sparkfun.com/qwiic_soil_moisture_sensor_py/classqwiic__soil__moisture__sensor_1_1_qwiic_soil_moisture_sensor.html
 
-Install using mpremote:
+---- How I Installed ---------------------------------------
+
+On an 'empty Pico 2:  did this install using mpremote (default Ubuntu version worked ok, did not create a venv to get newest mpremote)
+  
     mpremote mip install github:sparkfun/qwiic_soil_moisture_sensor_py
+
+It installed in the lib/ dir on the pico:
+   lib/
+     qwiic_soil_moisture_sensor.py
+     qwiic_i2c/
+        __init__.py
+        i2c_driver.py
+        micropython_i2c.py
+
 
 --- GITHUB soil moisture sensor ---------------------------------------
 
 git clone  git@github.com:sparkfun/qwiic_soil_moisture_sensor_py.git
+
+Install using mpremote:
+    mpremote mip install github:sparkfun/qwiic_soil_moisture_sensor_py
+
 
 See README in examples/ subdir.
 It lists these links (see docs_web_pages/ subdir for copies of the pages):
