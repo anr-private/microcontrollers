@@ -17,31 +17,36 @@ def scan_for_i2c(i2c_bus_number, data_pin_number, clock_pin_number, use_pullups=
         #   Manually configure pins and turn on the Pico's internal pull-ups
         sda_pin = machine.Pin(data_pin_number, machine.Pin.OUT, machine.Pin.PULL_UP)
         scl_pin = machine.Pin(clock_pin_number, machine.Pin.OUT, machine.Pin.PULL_UP)
-        print(f"@32 USING INTERNAL PULLUP resistors on Data, Clock pins")
+        print(f"@20 USING INTERNAL PULLUP resistors on Data, Clock pins")
     else:
         # for I2C that has internal pullup resistors: don't need external ones
         sda_pin = machine.Pin(data_pin_number)
         scl_pin = machine.Pin(clock_pin_number)
     
-    print(f"@38 Create I2C device  {i2c_bus_number=}  {data_pin_number=}  {clock_pin_number=}")
+    print(f"@26 Create I2C device  {i2c_bus_number=}  {data_pin_number=}  {clock_pin_number=}")
 
     ###i2c = machine.I2C(i2c_bus_number, sda=sda_pin, scl=scl_pin)
     i2c = machine.I2C(i2c_bus_number, sda=sda_pin, scl=scl_pin, freq=100000)
 
-    print(f"@42 Got I2c device obj: {i2c}")
+    print(f"@31 Got I2c device obj: {i2c}")
 
-    print(f"@44Scanning for I2C devices...")
+    print(f"@33 Scanning for I2C devices...")
     
     # Scan for devices on the I2C bus
-    devices = i2c.scan()
+    device_addresses = i2c.scan()
     
-    if devices:
-        print("@50Found I2C devices at addresses:")
-        for device_address in devices:
-            # Convert the address to hexadecimal for common representation
-            print(hex(device_address))
-    else:
-        print("@55  *****  No I2C devices found.  *************")
+    if not device_addresses:
+        print("@39  *****  No I2C devices found.  *************")
+        return
+
+    print("@42  Found I2C devices at addresses:")
+    for device_address in device_addresses:
+        # Convert the address to hexadecimal for common representation
+        print(hex(device_address))
+
+    for dev_addr in device_addresses:
+        try_writing_to_device(i2c, dev_addr)
+
     print()
 
 
@@ -67,6 +72,19 @@ def scan_for_i2c_alternate(i2c_bus_number, data_pin_number, clock_pin_number):
             print(f"Decimal address: {device} | Hex address: {hex(device)}")
 
     print()
+
+def try_writing_to_device(i2c, dev_address):
+    print(f"@77 WRITE TO DEVICE  {i2c}  {dev_address} ")
+    try:
+        # Try to write nothing to the device
+        # If it throws an I/O error - the device isn't connected
+        i2c.writeto(dev_address, bytearray())
+        print(f"@82 WRITE was successful.")
+    except Exception as ex:
+        print(f"@84 EXCEPTION {ex} {str(ex)} ")
+    except:
+        print(f"@86 UNKNOWN EXCEPTION ")
+
 
 
 def main():
