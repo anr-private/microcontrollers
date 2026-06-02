@@ -1,3 +1,5 @@
+# qwiic_soil_moisture_sensor.py
+
 """!
 qwiic_soil_moisture_sensor
 ============
@@ -34,10 +36,10 @@ SOIL_MOISTURE_SENSOR_DEFAULT_ADDRESS = 0x28
 # Some devices have multiple available addresses - this is a list of these addresses.
 # NOTE: The first address in this list is considered the default I2C address for the
 # device.
-_FULL_ADDRESS_LIST = list(range(0x08,0x40))				    	# Full I2C Address List (excluding resrved addresses)
+_FULL_ADDRESS_LIST = list(range(0x08,0x40))                     # Full I2C Address List (excluding resrved addresses)
 _FULL_ADDRESS_LIST.remove(SOIL_MOISTURE_SENSOR_DEFAULT_ADDRESS) # Remove Default Address of Soil Moisture Sensor from list
-_AVAILABLE_I2C_ADDRESS = [SOIL_MOISTURE_SENSOR_DEFAULT_ADDRESS]	# Initialize with Default Address of Soil Moisture Sensor
-_AVAILABLE_I2C_ADDRESS.extend(_FULL_ADDRESS_LIST)				# Add Full Range of I2C Addresses
+_AVAILABLE_I2C_ADDRESS = [SOIL_MOISTURE_SENSOR_DEFAULT_ADDRESS] # Initialize with Default Address of Soil Moisture Sensor
+_AVAILABLE_I2C_ADDRESS.extend(_FULL_ADDRESS_LIST)               # Add Full Range of I2C Addresses
 
 
 
@@ -66,9 +68,13 @@ class QwiicSoilMoistureSensor(object):
 
         # load the I2C driver if one isn't provided
         if i2c_driver is None:
-            self._i2c = qwiic_i2c.getI2CDriver()
+            print(f"QwiicSoilMoistureSensor.init@71  NO DRIVER PROVIDED")
+            #@@@@@@@ PROVIDE THE PIN NUMBERS  @@@@@@@@@@@@@@@@ ANR
+            anr_sda = 0
+            anr_scl = 1
+            self._i2c = qwiic_i2c.getI2CDriver(sda=anr_sda, scl=anr_scl)
             if self._i2c is None:
-                print("Unable to load I2C driver for this platform.")
+                print("QwiicSoilMoistureSensor@71 Unable to load I2C driver for this platform.")
                 return
         else:
             self._i2c = i2c_driver  # MicroPythonIC
@@ -84,7 +90,6 @@ class QwiicSoilMoistureSensor(object):
     def is_connected(self):
         """!
         Determine if a Soil MoistureSensor device is conntected to the system..
-
         @return **bool** True if the device is connected, otherwise False.
         """        
         return self._i2c.isDeviceConnected(self.address)
@@ -123,7 +128,7 @@ class QwiicSoilMoistureSensor(object):
         data = self._i2c.readBlock(self.address, COMMAND_GET_VALUE, 2)
         self.level = data[1] << 8 | data[0]
         
-    #----------------------------------------------------
+    #----------------------------------------------------ES
     # Checks to see if error bit is set
     def check_status_error(self):
         """!
@@ -184,3 +189,4 @@ class QwiicSoilMoistureSensor(object):
 
 
 
+###

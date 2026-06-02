@@ -3,10 +3,10 @@
 # Base class used to define the interface for the platform classes. 
 # A platform class performs the following:
 #   - Determines if the object is executing on it's desired platform
-#		- Platforms are strucutre into broad classifications. For example
-#			- Linux systems
-#			- CircuitPython 
-#	- Implements platform specific logic to support a given operation (I2C for now)
+#       - Platforms are strucutre into broad classifications. For example
+#           - Linux systems
+#           - CircuitPython 
+#   - Implements platform specific logic to support a given operation (I2C for now)
 # This specific class does very little besides define the base interface  
 #
 # Written by  SparkFun Electronics, May 2019
@@ -31,327 +31,329 @@ New to qwiic? Take a look at the entire [SparkFun qwiic ecosystem](https://www.s
 #
 #
 class I2CDriver(object):
-	"""
-	I2CDriver
+    """
+    I2CDriver
 
-		Implements the interface for the I2C bus for the qwiic ecosystem.
+        Implements the interface for the I2C bus for the qwiic ecosystem.
 
-		:return: The I2C Driver interface for the qwiic system.
-		:rtype: Object
-	"""
+        :return: The I2C Driver interface for the qwiic system.
+        :rtype: Object
+    """
 
-	# stubs
-	name = 'qwiic I2C abstract base class'
+    # stubs
+    name = 'qwiic I2C abstract base class'
 
-	def __init__(self, *args, **argk):
-		pass
+    def __init__(self, *args, **argk):
+        pass
 
 
-	# A class method is used to determine if the system is executing on the desired platform
+    # A class method is used to determine if the system is executing on the desired platform
 
-	@classmethod
-	def isPlatform(cls):
-		""" 
-			Called to determine if the specific driver supports the current platorm
+    @classmethod
+    def isPlatform(cls):
+        """ 
+            Called to determine if the specific driver supports the current platorm
 
-			:return: True if this platform is supported, otherwise False
-			:rtype: bool
+            :return: True if this platform is supported, otherwise False
+            :rtype: bool
 
-		"""
-		pass
+        """
+        pass
 
-	@classmethod
-	def is_platform(cls):
-		""" 
-			Called to determine if the specific driver supports the current platorm
+    @classmethod
+    def is_platform(cls):
+        """ 
+            Called to determine if the specific driver supports the current platorm
 
-			:return: True if this platform is supported, otherwise False
-			:rtype: bool
+            :return: True if this platform is supported, otherwise False
+            :rtype: bool
 
-		"""
-		pass
+        """
+        pass
 
-	#-------------------------------------------------------------------------	
-	# stubs to support Python with statements. 
-	#
-	# Helpful for I2C interactions that require a mutex.
+    #-------------------------------------------------------------------------  
+    # stubs to support Python with statements. 
+    #
+    # Helpful for I2C interactions that require a mutex.
 
-	def __enter__(self):
-		return self
+    def __enter__(self):
+        return self
 
-	def __exit__(self, type, value, traceback):
-		pass
+    def __exit__(self, type, value, traceback):
+        pass
 
 
-	#-------------------------------------------------------------------------		
-	# read Data Command
+    #-------------------------------------------------------------------------      
+    # read Data Command
 
-	def readWord(self, address, commandCode):
-		""" 
-			Called to read a word (16 bits) from a specific device.
+    def readWord(self, address, commandCode):
+        """ 
+            Called to read a word (16 bits) from a specific device.
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from, or `None` for no command
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from, or `None` for no command
 
-			:return: Returns the read data
-			:rtype: integer - first 16 bits contain the read data. 
+            :return: Returns the read data
+            :rtype: integer - first 16 bits contain the read data. 
 
-		"""
-		return None
+        """
+        return None
 
-	def read_word(self, address, commandCode):
-		""" 
-			Called to read a word (16 bits) from a specific device.
+    def read_word(self, address, commandCode):
+        """ 
+            Called to read a word (16 bits) from a specific device.
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from, or `None` for no command
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from, or `None` for no command
 
-			:return: Returns the read data
-			:rtype: integer - first 16 bits contain the read data. 
+            :return: Returns the read data
+            :rtype: integer - first 16 bits contain the read data. 
 
-		"""
-		return None
+        """
+        return None
 
-	def readByte(self, address, commandCode):
-		""" 
-			Called to read a byte (8 bits) from a specific device.
+    def readByte(self, address, commandCode):
+        """ 
+            Called to read a byte (8 bits) from a specific device.
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from, or `None` for no command
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from, or `None` for no command
 
-			:return: Returns the read data
-			:rtype: integer - first 8 bits contain the read data. 
+            :return: Returns the read data
+            :rtype: integer - first 8 bits contain the read data. 
 
-		"""
-		return None
+        """
+        return None
 
-	def read_byte(self, address, commandCode):
-		""" 
-			Called to read a byte (8 bits) from a specific device.
+    def read_byte(self, address, commandCode):
+        """ 
+            Called to read a byte (8 bits) from a specific device.
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from, or `None` for no command
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from, or `None` for no command
 
-			:return: Returns the read data
-			:rtype: integer - first 8 bits contain the read data. 
+            :return: Returns the read data
+            :rtype: integer - first 8 bits contain the read data. 
 
-		"""
-		return None
+        """
+        return None
 
-	def readBlock(self, address, commandCode, nBytes):
-		""" 
-			Called to read a block of bytesfrom a specific device.
+    def readBlock(self, address, commandCode, nBytes):
+        """ 
+            Called to read a block of bytesfrom a specific device.
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from, or `None` for no command
-			:param nBytes: The number of bytes to read from the device
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from, or `None` for no command
+            :param nBytes: The number of bytes to read from the device
 
-			:return: Returns the read data as a list of integers.
-			:rtype: list 
+            :return: Returns the read data as a list of integers.
+            :rtype: list 
 
-		"""
-		return None
-	
-	def read_block(self, address, commandCode, nBytes):
-		""" 
-			Called to read a block of bytesfrom a specific device.
+        """
+        return None
+    
+    def read_block(self, address, commandCode, nBytes):
+        """ 
+            Called to read a block of bytesfrom a specific device.
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from, or `None` for no command
-			:param nBytes: The number of bytes to read from the device
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from, or `None` for no command
+            :param nBytes: The number of bytes to read from the device
 
-			:return: Returns the read data as a list of integers.
-			:rtype: list 
+            :return: Returns the read data as a list of integers.
+            :rtype: list 
 
-		"""
-		return None
-	
-	#--------------------------------------------------------------------------	
-	# write Data Commands 
-	#
-	# Send a command to the I2C bus for this device. 
-	#
-	# value = 16 bits of valid data..
-	#
+        """
+        return None
+    
+    #-------------------------------------------------------------------------- 
+    # write Data Commands 
+    #
+    # Send a command to the I2C bus for this device. 
+    #
+    # value = 16 bits of valid data..
+    #
 
-	def writeCommand(self, address, commandCode):
-		""" 
-			Called to write a command to a device. No actual data is written
+    def writeCommand(self, address, commandCode):
+        """ 
+            Called to write a command to a device. No actual data is written
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from 
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from 
 
-			:return: None
+            :return: None
 
-		"""
-		return None
+        """
+        return None
 
-	def write_command(self, address, commandCode):
-		""" 
-			Called to write a command to a device. No actual data is written
+    def write_command(self, address, commandCode):
+        """ 
+            Called to write a command to a device. No actual data is written
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from 
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from 
 
-			:return: None
+            :return: None
 
-		"""
-		return None
+        """
+        return None
 
-	def writeWord(self, address, commandCode, value):
-		""" 
-			Called to write a word (16 bits) to a device. 
+    def writeWord(self, address, commandCode, value):
+        """ 
+            Called to write a word (16 bits) to a device. 
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from
-			:param value: The word (16 bits) to write to the I2C bus
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from
+            :param value: The word (16 bits) to write to the I2C bus
 
-			:return: None
+            :return: None
 
-		"""
+        """
 
-		return None
+        return None
 
-	def write_word(self, address, commandCode, value):
-		""" 
-			Called to write a word (16 bits) to a device. 
+    def write_word(self, address, commandCode, value):
+        """ 
+            Called to write a word (16 bits) to a device. 
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from
-			:param value: The word (16 bits) to write to the I2C bus
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from
+            :param value: The word (16 bits) to write to the I2C bus
 
-			:return: None
+            :return: None
 
-		"""
-		return None
+        """
+        return None
 
-	def writeByte(self, address, commandCode, value):
-		""" 
-			Called to write a byte (8 bits) to a device. 
+    def writeByte(self, address, commandCode, value):
+        """ 
+            Called to write a byte (8 bits) to a device. 
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from
-			:param value: The byte (8 bits) to write to the I2C bus
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from
+            :param value: The byte (8 bits) to write to the I2C bus
 
-			:return: None
+            :return: None
 
-		"""
+        """
 
-		return None
+        return None
 
-	def write_byte(self, address, commandCode, value):
-		""" 
-			Called to write a byte (8 bits) to a device. 
+    def write_byte(self, address, commandCode, value):
+        """ 
+            Called to write a byte (8 bits) to a device. 
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from
-			:param value: The byte (8 bits) to write to the I2C bus
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from
+            :param value: The byte (8 bits) to write to the I2C bus
 
-			:return: None
+            :return: None
 
-		"""
-		return None
+        """
+        return None
 
-	def writeBlock(self, address, commandCode, value):
-		""" 
-			Called to write a block of bytes to a device. 
+    def writeBlock(self, address, commandCode, value):
+        """ 
+            Called to write a block of bytes to a device. 
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from
-			:param value: A list of bytes (ints) to write on the I2C bus.
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from
+            :param value: A list of bytes (ints) to write on the I2C bus.
 
-			:return: None
+            :return: None
 
-		"""
-		pass
+        """
+        pass
 
-	def write_block(self, address, commandCode, value):
-		""" 
-			Called to write a block of bytes to a device. 
+    def write_block(self, address, commandCode, value):
+        """ 
+            Called to write a block of bytes to a device. 
 
-			:param address: The I2C address of the device to read from
-			:param commandCode: The "command" or register to read from
-			:param value: A list of bytes (ints) to write on the I2C bus.
+            :param address: The I2C address of the device to read from
+            :param commandCode: The "command" or register to read from
+            :param value: A list of bytes (ints) to write on the I2C bus.
 
-			:return: None
+            :return: None
 
-		"""
-		return None
-	
-	def writeReadBlock(self, address, writeBytes, readNBytes):
-		""" 
-			Called to write a block of bytes to a device, send no stop bit, and then read a block of bytes.
+        """
+        return None
+    
+    def writeReadBlock(self, address, writeBytes, readNBytes):
+        """ 
+            Called to write a block of bytes to a device, send no stop bit, and then read a block of bytes.
 
-			:param address: The I2C address of the device to read from
-			:param writeBytes: A list of bytes (ints) to write on the I2C bus.
-			:param readNBytes: The number of bytes to read from the device
+            :param address: The I2C address of the device to read from
+            :param writeBytes: A list of bytes (ints) to write on the I2C bus.
+            :param readNBytes: The number of bytes to read from the device
 
-			:return: A list of bytes read from the device.
-			:rtype: list
+            :return: A list of bytes read from the device.
+            :rtype: list
 
-		"""
-		return None
-	
-	def write_read_block(self, address, writeBytes, readNBytes):
-		""" 
-			Called to write a block of bytes to a device, send no stop bit, and then read a block of bytes.
+        """
+        return None
+    
+    def write_read_block(self, address, writeBytes, readNBytes):
+        """ 
+            Called to write a block of bytes to a device, send no stop bit, and then read a block of bytes.
 
-			:param address: The I2C address of the device to read from
-			:param writeBytes: A list of bytes (ints) to write on the I2C bus.
-			:param readNBytes: The number of bytes to read from the device
+            :param address: The I2C address of the device to read from
+            :param writeBytes: A list of bytes (ints) to write on the I2C bus.
+            :param readNBytes: The number of bytes to read from the device
 
-			:return: A list of bytes read from the device.
-			:rtype: list
+            :return: A list of bytes read from the device.
+            :rtype: list
 
-		"""
-		return None
+        """
+        return None
 
 
-	def isDeviceConnected(self, devAddress):
-		"""
-			Determines if a particular device (at the provided address)
-			is connected to the bus.
+    def isDeviceConnected(self, devAddress):
+        """
+            Determines if a particular device (at the provided address)
+            is connected to the bus.
 
-			:param devAddress: The I2C address of the device to check
+            :param devAddress: The I2C address of the device to check
 
-			:return: True if the device is connected, otherwise False.
-			:rtype: bool
+            :return: True if the device is connected, otherwise False.
+            :rtype: bool
 
-		"""
-		return None
+        """
+        return None
 
-	def is_device_connected(self, devAddress):
-		"""
-			Determines if a particular device (at the provided address)
-			is connected to the bus.
+    def is_device_connected(self, devAddress):
+        """
+            Determines if a particular device (at the provided address)
+            is connected to the bus.
 
-			:param devAddress: The I2C address of the device to check
+            :param devAddress: The I2C address of the device to check
 
-			:return: True if the device is connected, otherwise False.
-			:rtype: bool
+            :return: True if the device is connected, otherwise False.
+            :rtype: bool
 
-		"""
-		return None
+        """
+        return None
 
-	def ping(self, devAddress):
-		"""
-			Determines if a particular device (at the provided address)
-			is connected to the bus.
+    def ping(self, devAddress):
+        """
+            Determines if a particular device (at the provided address)
+            is connected to the bus.
 
-			:param devAddress: The I2C address of the device to check
+            :param devAddress: The I2C address of the device to check
 
-			:return: True if the device is connected, otherwise False.
-			:rtype: bool
+            :return: True if the device is connected, otherwise False.
+            :rtype: bool
 
-		"""
-		return None
+        """
+        return None
 
-	def scan(self):
-		"""
-			Used to scan the I2C bus, returning a list of I2C address attached to the computer.
+    def scan(self):
+        """
+            Used to scan the I2C bus, returning a list of I2C address attached to the computer.
 
-			:return: A list of I2C addresses. If no devices are attached, an empty list is returned.
-			:rtype: list
+            :return: A list of I2C addresses. If no devices are attached, an empty list is returned.
+            :rtype: list
 
-		"""
-		return None
+        """
+        return None
+
+###
