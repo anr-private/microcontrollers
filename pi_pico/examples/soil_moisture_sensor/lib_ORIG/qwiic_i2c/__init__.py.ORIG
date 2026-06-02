@@ -86,8 +86,6 @@ for module_name, class_name in _supported_platforms.items():
 
 _default_driver = None
 
-print(f"__init__.py@89  drivers found: {_drivers}")
-
 #-------------------------------------------------
 # Exported method to get the I2C driver for the execution plaform. 
 #

@@ -1,9 +1,16 @@
+README_AAA.txt
+
+SparkFun Capacitive Soil Moisture Sensor
+
+(Not the resistance sensor!)
+
 Downloaded library, examples, etc from Sparkfun
 
   https://docs.sparkfun.com/qwiic_soil_moisture_sensor_py/
   https://docs.sparkfun.com/qwiic_soil_moisture_sensor_py/classqwiic__soil__moisture__sensor_1_1_qwiic_soil_moisture_sensor.html
 
-Default I2C address:  0x37   but code shows 0x28(?!)
+
+Default I2C address:  0x37   but code shows 0x28 (for resistance sensor)
 
 NOTE that the sensor does not provide PULLUP resistors on its SDA and SCL pins.
 So you need to add 4.7K pullup resistors from the GPIO pins to Vcc 3.3v

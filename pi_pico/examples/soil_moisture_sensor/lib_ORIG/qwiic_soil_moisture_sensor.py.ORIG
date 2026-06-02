@@ -71,10 +71,7 @@ class QwiicSoilMoistureSensor(object):
                 print("Unable to load I2C driver for this platform.")
                 return
         else:
-            self._i2c = i2c_driver  # MicroPythonIC
-        print(f"QwiicSoilMoistureSensor.init@75  address 0x{self.address:02X}")
-        print(f"QwiicSoilMoistureSensor.init@75  device_name {self.device_name}")
-        print(f"QwiicSoilMoistureSensor.init@75  i2c driver {self._i2c}")
+            self._i2c = i2c_driver
 
     # ----------------------------------
     # is_connected()
