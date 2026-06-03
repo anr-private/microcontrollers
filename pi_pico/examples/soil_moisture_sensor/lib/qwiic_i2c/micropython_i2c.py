@@ -175,7 +175,7 @@ class MicroPythonI2C(I2CDriver):
         return self.writeReadBlock(address, writeBytes, readNBytes)
 
     def isDeviceConnected(self, devAddress):
-        print(f"mp_i2c.isDeviceConnected@174  devAddress={devAddress}")
+        print(f"mp_i2c.isDeviceConnected@174  devAddress=0x{devAddress:02X}")
 
         isConnected = False
         try:
