@@ -1,5 +1,18 @@
 README_AAA.txt
 
+
+ABANDONED this sensor
+
+It uses ATtiny85 microprocessor and is too old and slow to do i2c reliably.
+Did several tests and could not get the sensor to respond on i2c reliably.
+Trying instead:
+  Adafruit STEMMA sensor
+https://learn.adafruit.com/adafruit-stemma-soil-sensor-i2c-capacitive-moisture-sensor
+
+Analog Capacitive Soil Moisture Sensor v1.2.
+
+
+=================================================================================
 SparkFun Capacitive Soil Moisture Sensor
 
 (Not the resistance sensor!)
