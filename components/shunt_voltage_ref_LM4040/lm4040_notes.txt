@@ -1,0 +1,140 @@
+LM4040 Precision Micropower Shunt Voltage Reference IC
+
+See simple circuit diagram:
+    lm4040_voltage_ref_IC.png
+
+TO-92 pinouts: looking from bottom
+  For several pinouts of pkgs, see lm4040_pkgs_pinouts.png
+
+   ---------------------
+  /   1     2      3    \
+  |                      |
+   \                    /
+     \                 /
+       ----------------
+
+Pin 1: (float or connect to anode)
+Pin 2: CATHODE shut current / voltage input
+Pin 3: ANODE  common pin (connect to ground)
+
+Pi Pico use: to provide stable 3.0v reference voltage for ADC_VREF pin 
+(physical pin 35). This provides better ADC accuracy.
+
+                5V Reference Source
+                          │
+                  [ R_bias Resistor ]
+                          │
+ 3.3V Rail ───[ Internal 200 Ω ]───┴───► ADC_VREF Pin ───► RP2040 ADC
+                                   │
+                           [ LM4040-3.0 Shunt ]
+                                   │
+                                  GND
+
+
+=== PICO    RP2040  ====================================
+
+Circuit Connections LM4040 
+ Pin 1 (Cathode): Connects to the 5V source through the bias resistor.
+  Also connect directly to the ADC_VREF pin on the Pi Pico.
+ Pin 3 (Anode): Connects to AGND (Analog Ground, Pin 33) on the Pi Pico. 
+   Connecting this to the dedicated analog ground minimizes digital noise.
+ Pico ADC Pins: Connect your analog sensors to GPIO 26-28 (ADC0-ADC2).
+
+How to Size the Bias Resistor
+
+To calculate the ideal resistor, you use Ohm's law alongside the 
+LM4040's operational parameters:
+           V_in  -  V_zener
+ R_bias = --------------------------
+           I_zener + I_load
+
+V_in  5V  ref voltage
+V_zener  3.0v regulated voltage provided by LM4040-3.0
+I_zener  min operating current for LM4040 is 60 micro-amps
+           Prefer 100 micro-amps for stability
+I_load   Pico ADC_VREF draws about 150 micro-amps 
+           (It actually varies as A-to-D conversion occurs)
+Recommended: 1k resistor
+  This provides abouth 2 mA of shunt current from a 5V source which keeps
+     LM4040 in its operating range and allows overhead for Pico's
+     ADC draw.
+
+ 5V Reference Source
+          │
+          ▼
+     Bias Resistor (R1) ➔ [ 680Ω to 1.2kΩ ]
+          │
+          ├───┬─────────────────────────▶ Pico ADC_VREF (Pin 35)
+          │   │
+          │   ▼
+     [ LM4040-3.0 ]  (Pin 1: Cathode, Pin 3: Anode)
+          │   ▲
+          │   │
+          └───┴─────────────────────────▶ Pico AGND (Pin 33)
+
+
+=== PICO 2   RP2350  ====================================
+
+Unlike the original Pico, the Pico 2 W natively stabilizes its internal 
+ADC power rails, but using the LM4040-3.0 precision voltage reference still 
+provides excellent stability for highly accurate measurements.
+
+Circuit is the same as above, but slightly difference values.
+
+  5V Reference Source
+          │
+          ▼
+     Bias Resistor (R1) ➔ [ 820Ω ] (For optimal stability)
+          │
+          ├───┬─────────────────────────▶ Pico 2 W ADC_VREF (Pin 35)
+          │   │
+          │   ▼
+     [ LM4040-3.0 ]  (Pin 1: Cathode, Pin 3: Anode)
+          │   ▲
+          │   │
+          └───┴─────────────────────────▶ Pico 2 W AGND (Pin 33)
+
+The RP2350 ADC input impedance and current draw characteristics shift 
+during sampling. To prevent voltage droop when the internal Successive 
+Approximation Register (SAR) ADC switches its internal capacitor arrays, 
+you must calculate a slightly stiffer shunt current.
+
+Voltage drop across R_bias:
+         R_bias = V_in - V_out = 5v - 3v = 2v
+
+By Ohms law: I_bias is 2.4 Ma.
+This satisfies both the minimum 150 micro-amp internal ADC switching load 
+transients and the optimal 1 mA to 2 mA operating range of the LM4040 
+for the lowest dynamic impedance:
+
+                     2.0V
+        R_bias = ---------------------------
+                    0.0024 amps
+               = approx 833 ohms
+Standard value: use 820 or 750 ohms.
+
+Power dissipation:  P = I**2 * R  = 4mW so 1/8W or 1/4W resistor is ok.
+
+Pico 2 W config:
+ Isolate AGND (Pin 33): Connect Pin 3 (Anode) of the LM4040 directly to 
+    Pin 33 (AGND). Do not tie this specific ground track into the 
+    noisy digital system ground (GND pins) until they meet at the 
+    single-point star ground layout on the board.
+  Add a Bypass Capacitor: While the Pico 2 W handles power filtering better,
+    adding a 100 nF ceramic capacitor directly across the LM4040 Cathode and 
+    Anode pins suppresses high-frequency noise introduced by the onboard 
+    wireless Wi-Fi chip transmissions.
+
+Micropython notes:
+The RP2350 ADC features a 12-bit resolution 4096 discrete steps. 
+Use this formula in your MicroPython / C++ scripts to translate 
+raw ADC readings into accurate voltages:
+
+                        RAW ADC value
+     actual volatage = -----------------  times 3  (3 volts)
+                          4095
+
+
+
+
+###
