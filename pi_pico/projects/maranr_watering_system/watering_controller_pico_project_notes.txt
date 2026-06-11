@@ -188,6 +188,28 @@ See notes here:
 Put bookmarks for the doc webpages in Firefox in this folder:
   A__micropython
 
+ADC_VREF 
+The best accuracy for the ADC is obtained if you use a stable reference
+voltage supplied to the ADC_VREF pin (physical 35).
+It 
+
+                5V Reference Source
+                          │
+                  [ R_bias Resistor ]
+                          │
+ 3.3V Rail ───[ Internal 200 Ω ]───┴───► ADC_VREF Pin ───► RP2040 ADC
+                                   │
+                           [ LM4040-3.0 Shunt ]
+                                   │
+                                  GND
+
+
+
+https://www.digikey.com/en/products/detail/texas-instruments/LM4040C30ILPR/1494035
+  LM4040C30ILPR  - LM4040-3.0 in a plastic package like 2n2222 transistor
+                     (3 wire plastic 'half cylinder' shape)
+   $0.99 at Digikey
+
 
 === LCD ======================================
 
