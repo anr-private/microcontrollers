@@ -72,6 +72,7 @@ SCALE_BY_16 = True
 # Initialize ADC2 on GPIO 28
 # You can use the Pin object or just the GPIO number
 potentiometer = ADC(Pin(28)) 
+potentiometer = ADC(Pin(26)) 
 
 # Conversion factor for 16-bit ADC (3.3V / 65535)
 conversion_factor = 3.3 / 65535
