@@ -165,7 +165,7 @@ it is usually more reliable to use a protocol designed for it,
 such as CAN bus or RS-485.
 
 
-=== SOIL MOISTURE SENSOR  I2C  ===============================
+=== ABANDONDED: SOIL MOISTURE SENSOR  I2C  ===============================
 
 Downloaded the driver library and associated I2C driver using:
     mpremote mip install github:sparkfun/qwiic_soil_moisture_sensor_py
@@ -187,6 +187,45 @@ See notes here:
 
 Put bookmarks for the doc webpages in Firefox in this folder:
   A__micropython
+
+=== ANALOG CAPACITIVE SOIL MOISTURE SENSOR  ======================
+
+Got 2 kinds. One from Amazon 111-0295176-1169027 6/2/26  Qty 5
+Capacitive Analog Soil Moisture Sensor Module 3.3~5.5V Corrosion Resistant 
+Humidity Detection Sensors DIY Electronic for Arduino for Raspberry Pi 
+
+One from Digikey  99580862  6/2/2026  Qty 3
+SEN0193  DFRobot 
+
+
+
+
+
+=== ADC VREF  and ADC GPIO pins  ==================================
+
+The Pico 2 has improved accuracy vs Pico for measuring ADC analog.
+It may be good enough to not bother to provide ADC_VREF.
+The Pico 2 then defaults to using the 3.3v supply.
+
+Higher accuracy is possible by providing a reference voltage to
+ADC_VREF pin.
+
+The ADC_VREF pin max allowed is 3.0 v.
+The output from many sensors is higher than that.
+Ex: DFRobot sensor needs at least 3.3v to operate, so it will put
+3.3v on the ADC pin (ex GPIO26). So this voltage must be reduced
+to 3 volts or less. 
+Using a resistor divider:
+ Sensor Signal
+  0V to 3.3V ---- R1: 1kΩ  ----+---- GPIO 26 (0V to 3.0V)
+                               |
+                            R2: 10kΩ 
+                               |
+                              GND
+
+                         R_2                10k
+   V_out  = V_in *  ------------  =  3.3v * --------  = 3.3v - 0.909 = 3v
+                      R_1 + R_2            1k + 10k
 
 ADC_VREF 
 The best accuracy for the ADC is obtained if you use a stable reference
