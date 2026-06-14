@@ -242,12 +242,26 @@ It
                                    │
                                   GND
 
-
-
 https://www.digikey.com/en/products/detail/texas-instruments/LM4040C30ILPR/1494035
   LM4040C30ILPR  - LM4040-3.0 in a plastic package like 2n2222 transistor
                      (3 wire plastic 'half cylinder' shape)
    $0.99 at Digikey
+
+--- OUTDOOR WIRING  -----------------------------
+
+Use Direct Burial or UV-Resistant CAT-5 or CAT-6 cable.
+Marine-grade adhesive-lined heat shrink tubing or silicone-filled waterproof
+junction box to protect connections esp. at the sensor.
+Could use PVC conduit to run the wire.
+
+Use CAT wire like this: how to use the twisted pairs in the cable:
+  pair 1: Power & Gnd.  Use solid color wire for VCC 3.3v and 
+          striped-color pair-partner for GND.
+  pair 2: Signal & Gnd  Use solid color for signal, striped for GND.
+Connect the GNDs at the Pico end - connect to Pico GND pin.
+  
+Could use 5v to the sensor instead of 3.3v. Need a resistor divider
+as described above.
 
 
 === LCD ======================================
