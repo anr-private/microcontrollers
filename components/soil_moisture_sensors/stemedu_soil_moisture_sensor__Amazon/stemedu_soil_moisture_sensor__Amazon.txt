@@ -1,0 +1,85 @@
+Capacitive Sensor from Stemedu Store on Amazon
+
+5PCS Capacitive Analog Soil Moisture Sensor Module 3.3~5.5V 
+Corrosion Resistant Humidity Detection Sensors DIY Electronic for 
+Arduino for Raspberry Pi 
+
+https://www.amazon.com/dp/B0BTHL6M19
+
+Amazon order 111-0295176-1169027  June 2, 2026  $9.72
+
+=== From the Amazon listing ==================================
+
+【Version】This capacitive analog soil moisture sensor is V1.2
+【Voltage】Working voltage: 3.3~5.5 VDC, output voltage: 0~3.0 VDC
+【Interface】Interface: PH2.54-3P, Pin: Analog signal output, GND, VCC
+【Feature】Capacitive humidity sensor has good linearity, good repeatability, 
+    small hysteresis, fast response, small size, and can be used at - 10 ℃ - 60 ℃ humidity environment
+【Comparision】This capacitive soil humidity sensor is different from most
+    of the resistive sensors. It uses the capacitive sensing principle to 
+    detect soil humidity, avoiding the problem that the resistive sensor is 
+    easily corroded, and greatly extending its working life. 
+
+
+
+Capacitive Analog Soil Moisture Sensor Module
+
+    The sensor has a built-in regulator chip, which supports a wide voltage working environment of 3.3~5.5V, which means that it can work normally even on the 3.3V Arduino main control board.
+    The iconic DFRobot-Gravity interface ensures the compatibility of the interface and can be directly connected to the Gavity IO expansion board.
+    Micro PCs such as raspberry pie can work only by connecting an ADC (analog signal to digital signal) conversion module.
+
+Capacitive Analog Soil Moisture Sensor Module
+Specifications
+
+    Operating Voltage: DC 3.3-5.5V
+    Output Voltage: DC 0-3.0V
+    Interface: PH2.0-3P
+    Size: 99mmx16mm/3.9"x0.63"
+    Supports 3-Pin Gravity Sensor interface
+    Analog output
+
+Applications:
+
+    Garden plants
+    Moisture detection
+    Intelligent agriculture
+    Horticulture
+    Environmental monitoring
+
+It can be used to monitor soil moisture levels in real-time, allowing 
+farmers and gardeners to optimize their watering schedules and prevent 
+over or under-watering. The sensor can also be used to monitor soil moisture 
+levels in areas where water conservation is important, such as in 
+drought-prone regions.
+
+
+=== Images and Notes  - see the jpg images   ==========================
+
+--- Hardware Connections  img_1.jpg
+
+    VCC: 3.3V or 5V (3.3V is recommended for most capacitive models to avoid overvoltage)
+    GND: GND
+    AOUT (Analog Out): A0
+
+--- Calibration   img_2.jpg
+
+Capacitive sensors are not linear. You must determine the specific values for your sensor:
+
+The capacitance of the soil moisture sensor varies depending on the amount 
+of moisture present in the soil.
+When the soil is dry, the capacitance of the sensor is low, while when the soil
+is wet, the capacitance is high.
+  Dry Soil/Air: Note the analog Read (A0) value (e.g., 615)
+  Wet Soil/Water: Note the analog Read (A0) value (e.g.,272)
+Note: Do not submerge the electronic component part; 
+only the probe should be in water.
+
+--- Schematic  img_3.jpg  -------------------------
+
+The soil moisture sensor can be connected to an analog input on a 
+microcontroller or other electronic circuit to provide a voltage or 
+current signal that corresponds to the soil moisture level.
+
+
+
+###
