@@ -1,8 +1,16 @@
+README_AAA.txt
+
+ ~it/microcontrollers/pi_pico/examples/adc_input/README_AAA.txt
+
 Using ADC input to read values from ADC Capacitive Soil Moisture Sensor
 or similar sensor.
 
 ADC_VREF  - physical pin 35. Provide a stable reference voltage for ADC use.
 Otherwise ADC relies on 3.3v which may fluctuate as Pico operates.
+See LM4040 for a way to create a reference voltage.
+ ~/git/microcontrollers/components/shunt_voltage_ref_LM4040/lm4040_notes.txt
+The Pico 2 has a 'better' ADC and voltage regulation setup so it supposed
+to be more accurate using just its 3.3v source than a plain Pico.
 
 ADC 0   Gpio 26  physical pin
  0       26       31

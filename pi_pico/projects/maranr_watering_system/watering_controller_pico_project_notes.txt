@@ -198,9 +198,6 @@ One from Digikey  99580862  6/2/2026  Qty 3
 SEN0193  DFRobot 
 
 
-
-
-
 === ADC VREF  and ADC GPIO pins  ==================================
 
 The Pico 2 has improved accuracy vs Pico for measuring ADC analog.
@@ -209,6 +206,8 @@ The Pico 2 then defaults to using the 3.3v supply.
 
 Higher accuracy is possible by providing a reference voltage to
 ADC_VREF pin.
+
+NOISE: add 0.1uV cap on the ADC Pin to reduce noise.
 
 The ADC_VREF pin max allowed is 3.0 v.
 The output from many sensors is higher than that.
