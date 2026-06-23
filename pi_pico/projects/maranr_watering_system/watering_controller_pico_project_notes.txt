@@ -323,7 +323,8 @@ remove J1) and use J2B to supply GND. This allows complete separation
 of the input and relay circuits.
 
 
-MISC FILES
+===   MISC FILES  =============
+
   misc/favicon* files 
 
 === HISTORY  =================================================
