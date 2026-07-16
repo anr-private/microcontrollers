@@ -12,6 +12,7 @@ from primitives import set_global_exception
 from utils import gc_collect
 from utils import get_fs_space_string
 from utils import get_memory_status_string
+from utils import MWS_CONFIG
 
 log = None
 logrt = None
@@ -84,11 +85,22 @@ class MwsButtons(ElemLoggerABC):
 
         # Buttons are connected to these GPIO pins
         # They connect the pin to ground when pressed, so need PULL_UP
-        self.up_pin     = Pin(14, Pin.IN, Pin.PULL_UP)
-        self.left_pin   = Pin(15, Pin.IN, Pin.PULL_UP)
-        self.center_pin = Pin(20, Pin.IN, Pin.PULL_UP)
-        self.right_pin  = Pin(21, Pin.IN, Pin.PULL_UP)
-        self.down_pin   = Pin(22, Pin.IN, Pin.PULL_UP)
+        self.up_pin     = Pin(MWS_CONFIG.get("btn_up_gpio"    ), Pin.IN, Pin.PULL_UP)
+        self.left_pin   = Pin(MWS_CONFIG.get("btn_left_gpio"  ), Pin.IN, Pin.PULL_UP)
+        self.center_pin = Pin(MWS_CONFIG.get("btn_center_gpio"), Pin.IN, Pin.PULL_UP)
+        self.right_pin  = Pin(MWS_CONFIG.get("btn_right_gpio" ), Pin.IN, Pin.PULL_UP)
+        self.down_pin   = Pin(MWS_CONFIG.get("btn_down_gpio"  ), Pin.IN, Pin.PULL_UP)
+        # prototype#2 only (as of July 15 2026) - p#1 has no such buttons
+        self.upper_left_pin = Pin(MWS_CONFIG.get("btn_upper_left_gpio"   ), Pin.IN, Pin.PULL_UP)
+        self.lower_left_pin = Pin(MWS_CONFIG.get("btn_lower_left_gpio"   ), Pin.IN, Pin.PULL_UP)
+        self.upper_right_pin = Pin(MWS_CONFIG.get("btn_upper_right_gpio" ), Pin.IN, Pin.PULL_UP)
+        self.lower_right_pin = Pin(MWS_CONFIG.get("btn_lower_right_gpio" ), Pin.IN, Pin.PULL_UP)
+
+        ###@@@self.up_pin     = Pin(14, Pin.IN, Pin.PULL_UP)
+        ###@@@self.left_pin   = Pin(15, Pin.IN, Pin.PULL_UP)
+        ###@@@self.center_pin = Pin(20, Pin.IN, Pin.PULL_UP)
+        ###@@@self.right_pin  = Pin(21, Pin.IN, Pin.PULL_UP)
+        ###@@@self.down_pin   = Pin(22, Pin.IN, Pin.PULL_UP)
 
         if 1:
             # slow down the polling
@@ -100,6 +112,11 @@ class MwsButtons(ElemLoggerABC):
         self.center_pb = self.init_one_button(self.center_pin, "Center")
         self.right_pb  = self.init_one_button(self.right_pin, "Right")
         self.down_pb   = self.init_one_button(self.down_pin, "Down")
+
+        self.up_lt_pb   = self.init_one_button(self.upper_left_pin, "UP_LT")
+        self.low_lt_pb  = self.init_one_button(self.lower_left_pin, "LOW_LT")
+        self.up_rt_pb   = self.init_one_button(self.upper_right_pin, "UP_RT")
+        self.low_rt_pb  = self.init_one_button(self.lower_right_pin, "LOW_RT")
 
     async def handle_short(self, btn, btn_name):
         global SHORT_CTR

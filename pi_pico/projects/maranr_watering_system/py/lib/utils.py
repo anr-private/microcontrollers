@@ -32,8 +32,19 @@ else:
     GET_FLASH_SPACE = None
 
 MWS_CONFIG = {
+    "btn_left_gpio":     15,
+    "btn_right_gpio":    21,
+    "btn_up_gpio":       14,
+    "btn_down_gpio":     22,
+    "btn_center_gpio":   20,
+    "btn_upper_left_gpio":  19,
+    "btn_lower_left_gpio":  17,
+    "btn_upper_right_gpio": 18,
+    "btn_lower_right_gpio": 16,
+
     "lcd1602_sda_pin": 2,
     "lcd1602_scl_pin": 3,
+
     "log_file_path":  "mws_log.txt",
     }
 #TODO ADD table for daylight savings time changes

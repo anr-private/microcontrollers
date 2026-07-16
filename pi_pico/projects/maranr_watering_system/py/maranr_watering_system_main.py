@@ -55,6 +55,15 @@ def main():
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 
+    if 1:
+        log_control.log_and_print_one_line("\n===  MWS_CONFIG PARAMETERS  ========")
+        for fig_param in sorted(MWS_CONFIG.keys()):
+            fig_value = MWS_CONFIG.get(fig_param)
+            m = f" {fig_param:<22}  {fig_value:<60}"
+            log_control.log_and_print_one_line(m)
+        log_control.log_and_print_one_line("===  end of MWS_CONFIG PARAMETERS  ========\n")
+
+
     log_control.dump_registered_loggers()
 
     mws = MaranrWateringSystem()
