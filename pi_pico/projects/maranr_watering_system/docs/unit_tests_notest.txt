@@ -1,0 +1,80 @@
+UNIT TEST NOTES  for Maranr Watering System
+
+*** IMPORTANT NOTE ***
+In the 'real' git repo for maranr_watering_system, make sure
+that the latest 'real' py files have been uploaded:
+  Open a new terminal:
+    cd ~/git/microcontrollers/pi_pico/projects/maranr_watering_system
+    . aliases.mws 
+    COMPARE_ALL   # see if the /tmp/ copies of 'real' py files
+                  # are up-to-date
+    UPLOAD_ALL    # Upload 'real' files if necessary.
+  Close the terminal.
+***
+
+To perform unit tests:
+
+cd ~/git/art/src/python3/pico_support_tests/maranr_watering_system
+
+Activate the aliases:
+  . aliases_mws
+
+Use aliases to compare the local copies of py files against
+the actual Maranr project's git repo 'real' files:
+  COMPARE_ALL
+If there are differences, download the latest 'real' files:
+  DOWNLOAD_ALL
+If you make changes as the result of the unit testing, you can
+use this to 
+
+Each package lib/, etc., has a subdir lib/unit_tests/
+Each unit_tests/ has a venv just for that package.
+To see which unit tests exist:
+  find . -name unit_tests
+Typical output:
+  ./lib/unit_tests
+  ./lib2/unit_tests
+  ./logger_elem/unit_tests
+  ./weblib/unit_tests
+
+EXAMPLE: To test lib/
+
+cd lib/unit_tests   # NOT py/lib/unit_tests!
+. ACTIVATE_VENV
+pytest .
+. DEACTIVATE_VENV
+
+EXAMPLE: Test lib2
+cd lib2/unit_tests
+. ACTIVATE_VENV
+pytest .
+. DEACTIVATE_VENV
+
+
+After testing, check in all files into git repo.
+  cd ~/git/art/src/python3/pico_support_tests/maranr_watering_system
+  git status
+  git add or update as needed
+  git commit
+  git push
+
+*** NOTE ***
+If any files were updated and need to be re-integrated into the 'real'
+git repo:
+  COMPARE_ALL   # see what's changed
+  UPLOAD_ALL    # update the /tmp copies of the 'real' py files
+SWITCH TO THE REAL REPO
+  Open a new terminal
+    ~/git/microcontrollers/pi_pico/projects/maranr_watering_system
+    . aliases.mws 
+    COMPARE_ALL   # see if the /tmp/ copies of 'real' py files
+                  # are newer than the local 'real' files
+                  # due to changes from unit testing.
+    DOWNLOAD_ALL  # Download the updated 'real' files if necessary.
+    git add / update as needed
+    git status
+    git commit
+    git push
+  Close the terminal.
+***
+###

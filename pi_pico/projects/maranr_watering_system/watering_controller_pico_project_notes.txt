@@ -345,31 +345,12 @@ Starting upgrade to 1.29.0 micropython.
 MITM attack required update to pip version >= 26.2.2; 
  . ./ACTIVATE
  pip install -U pip  # got 26.2.2
+
 Looking at how to add annotations to the code.
-Need stubs for the 'built in' stuff like 'machine' module.
-pip install "micropython-rp2-stubs==1.27.*"    # currently using 1.27.0 
-pip install -U "micropython-rp2-stubs==1.29.*" # after you move to 1.29.0
+See ../docs/annotations_and_type_checking.notes
 
-pip install mypy "micropython-rp2-stubs==1.27.*" # installs mypy and stubs
-# undoes the above
-pip uninstall micropython-rp2-stubs
-# Should have done this 
-pip install mypy "micropython-rp2-rpi_pico2_w-stubs==1.27.*"
-
-# Next attempt:
-pip uninstall micropython-rp2-rpi_pico2_w-stubs micropython-stdlib-stubs
-pip install "micropython-rp2-rpi_pico2_w-stubs==1.27.*" --target ./typings --upgrade
-
-rm -rf typings && pip install "micropython-rp2-rpi_pico2_w-stubs==1.27.*" --target ./typings
-
-Created mypy.ini and run_mypy.sh to configure and run mypy.
-Multiple fixes to allow mypy to run.
-Added 'type: ignore' to lines that are CPython specific, tests, etc.
-
-TODO:
-Update mypy.ini with these - to start handling annotations/type checking
-disallow_untyped_defs = True for one directory at a time 
-(a per-module section such as [mypy-primitives.*]) rather than for the whole project.
+Documented how to do unit_tests
+doc/See unit_tests_notes.txt
 
 
 
