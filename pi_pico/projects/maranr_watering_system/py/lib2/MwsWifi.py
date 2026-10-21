@@ -14,7 +14,7 @@ import asyncio
 try:
     import time
 except ModuleNotFoundError:
-    import utime as time
+    import utime as time            # type: ignore
 
 import platform
 if "micropython" in platform.platform().lower():
@@ -23,17 +23,17 @@ else:
     PLATFORM = "cpython"
 
 if PLATFORM == "cpython":   # Py3
-    from cpython_test_support import CpythonTestSupport
-    cpyt = CpythonTestSupport.get_instance()
-    NETWORK_WLAN = cpyt.fake_network_wlan
-    NETWORK_STA_IF = "fake-network-sta-if"
+    from cpython_test_support import CpythonTestSupport   # type: ignore
+    cpyt = CpythonTestSupport.get_instance()              # type: ignore
+    NETWORK_WLAN = cpyt.fake_network_wlan                 # type: ignore
+    NETWORK_STA_IF = None # "fake-network-sta-if"                # type: ignore
 else:
     # use the 'real' filespace info
     import network
     NETWORK_WLAN = network.WLAN
     NETWORK_STA_IF = network.STA_IF
 
-from lib.utils import MWS_CONFIG
+from utils import MWS_CONFIG
 from lib2.DataBoard import DataBoard
 from details import SSID, PW
 from logger_elem.ElemLoggerABC import ElemLoggerABC

@@ -3,9 +3,15 @@
 import asyncio
 import gc
 try:
-    import utime as time
-except Exception:
     import time
+except ModuleNotFoundError:
+    import utime as time          # type: ignore
+# THE ABOVE REPLACES THE BELOW CODE: to match other similar import usages
+#    and to allow mypy to run
+# try:
+    # import utime as time
+# except Exception:
+    # import time
 from machine import Pin
 from machine import I2C    # hardware driver
 ###from machine import SoftI2C # software driver

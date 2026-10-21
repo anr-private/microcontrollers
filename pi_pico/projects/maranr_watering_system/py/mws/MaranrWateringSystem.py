@@ -5,9 +5,15 @@ import machine  # probably not needed
 import sys
 
 try:
-    import utime as time        #uPy
-except Exception:
-    import time                 #Py3 unit tests
+    import time
+except ModuleNotFoundError:
+    import utime as time          # type: ignore
+# THE ABOVE REPLACES THE BELOW CODE: to match other similar import usages
+#    and to allow mypy to run
+# try:
+    # import utime as time        #uPy
+# except Exception:
+    # import time                 #Py3 unit tests
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.DataBoard import DataBoard

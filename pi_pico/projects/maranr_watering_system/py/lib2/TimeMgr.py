@@ -7,14 +7,14 @@ import sys
 try:
     import time
 except ModuleNotFoundError:
-    import utime as time
+    import utime as time          # type: ignore
 try:
     import gc
     _ = gc.mem_free
 except Exception as ex:
     print(f"utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
     del gc
-    import gc_FAKE as gc
+    import gc_FAKE as gc        # type: ignore
     print(f"utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 if "micropython" in platform.platform().lower():
@@ -23,9 +23,9 @@ else:
     PLATFORM = "cpython"
 
 if PLATFORM == "cpython":   # Py3
-    from cpython_test_support import CpythonTestSupport
-    cpyt = CpythonTestSupport.get_instance()
-    NTP_TIME_SET_TIME = cpyt.fake_ntp_set_time
+    from cpython_test_support import CpythonTestSupport  # type: ignore
+    cpyt = CpythonTestSupport.get_instance()             # type: ignore
+    NTP_TIME_SET_TIME = cpyt.fake_ntp_set_time           # type: ignore
 else:
     import ntptime
     NTP_TIME_SET_TIME = ntptime.settime

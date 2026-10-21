@@ -7,8 +7,9 @@ import asyncio
 import time
 from . import launch, Delay_ms  # launch is in __init__.py
 
+# TouchPad is only ESP32, not PICO.  ANR
 try:
-    from machine import TouchPad
+    from machine import TouchPad     # type: ignore
 except (ImportError, AttributeError):
     pass
 

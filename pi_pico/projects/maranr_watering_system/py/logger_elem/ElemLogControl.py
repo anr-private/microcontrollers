@@ -18,25 +18,39 @@ class ElemLogControl:
     # central control for logging
     # Handles the log file(s) - the only class that does so
 
-    _instance = None
+    ### OLD _instance = None
+    _instance: "ElemLogControl | None" = None
 
-    #@@@@@@@@@@@@@@@@@@@@ move this into the instance?  why is it at the class level?
+    #@@@@@@@@@@@@@@@@@@@@ TODO move this into the instance?  It need not be at the class level?
+    # TODO: consider moving this into the instance (declare in __init__ as
+    #       self.registry: dict[str, "ElemLogger"] = {}). If so, remove the
+    #       'ElemLogControl.registry = {}' line from _nullify_instance() and
+    #       check for any use of ElemLogControl.registry outside the class.
+    #@@@@@@@@@@@@@@@ Use this to find other uses and fix them:
+    #@@@@@@@@@@@@@@@    grep -rn "ElemLogControl.registry\|\.registry" py/
+    #
     # key: simplified class name   value: ElemLogger for that class
-    registry = {}
-
+    ### OLD  registry = {}
+    registry: dict[str, "ElemLogger"] = {}
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> "ElemLogControl":
         if cls._instance is not None: return cls._instance
         cls._instance = ElemLogControl(VALIDATE)
         return cls._instance
 
+    # @classmethod
+    # def _nullify_instance(cls):
+        # #print(f"ELC@36  NULLIFY INSTANCE  =======================================")
+        # # UNIT TEST ONLY
+        # ElemLogControl._instance = None
+        # ElemLogControl.registry = {}
     @classmethod
-    def _nullify_instance(cls):
-        #print(f"ELC@36  NULLIFY INSTANCE  =======================================")
+    def _nullify_instance(cls) -> None:
         # UNIT TEST ONLY
         ElemLogControl._instance = None
         ElemLogControl.registry = {}
+
 
 
     def __init__(self, validate=None):
