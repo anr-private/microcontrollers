@@ -77,4 +77,14 @@ SWITCH TO THE REAL REPO
     git push
   Close the terminal.
 ***
+
+
+=== CPYTHON TEST SUPPORT  ======================
+
+There are support scaffolding items available to help run the micropython
+code under CPython:
+  ~/git/art/src/python3/pico_support_tests/maranr_watering_system/cpython_test_suppport
+  file: cpython_test_suppport.py
+
+
 ###
