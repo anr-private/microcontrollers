@@ -1,0 +1,6 @@
+mpremote==1.29.0
+packaging==26.3
+platformdirs==4.13.5
+pyserial==3.5
+setuptools==84.2.1
+wheel==0.48.0
