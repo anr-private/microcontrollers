@@ -362,7 +362,15 @@ pip install "micropython-rp2-rpi_pico2_w-stubs==1.27.*" --target ./typings --upg
 
 rm -rf typings && pip install "micropython-rp2-rpi_pico2_w-stubs==1.27.*" --target ./typings
 
-
 Created mypy.ini and run_mypy.sh to configure and run mypy.
+Multiple fixes to allow mypy to run.
+Added 'type: ignore' to lines that are CPython specific, tests, etc.
+
+TODO:
+Update mypy.ini with these - to start handling annotations/type checking
+disallow_untyped_defs = True for one directory at a time 
+(a per-module section such as [mypy-primitives.*]) rather than for the whole project.
+
+
 
 ### end ###
