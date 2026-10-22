@@ -352,6 +352,14 @@ See ../docs/annotations_and_type_checking.notes
 Documented how to do unit_tests
 doc/See unit_tests_notes.txt
 
+Commit Oct 21 '26 19:26  Working version commit.
+Before moving 'lib' to lib0 to get around dealing with lib/ being
+on the sys.path by default in micropython. So now lib/ will be
+empty from now on.
+
+
+
+
 
 
 ### end ###
