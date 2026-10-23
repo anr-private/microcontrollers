@@ -14,7 +14,8 @@ alias QQ_to_pico='../scripts/QQ_to_pico ${PREM_DEVICE}'
 
 alias COMPARE_ALL=../scripts/COMPARE_ALL.sh
 alias COMPARE_displays=../scripts/COMPARE_displays.sh
-alias COMPARE_lib=../scripts/COMPARE_lib.sh
+alias COMPARE_lib0=../scripts/COMPARE_lib0.sh
+alias COMPARE_lib1=../scripts/COMPARE_lib1.sh
 alias COMPARE_lib2=../scripts/COMPARE_lib2.sh
 alias COMPARE_logger_elem=../scripts/COMPARE_logger_elem.sh
 alias COMPARE_main=../scripts/COMPARE_main.sh
@@ -25,7 +26,8 @@ alias COMPARE_sensors=../scripts/COMPARE_sensors.sh
 alias COMPARE_weblib=../scripts/COMPARE_weblib.sh
 
 alias COMPARE_DISPLAYS=../scripts/COMPARE_displays.sh          
-alias COMPARE_LIB=../scripts/COMPARE_lib.sh
+alias COMPARE_LIB0=../scripts/COMPARE_lib0.sh
+alias COMPARE_LIB1=../scripts/COMPARE_lib1.sh
 alias COMPARE_LIB2=../scripts/COMPARE_lib2.sh
 alias COMPARE_LOGGER_ELEM=../scripts/COMPARE_logger_elem.sh
 alias COMPARE_MAIN=../scripts/COMPARE_main.sh
@@ -38,7 +40,8 @@ alias COMPARE_WEBLIB=../scripts/COMPARE_weblib.sh
 
 alias UPLOAD_ALL=../scripts/UPLOAD_ALL.sh
 alias UPLOAD_displays=../scripts/UPLOAD_displays.sh
-alias UPLOAD_lib=../scripts/UPLOAD_lib.sh
+alias UPLOAD_lib0=../scripts/UPLOAD_lib0.sh
+alias UPLOAD_lib1=../scripts/UPLOAD_lib1.sh
 alias UPLOAD_lib2=../scripts/UPLOAD_lib2.sh
 alias UPLOAD_logger_elem=../scripts/UPLOAD_logger_elem.sh
 alias UPLOAD_main=../scripts/UPLOAD_main.sh
@@ -49,7 +52,8 @@ alias UPLOAD_sensors=../scripts/UPLOAD_sensors.sh
 alias UPLOAD_weblib=../scripts/UPLOAD_weblib.sh
 
 alias UPLOAD_DISPLAYS=../scripts/UPLOAD_displays.sh
-alias UPLOAD_LIB=../scripts/UPLOAD_lib.sh
+alias UPLOAD_LIB0=../scripts/UPLOAD_lib0.sh
+alias UPLOAD_LIB1=../scripts/UPLOAD_lib1.sh
 alias UPLOAD_LIB2=../scripts/UPLOAD_lib2.sh
 alias UPLOAD_LOGGER_ELEM=../scripts/UPLOAD_logger_elem.sh
 alias UPLOAD_MAIN=../scripts/UPLOAD_main.sh
@@ -62,7 +66,8 @@ alias UPLOAD_WEBLIB=../scripts/UPLOAD_weblib.sh
 
 alias DOWNLOAD_ALL=../scripts/DOWNLOAD_ALL.sh
 alias DOWNLOAD_displays=../scripts/DOWNLOAD_displays.sh
-alias DOWNLOAD_lib=../scripts/DOWNLOAD_lib.sh
+alias DOWNLOAD_lib0=../scripts/DOWNLOAD_lib0.sh
+alias DOWNLOAD_lib1=../scripts/DOWNLOAD_lib1.sh
 alias DOWNLOAD_lib2=../scripts/DOWNLOAD_lib2.sh
 alias DOWNLOAD_logger_elem=../scripts/DOWNLOAD_logger_elem.sh
 alias DOWNLOAD_main=../scripts/DOWNLOAD_main.sh
@@ -73,7 +78,8 @@ alias DOWNLOAD_sensors=../scripts/DOWNLOAD_sensors.sh
 alias DOWNLOAD_weblib=../scripts/DOWNLOAD_weblib.sh
 
 alias DOWNLOAD_DISPLAYS=../scripts/DOWNLOAD_displays.sh
-alias DOWNLOAD_LIB=../scripts/DOWNLOAD_lib.sh
+alias DOWNLOAD_LIB0=../scripts/DOWNLOAD_lib0.sh
+alias DOWNLOAD_LIB1=../scripts/DOWNLOAD_lib1.sh
 alias DOWNLOAD_LIB2=../scripts/DOWNLOAD_lib2.sh
 alias DOWNLOAD_LOGGER_ELEM=../scripts/DOWNLOAD_logger_elem.sh
 alias DOWNLOAD_MAIN=../scripts/DOWNLOAD_main.sh
@@ -87,7 +93,8 @@ alias DOWNLOAD_WEBLIB=../scripts/DOWNLOAD_weblib.sh
                                                               
 alias PUSH_ALL_TO_PICO=../scripts/PUSH_ALL_TO_PICO.sh    
 alias PUSH_displays_to_pico=../scripts/PUSH_displays_to_pico.sh
-alias PUSH_lib_to_pico=../scripts/PUSH_lib_to_pico.sh
+alias PUSH_lib0_to_pico=../scripts/PUSH_lib0_to_pico.sh
+alias PUSH_lib1_to_pico=../scripts/PUSH_lib1_to_pico.sh
 alias PUSH_lib2_to_pico=../scripts/PUSH_lib2_to_pico.sh
 alias PUSH_logger_elem_to_pico=../scripts/PUSH_logger_elem_to_pico.sh
 alias PUSH_main_to_pico=../scripts/PUSH_main_to_pico.sh
@@ -98,7 +105,8 @@ alias PUSH_sensors_to_pico=../scripts/PUSH_sensors_to_pico.sh
 alias PUSH_weblib_to_pico=../scripts/PUSH_weblib_to_pico.sh
 
 alias PUSH_DISPLAYS_to_pico=../scripts/PUSH_displays_to_pico.sh
-alias PUSH_LIB_to_pico=../scripts/PUSH_lib_to_pico.sh
+alias PUSH_LIB0_to_pico=../scripts/PUSH_lib0_to_pico.sh
+alias PUSH_LIB1_to_pico=../scripts/PUSH_lib1_to_pico.sh
 alias PUSH_LIB2_to_pico=../scripts/PUSH_lib2_to_pico.sh
 alias PUSH_LOGGER_ELEM_to_pico=../scripts/PUSH_logger_elem_to_pico.sh
 alias PUSH_MAIN_to_pico=../scripts/PUSH_main_to_pico.sh
