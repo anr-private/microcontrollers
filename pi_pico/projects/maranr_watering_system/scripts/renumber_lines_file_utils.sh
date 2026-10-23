@@ -6,7 +6,7 @@
 
 PYTHON_EXE=python3
 
-FDIR="lib"
+FDIR="lib1"
 FNAME="file_utils.py"
 TARGET='FU@'
 

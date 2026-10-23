@@ -4,10 +4,12 @@ import micropython
 import os
 import platform
 import sys
-try:
-    import time
-except ModuleNotFoundError:
-    import utime as time
+import time
+# try:
+    # import time
+# except ModuleNotFoundError:
+    # import utime as time
+#### @@@ TODO remove the above
 try:
     import gc
     _ = gc.mem_free

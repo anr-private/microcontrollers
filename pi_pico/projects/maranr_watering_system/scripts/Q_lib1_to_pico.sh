@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# Q_lib_to_pico.sh
+# Q_lib1_to_pico.sh
 # 
 # Quick-push just the updated files to the Pico
 
 TIMESTAMP_MARKER_FILE="__QPUSH_MARKER__"
 
-LOCAL_DIR="lib"
+LOCAL_DIR="lib1"
 
 DBG=false
 VERBOSE=false
@@ -73,7 +73,7 @@ copy_changed_files_to_the_pico() {
     done
 
 
-    ###mpremote ${PREM_DEVICE} fs cp -r lib   :
+    ###mpremote ${PREM_DEVICE} fs cp -r lib1   :
 }
 
 list_pico_filesystem_contents() {
@@ -81,13 +81,13 @@ list_pico_filesystem_contents() {
     echo 'LIST THE PICO CONTENTS: ROOT DIR'
     mpremote ${PREM_DEVICE} fs ls 
     echo ' '    
-    echo 'LIST THE PICO CONTENTS: /lib'
-    mpremote ${PREM_DEVICE} fs ls /lib
+    echo 'LIST THE PICO CONTENTS: /lib1'
+    mpremote ${PREM_DEVICE} fs ls /lib1
 }
 
 
 main() {
-    ###echo "QUICK-PUSH_LIB_FILES_TO_PICO "
+    ###echo "QUICK-PUSH_LIB1_FILES_TO_PICO "
 
     if [ "$1" = "D" -o  "$1" = "d" ] ; then
         echo '________________________ DEBUG ENABLED   _______________'

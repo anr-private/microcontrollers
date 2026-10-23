@@ -1,10 +1,12 @@
 # file_utils.py
 
 import os
+from lib1.typing import Callable, List, Any
 
 # Which 'list dir' method is available
 try:
-    _=os.ilistdir # micropython
+    # micropython
+    _ = os.ilistdir   # type: ignore
     use_os_ilistdir = True
 except AttributeError:
     # 'real' Python3
@@ -13,8 +15,9 @@ except AttributeError:
 # how to support remove_subdir()
 try:
     import shutil
+    SHUTIL_IS_AVAILABLE = True
 except ImportError:
-    shutil = None
+    SHUTIL_IS_AVAILABLE = False
 
 # Logging functions; provided by our parent class using set_log_functions()
 ###log = None
@@ -116,8 +119,8 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
         print(f"FU@116 read_last_n_lines  errno={ex.errno}")
         return []
 
-
-def filter_dir_contents(dir_path:str, file_filter:str) -> bool:
+### TODO update the annotation
+def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
     # Filter the filenames in a directory.
     # Returns a collection of tuples:
     #   (fname, ftype, fsize, result-value)
@@ -222,10 +225,10 @@ def list_dir_micropython(dir_path):
 
 
 def remove_subdir(path):
-    if shutil is None:
-        remove_subdir_micropython(path)
-    else:
+    if SHUTIL_IS_AVAILABLE:
         remove_subdir_py3(path)
+    else:
+        remove_subdir_micropython(path)
 
 def remove_subdir_py3(path):
     # Python3 version

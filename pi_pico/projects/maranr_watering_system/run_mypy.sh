@@ -3,6 +3,8 @@
 mypy \
 py/maranr_watering_system_main.py \
 py/displays \
+py/lib0 \
+py/lib1 \
 py/lib2 \
 py/logger_elem \
 py/mws \

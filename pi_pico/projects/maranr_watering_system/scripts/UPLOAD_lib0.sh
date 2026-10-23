@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# UPLOAD_lib.sh
+# UPLOAD_lib0.sh
 
 DBG=false
 
-TMP_DIR=/tmp/LIB
-LOCAL_DIR=lib
+TMP_DIR=/tmp/LIB0
+LOCAL_DIR=lib0
 
 mkdir -p $TMP_DIR
 

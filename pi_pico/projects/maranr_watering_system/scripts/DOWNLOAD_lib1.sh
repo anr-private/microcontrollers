@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# DOWNLOAD_lib.sh
+# DOWNLOAD_lib1.sh
 
 DBG=false
 
-TMP_DIR=/tmp/LIB
-LOCAL_DIR=lib
+TMP_DIR=/tmp/LIB1
+LOCAL_DIR=lib1
 
 if [ ! -d ${TMP_DIR} ] ; then
     echo '*******************************************************'
