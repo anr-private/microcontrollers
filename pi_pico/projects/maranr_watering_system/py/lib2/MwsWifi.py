@@ -33,9 +33,9 @@ else:
     NETWORK_WLAN = network.WLAN
     NETWORK_STA_IF = network.STA_IF
 
-from utils import MWS_CONFIG
+from lib1.utils import MWS_CONFIG
+from lib1.details import SSID, PW
 from lib2.DataBoard import DataBoard
-from details import SSID, PW
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.TimeMgr import TimeMgr
 

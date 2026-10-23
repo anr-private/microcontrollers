@@ -4,9 +4,9 @@ import asyncio
 import gc
 import json
 
-from utils import show_len
-from utils import get_fs_space_string
-from utils import get_memory_status_string
+from lib1.utils import show_len
+from lib1.utils import get_fs_space_string
+from lib1.utils import get_memory_status_string
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl

@@ -9,10 +9,10 @@ from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.DataBoard import DataBoard
 from primitives import Pushbutton
 from primitives import set_global_exception
-from utils import gc_collect
-from utils import get_fs_space_string
-from utils import get_memory_status_string
-from utils import MWS_CONFIG
+from lib1.utils import gc_collect
+from lib1.utils import get_fs_space_string
+from lib1.utils import get_memory_status_string
+from lib1.utils import MWS_CONFIG
 
 log = None
 logrt = None

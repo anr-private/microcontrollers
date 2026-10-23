@@ -1,7 +1,6 @@
 # HdrAccum.py
 
-#import utils
-from utils import show_cc
+from lib1.utils import show_cc
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
 # Logging functions; provided by our parent class using set_log_functions()

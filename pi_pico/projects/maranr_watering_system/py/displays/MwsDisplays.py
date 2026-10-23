@@ -16,9 +16,9 @@ from machine import Pin
 from machine import I2C    # hardware driver
 ###from machine import SoftI2C # software driver
 
-from utils import MWS_CONFIG
-from utils import seconds_to_hhmmss_string
-from utils import get_flash_space
+from lib1.utils import MWS_CONFIG
+from lib1.utils import seconds_to_hhmmss_string
+from lib1.utils import get_flash_space
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
 from lib2.DataBoard import DataBoard

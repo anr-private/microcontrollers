@@ -1,7 +1,7 @@
 # HttpReply.py
 
-###@@@from utils import *
-import utils
+###@@@from u t i l s import *
+import u t i l s
 
 class HttpReply:
 

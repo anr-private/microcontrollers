@@ -23,9 +23,9 @@ from displays.MwsDisplays import MwsDisplays
 from sensors.MwsButtons import MwsButtons
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
-from utils import determine_machine_type
-from utils import get_fs_space_string
-from utils import get_memory_status_string
+from lib1.utils import determine_machine_type
+from lib1.utils import get_fs_space_string
+from lib1.utils import get_memory_status_string
 
 
 # Logging functions; provided by our parent class using set_log_functions()

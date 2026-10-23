@@ -3,9 +3,9 @@
 import os
 #import sys
 
-from file_utils import read_last_n_lines
-from file_utils import remove_file
-from file_utils import filter_dir_contents
+from lib1.file_utils import read_last_n_lines
+from lib1.file_utils import remove_file
+from lib1.file_utils import filter_dir_contents
 
 
 # subdir in which log files are found

@@ -27,9 +27,9 @@ from displays.MwsDisplays import MwsDisplays
 from sensors.MwsButtons import MwsButtons
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
-from utils import MWS_CONFIG
-from utils import get_fs_space_string
-from utils import get_memory_status_string
+from lib1.utils import MWS_CONFIG
+from lib1.utils import get_fs_space_string
+from lib1.utils import get_memory_status_string
 
 from mws.MaranrWateringSystem import MaranrWateringSystem
 

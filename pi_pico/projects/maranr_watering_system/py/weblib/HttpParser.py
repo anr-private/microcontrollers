@@ -3,7 +3,7 @@
 import sys
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from utils import string_to_int
+from lib1.utils import string_to_int
 
 from .ParsedHttp import ParsedHttp, METHOD_NAMES
 

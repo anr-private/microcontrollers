@@ -3,11 +3,11 @@
 import asyncio
 import gc
 
-from utils import gc_collect
+from lib1.utils import gc_collect
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
 from logger_elem.ElemLoggerABC import ElemLoggerABC
-from utils import show_cc
+from lib1.utils import show_cc
 
 from .HdrAccum import HdrAccum
 from .ParsedHttp import ParsedHttp

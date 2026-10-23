@@ -7,9 +7,9 @@ import machine
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.DataBoard import DataBoard
-from utils import gc_collect
-from utils import get_fs_space_string
-from utils import get_memory_status_string
+from lib1.utils import gc_collect
+from lib1.utils import get_fs_space_string
+from lib1.utils import get_memory_status_string
 
 log = None
 logrt = None
