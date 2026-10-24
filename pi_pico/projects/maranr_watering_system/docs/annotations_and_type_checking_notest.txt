@@ -38,6 +38,11 @@ class A:
 _instance = None  # type: ignore[assignment]
 
 
+=== FAKES  =======================
+
+py/typing_FAKES/
+Has fakes for typing module.
+So far not needed - have simpler work-arounds; see below.
 
 
 === Callable and other stuff importing from 'typing' module =====
