@@ -71,6 +71,7 @@ DEVICE_TO_IDENTIFIER = {
 # aka packages
 ALL_DIRS=[
      "displays",
+     "lib",
      "lib0",
      "lib1",
      "lib2",

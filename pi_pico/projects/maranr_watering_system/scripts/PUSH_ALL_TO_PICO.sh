@@ -34,6 +34,7 @@ rm -rf */__pycache__
 copy_release_files_to_the_pico() {
 
     ${SCRIPTS_DIR}/PUSH_displays_to_pico.sh
+    ${SCRIPTS_DIR}/PUSH_lib_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_lib0_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_lib1_to_pico.sh
     ${SCRIPTS_DIR}/PUSH_lib2_to_pico.sh
@@ -51,6 +52,7 @@ list_pico_filesystem_contents() {
     echo 'LIST THE PICO CONTENTS:'
     
     mpremote ${PREM_DEVICE} fs ls /displays
+    mpremote ${PREM_DEVICE} fs ls /lib
     mpremote ${PREM_DEVICE} fs ls /lib0
     mpremote ${PREM_DEVICE} fs ls /lib1
     mpremote ${PREM_DEVICE} fs ls /lib2
