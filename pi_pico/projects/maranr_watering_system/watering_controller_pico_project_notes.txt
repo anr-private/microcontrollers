@@ -360,8 +360,10 @@ empty from now on.
 2026-10-23
 Complete reload of pages and py files. Now using lib0, lib1 in place of lib/.
 By default there is no lib/ directory when running MWS.
-
-
+Except now adding lib/ back into the sources in order to support
+type annotations and 'from typing import xxx' and 'import typing'.
+The faked typing module is from here:
+  https://micropython-stubs.readthedocs.io/en/main/typing_mpy.html
 
 
 
