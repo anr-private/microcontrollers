@@ -12,16 +12,121 @@ pip install mypy "micropython-rp2-stubs==1.27.*" # installs mypy and stubs
 pip uninstall micropython-rp2-stubs
 # Should have done this 
 pip install mypy "micropython-rp2-rpi_pico2_w-stubs==1.27.*"
-
 # Next attempt:
 pip uninstall micropython-rp2-rpi_pico2_w-stubs micropython-stdlib-stubs
 pip install "micropython-rp2-rpi_pico2_w-stubs==1.27.*" --target ./typings --upgrade
-
 rm -rf typings && pip install "micropython-rp2-rpi_pico2_w-stubs==1.27.*" --target ./typings
+REPLACED all the above with shell script:
+ typings__create_the_dir.sh:
+    rm -rf typings
+    pip install "micropython-rp2-rpi_pico2_w-stubs==1.29.*" --target ./typings
+    echo '--- Verifying ---'
+    pip list --path ./typings
+    ls -d typings/*.dist-info
+    ls typings/machine.pyi
 
 Created mypy.ini and run_mypy.sh to configure and run mypy.
 Multiple fixes to allow mypy to run.
+
+=== IGNOREs   ====================
 Added 'type: ignore' to lines that are CPython specific, tests, etc.
+
+class A:
+    # This is the only form that works
+    _instance: "A | None"
+# This can silence the annotation error; not recommended.
+_instance = None  # type: ignore[assignment]
+
+
+
+
+=== Callable and other stuff importing from 'typing' module =====
+
+The following guarded import allows my tests that run on Ubuntu 
+using its python3; the code can/will use the 'real' 
+typing module that is part of the Ubuntu python3 install..
+mypy has its own typing module bundled in, so does not need
+an 'external' one.
+This also lets MicroPython ignore attempts to import Callable
+It works because MicroPython does not evaluate type annotations,
+so does not need/care about stuff like 'Callable'.
+Doing it this way saves having to put double-quotes around
+every use of things like 'Callable'.
+This applies not only to Callable but anything else imported from 
+the 'typing' module. Herein 'Callable' is just an example.
+USE THE FOLLOWING in .py files whose annotations need the 
+'from typing import ...':
+    # On CPython (tests, mypy) this import succeeds, so annotations evaluate.
+    # On MicroPython it fails harmlessly: annotations are never evaluated there,
+    # so names like Callable are not needed. Annotations only - do not use
+    # these names in executable code or type aliases.
+    # Guarded import of typing names, used only in annotations.
+    # CPython (Ubuntu tests): import succeeds, so annotations evaluate normally.
+    # mypy: has its own bundled typing, so it is unaffected either way.
+    # MicroPython: import fails harmlessly. Annotations are never evaluated there,
+    # so names like Callable are not needed, and no quoting of annotations is required.
+    # Applies to anything imported from typing, not just Callable.
+    # ANNOTATIONS ONLY: do not use these names in executable code or type aliases.
+    try: from typing import Callable
+    except ImportError: pass
+
+NOTE:
+Annotations only. If Callable (or anything else from that import) appears 
+in executable code, such as cast(...), an isinstance check, or a type alias 
+like Handler = Callable[[int], None], the Pico will raise NameError 
+when it reaches that line. Aliases are the likeliest trap, since they’re 
+ordinary assignments. Put them under an if TYPE_CHECKING: block or avoid them
+in device code.
+
+NOTE: Each file with this pattern makes one failed import attempt at load time
+on the Pico, which searches sys.path before giving up. 
+That cost is tiny, but it isn’t zero.
+
+NOTE: Using special symbol TYPE_CHECKING
+  TYPE_CHECKING = False
+  if TYPE_CHECKING:
+      from typing import Callable, Optional
+mypy recognizes the name TYPE_CHECKING and treats the block as active, 
+while on the Pico the constant is False and the import is skipped. 
+Annotations that use those names must be quoted ("Optional[int]") or 
+sit in a position that isn’t evaluated, such as a function signature, 
+since the names don’t exist at runtime.
+
+NOTE:
+Built-in generics (list[int], dict[str, int], int | None) and 
+quoted forward references need no import at all, so with those you 
+may not need typing anywhere.
+
+
+CLUTTER
+Annotate function signatures, not local variables. Parameters and return types are where mypy gets most of its value, and it infers locals from them. Variable annotations are needed mainly for empty containers (registry: dict[str, "ElemLogger"] = {}) and for names that start as None and get a value later.
+Skip trivial functions. With check_untyped_defs = True, mypy still checks the bodies of unannotated functions, so you don’t lose all checking by leaving them alone. Annotating public interfaces, such as methods that other modules call, gets you most of the benefit.
+Keep strictness local. The per-module sections we set up mean a module only has to be fully annotated if you choose to put it in the strict list. Everything else can stay as it is.
+Use -> None sparingly. It’s only needed to mark a function as annotated when it has no parameters; if it has at least one annotated parameter, mypy already treats it as annotated.
+Let inference handle constants. PLATFORM = "micropython" needs nothing, as in the example above.
+
+One more option is to keep annotations out of the code entirely, in .pyi stub files beside your modules. That’s the least intrusive way to get checking, but you’d maintain two files per module, and in practice it’s more work than inline annotations, so I wouldn’t recommend it unless the clutter really bothers you.
+
+Many experienced Python developers share your view, and a fair compromise is to annotate the boundaries and the tricky spots, and leave the straightforward interior code bare.
+
+STRICTNESS
+What you get without annotating more. With check_untyped defs = True, mypy checks the bodies of unannotated functions against the MicroPython stubs. That catches calls to attributes that don’t exist on your board (like machine.TouchPad), wrong argument counts, and typos in names. Of everything mypy can do for MicroPython code, this is probably the highest value for the least clutter, and it costs you nothing further.
+
+What annotations add. Mostly checking across function boundaries: None handling (int | None forcing callers to deal with the failure case), wrong argument types passed between your modules, and return values used the wrong way. That’s real value, but it grows with how much code is annotated, and it’s most useful on functions that many other places call.
+
+A low-commitment plan:
+
+Leave the config as it is and run mypy before you flash code to the Pico. It takes seconds.
+Annotate a function only when you’re already editing it, starting with ones that other modules call. Don’t go through the codebase annotating for its own sake.
+Keep the strict section to the one or two files you’ve fully annotated, and don’t extend it unless you want to.
+Keep a rough tally for a month or so: each time mypy reports something, note whether it was a real bug, a config problem, or only an annotation request.
+
+So far in this conversation, most of mypy’s output has been setup issues (module names, stubs) and requests for annotations. The one clear real finding is machine.TouchPad, which doesn’t exist on your board. Your tally will show whether the real-bug count justifies going further, and that’s a better basis for deciding than my opinion or a general rule.
+
+If the tally stays near zero and the annotations feel like clutter, running mypy on unannotated code alone is a perfectly respectable end state.
+
+
+
 
 TODO:
 Update mypy.ini with these - to start handling annotations/type checking
@@ -29,6 +134,20 @@ disallow_untyped_defs = True for one directory at a time
 (a per-module section such as [mypy-primitives.*]) rather than for the whole project.
 
 
+try: from typing import Callable
+except ImportError: pass
+
+Quotes are only needed when a name isn’t defined yet at the time the annotation runs, such as the class’s own name inside its body (your _instance case) or a class defined later in the file
+            "str|None" not needed
+def junk(s: str|None, i: int, f: float) -> list[str | int | float | None]:
+    if s is None: return [s,i,f] 
+    if i > 100: return [i,s,f]
+    if f < -10.0: return [f,i,s]
+    return [f,i,None]
 
 
+
+
+
+:wrap=soft:
 ###
