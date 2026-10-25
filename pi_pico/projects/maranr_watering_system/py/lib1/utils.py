@@ -138,13 +138,13 @@ def show_cc(line: str | None) -> str:
                    # for ch in line)
 
 
-@@@@ REPLACE WITH len_to_str()
-def show_len(item):
-    # return as str the length of an object like a string or list 
-    try:
-        return str(len(item))
-    except Exception as ex:
-        return f"ITEM-HAS-NO-LEN {item=} {ex=}"
+#@@@@ TODO REMOVE
+# def show_len(item):
+    # # return as str the length of an object like a string or list 
+    # try:
+        # return str(len(item))
+    # except Exception as ex:
+        # return f"ITEM-HAS-NO-LEN {item=} {ex=}"
 
 
 def len_to_str(item: Any) -> str:
@@ -161,13 +161,14 @@ def gc_collect():
     gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
 
 
-def get_memory_status_string(do_garbage_collect=False):
+def get_memory_status_string(do_garbage_collect:bool=False) -> str:
     ### # prints memory map of block usage
     ###micropython.mem_info(1)
     if do_garbage_collect: gc.collect()
     return f" {gc.mem_alloc()=}   {gc.mem_free()=}"
 
-def get_flash_space():
+
+def get_flash_space() -> tuple[int,int]:
 
     if  GET_FLASH_SPACE is not None:
         print(f"UTILS@109 Using FAKE for get_flash_space(): {GET_FLASH_SPACE} ")
@@ -192,48 +193,51 @@ def get_flash_space():
     return total_space, free_space
 
 
-def convert_fs_space_to_string(fs_space):
+def convert_fs_space_to_string(fs_space: int) -> str:
     # Convert to KB and MB for easier reading
     KB = 1024
     MB = 1024 * KB
 
     # Total space ex:  868,352 bytes, 848.00 KB, 0.83 MB
     # Free space ex:   507,904 bytes, 496.00 KB, 0.48 MB
-    #print(f"UTILS@138 Total space: {total_space:,} bytes, {total_space / KB:,.2f} KB, {total_space / MB:.2f} MB")
-    #print(f"UTILS@139 Free space:  {free_space:,} bytes, {free_space / KB:,.2f} KB, {free_space / MB:.2f} MB")
-    space_stg = f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
-    return space_stg
+    return f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
 
-def get_fs_space_string(sep=""):
+def get_fs_space_string(sep:str="") -> str:
     ts, fs = get_flash_space()
     tss = convert_fs_space_to_string(ts)
     fss = convert_fs_space_to_string(fs)
     return f"TOTAL SPACE {tss}   {sep}FREE SPACE {fss}"
 
 
-def determine_py_platform():
-    # returns "micropython", "cpython" 
-    if "micropython" in platform.platform().lower():
-        return "micropython"
-    return "cpython"
+def determine_py_platform() -> str:
+    # returns "micropython" or "cpython"  (some systems: "pypy", or something else)
+    return sys.implementation.name
+#@@@@ TODO REMOVE BELOW:
+# def determine_py_platform() -> str:
+    # # returns "micropython", "cpython" 
+    # if "micropython" in platform.platform().lower():
+        # return "micropython"
+    # return "cpython"
 
 
-def determine_machine_type():
+def determine_machine_type() -> str:
     # Returns::
     # "pi pico w" for Pi PICO-W
+    # "pi pico 2 w" for Pi PICO2-W
     # Else "unknown"
 
     os_uname = os.uname()
 
-    raw_machine_name_lc = os_uname[4].lower()
+    #@@@@ TODO REMOVE   raw_machine_name_lc = os_uname[4].lower()
+    raw_machine_name_lc = os_uname.machine.lower()
     if "pi pico w" in raw_machine_name_lc:
         return "pi pico w"
-    elif "pi pico 2 w" in raw_machine_name_lc:
+    if "pi pico 2 w" in raw_machine_name_lc:
         return "pi pico 2 w"
     return "unknown"
 
 
-def main():
+def main() -> None:
     print(f"UTILS@173 FS SPACE: {get_fs_space_string()}")
     print(f"UTILS@174 MEMORY: {get_memory_status_string()} ")
 

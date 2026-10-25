@@ -7,7 +7,7 @@ import asyncio
 import gc
 import json
 
-from lib1.utils import show_len
+from lib1.utils import len_to_str
 from lib1.utils import get_fs_space_string
 from lib1.utils import get_memory_status_string
 

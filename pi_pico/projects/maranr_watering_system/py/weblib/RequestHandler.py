@@ -5,7 +5,7 @@ import gc
 import json
 
 from lib1.utils import gc_collect
-from lib1.utils import show_len
+from lib1.utils import len_to_str
 from lib1.utils import get_fs_space_string
 from lib1.utils import get_memory_status_string
 
@@ -140,7 +140,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"RH@143 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@143 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
             return reply
 
 
@@ -151,7 +151,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"RH@154 REPLY WITH 404. '{m}' {file_path=}  len={show_len(reply)}")
+            log(f"RH@154 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -181,11 +181,11 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@184 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@184 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
             log(f"RH@185 {m=}")
             return reply
 
-        log(f"RH@188  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@188  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
             updated_file_contents = self._grinder.grind_file_contents(file_contents)
@@ -214,11 +214,11 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@217 REPLY WITH 404.  {file_path=}  len={show_len(reply)}")
+            log(f"RH@217 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
             log(f"RH@218 {m=}")
             return reply
 
-        log(f"RH@221  {file_path=} {content_type=}  len={show_len(file_contents)}")
+        log(f"RH@221  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()
