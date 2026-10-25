@@ -1,7 +1,9 @@
 # file_utils.py
 
 import os
-from lib0.typing import Callable, List, Any
+
+try: from typing import Callable, Any
+except ImportError: pass
 
 # Which 'list dir' method is available
 try:
