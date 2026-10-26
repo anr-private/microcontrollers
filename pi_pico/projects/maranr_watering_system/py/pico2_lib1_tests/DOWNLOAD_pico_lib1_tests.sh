@@ -1,15 +1,15 @@
 #!/bin/bash
 #
-# DOWNLOAD_lib1_tests.sh
+# DOWNLOAD_pico_lib1_tests.sh
 #
-# Download the lib1 tests from /tmp/
+# Download the PICO-based lib1 tests from /tmp/
 # This is used to interchange the files with the CPYthon support in
 # ~/git/art/src/python3/pico_support_tests/maranr_watering_system/
 
 DBG=false
 
-TMP_DIR=/tmp/LIB1
-LOCAL_DIR=lib1
+TMP_DIR=/tmp/PICO_LIB1_TESTS
+LOCAL_DIR=.
 
 if [ ! -d ${TMP_DIR} ] ; then
     echo '*******************************************************'
