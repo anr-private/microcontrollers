@@ -5,6 +5,7 @@
 # 
 
 REMOTE_DIR="pico_lib1_tests"
+REMOTE_LIBFAKE_DIR="lib1_FAKE"
 
 if [[ "$PREM_DEVICE" == 'a0' || "$PREM_DEVICE" == 'a1' || "$PREM_DEVICE" == 'a2' || "$PREM_DEVICE" == 'a3' ]] ; then
     echo 'PREM_DEVICE is currently ok: "'${PREM_DEVICE}'"'
@@ -30,8 +31,14 @@ copy_release_files_to_the_pico() {
     echo 'make remote dir: '${REMOTE_DIR}/
     mpremote ${PREM_DEVICE} fs mkdir :${REMOTE_DIR}
 
+    echo 'make remote subdir: '${REMOTE_LIBFAKE_DIR}/
+    mpremote ${PREM_DEVICE} fs mkdir :${REMOTE_LIBFAKE_DIR}
+
     echo 'Copy files to ' ${REMOTE_DIR}/
-    mpremote ${PREM_DEVICE} fs cp test_file_utils.py :/${REMOTE_DIR}/test_file_utils.py 
+    mpremote ${PREM_DEVICE} fs cp pico_test_read_last_n_lines.py :/${REMOTE_DIR}/pico_test_read_last_n_lines.py 
+
+    echo 'Copy files to ' ${REMOTE_LIBFAKE_DIR}/
+    mpremote ${PREM_DEVICE} fs cp read_last_n_lines.py :/${REMOTE_LIBFAKE_DIR}/read_last_n_lines.py 
     
     #echo 'Remove the client files we do not need'
     #mpremote fs rm http/AnrHttpClient.py
@@ -44,6 +51,8 @@ list_pico_filesystem_contents() {
     echo ' '    
     echo 'LIST THE PICO remote dir CONTENTS: '${REMOTE_DIR}/
     mpremote ${PREM_DEVICE} fs ls /${REMOTE_DIR}
+    echo 'LIST THE PICO remote subdir CONTENTS: '${REMOTE_LIBFAKE_DIR}/
+    mpremote ${PREM_DEVICE} fs ls /${REMOTE_LIBFAKE_DIR}
 }
 
 
