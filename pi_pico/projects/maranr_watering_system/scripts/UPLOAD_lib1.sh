@@ -17,14 +17,11 @@ for fp in ${LOCAL_DIR}/* ; do
     if $DBG ; then echo fn is $fn ; fi
 
     # ignore
-    if [ "$fn" = "__pycache__" ] ; then
-        continue
-    fi
-    if [[ "$fn" == *DEPRECATED ]] ; then
+    if [[ $fn = "__pycache__" ]] ; then
         if $DBG ; then echo ' SKIP THIS ' $fn ; fi
         continue
     fi
-    if [[ "$fn" == *QPUSH_MARK* ]] ; then
+    if [[ $fn == *QPUSH_MARK* ]] ; then
         if $DBG ; then echo ' SKIP THIS ' $fn ; fi
         continue
     fi
@@ -33,7 +30,7 @@ for fp in ${LOCAL_DIR}/* ; do
     TMP_F="${TMP_DIR}/${fn}"
 
     if [ ! -f "${TMP_F}" ] ; then
-        if $DBG ; then  echo '*** DOES NOT EXIST *** ' ${TMP_F} ; fi
+        if $DBG ; then  echo '*** DOES NOT EXIST *** ' ${TMP_F} ' -- CREATING IT.'; fi
         touch -d '1980-01-01 12:34:55' ${TMP_F}
     fi
 
@@ -55,7 +52,5 @@ done
 
 rm -f ${TMP_DIR}/*QPUSH_MARKER*
 rm -f ${TMP_DIR}/*DEPRECATED
-
-#cp -p ${LOCAL_DIR}/* ${TMP_DIR}/
 
 ###
