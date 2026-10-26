@@ -5,6 +5,8 @@
 import os
 import sys
 
+from lib1.file_utils import read_last_n_lines, filter_dir_contents
+
 from .ElemLogger import ElemLogger
 from .ElemLogFileTable import ElemLogFileTable
 

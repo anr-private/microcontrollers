@@ -6,18 +6,13 @@ try: from typing import Callable, Any
 except ImportError: pass
 
 # Which 'list dir' method is available
-# try:
-    # # micropython
-    # ###@@@@@ TODO REMOVE   _ = os.ilistdir   # t y p e : i g n o r e NOT NEEDED?  @@@@ TODO
-# 
-    # # True on MicroPython (os.ilistdir exists), False on regular Python 3
-    # use_os_ilistdir = True
-# except AttributeError:
-    # # 'real' Python3
-    # use_os_ilistdir = False
-#@@@@ TODO REMOVE THE ABOVE
-# Which 'list dir' method is available
-use_os_ilistdir = hasattr(os, "ilistdir")
+try:
+    # micropython
+    _ = os.ilistdir   # type: ignore
+    use_os_ilistdir = True
+except AttributeError:
+    # 'real' Python3
+    use_os_ilistdir = False
 
 # how to support remove_subdir()
 try:
@@ -37,14 +32,8 @@ SEEK_CURR = 1  # relative to current file position
 SEEK_END = 2	# relative to end of file
 
 
-def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: int) -> list[str]:
-    """ Reads the last N lines of a text file efficiently in MicroPython.
-    Arg relative_line_number is the line number of the first line
-    being requested, relative to the end of the file.
-    number_of_lines is the number of lines
-    So (1,1) gets the last line in the file,
-    (10,2) gets the 10th and 9th lines from the end of file.
-    """
+def read_last_n_lines(fpath, relative_line_number, number_of_lines):
+    """Reads the last N lines of a text file efficiently in MicroPython."""
     try:
         with open(fpath, 'rb') as f: # Open in binary mode for reliable seeking
             f.seek(0, SEEK_END)
@@ -62,7 +51,7 @@ def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: in
                     break
 
                 # Read a chunk from near the end
-                ### @@@ TODO @@@ USE THIS???:  chunk_size = 128 # Read in small chunks to save memory
+                chunk_size = 128 # Read in small chunks to save memory
                 chunk_size = 100 #@@@@@@@@@@@@@@@@@@@@@@@
 
                 position = max(0, position-chunk_size)
