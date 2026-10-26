@@ -33,6 +33,19 @@ for fp in ${LOCAL_DIR}/* ; do
     if [[ $fn == *DEPRECATED ]] ; then
         continue
     fi
+    if [[ $fn == COMPARE_pico_lib1_tests.sh ]] ; then
+        continue
+    fi
+    if [[ $fn == DOWNLOAD_pico_lib1_tests.sh ]] ; then
+        continue
+    fi
+    if [[ $fn == UPLOAD_pico_lib1_tests.sh ]] ; then
+        continue
+    fi
+    if [[ $fn == PUSH_pico_lib1_tests_to_PICO.sh ]] ; then
+        continue
+    fi
+
 
     if $DBG ; then echo \
     "diff -q ${LOCAL_DIR}/$fn  ${TMP_DIR}/$fn" ; fi
