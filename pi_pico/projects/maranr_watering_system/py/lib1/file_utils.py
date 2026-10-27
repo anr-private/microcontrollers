@@ -101,7 +101,7 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
             #print(f"@@257 ___ after loop:  {lines_found=}   {len(fbytes)=}")
             #print(f"@@@@  lines: len={len(lines)} {lines}")
             if fbytes and lines_found < relative_line_number:
-                line_stg = line.decode('utf-8')
+                line_stg = fbytes.decode('utf-8')
                 #print(f"@@260 LAST  line is '{line_stg}' ")
                 lines.insert(0, line_stg)
                 #print(f"@@262  LAST: num-in-list = {len(lines)}")
