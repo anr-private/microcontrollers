@@ -1,3 +1,5 @@
+# read_last_n_lines.py
+#
 # os module on MicroPython does not define these (unlike Py3)
 SEEK_SET = 0  # relative to start of file
 SEEK_CURR = 1  # relative to current file position
@@ -50,3 +52,38 @@ def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: in
     except OSError as ex:
         print(f"FU read_last_n_lines  EX={repr(ex)}  errno={ex.errno}")
         return []
+
+# ----------------------------------------------------------------------
+# COMMENTARY (not code): why lines 37-38 prepend a newline to buf
+#
+#     if position == 0:
+#         buf = b"\n" + buf  # treat the start of the file as a newline
+#
+# This has nothing to do with numbering. Lines are counted from the end of
+# the file, and `found` goes up by one for each non-empty line extracted.
+# The prepended newline is there so the first line of the file can be
+# extracted by the same code as every other line.
+#
+# The inner loop pulls out a line by finding the last \n in the buffer and
+# taking everything after it. Every line except the first has a \n in front
+# of it. The first line has nothing in front of it, so without help it would
+# be left sitting in `buf` when the loop ended. The original code handled
+# this with a separate block after the loop, and that block was the one
+# with the `line`/`fbytes` bug.
+#
+# The prepended \n gives the first line a delimiter, so there is no special
+# case. Example, with the file  a\nb\n :
+#
+#   1. After reading the whole file, buf is  \na\nb\n  once the newline is
+#      added.
+#   2. The last \n has nothing after it, so that empty "line" is skipped.
+#   3. Next comes  b , which counts as 1 from the end.
+#   4. Then  a , which counts as 2 from the end. The leading \n it was
+#      waiting for is the one we added.
+#
+# It is added only when position == 0, meaning the read has reached the
+# start of the file. At any other chunk boundary the buffer starts in the
+# middle of a line, and adding a newline there would split that line in two.
+# ----------------------------------------------------------------------
+
+###

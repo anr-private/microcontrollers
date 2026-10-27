@@ -1,3 +1,5 @@
+# pico_test_read_last_n_lines.py
+#
 # On-device test for read_last_n_lines (MicroPython on the Pico; also runs on CPython).
 #
 # Setup: 1) edit the import line below so `mod` is the module that contains
@@ -16,6 +18,7 @@ try:
     TEST_PATH = "_rlnl_test.txt"
 except ImportError:
     print("Failed to import the module that contains the read_last_n_lines function")
+    raise
 
 ###TEST_PATH = "._rlnl_test.txt"
 
