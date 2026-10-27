@@ -1,6 +1,25 @@
-"""Tests for read_last_n_lines, run on CPython (Ubuntu python3).
+# test_read_last_n_lines.py
+#
+# Test for the read_last_n_lines() function
+# Intended to be run using CPython 3 under Linux.
+# There is a separate test for performing testing on the PICO.
 
-Usage:   python3 test_read_last_n_lines.py path/to/module_with_the_function.py
+import importlib.util
+import os
+import random
+import sys
+import tempfile
+
+DEFAULT_MODULE_PATH = "lib1_FAKE/read_last_n_lines.py"
+
+HELP_INFO=f"""Tests for read_last_n_lines, run on CPython (Ubuntu python3).
+
+Usage:
+    python3 test_read_last_n_lines.py path/to/module_with_the_function.py
+ OR
+    python3 test_read_last_n_lines.py 
+The no-parameter version uses a hard-coded path to the module:
+   '{DEFAULT_MODULE_PATH}'
 
 The module must define read_last_n_lines(fpath, relative_line_number, number_of_lines).
 If it also has a module-level _CHUNK_SIZE, the tests repeat with several chunk
@@ -16,11 +35,6 @@ Behavior being checked (the function's docstring, plus the existing behavior):
     the oldest number_of_lines lines of the file are returned
   - unreadable file -> []
 """
-import importlib.util
-import os
-import random
-import sys
-import tempfile
 
 
 def load(path):
@@ -135,7 +149,16 @@ def main(module_path: str) -> int:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(__doc__)
+    print(f"MAIN: sys.argv is {sys.argv}")
+    module_path = None
+    if len(sys.argv) == 2:
+        module_path = sys.argv[1]
+    elif len(sys.argv) == 1:
+        print(f"NO MODULE PATH PARAMETER SPECIFIED: ASSUMING {DEFAULT_MODULE_PATH=}")
+        module_path = DEFAULT_MODULE_PATH
+    else:
+        print(HELP_INFO)
         sys.exit(2)
-    sys.exit(main(sys.argv[1]))
+    sys.exit(main(module_path))
+
+###

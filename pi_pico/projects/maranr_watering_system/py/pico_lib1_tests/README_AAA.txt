@@ -9,6 +9,16 @@ This dir contains files for testing lib1/ contents:
 
   # scripts used for interchanging files with the CPython Pico support
   #  in git/art/
+  # NOTE that these are local to each of the two repo's:
+  # NOTE THEY ARE NOT THE SAME!! They copy in opposite directions to/from /tmp
+  # -there is a set in the 'real' PICO repo:
+  #    ~/git/microcontrollers/pi_pico/projects/maranr_watering_system/....
+  #                                                     py/pico_lib1_tests
+  # -and another set with the same names in the CPython pico support repo:
+  #    ~/git/art/src/python3/pico_support_tests/maranr_watering_system/....
+  #                                                         pico_lib1_tests
+  # NOTE these are NOT copied to the /tmp/PICO_LIB1_TESTS/ 
+  # exchange dir - THEY ARE NOT INTERCHANGEABLE
  COMPARE_pico_lib1_tests.sh*      Compares this dir vs /tmp/PICO_LIB1_TESTS/
  DOWNLOAD_pico_lib1_tests.sh*
  UPLOAD_pico_lib1_tests.sh*

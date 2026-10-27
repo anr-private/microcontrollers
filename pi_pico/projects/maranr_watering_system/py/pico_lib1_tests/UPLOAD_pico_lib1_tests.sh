@@ -3,8 +3,10 @@
 # UPLOAD_pico_lib1_tests.sh
 #
 # Upload the PICO-based lib1 tests to /tmp/
-# This is used to interchange the files with the CPYthon support in
-# ~/git/art/src/python3/pico_support_tests/maranr_watering_system/
+# Runs in the PICO repo:
+#    ~/git/microcontrollers/pi_pico/projects/maranr_watering_system/py/pico_lib1_tests
+# This is used to provide the files to the CPYthon-support in
+# ~/git/art/src/python3/pico_support_tests/maranr_watering_system/pico_lib1_tests
 
 DBG=false
 
