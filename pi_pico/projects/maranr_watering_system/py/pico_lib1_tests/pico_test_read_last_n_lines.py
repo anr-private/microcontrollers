@@ -13,13 +13,20 @@
 import os
 import random
 
+mod = None
 try:
     import lib1_FAKE.read_last_n_lines as mod   # <-- EDIT: the module that has read_last_n_lines
     TEST_PATH = "_rlnl_test.txt"
 except ImportError:
     print("Failed to import the module that contains the read_last_n_lines function")
-    raise
-
+try:
+    # This imports the function from ./read_last_n_lines.py
+    import read_last_n_lines as mod   # <-- EDIT: the module that has read_last_n_lines
+    TEST_PATH = "_rlnl_test.txt"
+except ImportError:
+    print("Failed to import the module that contains the read_last_n_lines function")
+if mod is None:
+    raise RuntimeError("Cannot find/import the module that conatins the read_last_n_lines function")
 ###TEST_PATH = "._rlnl_test.txt"
 
 RANDOM_CASES_PER_CHUNK = 60       # raise for a longer run
@@ -121,3 +128,5 @@ for item in failures[:5]:
     print("     expected:", expected)
     print("     got:     ", got)
 print("RESULT: " + ("FAILED" if failures else "PASSED - all cases correct"))
+
+###

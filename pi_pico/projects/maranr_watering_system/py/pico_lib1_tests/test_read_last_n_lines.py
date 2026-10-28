@@ -21,6 +21,10 @@ Usage:
 The no-parameter version uses a hard-coded path to the module:
    '{DEFAULT_MODULE_PATH}'
 
+THIS VERSION CAN RUN IF THE read_last_n_lines.py file is in the same dir
+as this test file:
+    python3 test_read_last_n_lines.py read_last_n_lines.py
+
 The module must define read_last_n_lines(fpath, relative_line_number, number_of_lines).
 If it also has a module-level _CHUNK_SIZE, the tests repeat with several chunk
 sizes (1, 2, 3, 7, ...), which exercises chunk boundaries and UTF-8 characters
