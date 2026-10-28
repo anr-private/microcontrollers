@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# -v   show verbose output including which files are found/checked ('Found')
+# A report file. mypy --linecount-report /tmp/rep <your usual arguments> should write /tmp/rep/linecount.txt with one line for every file it processed.
+
 mypy \
 py/maranr_watering_system_main.py \
 py/displays \
@@ -9,7 +12,9 @@ py/logger_elem \
 py/mws \
 py/primitives \
 py/sensors \
-py/weblib 
+py/weblib \
+2>&1
+
 
 # OMITTED DUE TO conflicting ways of importing from lib
 # due to lib being on micropython's default sys.path

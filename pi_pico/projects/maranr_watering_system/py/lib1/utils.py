@@ -35,8 +35,8 @@ except Exception as ex:
 PLATFORM = sys.implementation.name
 if PLATFORM == "cpython":   # Py3
     from cpython_test_support import CpythonTestSupport   # type:ignore
-    cpyt = CpythonTestSupport.get_instance()              # type:ignore 
-    GET_FLASH_SPACE = cpyt.fake_get_flash_space           # type:ignore
+    cpyt = CpythonTestSupport.get_instance()
+    GET_FLASH_SPACE = cpyt.fake_get_flash_space
 else:
     # use the 'real' filespace info
     GET_FLASH_SPACE = None

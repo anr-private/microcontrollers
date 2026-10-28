@@ -24,8 +24,8 @@ else:
 
 if PLATFORM == "cpython":   # Py3
     from cpython_test_support import CpythonTestSupport  # type: ignore
-    cpyt = CpythonTestSupport.get_instance()             # type: ignore
-    NTP_TIME_SET_TIME = cpyt.fake_ntp_set_time           # type: ignore
+    cpyt = CpythonTestSupport.get_instance()
+    NTP_TIME_SET_TIME = cpyt.fake_ntp_set_time
 else:
     import ntptime
     NTP_TIME_SET_TIME = ntptime.settime

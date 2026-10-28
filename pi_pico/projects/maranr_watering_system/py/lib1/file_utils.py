@@ -27,12 +27,13 @@ except ImportError:
 ###logi = None
 
 # os module does not define these (unlike Py3)
-SEEK_SET = 0  # relative to the start of file
+SEEK_SET = 0   # relative to the start of file
 SEEK_CURR = 1  # relative to current file position
-SEEK_END = 2	# relative to end of file
+SEEK_END = 2   # relative to end of file
 
+###def read_last_n_lines(fpath, relative_line_number, number_of_lines):
+def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: int) -> list[str]:
 
-def read_last_n_lines(fpath, relative_line_number, number_of_lines):
     """Reads the last N lines of a text file efficiently in MicroPython."""
     try:
         with open(fpath, 'rb') as f: # Open in binary mode for reliable seeking
@@ -40,7 +41,7 @@ def read_last_n_lines(fpath, relative_line_number, number_of_lines):
             file_size = f.tell()
             position = file_size
             lines_found = 0
-            lines = []
+            lines: list[str] = []
             fbytes = b""
 
             while True:
@@ -201,7 +202,7 @@ def list_dir_micropython(dir_path):
     results = []
 
     try:
-        for entry in os.ilistdir(dir_path):
+        for entry in os.ilistdir(dir_path):   # type: ignore[attr-defined]
             fname = entry[0] # may be the dir name
             entry_type = entry[1]
             # inode = entry[2]
@@ -241,19 +242,19 @@ def remove_subdir_py3(path):
     except Exception as ex:
         print(f"FU@237 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
-def remove_subdir_micropython(path):
+def remove_subdir_micropython(path: str) -> None:
     # Micropython version
     # Check if path is a file or directory
     try:
         # Get list of items in the directory
-        for entry in os.ilistdir(path):
+        for entry in os.ilistdir(path):    # type: ignore[attr-defined]
             name, type = entry[0], entry[1]
             full_path = f"{path}/{name}"
             
             if type == 0x8000: # It's a file
                 os.remove(full_path)
             elif type == 0x4000: # It's a directory
-                rm_recursive(full_path) # Recurse into subdirectory
+                remove_subdir_micropython(full_path) # Recurse into subdirectory
         
         # Finally, remove the now-empty directory
         os.rmdir(path)

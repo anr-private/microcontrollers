@@ -2,11 +2,13 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
+try: from typing import Any
+except ImportError: pass
 
 # Logging functions; our parent ses set_log_functions()
-log = None
-logrt = None
-logi = None
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 
 #@@@@@@@@@@@@@@ TODO replace with just a function

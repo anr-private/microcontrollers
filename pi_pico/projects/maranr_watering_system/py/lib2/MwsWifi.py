@@ -24,9 +24,9 @@ else:
 
 if PLATFORM == "cpython":   # Py3
     from cpython_test_support import CpythonTestSupport   # type: ignore
-    cpyt = CpythonTestSupport.get_instance()              # type: ignore
-    NETWORK_WLAN = cpyt.fake_network_wlan                 # type: ignore
-    NETWORK_STA_IF = None # "fake-network-sta-if"                # type: ignore
+    cpyt = CpythonTestSupport.get_instance()
+    NETWORK_WLAN = cpyt.fake_network_wlan
+    NETWORK_STA_IF = None # "fake-network-sta-if"         # type: ignore
 else:
     # use the 'real' filespace info
     import network
