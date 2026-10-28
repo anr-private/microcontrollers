@@ -5,7 +5,7 @@ from logger_elem.ElemLogControl import ElemLogControl
 try: from typing import Any
 except ImportError: pass
 
-# Logging functions; our parent ses set_log_functions()
+# Logging functions; our parent class sets using _set_logger()
 log:   Any = None
 logrt: Any = None
 logi:  Any = None

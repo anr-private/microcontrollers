@@ -11,9 +11,12 @@ from lib1.utils import gc_collect
 from lib1.utils import get_fs_space_string
 from lib1.utils import get_memory_status_string
 
-log = None
-logrt = None
-logi = None
+try: from typing import Any
+except ImportError: pass
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 VALIDATE = 804146
 
@@ -23,10 +26,10 @@ VALIDATE = 804146
 class MwsSensors(ElemLoggerABC):
     """ sensors and effectors """
 
-    _instance = None
+    _instance: "MwsSensors | None" = None
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> "MwsSensors":
         if cls._instance is not None: return cls._instance
         cls._instance = MwsSensors(VALIDATE)
         return cls._instance
@@ -40,7 +43,7 @@ class MwsSensors(ElemLoggerABC):
     def __init__(self, validate):
         if validate != VALIDATE:
             raise RuntimeError(f"MwsSensors CTOR is private!")
-        self._databoard = None        
+        self._databoard: "DataBoard | None" = None        
         super().__init__()
 
 
@@ -67,13 +70,13 @@ class MwsSensors(ElemLoggerABC):
         while 1:
             if 0:
                 fss = get_fs_space_string()
-                log(f"SENSORS@68.sensors_coro RUNNING: {fss}")
+                log(f"SENSORS@73.sensors_coro RUNNING: {fss}")
             if 0:
                 mss = get_memory_status_string(do_garbage_collect=False)
-                log(f"SENSORS@71.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                log(f"SENSORS@76.sensors_coro MEMORY before GC: {mss} ++++++++++++++++++++++++++++++++++++")
                 gc_collect()
                 mss = get_memory_status_string(do_garbage_collect=False)
-                log(f"SENSORS@74.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
+                log(f"SENSORS@79.sensors_coro MEMORY after  GC: {mss} ++++++++++++++++++++++++++++++++++++")
 
             # Reduce logging volume/freq
             log_limit_ctr += 1
@@ -99,11 +102,12 @@ class MwsSensors(ElemLoggerABC):
         gc.collect()
         ma_after = gc.mem_alloc()
         mf_after = gc.mem_free()
-        self._databoard.set_memory_alloc_and_free(ma_after, mf_after)
+        if self._databoard is not None:
+            self._databoard.set_memory_alloc_and_free(ma_after, mf_after)
         ma_diff = ma_after - ma_before
         mf_diff = mf_after - mf_before
-        m1 = f"SENSORS@92  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
-        m2 = f"SENSORS@93  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
+        m1 = f"SENSORS@109  ++++++++++  Alloc:  {ma_after} - {ma_before}  ==>  DIFF: {ma_diff} +++++++++++++++++++++++++++++++++++++++"
+        m2 = f"SENSORS@110  ++++++++++  Free:   {mf_after} - {mf_before}  ==>  DIFF: {mf_diff}  +++++++++++++++++++++++++++++++++++++++"
         if use_logi:
             LL(m1); LL(m2)
         else:
@@ -116,9 +120,10 @@ class MwsSensors(ElemLoggerABC):
 
         temperature_c = read_internal_temperature()
         temperature_f = celsius_to_fahrenheit(temperature_c)
-        self._databoard.set_internal_temps(temperature_f, temperature_c);
+        if self._databoard is not None:
+            self._databoard.set_internal_temps(temperature_f, temperature_c);
 
-        m = f"SENSORS@109  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F"
+        m = f"SENSORS@126  Internal Temperature: {temperature_c:10.4f} °C   {temperature_f:10.4f} °F"
         if use_logi:
             LL(m)
         else:

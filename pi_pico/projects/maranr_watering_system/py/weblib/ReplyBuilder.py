@@ -5,6 +5,9 @@ import sys
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib1.utils import show_cc
 
+try: from typing import Any
+except ImportError: pass
+
 from .HttpReply import HttpReply
 
 
@@ -30,10 +33,10 @@ NOT_FOUND_HTML_LINES = [
     ]
 
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 
 class ReplyBuilder(ElemLoggerABC):
@@ -61,7 +64,7 @@ class ReplyBuilder(ElemLoggerABC):
 
         reply = self._build_reply()
 
-        log(f"RB@64 build_textual_file_reply: {str(reply)}")
+        log(f"RB@67 build_textual_file_reply: {str(reply)}")
         return reply
 
 
@@ -75,7 +78,7 @@ class ReplyBuilder(ElemLoggerABC):
 
         reply = self._build_reply()
 
-        log(f"RB@78.build_binary_file_reply: {str(reply)}")
+        log(f"RB@81.build_binary_file_reply: {str(reply)}")
         return reply
 
 
@@ -86,16 +89,16 @@ class ReplyBuilder(ElemLoggerABC):
         valsdict = {"RESOURCE" : resource_not_found}
         fmt_lines = []
         for line in NOT_FOUND_HTML_LINES:
-            log(f"RB@89  {line=}  {valsdict=}")
+            log(f"RB@92  {line=}  {valsdict=}")
             fmt_line = line.format(**valsdict)
-            log(f"RB@91  {fmt_line=}  {valsdict=}")
+            log(f"RB@94  {fmt_line=}  {valsdict=}")
             fmt_lines.append(fmt_line)
         body_lines = add_eol_to_lines(fmt_lines)
         self.body = "".join(body_lines)
 
         reply = self._build_reply()
 
-        log(f"RB@98.build_reply_404: {str(reply)}")
+        log(f"RB@101.build_reply_404: {str(reply)}")
         return reply
 
     def _build_reply(self):
@@ -112,7 +115,7 @@ class ReplyBuilder(ElemLoggerABC):
         lines = add_eol_to_lines(lines)
         header_stg = "".join(lines)
         #for line in lines:
-        #    PRINT(f"RB@115 {show_cc(line)}")
+        #    PRINT(f"RB@118 {show_cc(line)}")
 
         reply = HttpReply()
         reply.set_reply(header_stg, self.body)
@@ -123,8 +126,8 @@ class ReplyBuilder(ElemLoggerABC):
         s = []
         s.append("status=%s" % str(self.status_value))
         s.append(",content=%s" % str(self.content_type))
-        if self._body:
-            s.append("body.len={len(self._body)}")
+        if self.body:
+            s.append("body.len={len(self.body)}")
         #if self._reply:
         #    s.append("reply.len={len(self._reply)}")
         return ("%s[%s]" % 

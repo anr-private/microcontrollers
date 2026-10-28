@@ -2,7 +2,11 @@
 
 import sys
 
+try: from typing import Any
+except ImportError: pass
+
 from .ElemLogControl import ElemLogControl
+from .ElemLogControl import ElemLogger
 
 PRT=False
 def prt(s):
@@ -25,6 +29,14 @@ class ElemLoggerABC:
 
     def _get_control_instance(self):
         return ElemLogControl.get_instance()
+
+
+    ### @abstractmethod   NOT AVAILABLE IN micropython 1.29.0
+    def _set_logger(self, logger: "ElemLogger"):
+        """ Tell the subclass what to use as its logger 
+        This is an abstract method: the subclass must implement.
+        """
+        raise NotImplementedError(f"Obj={self} _set_logger() is not implemented in the ElemLogControlABC subclass")
 
 
     @classmethod

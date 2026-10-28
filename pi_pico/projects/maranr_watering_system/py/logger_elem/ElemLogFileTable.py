@@ -36,6 +36,7 @@ LOG_FSPACE_LOW_WATERMARK =    750_000
 LOGFILE_IS_EXTANT = 1
 LOGFILE_WAS_REMOVED = 0
 
+EMPTY_LOG_FPATH_MARKER_STG = "NULL_LOG_FPATH"
 
 
 class ElemLogFileTable:
@@ -57,7 +58,7 @@ class ElemLogFileTable:
         self._log_file_table = []
 
         # path of currently-open log file
-        self._current_log_fpath = None
+        self._current_log_fpath: str = EMPTY_LOG_FPATH_MARKER_STG
         # file descriptor for currently-open logfile
         self._logf = None
         # file size (bytes) of the currently-open file
@@ -536,7 +537,7 @@ class ElemLogFileTable:
             print(f"ELFT@536 Closed current log. LOG TABLE: {self._log_file_table}")
         # We have no open logfile.
         self._logf = None
-        self._current_log_fpath = None
+        self._current_log_fpath = EMPTY_LOG_FPATH_MARKER_STG
         self._current_log_fsize = 0
 
 

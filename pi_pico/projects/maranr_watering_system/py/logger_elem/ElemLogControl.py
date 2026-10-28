@@ -5,6 +5,9 @@
 import os
 import sys
 
+try: from typing import Any
+except ImportError: pass
+
 from lib1.file_utils import read_last_n_lines, filter_dir_contents
 
 from .ElemLogger import ElemLogger
@@ -52,7 +55,6 @@ class ElemLogControl:
         ElemLogControl.registry = {}
 
 
-
     def __init__(self, validate=None):
         if validate != VALIDATE:
             m = f"ELC@44 CALLED CTOR use get_instance()"
@@ -63,9 +65,11 @@ class ElemLogControl:
 
         print(f"ELC@50 ******************************$@$@$@$*$*$")
         print(f"ELC@51 ****** REGISTER OURSELF")
-        simplified_class_name = extract_simplified_classname(self)
-        print(f"ELC@53 {simplified_class_name=}")
-        self.registry[simplified_class_name] = self
+        our_simplified_class_name = extract_simplified_classname(self)
+        print(f"ELC@53 {our_simplified_class_name=}")
+        ####@@@@ TODO clean this up
+        ######   WAS  self.registry[simplified_class_name] = self
+        self.registry[our_simplified_class_name] = ElemLogger(self, our_simplified_class_name)
         
         # Table of log files that have been created and are now closed
         # List contains tuples:
@@ -103,7 +107,7 @@ class ElemLogControl:
         return self._log_file_table.get_status_lines()
 
 
-    def register_user_class(self, obj_instance):
+    def register_user_class(self, obj_instance: Any) -> "ElemLogger":
         # obj is a user obj that subclasses ElemLogControlABC
         # Returns a logger obj the caller should use
 
@@ -137,10 +141,16 @@ class ElemLogControl:
     def enable_logging(self, class_name, enabled):
         # enable/disable logging for the specified class
         logger = self.registry.get(class_name)
-        m = f"ELC@126 logger is {logger}  {enabled=}"
+        m = f"ELC@142 logger is {logger}  {enabled=} {class_name=}"
         print(m)
         self.log_one_line(m)
-        # may enable ourself(!) if class_name is this class
+        ##@@@@ TODO this is not accurate?:
+        #@@@@@    may enable ourself(!) if class_name is this class
+        if logger is None:
+            m = f"ELC@148 logger is NONE for {class_name=}  {enabled=}"
+            print(m)
+            self.log_one_line(m)
+            return
         logger.enable_log(enabled)
 
 

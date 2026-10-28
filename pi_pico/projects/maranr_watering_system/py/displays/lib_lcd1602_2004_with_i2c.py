@@ -13,6 +13,11 @@
 import time
 from machine import SoftI2C, Pin
 
+try: from typing import Any
+except ImportError: pass
+
+# logger
+logi: Any
 
 class LCD():
 

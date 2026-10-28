@@ -93,7 +93,7 @@ class HttpReply(ElemLoggerABC):
         if self._header is None:
             hdr_len_stg = "None"
         else:
-            hdr_len_stg = len(self._header)
+            hdr_len_stg = str(len(self._header))
 
         if self._body is None:
             body_len_stg = "None"

@@ -7,20 +7,25 @@ from lib1.utils import get_memory_status_string
 from lib1.utils import get_fs_space_string
 from lib2.TimeMgr import TimeMgr
 
-#PRT=True
-#def prt(s):
-#    if PRT: print (s)
+try: from typing import Any
+except ImportError: pass
 
 
-log = None
-logrt = None
-logi = None
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 START_MARKER = "[["
 END_MARKER = "]]"
 
 
-BODY_SUBS = {
+# Key: the symbol from the template
+# Value: a tuple of 3 items:
+#    callable to be invoked
+#      params for the callable
+#      keyword-params for the callable (omitted if none)
+BODY_SUBS: dict[str, tuple[Any, ...]] = {
     # NOTE keys are always all lower case!
     "filesystem-status-splitline": (get_fs_space_string, (), {"sep":"<br>"} ),
     "memory-status": (get_memory_status_string, ()),
@@ -60,7 +65,7 @@ class TemplateGrinder(ElemLoggerABC):
         logi = logger.logi
 
 
-    def _fetch_value_for_symbol(self, symbol_stg):
+    def _fetch_value_for_symbol(self, symbol_stg: str) -> str:
         funct_info = BODY_SUBS.get(symbol_stg)
         if funct_info is None:
             return f"UNKOWN:{symbol_stg}"
@@ -154,7 +159,7 @@ class TemplateGrinder(ElemLoggerABC):
 
 
     def __str__(self):
-        s = []
+        s: list[str] = []
         #s.append("num=%s" % str(self.num))
         return ("%s[%s]" % 
             (self.__class__.__name__, ",".join(s)))

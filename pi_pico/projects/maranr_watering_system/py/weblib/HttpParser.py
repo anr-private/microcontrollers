@@ -44,15 +44,14 @@ class HttpParser(ElemLoggerABC):
         self.no_err()
 
         if hdr_data is None:
-            ###self.err(l no(), f"Header Data is NONE")
-            self.err(f"Header Data is NONE")
+            self.err(48,f"Header Data is NONE")
             return None
 
         eol_sep = "\r\n"
         if hdr_data.find(eol_sep) < 0:
             eol_sep = "\n"
             if hdr_data.find(eol_sep) < 0:
-                self.err(f"CANNOT DETERMINE eol-sequence")
+                self.err(55, f"CANNOT DETERMINE eol-sequence")
                 log(f"HP@56 parse_header_data {self._latest_error}")
                 return None
         log(f"HP@58 parse_header_data expected eol: {repr(eol_sep)}")
@@ -66,7 +65,7 @@ class HttpParser(ElemLoggerABC):
 
         if len(lines) < 3:
             ###log(f"HP@68 parse_header_data ONLY {len(lines)} HEADER LINE(S) FOUND after splitting on eol {repr(eol_sep)}")
-            self.err(f"ONLY {len(lines)} HEADER LINE(S) FOUND after splitting on eol {repr(eol_sep)}")
+            self.err(69,f"ONLY {len(lines)} HEADER LINE(S) FOUND after splitting on eol {repr(eol_sep)}")
             log(f"HP@70 parse_header_data {self._latest_error}")
             return None
 
@@ -77,10 +76,10 @@ class HttpParser(ElemLoggerABC):
         last_line = lines[-1]
         second_to_last_line = lines[-2]
         if len(last_line) != 0:
-            self.err(f"Expected blank last line; got '{last_line}'")
+            self.err(80,f"Expected blank last line; got '{last_line}'")
             return None
         if len(second_to_last_line) != 0:
-            self.err(f"Expected blank second-to-last line; got '{second_to_last_line}'")
+            self.err(83,f"Expected blank second-to-last line; got '{second_to_last_line}'")
             return None
         log(f"HP@85 found empty line end-of-hdr")
 
@@ -93,13 +92,13 @@ class HttpParser(ElemLoggerABC):
         log(f"HP@93 parse_start_line  {ok=}")
         if not ok: 
             if not self._latest_error:
-                err(84, "INTERNAL ERROR start-line parse failed but no _latest_error")
+                self.err(96, "INTERNAL ERROR start-line parse failed but no _latest_error")
             return None
 
         for line in fields_lines:
             err_stg = self.parse_element_line(ph, line)
             if err_stg:
-                self.err(f"Cannot parse field-line '{line}'  Error:{err_stg}")
+                self.err(102,f"Cannot parse field-line '{line}'  Error:{err_stg}")
                 return None
 
         return ph
@@ -186,7 +185,7 @@ class HttpParser(ElemLoggerABC):
         parts = start_line.split()
         log(f"HP@184 parse_reply_start_line parts={parts}")
         if len(parts) < 3:
-            self.err(f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
+            self.err(188,f"Reply start line: only {len(parts)} parts, expected 3:  {start_line}")
             return None
         
         version_stg_val = parts[0]
@@ -202,8 +201,11 @@ class HttpParser(ElemLoggerABC):
 
         num_code_as_int = string_to_int(numeric_code_val)
         log(f"HP@201 {num_code_as_int=}")
+        if num_code_as_int is None:
+            self.err(205, f"Reply numeric_code is not an int: {numeric_code_val}")
+            return None
         if num_code_as_int <= 0:
-            self.error(lno(), f"Reply numeric_code is not an int or is less than zero: {numeric_code_val}")
+            self.err(208, f"Reply numeric_code <= zero: {numeric_code_val}")
             return None
         got_num_code = str(num_code_as_int)
 
@@ -341,13 +343,13 @@ class HttpParser(ElemLoggerABC):
     def no_err(self):
         self._latest_error = ""
 
-    def err(self, line_no, err_stg=None):
+    def err(self, line_no: int, err_stg:str|None=None):
         if err_stg is None:
-            err_stg = line_no
-            line_no = ""
+            err_stg = str(line_no)
+            line_no_stg = "??"
         else:
-            line_no = "@" + str(line_no)
-        self._latest_error = f"HP{line_no} {err_stg}"
+            line_no_stg = "@" + str(line_no)
+        self._latest_error = f"HP{line_no_stg} {err_stg}"
 
 
 ### end ###

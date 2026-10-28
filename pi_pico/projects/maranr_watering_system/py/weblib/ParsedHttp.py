@@ -157,8 +157,8 @@ class ParsedHttp:
         lines.append(" ".join(s))
 
         for field_name in sorted(self._fields):
-            s = f"   {field_name}: '{self._fields[field_name]}'"
-            lines.append(s)
+            ss = f"   {field_name}: '{self._fields[field_name]}'"
+            lines.append(ss)
 
         return sep.join(lines)
     long_string = long_str

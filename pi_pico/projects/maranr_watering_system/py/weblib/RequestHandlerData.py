@@ -78,7 +78,7 @@ class RequestHandlerData(ElemLoggerABC):
                                                          suffix = "<br>\n")
             dbdata = "".join(dblines)
             data_dict["databoard_status"] = dbdata
-            data_dict["wifi_state"] = str(MwsWifi.state)
+            data_dict["wifi_state"] = str(MwsWifi.state_visibility)
 
         json_stg = json.dumps(data_dict)
         log(f"RHDATA@84 body: JSON-string:...")  

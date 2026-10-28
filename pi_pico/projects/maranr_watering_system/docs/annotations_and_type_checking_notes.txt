@@ -1,5 +1,52 @@
 ANNOTATIONS and TYPE CHECKING NOTES  for Maranr Watering System
 
+QUICK REFS
+
++++ IMPORTs you often need   +++++++++++++++++++++
+
+try: from typing import Any
+except ImportError: pass
+
+try: from typing import Callable
+except ImportError: pass
+
++++ SINGLETON  +++++++++++++++++++++++++++++++++++
+
+class MwsWifi(ElemLoggerABC):
+
+    _instance: "MwsWifi | None" = None
+
+    @classmethod
+    def get_instance(cls) -> "MwsWifi":
+        if cls._instance is None:
+            cls._instance = cls(1234567)
+        return cls._instance
+
++++ LOGGING FUNCTIONS  +++++++++++++++++++++++++++
+try: from typing import Any
+except ImportError: pass
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
+
++++ CALLABLE  +++++++++++++++++++++++++++++++
+
+try: from typing import Callable
+except ImportError: pass
+
++++ TUPLE of variable length and content  +++++++++++++++++++
+ALSO usable for a variable length parameter list to a function/method
+
+try: from typing import Any
+except ImportError: pass
+
+d: tuple[Any, ...] = ()
+d = (1, 2, 3)            # OK
+d = (1, some_obj, 'a')   # OK
+d = (None, None)         # OK
+
+===============================================================
 
 Used Claude to determine some details.
 
