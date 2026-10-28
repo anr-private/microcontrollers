@@ -13,27 +13,27 @@
 import os
 import random
 
-ok_flag = False
+where_imported = ""
 try:
     # This import is used on the PICO where lib1_FAKE simulates the
     # lib1/ package.
     from lib1_FAKE.read_last_n_lines import read_last_n_lines, Z__set_chunk_size   # <-- EDIT if needed
     TEST_PATH = "_rlnl_test.txt"
-    ok_flag = True
+    where_imported = "Imported successfully the function from  lib1_FAKE.read_last_n_lines"
 except ImportError:
-    print("Using lib1_FAKE: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
+    pass #print("Using lib1_FAKE: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
 try:
     # This imports the function from ./read_last_n_lines.py
     # It is used to run this test directly in the PICO repo dir:
     #   .../git/microcontrollers/pi_pico/projects/maranr_watering_system/py/pico_lib1_tests
     from read_last_n_lines import read_last_n_lines, Z__set_chunk_size   # <-- EDIT if needed
     TEST_PATH = "_rlnl_test.txt"
-    ok_flag = True
+    where_imported = "Imported successfully the function from  ./read_last_n_lines.py"
 except ImportError:
-    print("From ./read_last_n_lines.py: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
-if not ok_flag:
+    pass #print("From ./read_last_n_lines.py: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
+if not where_imported:
     raise RuntimeError("Cannot find/import the module that contains the read_last_n_lines function")
-
+print(f"{where_imported}")
 ###TEST_PATH = "._rlnl_test.txt"
 
 RANDOM_CASES_PER_CHUNK = 60       # raise for a longer run

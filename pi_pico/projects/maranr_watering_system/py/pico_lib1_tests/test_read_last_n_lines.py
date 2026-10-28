@@ -4,8 +4,9 @@
 # Intended to be run using CPython 3 under Linux.
 # There is a separate test (pico_test_read_last_n_lines.py) for running on the Pico.
 #
-# Usage, from the folder that contains this file and lib1_FAKE/:
+# This test currently is run like this:
 #     python3 test_read_last_n_lines.py
+# It assumes the read_last_n_lines.py is in the same dir as this test.
 #
 # The tests change the chunk size via Z__set_chunk_size() (tests only), which
 # exercises chunk boundaries and UTF-8 characters split across chunks.
@@ -30,6 +31,7 @@ import tempfile
 # OLD APPROACH: from lib1_FAKE.read_last_n_lines import read_last_n_lines, Z__set_chunk_size
 # NEW APPROACH: read the functions directly from ./read_last_n_lines.py
 from read_last_n_lines import read_last_n_lines, Z__set_chunk_size
+print("Imported successfully the function(s) from ./read_last_n_lines.py")
 
 CHUNK_SIZES = (1, 2, 3, 7, 16, 100, 128)
 RANDOM_CASES_PER_CHUNK = 1500
