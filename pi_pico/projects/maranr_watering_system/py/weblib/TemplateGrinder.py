@@ -7,7 +7,7 @@ from lib1.utils import get_memory_status_string
 from lib1.utils import get_fs_space_string
 from lib2.TimeMgr import TimeMgr
 
-try: from typing import Any
+try: from typing import Any, Callable
 except ImportError: pass
 
 
@@ -19,17 +19,24 @@ logi:  Any = None
 START_MARKER = "[["
 END_MARKER = "]]"
 
+"""
+@@@@@@@@@@@@@@
+Optional simplification. If every entry had all three parts, with () and {} 
+for the missing ones, the len(funct_info) checks could go and you could
+ use a precise type, tuple[Callable[..., str], tuple[Any, ...], dict[str, Any]]. 
+That costs a little more memory per entry, so it’s your call.
+"""
 
 # Key: the symbol from the template
 # Value: a tuple of 3 items:
 #    callable to be invoked
-#      params for the callable
-#      keyword-params for the callable (omitted if none)
-BODY_SUBS: dict[str, tuple[Any, ...]] = {
+#      params for the callable - empty tuple if none
+#      keyword-params for the callable - empty dict if none
+BODY_SUBS: dict[str, tuple[Callable[...,str], tuple[Any,...],dict[str,Any]]] = {
     # NOTE keys are always all lower case!
     "filesystem-status-splitline": (get_fs_space_string, (), {"sep":"<br>"} ),
-    "memory-status": (get_memory_status_string, ()),
-    "date-time": (TimeMgr.get_formatted_date_time_string, ()),
+    "memory-status": (get_memory_status_string, (), {}),
+    "date-time": (TimeMgr.get_formatted_date_time_string, (), {}),
     }
 
 VALIDATE = 7020405
@@ -69,14 +76,11 @@ class TemplateGrinder(ElemLoggerABC):
         funct_info = BODY_SUBS.get(symbol_stg)
         if funct_info is None:
             return f"UNKOWN:{symbol_stg}"
-            
+        
+        # Get the function to call and get its args 
         funct = funct_info[0]
-        args = ()
-        kw = {}
-        if len(funct_info) > 1:
-            args = funct_info[1]
-        if len(funct_info) > 2:
-            kw = funct_info[2]
+        args = funct_info[1]
+        kw = funct_info[2]
 
         r = funct(*args, **kw)
         return r
