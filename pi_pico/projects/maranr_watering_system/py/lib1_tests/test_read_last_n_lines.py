@@ -28,10 +28,8 @@ import random
 import sys
 import tempfile
 
-# OLD APPROACH: from lib1_FAKE.read_last_n_lines import read_last_n_lines, Z__set_chunk_size
-# NEW APPROACH: read the functions directly from ./read_last_n_lines.py
 from lib1.read_last_n_lines import read_last_n_lines, Z__set_chunk_size, Z__set_print
-print("Imported successfully the function(s) from ./read_last_n_lines.py")
+print("Imported successfully the function(s) from lib1/read_last_n_lines.py")
 
 CHUNK_SIZES = (1, 2, 3, 7, 16, 100, 128)
 RANDOM_CASES_PER_CHUNK = 1500
@@ -92,7 +90,7 @@ FIXED = [
 ]
 
 
-def random_file(rng: random.Random) -> bytes:
+def create_random_data(rng: random.Random) -> bytes:
     words = ["a", "bb", "ccc", "line", "x" * 40, "é", "日本語", "\U0001F600", ""]
     out = []
     for _ in range(rng.randint(0, 40)):
@@ -108,6 +106,19 @@ def random_file(rng: random.Random) -> bytes:
 
     
 def perform_test() -> int:
+    """ """
+    
+    # capture 'print' from the function
+    capturesPrint = CapturesPrint()
+    old_print = Z__set_print(capturesPrint.print)
+    try:
+        result = do_perform_test()
+    finally:
+        Z__set_print(old_print)
+    return result
+
+
+def do_perform_test() -> int:
     """ """
     
     # capture 'print' from the function
@@ -146,7 +157,7 @@ def perform_test() -> int:
                 run_test_case("fixed", data, rel, n, False, exp_ignore, chunk)
                 run_test_case("fixed", data, rel, n, True, exp_show, chunk)
             for _ in range(RANDOM_CASES_PER_CHUNK):
-                data = random_file(rng)
+                data = create_random_data(rng)
                 nlines = len(data.split(b"\n"))
                 rel = rng.randint(0, nlines + 3)
                 n = rng.randint(0, 6)

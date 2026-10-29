@@ -15,32 +15,11 @@ import random
 
 where_imported = ""
 try:
-    # This import is used on the PICO where lib1_FAKE simulates the
-    # lib1/ package.
-    from lib1_FAKE.read_last_n_lines import read_last_n_lines, Z__set_chunk_size   # <-- EDIT if needed
+    from lib1.read_last_n_lines import read_last_n_lines, Z__set_chunk_size
     TEST_PATH = "_rlnl_test.txt"
     where_imported = "Imported successfully the function from  lib1_FAKE.read_last_n_lines"
 except ImportError:
     pass #print("Using lib1_FAKE: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
-try:
-    # This imports the function from ./read_last_n_lines.py
-    # It is used to run this test directly in the PICO repo dir:
-    #   .../git/microcontrollers/pi_pico/projects/maranr_watering_system/py/pico_lib1_tests
-    from read_last_n_lines import read_last_n_lines, Z__set_chunk_size   # <-- EDIT if needed
-    TEST_PATH = "_rlnl_test.txt"
-    where_imported = "Imported successfully the function from  ./read_last_n_lines.py"
-except ImportError:
-    pass #print("From ./read_last_n_lines.py: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
-
-try:
-    # This imports the function from ./read_last_n_lines.py
-    # It is used to run this test directly in the PICO repo dir:
-    #   .../git/microcontrollers/pi_pico/projects/maranr_watering_system/py/pico_lib1_tests
-    from pico_lib1_tests.read_last_n_lines import read_last_n_lines, Z__set_chunk_size   # <-- EDIT if needed
-    TEST_PATH = "_rlnl_test.txt"
-    where_imported = "Imported successfully the function from this dir using:  pico_lib1_tests/read_last_n_lines.py"
-except ImportError:
-    pass #print("From (this dir as:) pico_lib1_tests/read_last_n_lines.py: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
 
 if not where_imported:
     raise RuntimeError("Cannot find/import the module that contains the read_last_n_lines function")
@@ -51,7 +30,7 @@ RANDOM_CASES_PER_CHUNK = 60       # raise for a longer run
 CHUNK_SIZES = (1, 3, 7, 100, 128)
 
 
-def reference(data, rel, n, show_blank_lines):
+def create_reference_data(data, rel, n, show_blank_lines):
     # Simple, obviously-correct version: read everything, split, slice.
     if rel <= 0 or n <= 0:
         return []
@@ -98,7 +77,7 @@ FIXED = [
 WORDS = ["a", "bb", "ccc", "line", "x" * 40, "é", "日本語", ""]
 
 
-def random_file():
+def create_random_data():
     out = []
     for _ in range(random.randint(0, 25)):
         words = [random.choice(WORDS) for _ in range(random.randint(0, 5))]
@@ -116,7 +95,7 @@ failures = []
 total = 0
 
 
-def check(label, data, rel, n, show, expected, chunk):
+def run_test_case(label, data, rel, n, show, expected, chunk):
     global total
     total += 1
     with open(TEST_PATH, "wb") as f:
@@ -131,7 +110,7 @@ def check(label, data, rel, n, show, expected, chunk):
 
 # the hand-written expected values must agree with the reference
 for data, rel, n, exp_ignore, exp_show in FIXED:
-    if reference(data, rel, n, False) != exp_ignore or reference(data, rel, n, True) != exp_show:
+    if create_reference_data(data, rel, n, False) != exp_ignore or create_reference_data(data, rel, n, True) != exp_show:
         print("TEST BUG: reference disagrees with the hand-written value for", data, rel, n)
 
 random.seed(12345)
@@ -140,15 +119,15 @@ for chunk in CHUNK_SIZES:
     Z__set_chunk_size(chunk)
     print("chunk size:", chunk)
     for data, rel, n, exp_ignore, exp_show in FIXED:
-        check("fixed", data, rel, n, False, exp_ignore, chunk)
-        check("fixed", data, rel, n, True, exp_show, chunk)
+        run_test_case("fixed", data, rel, n, False, exp_ignore, chunk)
+        run_test_case("fixed", data, rel, n, True, exp_show, chunk)
     for _ in range(RANDOM_CASES_PER_CHUNK):
-        data = random_file()
+        data = create_random_data()
         nlines = len(data.split(b"\n"))
         rel = random.randint(0, nlines + 3)
         n = random.randint(0, 5)
         show = random.choice([False, True])
-        check("random", data, rel, n, show, reference(data, rel, n, show), chunk)
+        run_test_case("random", data, rel, n, show, create_reference_data(data, rel, n, show), chunk)
 Z__set_chunk_size(original_chunk)
 
 os.remove(TEST_PATH)
