@@ -30,15 +30,25 @@ import tempfile
 
 # OLD APPROACH: from lib1_FAKE.read_last_n_lines import read_last_n_lines, Z__set_chunk_size
 # NEW APPROACH: read the functions directly from ./read_last_n_lines.py
-from read_last_n_lines import read_last_n_lines, Z__set_chunk_size
+from lib1.read_last_n_lines import read_last_n_lines, Z__set_chunk_size, Z__set_print
 print("Imported successfully the function(s) from ./read_last_n_lines.py")
 
 CHUNK_SIZES = (1, 2, 3, 7, 16, 100, 128)
 RANDOM_CASES_PER_CHUNK = 1500
 
+class CapturesPrint:
+    """ Capture printed output from the function being tested """
+    def __init__(self):
+        self.captured: list[str] = []
 
-def reference(data: bytes, rel: int, n: int, show_blank_lines: bool) -> list[str]:
-    """Simple, obviously-correct version: read everything, split, slice."""
+    def print(self, s:str) -> None:
+        self.captured.append(s)
+
+
+def create_reference_data(data: bytes, rel: int, n: int, show_blank_lines: bool) -> list[str]:
+    """ Does the same thing as the read_last_n_lines() function.
+    It's a simpler, obviously-correct version: read everything, split, slice.
+    """
     if rel <= 0 or n <= 0:
         return []
     pieces = data.split(b"\n")
@@ -96,7 +106,15 @@ def random_file(rng: random.Random) -> bytes:
     return data
 
 
-def main() -> int:
+    
+def perform_test() -> int:
+    """ """
+    
+    # capture 'print' from the function
+    capturesPrint = CapturesPrint()
+    Z__set_print(capturesPrint.print)
+
+
     failures = []
     total = 0
     rng = random.Random(12345)
@@ -104,7 +122,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         path = os.path.join(tmp, "t.txt")
 
-        def check(label, data, rel, n, show, expected, chunk):
+        def run_test_case(label, data, rel, n, show, expected, chunk):
             nonlocal total
             total += 1
             with open(path, "wb") as f:
@@ -118,22 +136,23 @@ def main() -> int:
 
         # the hand-written expected values must agree with the reference
         for data, rel, n, exp_ignore, exp_show in FIXED:
-            assert reference(data, rel, n, False) == exp_ignore, ("reference disagrees", data, rel, n, False)
-            assert reference(data, rel, n, True) == exp_show, ("reference disagrees", data, rel, n, True)
+            assert create_reference_data(data, rel, n, False) == exp_ignore, ("reference disagrees", data, rel, n, False)
+            assert create_reference_data(data, rel, n, True) == exp_show, ("reference disagrees", data, rel, n, True)
 
         original_chunk = Z__set_chunk_size(CHUNK_SIZES[0])
         for chunk in CHUNK_SIZES:
             Z__set_chunk_size(chunk)
             for data, rel, n, exp_ignore, exp_show in FIXED:
-                check("fixed", data, rel, n, False, exp_ignore, chunk)
-                check("fixed", data, rel, n, True, exp_show, chunk)
+                run_test_case("fixed", data, rel, n, False, exp_ignore, chunk)
+                run_test_case("fixed", data, rel, n, True, exp_show, chunk)
             for _ in range(RANDOM_CASES_PER_CHUNK):
                 data = random_file(rng)
                 nlines = len(data.split(b"\n"))
                 rel = rng.randint(0, nlines + 3)
                 n = rng.randint(0, 6)
                 for show in (False, True):
-                    check("random", data, rel, n, show, reference(data, rel, n, show), chunk)
+                    run_test_case("random", data, rel, n, show, 
+                                  create_reference_data(data, rel, n, show), chunk)
         Z__set_chunk_size(original_chunk)
 
         # Z__set_chunk_size: returns the old size, rejects sizes below 1
@@ -154,21 +173,29 @@ def main() -> int:
                              f"{again=} {rejected=} {after=}"))
 
         # missing file -> []
-        print("Next: reading a file that does not exist on purpose. The function should")
-        print("print ONE error line (FileNotFoundError) and return []. That is expected.")
+        print("TRLNL@176: Try to read a file that does not exist.")
+        print("TRLNL@177: It should print ONE error line (FileNotFoundError) and return [].")
         total += 1
+        assert len(capturesPrint.captured) == 0
         got = read_last_n_lines(os.path.join(tmp, "does_not_exist.txt"), 1, 1)
-        print("(end of the expected error output)\n")
+        assert len(capturesPrint.captured) == 1
+        print(f"TRLNL@182: Captured print: {capturesPrint.captured=}")
+        assert "FileNotFoundError" in capturesPrint.captured[0]
         if got != []:
             failures.append(("missing file", None, None, b"", 1, 1, [], got))
 
-    print(f"{total} cases, {len(failures)} failures")
+    print(f"TRLNL@187: {total} cases, {len(failures)} failures")
     for label, chunk, show, data, rel, n, expected, got in failures[:5]:
-        print(f"   e.g. [{label}, chunk={chunk}, show_blank_lines={show}] data={data[:60]!r} rel={rel} n={n}")
-        print(f"        expected={expected!r}")
-        print(f"        got     ={got!r}")
-    print("RESULT: " + ("FAILED" if failures else "PASSED - all cases correct"))
+        print(f"TRLNL@189:    e.g. [{label}, chunk={chunk}, show_blank_lines={show}] data={data[:60]!r} rel={rel} n={n}")
+        print(f"TRLNL@190:         expected={expected!r}")
+        print(f"TRLNL@191:         got     ={got!r}")
+    print("TRLNL@192: RESULT: " + ("FAILED" if failures else "PASSED - all cases correct"))
     return 1 if failures else 0
+
+
+def main() -> int:
+    """ """
+    return perform_test()
 
 
 if __name__ == "__main__":

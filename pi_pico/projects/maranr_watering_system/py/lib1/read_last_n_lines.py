@@ -1,5 +1,10 @@
 # read_last_n_lines.py
 #
+# Micropython function to read lines from the tail of a file (e.g., a log)
+
+try: from typing import Callable
+except ImportError: pass
+
 # os module on MicroPython does not define these (unlike Py3)
 SEEK_SET = 0  # relative to start of file
 SEEK_CURR = 1  # relative to current file position
@@ -8,6 +13,17 @@ SEEK_END = 2  # relative to end of file
 # Bytes read per step, small to save memory on the Pico.
 # Tests change this ONLY via Z__set_chunk_size(); production code must never change it.
 _CHUNK_SIZE = 128
+
+# Allows redirecting the output of this module - mainly for testing.
+def _PRINT(s:str) -> str:
+    print(s)
+    return ""
+_print: Callable[[str],str] = _PRINT
+
+# def Z__set_print(new_print: Callable[[str], str]) -> None:
+    # global _print
+    # _print = new_print
+#@@@@@@@@@@@@@@@@@@@@@@@
 
 
 def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: int,
@@ -62,7 +78,7 @@ def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: in
                             lines.pop()  # drop the newest, we want the older ones
             return lines
     except OSError as ex:
-        print(f"FU read_last_n_lines  EX={repr(ex)}  errno={ex.errno}")
+        _print(f"FU read_last_n_lines  EX={repr(ex)}  errno={ex.errno}")
         return []
 
 
@@ -77,6 +93,13 @@ def Z__set_chunk_size(new_chunk_size: int) -> int:
     old_chunk_size = _CHUNK_SIZE
     _CHUNK_SIZE = new_chunk_size
     return old_chunk_size
+
+def Z__set_print(new_print: Callable[[str], str]) -> None:
+    """ Replace the print output function with one the caller
+    wants to use. Used mainly for testing.
+    """
+    global _print
+    _print = new_print
 
 
 # ----------------------------------------------------------------------
