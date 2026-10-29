@@ -106,6 +106,7 @@ alias PUSH_lib2_to_pico=../scripts/PUSH_lib2_to_pico.sh
 alias PUSH_logger_elem_to_pico=../scripts/PUSH_logger_elem_to_pico.sh
 alias PUSH_main_to_pico=../scripts/PUSH_main_to_pico.sh
 alias PUSH_mws_to_pico=../scripts/PUSH_mws_to_pico.sh
+alias PUSH_pico_lib1_tests_to_pico=../scripts/PUSH_pico_lib1_tests_to_pico.sh
 alias PUSH_primitives_to_pico=../scripts/PUSH_primitives_to_pico.sh
 alias PUSH_sensors_to_pico=../scripts/PUSH_sensors_to_pico.sh
 #alias PUSH_triv log_to_pico=../scripts/PUSH_triv log_to_pico.sh

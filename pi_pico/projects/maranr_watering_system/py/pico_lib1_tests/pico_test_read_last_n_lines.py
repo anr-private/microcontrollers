@@ -31,6 +31,17 @@ try:
     where_imported = "Imported successfully the function from  ./read_last_n_lines.py"
 except ImportError:
     pass #print("From ./read_last_n_lines.py: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
+
+try:
+    # This imports the function from ./read_last_n_lines.py
+    # It is used to run this test directly in the PICO repo dir:
+    #   .../git/microcontrollers/pi_pico/projects/maranr_watering_system/py/pico_lib1_tests
+    from pico_lib1_tests.read_last_n_lines import read_last_n_lines, Z__set_chunk_size   # <-- EDIT if needed
+    TEST_PATH = "_rlnl_test.txt"
+    where_imported = "Imported successfully the function from this dir using:  pico_lib1_tests/read_last_n_lines.py"
+except ImportError:
+    pass #print("From (this dir as:) pico_lib1_tests/read_last_n_lines.py: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
+
 if not where_imported:
     raise RuntimeError("Cannot find/import the module that contains the read_last_n_lines function")
 print(f"{where_imported}")

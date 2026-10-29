@@ -46,6 +46,19 @@ d = (1, 2, 3)            # OK
 d = (1, some_obj, 'a')   # OK
 d = (None, None)         # OK
 
+EX: dispatch dictionary
+# key: symbol saying which handler to call
+# value: handler a tuple of:
+#   (ref-to-function-or-method, tuple-of-args, dict-of-kw-args)
+# OR if no keyword args are needed:
+#   (ref-to-function-or-method, tuple-of-args)
+BODY_SUBS: dict[str, tuple[Any, ...]] = {
+    #  symbol  -- call function get_fs_space_string, no args, kwargs sep="<br>"
+    "filesystem-status-splitline": (get_fs_space_string, (), {"sep":"<br>"} ),
+    # symbol   -- call function get_memory_status_string, no args, no kw-args
+    "memory-status": (get_memory_status_string, ()),
+
+
 ===============================================================
 
 Used Claude to determine some details.
