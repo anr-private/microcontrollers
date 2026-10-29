@@ -19,17 +19,10 @@ logi:  Any = None
 START_MARKER = "[["
 END_MARKER = "]]"
 
-"""
-@@@@@@@@@@@@@@
-Optional simplification. If every entry had all three parts, with () and {} 
-for the missing ones, the len(funct_info) checks could go and you could
- use a precise type, tuple[Callable[..., str], tuple[Any, ...], dict[str, Any]]. 
-That costs a little more memory per entry, so it’s your call.
-"""
 
 # Key: the symbol from the template
 # Value: a tuple of 3 items:
-#    callable to be invoked
+#    callable to be invoked - returns a str, the value to be inserted 
 #      params for the callable - empty tuple if none
 #      keyword-params for the callable - empty dict if none
 BODY_SUBS: dict[str, tuple[Callable[...,str], tuple[Any,...],dict[str,Any]]] = {
