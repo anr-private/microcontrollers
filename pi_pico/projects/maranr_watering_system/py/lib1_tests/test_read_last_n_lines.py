@@ -192,23 +192,23 @@ def do_perform_test(capturesPrint: CapturesPrint) -> int:
                              f"{again=} {rejected=} {after=}"))
 
         # missing file -> []
-        print("TRLNL@176: Try to read a file that does not exist.")
-        print("TRLNL@177: It should print ONE error line (FileNotFoundError) and return [].")
+        print("TRLNL@195: Try to read a file that does not exist.")
+        print("TRLNL@196: It should print ONE error line (FileNotFoundError) and return [].")
         total += 1
         assert len(capturesPrint.captured) == 0
         got = read_last_n_lines(os.path.join(tmp, "does_not_exist.txt"), 1, 1)
         assert len(capturesPrint.captured) == 1
-        print(f"TRLNL@182: Captured print: {capturesPrint.captured=}")
+        print(f"TRLNL@201: Captured print: {capturesPrint.captured=}")
         assert "FileNotFoundError" in capturesPrint.captured[0]
         if got != []:
             failures.append(("missing file", None, None, b"", 1, 1, [], got))
 
-    print(f"TRLNL@187: {total} cases, {len(failures)} failures")
+    print(f"TRLNL@206: {total} cases, {len(failures)} failures")
     for label, chunk, show, data, rel, n, expected, got in failures[:5]:
-        print(f"TRLNL@189:    e.g. [{label}, chunk={chunk}, show_blank_lines={show}] data={data[:60]!r} rel={rel} n={n}")
-        print(f"TRLNL@190:         expected={expected!r}")
-        print(f"TRLNL@191:         got     ={got!r}")
-    print("TRLNL@192: RESULT: " + ("FAILED" if failures else "PASSED - all cases correct"))
+        print(f"TRLNL@208:    e.g. [{label}, chunk={chunk}, show_blank_lines={show}] data={data[:60]!r} rel={rel} n={n}")
+        print(f"TRLNL@209:         expected={expected!r}")
+        print(f"TRLNL@210:         got     ={got!r}")
+    print("TRLNL@211: RESULT: " + ("FAILED" if failures else "PASSED - all cases correct"))
     return 1 if failures else 0
 
 

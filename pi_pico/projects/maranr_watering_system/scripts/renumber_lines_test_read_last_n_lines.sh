@@ -8,7 +8,7 @@ PYTHON_EXE=python3
 
 FDIR="lib1_tests"
 FNAME="test_read_last_n_lines.py"
-TARGET='TG@'
+TARGET='TRLNL@'
 
 FPATH="${FDIR}/${FNAME}"
 OUT_FPATH="${FPATH}.out"
