@@ -58,6 +58,15 @@ BODY_SUBS: dict[str, tuple[Any, ...]] = {
     # symbol   -- call function get_memory_status_string, no args, no kw-args
     "memory-status": (get_memory_status_string, ()),
 
+--- FILE DESCRIPTOR  ---------------------------
+
+try: from typing import IO
+except ImportError: pass
+
+f: "IO[str] | None" = None
+...
+f = open("myfile", "r")
+
 
 ===============================================================
 

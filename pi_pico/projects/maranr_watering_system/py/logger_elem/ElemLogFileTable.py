@@ -7,6 +7,8 @@ from lib1.read_last_n_lines import read_last_n_lines
 from lib1.file_utils import remove_file
 from lib1.file_utils import filter_dir_contents
 
+try: from typing import IO
+except ImportError: pass
 
 # subdir in which log files are found
 LOG_FILES_SUBDIR = "logs"
@@ -55,49 +57,49 @@ class ElemLogFileTable:
         #    removed to reclaim file space.
         # A logfile is added to the table when it is closed and
         # so replaced with a new 'currently-open logfile'.
-        self._log_file_table = []
+        self._log_file_table: list[ tuple[str, int, int] ] = []
 
         # path of currently-open log file
         self._current_log_fpath: str = EMPTY_LOG_FPATH_MARKER_STG
         # file descriptor for currently-open logfile
-        self._logf = None
+        self._logf: IO[str] | None = None
         # file size (bytes) of the currently-open file
-        self._current_log_fsize = 0
+        self._current_log_fsize: int = 0
 
         # An int value: the value to be used for the file extension 
         # of the next log file that will be created. 
         # The value is converted into 3 decimal digits
         # and used as the file extension on BASE_LOG_FNAME.
-        # If None, no logs have been opened yet so we'll need  to
+        # If negative (ex: -1), no logs have been opened yet so we'll need  to
         # determine the file extension of the first file.
         # And if None, the _log_file_table will be empty.
-        self._fname_next_ctr = None
+        self._fname_next_ctr: int = -1
 
 
 
-    def _set_max_log_file_size(self, new_max_size):
+    def _set_max_log_file_size(self, new_max_size: int) -> None:
         # unit test ONLY
         print(f"ELFT@79  _set_max_log_file_size to {new_max_size} =======================================")
         global MAX_LOG_FILE_SIZE
         MAX_LOG_FILE_SIZE = new_max_size
 
-    def _set_log_fspace_high_watermark(self, new_high_watermark):
+    def _set_log_fspace_high_watermark(self, new_high_watermark: int) -> None:
         # unit test ONLY
         print(f"ELFT@85  _set_log_fspace_high_watermark to {new_high_watermark} =======================================")
         global LOG_FSPACE_HIGH_WATERMARK
         LOG_FSPACE_HIGH_WATERMARK = new_high_watermark
 
-    def _set_log_fspace_low_watermark(self, new_low_watermark):
+    def _set_log_fspace_low_watermark(self, new_low_watermark: int) -> None:
         # unit test ONLY
         print(f"ELFT@91  _set_log_fspace_low_watermark to {new_low_watermark} =======================================")
         global LOG_FSPACE_LOW_WATERMARK
         LOG_FSPACE_LOW_WATERMARK = new_low_watermark
 
 
-    def get_current_log_fpath(self):
+    def get_current_log_fpath(self) -> str:
         return self._current_log_fpath
 
-    def get_current_log_fsize(self):
+    def get_current_log_fsize(self) -> int:
         return self._current_log_fsize
 
 
@@ -310,7 +312,7 @@ class ElemLogFileTable:
 
 
     def _make_new_log_fpath(self):
-        if self._fname_next_ctr is None:
+        if self._fname_next_ctr < 0:
             # Determine the file extension of the first logfile that
             # we are going to write in this session.
             new_extension_value = self._determine_starting_fname_extension_value()
