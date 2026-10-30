@@ -1,1 +1,32 @@
-#
+
+**1. Sharing tests between pytest and the Pico.** Yes, if the shared tests are written as plain functions named `test_...()` that use plain `assert` and import no pytest. pytest collects those natively and shows the values when an assert fails. On the Pico, a roughly 15-line runner finds the `test_` functions in `globals()`, calls each one, catches `AssertionError` and other exceptions, counts them, and prints the `RESULT:` line. What you give up in shared tests is pytest's `parametrize` and fixtures. Your table-driven style (`FIXED` plus the random cases) doesn't need them. To keep per-case detail, a table-driven test can collect its failing cases and assert once with a message like `assert not failures, failures[:5]`. The platform differences (scratch directory, captured print) go into a tiny helper, so the test bodies contain no `if micropython`.
+
+**2. Keeping the Pico clean, and the "BIG_TEST.py" idea.** `mpremote run` sends the script text and copies nothing, which is what you want. For shared test files the script needs the runner too, so a driver script on the PC would build a temporary file for each test file: the test source plus the runner. It runs `mpremote run` on that file, reads the `RESULT:` line from the output, and prints one summary line per file and a total. Nothing is installed on the board except the production code. I'd avoid one giant script for two reasons. The Pico compiles the whole script in RAM, so a big one risks `MemoryError`. And tests would share module state, such as the `Z__` hooks. One run per file also shows which file failed.
+
+The alternative is `mpremote mount`. It mounts a local directory under `/remote` on the device, so the board can import shared helper modules from the PC. The docs I could reach don't say what it does to the device's current directory or `sys.path`. If the current directory becomes `/remote`, then relative scratch files would be written onto your PC, not the board. Check `os.getcwd()` before relying on it. Mounting is also slower and has quirks with soft resets.
+
+**3. Telling platforms apart.** Let the directory say where a test runs:
+```
+tests/
+  shared/    test_*.py        pytest AND the Pico driver
+  cpython/   test_*.py        pytest only (fakes for machine etc.)
+  pico/      pico_test_*.py   mpremote only
+  run_pico_tests.py           the driver
+```
+pytest collects `test_*.py` by default, so the `pico_test_` prefix already keeps it away from Pico-only files. A `pytest.ini` with `testpaths = tests/shared tests/cpython` and `pythonpath = py py/lib` makes tests import the real production files, so there are no copies. The venv sits at the repo root and is gitignored, with a `requirements-dev.txt`. The support file can then live under `tests/cpython/`, with no per-directory symlinks.
+
+**4. Priorities.** In order: one command per platform (`pytest` and `python tests/run_pico_tests.py`); one summary line per file, with details only for failures; adding a test means adding a `test_` function, with no registration because the runner finds it by name. Everything else (coverage, CI, fixtures) waits until something hurts.
+
+**5. What can be shared.** Pure logic, such as `read_last_n_lines` and the string and conversion helpers, is shared. Filesystem code is shared if the scratch path is abstracted. Hardware code is Pico-only. Anything that needs fakes is CPython-only. I'd start new tests as shared and move them only when they need a platform feature.
+
+Questions for you:
+- Are you happy with plain asserts, losing parametrize and fixtures in the shared tests?
+- Should the tree be a top-level `tests/`, or do you want to keep your existing `lib1_tests/` name?
+- The repo-location question is still open.
+
+If you agree, I'd prototype this on `read_last_n_lines`, since that test is already close to shared form. I wouldn't start until you say so.
+
+Sources: [mpremote man page (Debian, v0.4.0)](https://manpages.debian.org/unstable/micropython-mpremote/mpremote.1.en.html), [MicroPython forum: running unit tests stored on the host](https://forum.micropython.org/viewtopic.php?p=70728)
+
+:wrap=soft:
+###

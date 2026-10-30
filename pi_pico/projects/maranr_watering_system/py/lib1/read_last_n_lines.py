@@ -34,6 +34,8 @@ def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: in
     returned (as ""). The final newline of the file ends the last line, it
     does not start another one. A line holding only a CR (from a CRLF file)
     is not empty.
+    Bytes that are not valid UTF-8 are replaced with U+FFFD which 
+    precludes a UnicodeError.
     Returns [] if the file cannot be read.
     """
     if relative_line_number <= 0 or number_of_lines <= 0:
@@ -66,13 +68,13 @@ def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: in
                     counts = bool(line) or (show_blank_lines and not at_end)
                     at_end = False
                     if counts:
-                        lines.insert(0, line.decode('utf-8'))
+                        lines.insert(0, line.decode('utf-8', 'replace'))
                         found += 1
                         if len(lines) > number_of_lines:
                             lines.pop()  # drop the newest, we want the older ones
             return lines
     except OSError as ex:
-        _print(f"FU read_last_n_lines  EX={repr(ex)}  errno={ex.errno}")
+        _print(f"read_last_n_lines  EX={repr(ex)}  errno={ex.errno}")
         return []
 
 
