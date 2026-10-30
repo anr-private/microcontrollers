@@ -369,16 +369,19 @@ class ElemLogFileTable:
         # Return the int value of that file extension.
         # Returns 
         # gets (fname, ftype, fsize, file-extension-int-value) 
-        existing_logs_info = filter_dir_contents(LOG_FILES_SUBDIR, _log_file_filter)
-
-        print(f"ELFT@373 _determine_starting_fname_extension_value fname_ext_values={existing_logs_info}")
+        try:
+            existing_logs_info = filter_dir_contents(LOG_FILES_SUBDIR, _log_file_filter)
+            print(f"ELFT@373 _determine_biggest_existing_log_fname_extension_value fname_ext_values={existing_logs_info}")
+        except RuntimeError as ex:
+            print(f"ELFT@376 _determine_biggest_existing_log_fname_extension_value FAILED: ex={ex} {str(ex)}")
+            return None
 
         if len(existing_logs_info) == 0: 
             return None
 
         biggest = max([fitem[3] for fitem in existing_logs_info])
 
-        print(f"ELFT@380 max _determine_starting_fname_extension_value is {biggest=}")
+        print(f"ELFT@380 max _determine_biggest_existing_log_fname_extension_value is {biggest=}")
 
         return biggest
 

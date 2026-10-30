@@ -2,6 +2,10 @@
 
 import os
 
+# no 'stat' in micropython
+try: import stat
+except ImportError: pass
+
 try: from typing import Callable, Any
 except ImportError: pass
 
@@ -33,7 +37,7 @@ def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
     # Filter the filenames in a directory.
     # Returns a collection of tuples:
     #   (fname, ftype, fsize, result-value)
-    # Where 
+    # Where
     #  fname is the filename (incl extension, but no path info)
     #    (it is the dir name if ftype is 'd')
     #  ftype is 'd', 'f', '?'
@@ -85,7 +89,9 @@ def list_dir_contents(dir_path):
     # Returns dir contents as tuples (in no particular order):
     #   (fname, ftype, fsize)
     # fname is filename (no path info)
-    # ftype is 'd' for a dir, 'f' for a file, '?' otherwise
+    # ftype is 'd' for a dir, 'f' for a file,
+    # 'L' sym-link  'F' fifo  'S' socket  'B' block dev  'C' char dev      
+    # Possiblty '?' if otherwise
     if use_os_ilistdir: return list_dir_micropython(dir_path)
     return list_dir_python(dir_path)
 
@@ -103,35 +109,38 @@ def list_dir_contents(dir_path):
 
 def list_dir_python(dir_path): # 'real' python
     results = []
-    with os.scandir(dir_path) as entries:
-        for entry in entries:
-            #fpath = entry.path
-            item_name = entry.name
-            file_size = entry.stat().st_size
-            if entry.is_dir():
-                item_type = "d"
-            elif entry.is_file():
-                item_type = "f"
-            elif entry.is_symlink():
-                item_type = "L"
-            elif stat.S_ISFIFO(mode):
-                item_type = 'F'
-            elif stat.S_ISSOCK(mode):
-                item_type = 'S'
-            elif stat.S_ISBLK(mode):
-                item_type = 'B'
-            elif stat.S_ISCHR(mode):
-                item_type = 'C'
-            else:
-                item_type = "unknown"
-            results.append( [item_name, item_type, file_size] )
+    try:
+        with os.scandir(dir_path) as entries:
+            for entry in entries:
+                #fpath = entry.path
+                item_name = entry.name
+                item_stat = entry.stat(follow_symlinks=False)
+                item_mode = item_stat.st_mode
+                file_size = item_stat.st_size
+                if entry.is_symlink():  # must be tested before is_dir,is_file
+                    item_type = "L"
+                elif entry.is_dir():
+                    item_type = "d"
+                elif entry.is_file():
+                    item_type = "f"
+                elif stat.S_ISFIFO(item_mode):
+                    item_type = 'F'
+                elif stat.S_ISSOCK(item_mode):
+                    item_type = 'S'
+                elif stat.S_ISBLK(item_mode):
+                    item_type = 'B'
+                elif stat.S_ISCHR(item_mode):
+                    item_type = 'C'
+                else:
+                    item_type = "unknown"
+                results.append( (item_name, item_type, file_size) )
+    except Exception as ex:
+        print(f"FU@131 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        raise RuntimeError(f"list_dir_python FAILED. EX={ex} {str(ex)}")
     return results
 
 def list_dir_micropython(dir_path):
-    #print(f"FU@106  USING list_dir_micropython  {dir_path}")
-
     results = []
-
     try:
         for entry in os.ilistdir(dir_path):   # type: ignore[attr-defined]
             fname = entry[0] # may be the dir name
@@ -153,7 +162,8 @@ def list_dir_micropython(dir_path):
     
             results.append ( (fname, ftype, fsize) )
     except Exception as ex:
-        print(f"FU@131 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        print(f"FU@160 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        raise RuntimeError(f"list_dir_micropython FAILED. EX={ex} {str(ex)}")
 
     return results
 
