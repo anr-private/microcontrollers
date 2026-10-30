@@ -9,6 +9,8 @@
 # It needs lib1/file_utils.py on the Pico. The output ends with a line that
 # contains RESULT: PASSED or RESULT: FAILED.
 #
+# It also runs on CPython3.
+#
 # It creates two scratch directories (SCRATCH_DIR, TREE_DIR) in the Pico's flash
 # and removes them at the end. About a dozen tiny files, one of BIG_SIZE bytes,
 # so the flash wear is negligible.
@@ -21,7 +23,8 @@
 # Not tested on purpose: symlinks, FIFOs and the like (they cannot exist on the
 # Pico), and the size reported for a directory (the application does not use it).
 #
-# No __main__ guard at the bottom: this file is only ever run, never imported.
+# No __main__ guard: this file is only ever run, never imported.
+
 import os
 
 from lib1.file_utils import list_dir_contents, filter_dir_contents, remove_subdir, remove_file
@@ -215,5 +218,39 @@ def perform_test() -> int:
 
 
 perform_test()
+
+"""
+Claude built this test. Its notes:
+It has 15 checks, in the same plain-script style as
+ pico_test_read_last_n_lines.py. 
+It builds a small scratch directory in flash and checks:
+
+list_dir_contents: the names, types and sizes of files (including an empty file
+ and a 1000-byte one), a hidden name, a name with spaces, a subdirectory and an
+ empty directory. It also checks that the listing doesn’t descend into
+ subdirectories, and that a missing directory raises.
+filter_dir_contents: the filter is called once per entry with (name, type,
+ size), None drops an entry, and False keeps it. That is the gotcha documented 
+in the function’s comment.
+remove_file: returns True when it removes a file and False for a missing one.
+remove_subdir: removes a tree three levels deep and doesn’t raise for a missing
+ path. On the board this is the first real test of the recursion fix.
+
+Directory sizes, symlinks and FIFOs are skipped, as you decided. Test lines
+ carry a TFUT@NNN: prefix, deliberately free of the substring FU@ so a search
+ for FU@ finds only file_utils messages. The line numbers are already correct.
+
+I ran it here on CPython: 15 checks passed. I also broke file_utils five
+ different ways, and the test failed each time. I have no board, so none of
+ this has run on the Pico. I also haven’t run mypy on it.
+
+On the board you should see three groups of expected error lines: one from the
+ missing directory, two from the missing file, and one from the missing path in 
+remove_subdir. If the Pico reports different file sizes than the test expects, 
+the “list: contents” check will say so, and that would be a real finding.
+
+
+"""
+
 
 ###

@@ -1,24 +1,30 @@
-The test is written and ready, as pico_test_file_utils.py. I haven’t sent it, since you asked for no downloads until you say so.
 
-It has 15 checks, in the same plain-script style as pico_test_read_last_n_lines.py. It builds a small scratch directory in flash and checks:
+It has 15 checks, in the same plain-script style as
+ pico_test_read_last_n_lines.py. 
+It builds a small scratch directory in flash and checks:
 
-list_dir_contents: the names, types and sizes of files (including an empty file and a 1000-byte one), a hidden name, a name with spaces, a subdirectory and an empty directory. It also checks that the listing doesn’t descend into subdirectories, and that a missing directory raises.
-filter_dir_contents: the filter is called once per entry with (name, type, size), None drops an entry, and False keeps it. That is the gotcha documented in the function’s comment.
+list_dir_contents: the names, types and sizes of files (including an empty file
+ and a 1000-byte one), a hidden name, a name with spaces, a subdirectory and an
+ empty directory. It also checks that the listing doesn’t descend into
+ subdirectories, and that a missing directory raises.
+filter_dir_contents: the filter is called once per entry with (name, type,
+ size), None drops an entry, and False keeps it. That is the gotcha documented 
+in the function’s comment.
 remove_file: returns True when it removes a file and False for a missing one.
-remove_subdir: removes a tree three levels deep and doesn’t raise for a missing path. On the board this is the first real test of the recursion fix.
+remove_subdir: removes a tree three levels deep and doesn’t raise for a missing
+ path. On the board this is the first real test of the recursion fix.
 
-Directory sizes, symlinks and FIFOs are skipped, as you decided. Test lines carry a TFUT@NNN: prefix, deliberately free of the substring FU@ so a search for FU@ finds only file_utils messages. The line numbers are already correct.
+Directory sizes, symlinks and FIFOs are skipped, as you decided. Test lines
+ carry a TFUT@NNN: prefix, deliberately free of the substring FU@ so a search
+ for FU@ finds only file_utils messages. The line numbers are already correct.
 
-I ran it here on CPython: 15 checks passed. I also broke file_utils five different ways, and the test failed each time. I have no board, so none of this has run on the Pico. I also haven’t run mypy on it.
+I ran it here on CPython: 15 checks passed. I also broke file_utils five
+ different ways, and the test failed each time. I have no board, so none of
+ this has run on the Pico. I also haven’t run mypy on it.
 
-On the board you should see three groups of expected error lines: one from the missing directory, two from the missing file, and one from the missing path in remove_subdir. If the Pico reports different file sizes than the test expects, the “list: contents” check will say so, and that would be a real finding.
+On the board you should see three groups of expected error lines: one from the
+ missing directory, two from the missing file, and one from the missing path in 
+remove_subdir. If the Pico reports different file sizes than the test expects, 
+the “list: contents” check will say so, and that would be a real finding.
 
-Tell me when you want the file sent.
-
-I’ve sent pico_test_file_utils.py. It needs lib1/file_utils.py on the board and runs with mpremote run pico_test_file_utils.py.
-
-Please tell me what the Pico prints, especially the “list: contents” check, which compares real file sizes from the board. On the board the run should also print the expected error lines: one for the missing directory, two for the missing file and one for the missing path in remove_subdir.
-
-
-:wrap=soft:
 
