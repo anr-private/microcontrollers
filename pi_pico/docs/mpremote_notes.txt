@@ -81,6 +81,68 @@ FS EXAMPLES:
   mpremote fs cp :main.py main.py  Copy main.py from Pico to devel host.
 
 
+=== RUN and Running commands  ==========================
+
+Run a file on the Linux system.
+The run command sends the source directly to the Pico.
+The file contents are streamed directly to Pico MicroPython's
+raw REPL. The same as if the Pico were running 'main.py'
+on its local filesystem. The source is not written to the 
+Pico's filesystem.
+A soft-reset-then-execute is performed.
+The boot.py file gets run (likely but not proven yet - need to test)
+The code gets "__main__" as its __name__.
+It runs in the root dir on the Pico ('/') - unless boot.py does os.chdir()?
+It has access to filesystem on Pico.
+There is no way to use 'run' on a file that is currently extant on Pico.
+NOTE that mpremote docs call the Pico 'remote' and Linux system 'local'.
+  mpremote run  some-file.py  # a file in Linux filesystem
+
++++  Running a file that is extant on the PICO    +++++++
+
+Option 1 — 'import' (this is the pattern the docs actually show):
+
+mpremote exec "import app"
+
+This runs app.py’s top-level code, provided it’s somewhere on the 
+device’s import path (root / is on sys.path by default, 
+so /app.py imports as app. A file in a subdir needs dotted notation.
+Inside the file, __name__ will be "app", not "__main__".
+— so any if __name__ == "__main__": guard in that file will not fire. 
+Whereas the 'run' command produces __name__ == "__main__".
+CACHE ISSUES
+Created this file test_app.py on Linux; copied to Pico using
+mpremote cp test_app.py :/
+Then ran these on Linux:
+ mpremote exec "import test_app"  exec "import test_app"  exec "import test_app"
+ mpremote exec "import test_app" disconnect exec "import test_app" disconnect exec "import test_app"
+The first one runs the code only once; the second and third imports
+do nothing as sys.modules already contains test_app - this is 
+the cache issue.
+The second example uses 'disconnect' between the 'exec's to force
+a session close.
+The 'disconnect's start a new session (cause a soft-reset-execute)
+and the code in test_app.py runs 3 times.
+MicroPython caches imports the same way CPython does: 
+a second mpremote exec "import app" in the same connected session
+ (no disconnect/soft-reset in between) won’t re-run the module’s code.
+It just returns the already-imported module from sys.modules.
+
+
+Option 2 — read-and-exec (closer to how run actually behaves):
+
+These read the file and execute its contents:
+ mpremote exec "exec(open('/test_app.py').read())"
+ mpremote exec "exec(open('test_app.py').read())"
+
+This reads the file’s source as text off the device’s own filesystem 
+and executes it directly. It's the same underlying mechanism run uses, 
+just sourced from the device’s flash instead of streamed from your host.
+Because it’s a plain exec() rather than an import, it re-runs fully 
+every time you call it (no caching) and __name__ is "__main__" always.
+Unlike Option 1, no entry is made in sys.modules since no import
+was done.
+
 
 === SHORTCUTS  =================================
 
