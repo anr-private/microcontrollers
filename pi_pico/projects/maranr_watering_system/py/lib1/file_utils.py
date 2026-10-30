@@ -62,7 +62,7 @@ def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
 
     dir_contents = list_dir_contents(dir_path)
 
-    print(f"FU@65 dir_contents={dir_contents}")
+    #print(f"FU@65 dir_contents={dir_contents}")
 
     selected_items = []
 
@@ -89,18 +89,43 @@ def list_dir_contents(dir_path):
     if use_os_ilistdir: return list_dir_micropython(dir_path)
     return list_dir_python(dir_path)
 
+# def list_dir_python(dir_path): # 'real' python
+    # results = []
+    # try:
+        # for fname in os.listdir(dir_path):
+            # fpath = dir_path + "/" + fname
+            # #print(f"FU@97 {fname=}  {fpath=}")
+            # fsize = os.path.getsize(fpath)
+            # results.append ( (fname, "f", fsize) )
+    # except FileNotFoundError as ex:
+        # print(f"FU@101 Cannot find dir='{dir_path}'")
+    # return results
+
 def list_dir_python(dir_path): # 'real' python
     results = []
-    try:
-        for fname in os.listdir(dir_path):
-            fpath = dir_path + "/" + fname
-            #print(f"FU@97 {fname=}  {fpath=}")
-            fsize = os.path.getsize(fpath)
-            results.append ( (fname, "f", fsize) )
-    except FileNotFoundError as ex:
-        print(f"FU@101 Cannot find dir='{dir_path}'")
+    with os.scandir(dir_path) as entries:
+        for entry in entries:
+            #fpath = entry.path
+            item_name = entry.name
+            file_size = entry.stat().st_size
+            if entry.is_dir():
+                item_type = "d"
+            elif entry.is_file():
+                item_type = "f"
+            elif entry.is_symlink():
+                item_type = "L"
+            elif stat.S_ISFIFO(mode):
+                item_type = 'F'
+            elif stat.S_ISSOCK(mode):
+                item_type = 'S'
+            elif stat.S_ISBLK(mode):
+                item_type = 'B'
+            elif stat.S_ISCHR(mode):
+                item_type = 'C'
+            else:
+                item_type = "unknown"
+            results.append( [item_name, item_type, file_size] )
     return results
-
 
 def list_dir_micropython(dir_path):
     #print(f"FU@106  USING list_dir_micropython  {dir_path}")
