@@ -17,10 +17,9 @@ where_imported = ""
 try:
     from lib1.read_last_n_lines import read_last_n_lines, Z__set_chunk_size
     TEST_PATH = "_rlnl_test.txt"
-    where_imported = "Imported successfully the function from  lib1_FAKE.read_last_n_lines"
+    where_imported = "Imported successfully the function from  lib1.read_last_n_lines.py"
 except ImportError:
-    pass #print("Using lib1_FAKE: Failed to import the module that contains the read_last_n_lines, Z__set_chunk_size functions.")
-
+    pass 
 if not where_imported:
     raise RuntimeError("Cannot find/import the module that contains the read_last_n_lines function")
 print(f"{where_imported}")

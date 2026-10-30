@@ -21,106 +21,12 @@ try:
 except ImportError:
     SHUTIL_IS_AVAILABLE = False
 
-# Logging functions; provided by our parent class using set_log_functions()
-###log = None
-###logrt = None
-###logi = None
+# NOT USED YET
+# Logging functions; our parent class sets using _set_logger()
+#log:   Any = None
+#logrt: Any = None
+#logi:  Any = None
 
-# os module does not define these (unlike Py3)
-SEEK_SET = 0   # relative to the start of file
-SEEK_CURR = 1  # relative to current file position
-SEEK_END = 2   # relative to end of file
-
-###def read_last_n_lines(fpath, relative_line_number, number_of_lines):
-def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: int) -> list[str]:
-
-    """Reads the last N lines of a text file efficiently in MicroPython."""
-    try:
-        with open(fpath, 'rb') as f: # Open in binary mode for reliable seeking
-            f.seek(0, SEEK_END)
-            file_size = f.tell()
-            position = file_size
-            lines_found = 0
-            lines: list[str] = []
-            fbytes = b""
-
-            while True:
-                #print(f"\n@@LOOP TOP -- pos={position}  {lines_found=}  {relative_line_number=}")
-                if position <= 0:
-                    break
-                if lines_found >= relative_line_number:
-                    break
-
-                # Read a chunk from near the end
-                chunk_size = 128 # Read in small chunks to save memory
-                chunk_size = 100 #@@@@@@@@@@@@@@@@@@@@@@@
-
-                position = max(0, position-chunk_size)
-                #print(f"@@214  seek pos {position=}")
-                f.seek(position)
-
-                chunk = f.read(file_size-position if position == 0 else chunk_size)
-
-                #print(f"FU@58  READ got {len(chunk)} bytes")
-
-                file_size = position # Update file_size for next iteration if needed
-                #print(f"@223  new file size {file_size}")
-                fbytes = chunk + fbytes # Prepend the new chunk to the fbytes
-                ###print(f"FU@63 read_last_n_lines combined bytes {len(fbytes)} bytes")
-                
-                # Count newlines in the fbytes
-                while b'\n' in fbytes and lines_found < relative_line_number:
-                    #print(f"@@ ---- INNERLOOP-------------")
-                    # Find the last newline
-                    last_newline_index = fbytes.rfind(b'\n')
-                    #print(f"@@232  {last_newline_index=} ")
-                    if last_newline_index < 0:
-                        break
-                    
-                    line = fbytes[last_newline_index + 1:]
-                    #print(f"@@237  len.line is {len(line)}")
-
-                    if line: # Avoid empty lines if file ends with newline
-                        line_stg = line.decode('utf-8')
-                        #print(f"@@241  line is '{line_stg}' ")
-                        # Insert at beginning
-                        lines.insert(0, line_stg)
-                        #print(f"@@244  num-in-list = {len(lines)}")
-                        lines_found += 1
-                        #print(f"@@246  {lines_found=}")
-                        # Discard 'extra' lines at the end
-                        if len(lines) > number_of_lines:
-                            _ = lines.pop()
-                            #print(f"@@250 popped {_}  new-num-in-list={len(lines)}")
-
-                    # Keep the remaining fbytes for the next line
-                    fbytes = fbytes[:last_newline_index]
-                    #print(f"@@245  remain len is  {len(fbytes)=}")
-                    #print(f"@@256  remain bytes are {fbytes.decode('utf-8')}")
-
-            # If loop finishes and there's still content in fbytes, it's the first line(s)
-            #print(f"@@257 ___ after loop:  {lines_found=}   {len(fbytes)=}")
-            #print(f"@@@@  lines: len={len(lines)} {lines}")
-            if fbytes and lines_found < relative_line_number:
-                line_stg = fbytes.decode('utf-8')
-                #print(f"@@260 LAST  line is '{line_stg}' ")
-                lines.insert(0, line_stg)
-                #print(f"@@262  LAST: num-in-list = {len(lines)}")
-                lines_found += 1
-                #print(f"@@264 LAST  {lines_found=}")
-                if len(lines) > number_of_lines:
-                    _ = lines.pop()
-                    #print(f"@@268 LAST: popped {_}  new-num-in-list={len(lines)}")
-
-            # Return only the last N lines
-            lines_returned = lines[-relative_line_number:]
-            #print(f"@@268 len(lines_returned): {len(lines_returned)}  {relative_line_number=}")
-            return lines_returned
-    except OSError as ex:
-        print(f"FU@114 read_last_n_lines  EX={repr(ex)}")
-        print(f"FU@115 read_last_n_lines  EX={str(ex)}")
-        print(f"FU@116 read_last_n_lines  errno={ex.errno}")
-        return []
 
 ### TODO update the annotation
 def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
@@ -156,22 +62,22 @@ def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
 
     dir_contents = list_dir_contents(dir_path)
 
-    print(f"FU@153 dir_contents={dir_contents}")
+    print(f"FU@65 dir_contents={dir_contents}")
 
     selected_items = []
 
     for item in dir_contents:
         (fname, ftype, fsize) = item
-        #print(f"FU@159  {fname=}  {ftype=}  {fsize=} ")
+        #print(f"FU@71  {fname=}  {ftype=}  {fsize=} ")
 
         ok = file_filter(fname, ftype, fsize)
 
-        #print(f"FU@163 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
+        #print(f"FU@75 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
 
         if ok is not None:
             selected_items.append( (fname, ftype, fsize, ok) )
 
-    #print(f"FU@168  {selected_items=}  {dir_path=} ")
+    #print(f"FU@80  {selected_items=}  {dir_path=} ")
     return  selected_items
 
 
@@ -188,16 +94,16 @@ def list_dir_python(dir_path): # 'real' python
     try:
         for fname in os.listdir(dir_path):
             fpath = dir_path + "/" + fname
-            #print(f"FU@185 {fname=}  {fpath=}")
+            #print(f"FU@97 {fname=}  {fpath=}")
             fsize = os.path.getsize(fpath)
             results.append ( (fname, "f", fsize) )
     except FileNotFoundError as ex:
-        print(f"FU@189 Cannot find dir='{dir_path}'")
+        print(f"FU@101 Cannot find dir='{dir_path}'")
     return results
 
 
 def list_dir_micropython(dir_path):
-    #print(f"FU@194  USING list_dir_micropython  {dir_path}")
+    #print(f"FU@106  USING list_dir_micropython  {dir_path}")
 
     results = []
 
@@ -213,16 +119,16 @@ def list_dir_micropython(dir_path):
     
             if entry_type == 0x8000:
                 ftype = "f"
-                ###print(f"FU@210 File: {fname}")
+                ###print(f"FU@122 File: {fname}")
             elif entry_type == 0x4000:
                 ftype = "d"
-                ###print(f"FU@213 Directory: {fname}")
+                ###print(f"FU@125 Directory: {fname}")
             else:
                 ftype = "?"
     
             results.append ( (fname, ftype, fsize) )
     except Exception as ex:
-        print(f"FU@219 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        print(f"FU@131 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
 
     return results
 
@@ -240,7 +146,7 @@ def remove_subdir_py3(path):
     except FileNotFoundError as ex:
         pass
     except Exception as ex:
-        print(f"FU@237 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+        print(f"FU@149 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
 def remove_subdir_micropython(path: str) -> None:
     # Micropython version
@@ -260,20 +166,20 @@ def remove_subdir_micropython(path: str) -> None:
         os.rmdir(path)
     except OSError:
         # Handle cases where the path doesn't exist or permissions fail
-        print("FU@257 Failed to remove:", path)
+        print("FU@169 Failed to remove:", path)
 
 def remove_file(fpath):
-    #print(f"FU@260 Remove file '{fpath}'")
+    #print(f"FU@172 Remove file '{fpath}'")
     try:
         os.remove(fpath)
         return True
     except OSError as ex:
-        m = f"FU@264 remove_file '{fpath}' FAILED. OSError={ex} {str(ex)}"
+        m = f"FU@177 remove_file '{fpath}' FAILED. OSError={ex} {str(ex)}"
         print(m)
-        m = f"FU@264 remove_file '{fpath}' FAILED. errno={ex.errno}"
+        m = f"FU@179 remove_file '{fpath}' FAILED. errno={ex.errno}"
         print(m)
     except Exception as ex:
-        m = f"FU@2672 remove_file '{fpath}' FAILED. EX={ex} {str(ex)}"
+        m = f"FU@182 remove_file '{fpath}' FAILED. EX={ex} {str(ex)}"
         print(m)
     return False
 

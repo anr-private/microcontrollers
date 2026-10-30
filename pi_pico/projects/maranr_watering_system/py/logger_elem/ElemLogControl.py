@@ -8,7 +8,7 @@ import sys
 try: from typing import Any
 except ImportError: pass
 
-from lib1.file_utils import read_last_n_lines, filter_dir_contents
+from lib1.read_last_n_lines import read_last_n_lines
 
 from .ElemLogger import ElemLogger
 from .ElemLogFileTable import ElemLogFileTable

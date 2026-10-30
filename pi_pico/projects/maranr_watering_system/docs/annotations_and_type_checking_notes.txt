@@ -212,6 +212,28 @@ def junk(s: str|None, i: int, f: float) -> list[str | int | float | None]:
 
 
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+One file, shared by both. Today’s two files differ in only a few places. Instead of a shared core plus two front-ends, one file could hold the cases, the reference function, a module-level run_test_case() and a perform_test() entry point. The Pico runs just that file with mpremote run, so it stays self-contained and nothing else needs copying. A thin pytest file, which is never copied to the board, imports it and parametrizes over the same cases. That matters because mpremote run sends only the one script. If it imported a separate core module, the module would have to be copied to the board, or you’d have to use mpremote mount. I haven’t tried mount with your setup.
+
+What differs between platforms. The file would need small branches, or parameters supplied by the caller, for these:
+
+Scratch file: a temp directory on CPython, a fixed path on the Pico.
+Random numbers: random.Random(seed) on CPython. MicroPython has no Random class, but the random module itself has randint and choice. If the code takes “an object with those methods”, it can be given either one. The same seed gives different data on each platform, so failures need to print their data (they already do).
+Sizes: the Pico version uses fewer lines and no emoji, and a smaller random count. These would become parameters.
+Missing-file message: check for errno=2, not FileNotFoundError.
+pytest: it can’t run on the Pico, and tempfile and sys.exit need guarding.
+
+It resolves the earlier counting question. pytest needs run_test_case at module level with explicit parameters, returning a failure description or None. Then the script’s loop does the counting and pytest does it itself, so the count moves out of the helper.
+
+Three things to settle before I touch anything:
+
+Your existing pytest tests: do they import many production modules that need fakes for machine and the like? You haven’t answered this yet, and it decides how much fake setup has to move.
+Are you happy with the one-file-plus-thin-wrapper shape, or would you prefer a separate core module?
+Where should the merged file live? It depends on the repo decision (a tests directory in the main repo, or a sibling checkout).
+
+When we start, please re-attach the current copies of all three files, since the ones I have are out of date.
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 :wrap=soft:

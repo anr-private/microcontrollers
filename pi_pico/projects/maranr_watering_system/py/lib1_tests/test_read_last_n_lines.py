@@ -104,28 +104,38 @@ def create_random_data(rng: random.Random) -> bytes:
     return data
 
 
-    
+"""
+old_chunk = Z__set_chunk_size(CHUNK_SIZES[0])   # sets it and returns the old one
+try: ...
+finally:
+    Z__set_chunk_size(old_chunk)
+"""
+
+
 def perform_test() -> int:
     """ """
     
+    # save the original chunk size - restore below, so multiple uses
+    # of the package in different tests can be done
+    # (We don't use the size we are setting - it's arbitrary but
+    #  must not be a 'bad' value like 0 or -1 etc.)
+    original_chunk_size = Z__set_chunk_size(CHUNK_SIZES[0])
+
     # capture 'print' from the function
     capturesPrint = CapturesPrint()
     old_print = Z__set_print(capturesPrint.print)
+
     try:
-        result = do_perform_test()
+        result = do_perform_test(capturesPrint)
     finally:
         Z__set_print(old_print)
+        Z__set_chunk_size(original_chunk_size)
     return result
 
 
-def do_perform_test() -> int:
+def do_perform_test(capturesPrint: CapturesPrint) -> int:
     """ """
     
-    # capture 'print' from the function
-    capturesPrint = CapturesPrint()
-    Z__set_print(capturesPrint.print)
-
-
     failures = []
     total = 0
     rng = random.Random(12345)
@@ -145,12 +155,12 @@ def do_perform_test() -> int:
             if got != expected:
                 failures.append((label, chunk, show, data, rel, n, expected, got))
 
-        # the hand-written expected values must agree with the reference
+        # Verify the test data:
+        # the hand-written expected values must agree with the reference data
         for data, rel, n, exp_ignore, exp_show in FIXED:
             assert create_reference_data(data, rel, n, False) == exp_ignore, ("reference disagrees", data, rel, n, False)
             assert create_reference_data(data, rel, n, True) == exp_show, ("reference disagrees", data, rel, n, True)
 
-        original_chunk = Z__set_chunk_size(CHUNK_SIZES[0])
         for chunk in CHUNK_SIZES:
             Z__set_chunk_size(chunk)
             for data, rel, n, exp_ignore, exp_show in FIXED:
@@ -164,8 +174,6 @@ def do_perform_test() -> int:
                 for show in (False, True):
                     run_test_case("random", data, rel, n, show, 
                                   create_reference_data(data, rel, n, show), chunk)
-        Z__set_chunk_size(original_chunk)
-
         # Z__set_chunk_size: returns the old size, rejects sizes below 1
         total += 1
         before = Z__set_chunk_size(9)

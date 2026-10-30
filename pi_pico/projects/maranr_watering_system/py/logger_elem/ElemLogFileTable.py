@@ -3,7 +3,7 @@
 import os
 #import sys
 
-from lib1.file_utils import read_last_n_lines
+from lib1.read_last_n_lines import read_last_n_lines
 from lib1.file_utils import remove_file
 from lib1.file_utils import filter_dir_contents
 

@@ -15,10 +15,9 @@ SEEK_END = 2  # relative to end of file
 _CHUNK_SIZE = 128
 
 # Allows redirecting the output of this module - mainly for testing. See Z__set_print().
-def _PRINT(s:str) -> str:
+def _PRINT(s:str) -> None:
     print(s)
-    return ""
-_print: Callable[[str],str] = _PRINT
+_print: Callable[[str],None] = _PRINT
 
 
 def read_last_n_lines(fpath: str, relative_line_number: int, number_of_lines: int,
@@ -89,7 +88,7 @@ def Z__set_chunk_size(new_chunk_size: int) -> int:
     _CHUNK_SIZE = new_chunk_size
     return old_chunk_size
 
-def Z__set_print(new_print: Callable[[str], str]) -> Callable[[str], str]:
+def Z__set_print(new_print: Callable[[str], None]) -> Callable[[str], None]:
     """ Replace the print output function with one the caller
     wants to use. Used mainly for testing.
     """
