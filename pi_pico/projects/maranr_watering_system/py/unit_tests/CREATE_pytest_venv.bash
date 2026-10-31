@@ -13,7 +13,7 @@
 #   ln -s ACTIVATE_VENV    ACTIVATE
 #   ln -s DEACTIVATE_VENV  DEACTIVATE
 
-VENV_SUBDIR_NAME=".pytest_ut_trial_venv"
+VENV_SUBDIR_NAME=".pytest_unit_tests_venv"
 ###export VENV_SUBDIR_NAME
 
 # DEACTIVATE any active venv
@@ -42,6 +42,8 @@ main() {
     pip install -U pip
     pip install -U setuptools   wheel
     pip install -U pytest
+    pip install -U mypy
+    pip install -U mpremote
 
     # Tell GIT to add .pytest_anr_http_lib1_venv/pyvenv.cfg
     # and then ignore everything else
