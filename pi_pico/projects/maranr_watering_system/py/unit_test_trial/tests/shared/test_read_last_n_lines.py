@@ -74,7 +74,7 @@ FIXED = [
 
 WORDS = ["a", "bb", "ccc", "line", "x" * 40, "é", "日本語", ""]
 #if not _ON_MICROPYTHON:
-WORDS.append("\U0001F600")      # a 4-byte character; not tried on the Pico yet
+WORDS.append("\U0001F600")      # a 4-byte character
 
 class CapturesPrint:
     """ Capture printed output from the function being tested """
