@@ -1,6 +1,7 @@
 # run_pico_tests.py
 #
-# SKETCH of the PC-side driver (CPython). Run it from the repo root:
+# Runs tests on the PICO.
+# Usage:
 #     python3 run_pico_tests.py [test_file ...]
 # For each shared test (tests/shared/test_*.py) it builds a throw-away script
 # (build/_assembled_<name>) = the test source + tests/pico/pico_glue.py, and sends
