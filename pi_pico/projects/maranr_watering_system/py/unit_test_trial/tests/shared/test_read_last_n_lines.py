@@ -78,7 +78,7 @@ WORDS.append("\U0001F600")      # a 4-byte character
 
 class CapturesPrint:
     """ Capture printed output from the function being tested """
-    def __init__(self):
+    def __init__(self) -> None:
         self.captured: list[str] = []
 
     def print(self, s: str) -> None:
