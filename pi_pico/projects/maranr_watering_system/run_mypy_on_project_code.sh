@@ -3,7 +3,7 @@
 # -v   show verbose output including which files are found/checked ('Found')
 # A report file. mypy --linecount-report /tmp/rep <your usual arguments> should write /tmp/rep/linecount.txt with one line for every file it processed.
 
-mypy \
+mypy --cache-dir=/dev/null --config-file mypy.ini  \
 py/maranr_watering_system_main.py \
 py/displays \
 py/lib1 \
