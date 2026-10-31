@@ -206,4 +206,13 @@ def test_remove_subdir_missing_path_does_not_raise() -> None:
     print("TFUT@206: (end of the expected error output)")
     assert raised is None, raised
 
+""" Claude's comments: what this tests:
+The filter’s if ok is not None: check was changed to if ok:.
+Reported file sizes were off by one.
+Hidden files were skipped.
+remove_file returned True for a missing file.
+shutil.rmtree was replaced by os.rmdir.
+The raise for a missing directory was removed.
+FileNotFoundError was re-raised in remove_subdir.
+"""
 ###
