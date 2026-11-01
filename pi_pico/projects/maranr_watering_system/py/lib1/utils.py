@@ -21,7 +21,7 @@ except Exception as ex:
     print(f"UTILS@15 utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
     del gc   
     #                       # 'type ignore' is for mypy                         
-    import gc_FAKE as gc    # type: ignore
+    import support.gc_FAKE as gc    # type: ignore
     print(f"UTILS@18 utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 #@@@@@@@@@@ TODO fake the GC using CpythonTestSupport  see TestElemLogControl.py
 
@@ -34,7 +34,7 @@ except Exception as ex:
 # "micropython" or "cpython"
 PLATFORM = sys.implementation.name
 if PLATFORM == "cpython":   # Py3
-    from cpython_test_support import CpythonTestSupport   # type:ignore
+    from support.cpython_test_support import CpythonTestSupport   # type:ignore
     cpyt = CpythonTestSupport.get_instance()
     GET_FLASH_SPACE = cpyt.fake_get_flash_space
 else:
