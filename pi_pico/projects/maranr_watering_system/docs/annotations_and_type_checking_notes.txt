@@ -70,6 +70,19 @@ f = open("myfile", "r")
 
 ===============================================================
 
+MYPY CACHE
+
+.mypy_cache/  - created by default 
+
+It can cause issues when things change: files renamed, dirs
+moved or renamed, etc.
+For now turned it off in all of the run_mypy_on_xxxx.sh 
+using option:
+   mypy --cache-dir=/dev/null  ...
+
+
+===============================================================
+
 Used Claude to determine some details.
 
 Need stubs for the 'built in' stuff like 'machine' module.

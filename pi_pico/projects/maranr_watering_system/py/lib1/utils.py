@@ -1,6 +1,6 @@
 # utils.py
 
-import micropython
+###@@@@ REMOVE import micropython
 import os
 import platform
 import sys

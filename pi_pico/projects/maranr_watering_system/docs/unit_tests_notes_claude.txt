@@ -28,5 +28,76 @@ If you agree, I'd prototype this on `read_last_n_lines`, since that test is alre
 
 Sources: [mpremote man page (Debian, v0.4.0)](https://manpages.debian.org/unstable/micropython-mpremote/mpremote.1.en.html), [MicroPython forum: running unit tests stored on the host](https://forum.micropython.org/viewtopic.php?p=70728)
 
+=====================================================================
+
+CREATING TEST for lib1/utils.py
+
+I haven't seen `lib1/utils.py`, so this is the method I'd follow. If you paste or attach the file, I can point at specific functions.
+
+**1. Decide where the test lives**
+- If every function in `utils.py` runs on both CPython and MicroPython, the test goes in `tests/shared/lib1/test_utils.py`. This is the default, and it's worth trying first, since the shared form gives you the Pico run as well.
+- If any function needs a hardware module (`machine`, `time.ticks_ms`, `network`), those functions get a CPython test with a fake, or a Pico-only test. The rest can still be shared.
+- The file name must be unique across the whole `tests/` tree, so check that no other `test_utils.py` exists.
+
+**2. List the functions and sort them by testing effort**
+- **Pure functions:** values in, value out (string formatting, number conversion, parsing). They are the easiest to test and the most valuable.
+- **Functions with side effects:** files, printing, global state. They need a scratch directory or a hook, like `get_scratch_path()` and `Z__set_print` in your earlier tests.
+- **Functions that use time or randomness:** these need a hook or a seeded value to be repeatable.
+- Start with the pure ones. A first test file with five solid tests beats a perfect one that never gets written.
+
+**3. For each function, write the cases in this order**
+1. One ordinary case with the answer worked out by hand.
+2. The boundaries: zero, one, empty string, empty list, maximum value, the value just either side of a limit.
+3. Bad input: whatever the function does today (raises, returns None, prints a message). Test what it actually does, and note any case where you think it should do something else.
+4. Anything that was once a bug. Those make the best tests.
+
+**4. Habits that carry over from your existing tests**
+- **Test functions:** each is a plain `def test_something()` with plain asserts, and each assert message shows the actual value.
+- **Independence:** each test stands on its own and doesn't rely on another test having run.
+- **Tables for many cases:** if you have many similar cases, put them in a list, loop over them, collect the failures and assert once. `FIXED` in `test_read_last_n_lines.py` is the model.
+- **Expected values:** write them by hand, not by calling the function being tested, or the test can't catch a mistake.
+- **Cleanup:** put anything the test creates or changes in a `try/finally` that puts it back.
+- **Names:** `test_` plus a description of the behavior (`test_empty_string_returns_none`), not the function name alone.
+
+**5. Check the test itself**
+- After it passes, break the function on purpose, for example off by one or a flipped comparison, and make sure some test fails. That is the cheap way to find out whether a test really tests anything. I did this with seven deliberate breaks on `file_utils`.
+- Run it three ways: `pytest .`, `python3 run_pico_tests.py lib1`, and `./run_mypy.sh`.
+
+Three questions, so I can help further:
+1. Roughly how many functions does `utils.py` have, and does any of them touch hardware or the clock?
+2. Do you already have a CPython test for it among your 40, and if so, how much of it would carry over?
+3. Which function worries you most? Start there.
+
+
+A minimal start is the right size. Build it up in small steps, and get one test green on both platforms before adding more.
+
+**Step 1: One test, both platforms**
+- Create `tests/shared/lib1/test_utils.py`. It needs the first-line comment with its own name, the `###` ending, and a short header saying what it covers.
+- Put in one test for one function, the simplest one in `utils.py`.
+- Run `pytest .` and `python3 run_pico_tests.py lib1`. Once both pass you know the plumbing works, and what follows is just adding tests.
+
+**Step 2: Convert from the old CPython test**
+The existing pytest file is a good source for the cases, such as inputs, expected values and edge cases. What usually has to change is anything that is pytest-only, because MicroPython has no pytest. Go through the old file and look for:
+- `import pytest`, which has to go.
+- `@pytest.mark.parametrize`. Replace it with a list of cases and a loop in one test, collecting failures and asserting once at the end.
+- `pytest.raises(...)`. Replace it with `try/except` that records what happened, then assert on that.
+- Fixtures, `tmp_path` and `monkeypatch`. Replace them with `get_scratch_path()` for files and `try/finally` for anything you change and need to put back.
+- `capsys` for captured output. Replace it with a print hook like `Z__set_print`, if the function has one.
+- `assert x == y` with no message. Add `, x` so MicroPython shows the value.
+- Standard library imports that MicroPython lacks (`re` differences, `unittest`, `typing` at runtime, `pathlib`). A guarded `try/except ImportError` handles `typing`, and the others need a different approach.
+
+If a function can't run on the Pico at all, leave its test out of the shared file and put it in `tests/cpython/lib1/` instead. Don't force it into the shared file.
+
+**Step 3: Add functions in order of ease**
+- Add the next function, run both platforms, and repeat.
+- Pure functions will go quickly. A function that fails on the Pico but passes on the PC has found a MicroPython difference, which is useful to know.
+- Where the Pico gives a different result than CPython (number formatting, integer sizes, float precision, string methods), decide per case whether the test should accept both or whether `utils.py` has a real portability bug.
+
+**Step 4: A check at the end**
+Break two or three functions on purpose and confirm a test fails each time.
+
+If you'd like a second pair of eyes on the conversion, attach the old pytest file and `lib1/utils.py`, and I'll mark which parts will need changing for MicroPython without writing the test for you.
+
+
 :wrap=soft:
 ###

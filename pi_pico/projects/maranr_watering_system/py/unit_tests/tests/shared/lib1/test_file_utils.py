@@ -23,6 +23,7 @@
 #
 # Not tested on purpose: symlinks, FIFOs and the like (they cannot exist on the
 # Pico), and the size reported for a directory (the application does not use it).
+
 import os
 
 from lib1.file_utils import list_dir_contents, filter_dir_contents, remove_subdir, remove_file
