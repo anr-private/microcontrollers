@@ -8,8 +8,9 @@ from lib1.utils import seconds_to_hhmmss_string, seconds_to_hhmmss
 from lib1.utils import string_to_int, show_cc
 from lib1.utils import get_flash_space, convert_fs_space_to_string
 
-from support.cpython_test_support import CpythonTestSupport
-
+# CPython only
+try: from support.cpython_test_support import CpythonTestSupport
+except ImportError: pass
 
 def test_seconds_to_hhmmss_string() -> None:
     total_secs = 1793501920
