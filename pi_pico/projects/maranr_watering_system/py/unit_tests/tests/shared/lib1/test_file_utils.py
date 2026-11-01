@@ -30,7 +30,7 @@ from lib1.file_utils import list_dir_contents, filter_dir_contents, remove_subdi
 
 # CPython: the real module tests/cpython/cpython_glue.py.
 # Pico: there is no such module; run_pico_tests.py appends get_scratch_path().
-try: from cpython_glue import get_scratch_path
+try: from support.cpython_glue import get_scratch_path
 except ImportError: pass
 
 BIG_SIZE = 1000
