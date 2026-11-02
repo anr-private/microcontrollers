@@ -2,14 +2,18 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
+try: from typing import Any
+except ImportError: pass
+
 PRT=True
 def prt(s):
     if PRT: print (s)
 
 
-log = None
-logrt = None
-logi = None
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 
 class ClassA(ElemLoggerABC):

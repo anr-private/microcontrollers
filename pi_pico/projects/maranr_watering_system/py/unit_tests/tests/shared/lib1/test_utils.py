@@ -9,7 +9,7 @@ from lib1.utils import string_to_int, show_cc
 from lib1.utils import get_flash_space, convert_fs_space_to_string
 
 # CPython only
-try: from support.cpython_test_support import CpythonTestSupport
+try: from cpython_test_support import CpythonTestSupport
 except ImportError: pass
 
 def test_seconds_to_hhmmss_string() -> None:
@@ -41,7 +41,7 @@ def test_seconds_to_hhmmss_string() -> None:
 def test_seconds_to_hhmmss() -> None:
     total_secs = 1793501920
     v = seconds_to_hhmmss(total_secs)
-    assert v == (498194,58,40), s
+    assert v == (498194,58,40), v
 
     total_secs = 17935
     v = seconds_to_hhmmss(total_secs)
@@ -94,7 +94,7 @@ def test_show_cc() -> None:
             for x in got:
                 print(f"{x} {ord(x)}")
 
-def test_get_flash_space():
+def test_get_flash_space() -> None:
     # on shadow Ubunt 24.04, the actual is:
     #   exp_total_space = 1_966_736_678_912
     #print(f"@@T@ DIR cpython_test_support is {dir(cpython_test_support)}")
@@ -113,7 +113,8 @@ def test_get_flash_space():
     assert got_total_space == faked_FS_total
     assert got_free_space == faked_FS_free
 
-def test_convert_fs_space_to_string():
+
+def test_convert_fs_space_to_string() -> None:
     total_space = 12345678
     total_stg = convert_fs_space_to_string(total_space)
     print(f"@@T@34  {total_stg=}")

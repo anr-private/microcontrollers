@@ -14,16 +14,6 @@ except ImportError: pass
 # except ModuleNotFoundError:
     # import utime as time
 #### @@@ TODO remove the above
-try:
-    import gc
-    _ = gc.mem_free
-except Exception as ex:
-    print(f"UTILS@15 utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
-    del gc   
-    #                       # 'type ignore' is for mypy                         
-    import support.gc_FAKE as gc    # type: ignore
-    print(f"UTILS@18 utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-#@@@@@@@@@@ TODO fake the GC using CpythonTestSupport  see TestElemLogControl.py
 
 # if "micropython" in platform.platform().lower():
     # PLATFORM : str = "micropython"
@@ -34,7 +24,7 @@ except Exception as ex:
 # "micropython" or "cpython"
 PLATFORM = sys.implementation.name
 if PLATFORM == "cpython":   # Py3
-    from support.cpython_test_support import CpythonTestSupport   # type:ignore
+    from cpython_test_support import CpythonTestSupport   # ZZtype:ignore
     cpyt = CpythonTestSupport.get_instance()
     GET_FLASH_SPACE = cpyt.fake_get_flash_space
 else:
@@ -155,18 +145,6 @@ def len_to_str(item: Any) -> str:
         return f"len(ITEM)-FAILED {item=} {ex=}"
 len_to_string=len_to_str
 
-def gc_collect():
-    # per https://docs.micropython.org/en/latest/reference/constrained.html#the-heap
-    gc.collect()
-    gc.threshold(gc.mem_free() // 4 + gc.mem_alloc())
-
-
-def get_memory_status_string(do_garbage_collect:bool=False) -> str:
-    ### # prints memory map of block usage
-    ###micropython.mem_info(1)
-    if do_garbage_collect: gc.collect()
-    return f" {gc.mem_alloc()=}   {gc.mem_free()=}"
-
 
 def get_flash_space() -> tuple[int,int]:
 
@@ -239,7 +217,6 @@ def determine_machine_type() -> str:
 
 def main() -> None:
     print(f"UTILS@173 FS SPACE: {get_fs_space_string()}")
-    print(f"UTILS@174 MEMORY: {get_memory_status_string()} ")
 
 if __name__ == "__main__":
     main()

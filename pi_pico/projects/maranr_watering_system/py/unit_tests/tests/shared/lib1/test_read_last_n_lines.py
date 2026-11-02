@@ -30,7 +30,7 @@ from lib1.read_last_n_lines import read_last_n_lines, Z__set_chunk_size, Z__set_
 
 # CPython: the real module tests/cpython/cpython_glue.py.
 # Pico: there is no such module; run_pico_tests.py appends get_scratch_path().
-try: from support.cpython_glue import get_scratch_path
+try: from cpython_glue import get_scratch_path
 except ImportError: pass
 
 # Only the NUMBERS differ by platform: every case writes a file, and the Pico's flash

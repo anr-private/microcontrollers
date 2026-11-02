@@ -99,5 +99,58 @@ Break two or three functions on purpose and confirm a test fails each time.
 If you'd like a second pair of eyes on the conversion, attach the old pytest file and `lib1/utils.py`, and I'll mark which parts will need changing for MicroPython without writing the test for you.
 
 
+I'd separate support code from test files, and use inheritance for the tweaks instead of copies.
+
+**Why the current layout gets messy**
+`tests/cpython/` is doing two jobs. The folders that mirror `py/` (`lib1`, `logger_elem`, ...) hold test files, while `cpython_glue.py` and the fakes are support code. If support folders sit beside them, nobody can tell a package from a helper. So give support code its own subfolder:
+
+```
+tests/cpython/
+    lib1/test_...py            tests, mirroring py/
+    logger_elem/test_...py
+    support/                   the only folder on pythonpath / mypy_path
+        cpython_glue.py        bare-name modules (see below)
+        gc_FAKE.py
+        test_classes/          groups of helpers, one folder per theme
+            ClassA.py
+            ClassB.py
+        fake_hardware/         e.g. fake machine/pin modules, when you need them
+```
+
+**Two kinds of support code, two placements**
+1. **Modules that something imports by a bare name:** `cpython_glue` (imported by the shared tests) and `gc_FAKE` (imported by `utils.py`). Python finds them only at the top of a path entry, so they sit directly in `support/`. Keep this list short. Every entry is a place where production code or a shared test knows about a fake.
+2. **Helpers that only tests import:** `ClassA` and similar. Put them in themed subfolders and import them with the folder name, such as `from test_classes.ClassA import ClassA`. A theme folder needs no `__init__.py`. Python and your `mypy.ini` (`namespace_packages = True`) treat it as a package.
+
+That keeps pytest and mypy at one path entry, `tests/cpython/support`, in place of today's `tests/cpython`. They stay easy to reason about, and a new theme folder needs no config change.
+
+**Reuse without copying, tweaks without duplicating**
+Don't put helpers under `tests/cpython/logger_elem/`. A folder named for a package says "tests for this package", and reuse from another package would then look wrong, as you noticed. Put them in `support/test_classes/` and let any test import them.
+
+For a tweak that only one test needs, use a subclass in the test that needs it. The subclass lives in that test file, or in a helper file beside it:
+
+- `ClassA` stays plain and shared.
+- The logger test defines `class ClassAWithX(ClassA)` and adds only the difference.
+
+If you keep making the same tweak in several places, it is not a tweak any more. Add it to the shared class as an option with a default, so existing tests are unaffected. Either way, the original is never copied.
+
+**Rules that keep it from getting messy again**
+- **One owner:** Each support file has one place. Nothing is duplicated.
+- **Names:** Support modules never start with `test_`, so pytest won't try to collect them. Your folder `test_classes/` is fine as a directory name, since pytest matches file names. But `tests/shared`-style globbing for `test_*.py` in your driver covers only `shared/` and `pico/`, so no clash there either. If the name ever confuses you, rename it to `sample_classes`.
+- **No clash with production names:** Keep support folder names different from your packages (`logger_elem`, `lib1`, ...), or an import could pick the wrong one.
+- **Not for shared tests:** Shared tests can't use anything under `support/` on the Pico, because the driver sends only the test file and the glue. A test that needs these helpers must be a CPython-only test. Shared tests stick to production code and the glue.
+
+**What would change if you adopt this**
+- Move `tests/cpython/cpython_glue.py`, `gc_FAKE.py` and `test_classes/` into `tests/cpython/support/`.
+- Change `pytest.ini` and `mypy.ini` to use `tests/cpython/support` instead of `tests/cpython`.
+- Update the comment in the shared tests that says `tests/cpython/cpython_glue.py`. That is a path edit in the header of the two tests I gave you.
+- Run `pytest .` and `./run_mypy.sh` to confirm.
+
+I haven't run any of this, and mypy is the likely place for a surprise with the new layout. If it complains, send me the error.
+
+Which of your fakes are imported by production code (like `gc_FAKE`), and which are only used by tests? That tells you how many files really need to sit at the top of `support/`.
+
+
+
+
 :wrap=soft:
 ###

@@ -6,10 +6,13 @@
 import os
 
 # how to support remove_subdir()
-try:
-    import shutil
-except ImportError:
-    shutil = None
+# try:
+    # import shutil
+# except ImportError:
+    # shutil = None   # type: ignore[assignment]
+#@@@@@@@@@@@@@@@@@@@@@@@@@@
+import shutil
+
 
 # Mock the _X = const(123) capability of micropython
 def const(x):
@@ -24,6 +27,8 @@ class CpythonTestSupport:
     
     _instance = None
 
+    #@@@@@@@registry = {}
+
     @classmethod
     def get_instance(cls):
         # UNIT TEST ONLY
@@ -36,7 +41,7 @@ class CpythonTestSupport:
         #print(f"CPYS@34  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         CpythonTestSupport._instance = None
-        CpythonTestSupport.registry = {}
+        #@@@@@@@@@@CpythonTestSupport.registry = {}
         # Remove any messages - unit test only
         #CpythonTestSupport._clear_latest_messages()
 
@@ -83,7 +88,7 @@ class FileHelper:
         #print(f"CPYS@81  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         FileHelper._instance = None
-        FileHelper.registry = {}
+        #@@@@@@@@@@@@2FileHelper.registry = {}
 
 
     def __init__(self, validate):
@@ -144,12 +149,14 @@ class FileHelper:
 
     def remove_subdir(self, path):
         # copied from lib/file_utils.py
+        self.remove_subdir_py3(path)
 
-        if shutil is None:
-            self.remove_subdir_micropython(path)
-        else:
-            self.remove_subdir_py3(path)
-    
+#@@@@@@@@@@@@@@@@@@@@ 
+        # if shutil is None:
+            # self.remove_subdir_micropython(path)
+        # else:
+            # self.remove_subdir_py3(path)
+
     def remove_subdir_py3(self, path):
         # Python3 version
         try:
@@ -159,24 +166,27 @@ class FileHelper:
         except Exception as ex:
             print(f"CPYS@158 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
     
-    def remove_subdir_micropython(self, path):
-        # Micropython version
-        # Check if path is a file or directory
-        try:
-            # Get list of items in the directory
-            for entry in os.ilistdir(path):
-                name, type = entry[0], entry[1]
-                full_path = f"{path}/{name}"
-                
-                if type == 0x8000: # It's a file
-                    os.remove(full_path)
-                elif type == 0x4000: # It's a directory
-                    self.remove_subdir_micropython(full_path) # Recurse into subdirectory
-            
-            # Finally, remove the now-empty directory
-            os.rmdir(path)
-        except OSError:
-            # Handle cases where the path doesn't exist or permissions fail
-            print("CPYS@178 Failed to remove:", path)
-    
+    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    # def remove_subdir_micropython(self, path):
+        # # Micropython version
+        # # Check if path is a file or directory
+        # try:
+            # # Get list of items in the directory
+            # for entry in os.ilistdir(path):
+                # name, type = entry[0], entry[1]
+                # full_path = f"{path}/{name}"
+                # 
+                # if type == 0x8000: # It's a file
+                    # os.remove(full_path)
+                # elif type == 0x4000: # It's a directory
+                    # self.remove_subdir_micropython(full_path) # Recurse into subdirectory
+            # 
+            # # Finally, remove the now-empty directory
+            # os.rmdir(path)
+        # except OSError:
+            # # Handle cases where the path doesn't exist or permissions fail
+            # print("CPYS@178 Failed to remove:", path)
+    # 
+
+
 ###
