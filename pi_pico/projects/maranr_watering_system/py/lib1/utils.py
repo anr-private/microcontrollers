@@ -21,16 +21,6 @@ except ImportError: pass
     # PLATFORM : str = "cpython"
 #@@@@ TODO REMOVE THE ABOVE
 
-# "micropython" or "cpython"
-PLATFORM = sys.implementation.name
-if PLATFORM == "cpython":   # Py3
-    from cpython_test_support import CpythonTestSupport   # ZZtype:ignore
-    cpyt = CpythonTestSupport.get_instance()
-    GET_FLASH_SPACE = cpyt.fake_get_flash_space
-else:
-    # use the 'real' filespace info
-    GET_FLASH_SPACE = None
-
 MWS_CONFIG = {
     "btn_left_gpio":     15,
     "btn_right_gpio":    21,
@@ -144,47 +134,6 @@ def len_to_str(item: Any) -> str:
     except Exception as ex:
         return f"len(ITEM)-FAILED {item=} {ex=}"
 len_to_string=len_to_str
-
-
-def get_flash_space() -> tuple[int,int]:
-
-    if  GET_FLASH_SPACE is not None:
-        print(f"UTILS@109 Using FAKE for get_flash_space(): {GET_FLASH_SPACE} ")
-        return GET_FLASH_SPACE()
-
-    # Get filesystem statistics for the root directory ("/")
-    # On uPy it is os.statvfs("/"); on CPy it uses faker CpythonTestSupport
-    print(f"UTILS@114 Using 'real' filespace info")
-    stat = os.statvfs("/")
-
-    # Block size
-    block_size = stat[0]
-    # Total number of blocks
-    total_blocks = stat[2]
-    # Number of free blocks available to unprivileged user
-    free_blocks = stat[3]
-
-    # Calculate total and free space in bytes
-    total_space = block_size * total_blocks
-    free_space = block_size * free_blocks
-
-    return total_space, free_space
-
-
-def convert_fs_space_to_string(fs_space: int) -> str:
-    # Convert to KB and MB for easier reading
-    KB = 1024
-    MB = 1024 * KB
-
-    # Total space ex:  868,352 bytes, 848.00 KB, 0.83 MB
-    # Free space ex:   507,904 bytes, 496.00 KB, 0.48 MB
-    return f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
-
-def get_fs_space_string(sep:str="") -> str:
-    ts, fs = get_flash_space()
-    tss = convert_fs_space_to_string(ts)
-    fss = convert_fs_space_to_string(fs)
-    return f"TOTAL SPACE {tss}   {sep}FREE SPACE {fss}"
 
 
 def determine_py_platform() -> str:
