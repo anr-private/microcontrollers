@@ -12,6 +12,11 @@ def test_gc_collect() -> None:
 
     got = gc_collect()
     assert got is None, got
+    try:
+        from lib1.gc_utils import _MOST_RECENT_THRESHOLD_ARG
+        assert _MOST_RECENT_THRESHOLD_ARG == 1820 # depends on gc_FAKE values
+    except ImportException:
+        pass # CPython only 
 
 
 def test_get_memory_status_string() -> None:
