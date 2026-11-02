@@ -1,6 +1,9 @@
 # gc_FAKE.py
 #
 
+_MOST_RECENT_THRESHOLD_ARG = -1
+
+
 print(f"______ USING gc_FAKE.py  - NO MICROPTYON VERSION AVAILABLE _________________")
 
 def collect() -> None:
@@ -15,6 +18,10 @@ def mem_free() -> int:
     return 2345
 
 def threshold(threshold_value: int) -> None:
-    pass
+    # save for unit test
+    global _MOST_RECENT_THRESHOLD_ARG
+    _MOST_RECENT_THRESHOLD_ARG = threshold_value
+
+
 
 ###

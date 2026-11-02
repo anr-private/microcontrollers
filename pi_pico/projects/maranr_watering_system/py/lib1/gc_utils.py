@@ -2,7 +2,6 @@
 #
 # Interface to the 'gc' module
 
-_MOST_RECENT_THRESHOLD_ARG = -1
 
 
 try:
@@ -20,10 +19,6 @@ def gc_collect() -> None:
     # per https://docs.micropython.org/en/latest/reference/constrained.html#the-heap
     gc.collect()
     new_threshold = gc.mem_free() // 4 + gc.mem_alloc()
-    # save for unit test
-    global _MOST_RECENT_THRESHOLD_ARG
-    _MOST_RECENT_THRESHOLD_ARG = new_threshold
-
     gc.threshold(new_threshold)
 
 
