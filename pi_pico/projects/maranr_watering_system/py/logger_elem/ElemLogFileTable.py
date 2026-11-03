@@ -584,7 +584,7 @@ class ElemLogFileTable:
         if to_log: self._log_a_line(m)
 
 
-### FUNCTIONS  ###########################################################
+### SUPPORT  FUNCTIONS  #################################################
 
 def is_3_digit_int(s):
     # Returns int(s) if s is a 3-digit number; else None.
@@ -618,6 +618,15 @@ def _log_file_filter(fname, ftype, fsize):
     if ext_val is None: return None
     return ext_val
 
+### UNIT TEST FUNCTIONS  #################################################
 
+def Z__set_log_file_dir(new_dir: str) -> str:
+    """ Replace the production dir with a test dir.
+    Keep test logs from polluting production dir.
+    UNIT TEST ONLY
+    """
+    global LOG_FILES_SUBDIR
+    old_dir = LOG_FILES_SUBDIR
+    LOG_FILES_SUBDIR = new_dir
 
 ###

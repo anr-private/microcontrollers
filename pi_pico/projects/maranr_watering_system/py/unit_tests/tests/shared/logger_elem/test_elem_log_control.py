@@ -4,12 +4,21 @@
 
 import os
 
-from test_classes.ClassA import ClassA
-from test_classes.ClassB import ClassB
+if 1:
+    #@@@@@@@@@@@@@@@@@@@@@@@@
+    import sys
+    for s in sys.path:
+        print(f"PATH: {s}")
+
+from ztest_logger_elem.ClassA import ClassA
+from ztest_logger_elem.ClassB import ClassB
 
 #from lib1.file_utils import xxx
 #@@@@@@ NEEDED?
 from lib1.utils import string_to_int
+
+try: from cpython_glue import get_scratch_path
+except ImportError: pass
 
 from logger_elem.ElemLogControl import ElemLogControl
 
@@ -19,13 +28,34 @@ from logger_elem.ElemLogControl import ElemLogControl
 
 def test_USE_THIS_SKELETON_as_basis_for_all_tests() -> None:
     """ """
+    # Replace the production logs/ dir with a test dir
+    logs_dir = get_scratch_path("logs")
+    # Clear out any leftover 'global' stuff in ElemLogControl
+    ElemLogControl._nullify_instance()
+    elc = ElemLogControl.get_instance()
     try:
-        ElemLogControl._nullify_instance()
-        elc = ElemLogControl.get_instance()
-        # TEST CODE HERE
+        pass # PUT TEST CODE HERE
     finally:
+        # Leave no (log) files dangling open - esp on Pico
+        elc.close_all_logging()
         ElemLogControl._nullify_instance()
-@@@@ use everywhere @@@@
+
+
+def test_registry_trivial_case() -> None:
+    """ The registry contains one element, ElemLogControl itself.
+    It is created when the instance is created.
+    """
+    ElemLogControl._nullify_instance()
+    elc = ElemLogControl.get_instance()
+    try:
+        classes = elc.get_registered_classes()
+        assert len(classes) == 1, classes
+        # classes is a view object, does not support [0]
+        assert list(classes)[0] == "ElemLogControl"
+    finally:
+        # Leave no (log) files dangling open - esp on Pico
+        elc.close_all_logging()
+        ElemLogControl._nullify_instance()
 
 
 def test_get_lines_from_log_file() -> None:

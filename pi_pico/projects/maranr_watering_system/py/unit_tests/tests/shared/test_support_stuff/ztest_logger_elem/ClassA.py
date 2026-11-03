@@ -1,4 +1,4 @@
-# ClassB.py
+# ClassA.py
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
@@ -16,7 +16,7 @@ logrt: Any = None
 logi:  Any = None
 
 
-class ClassB(ElemLoggerABC):
+class ClassA(ElemLoggerABC):
     
     def __init__(self, num):
         self.num = num
@@ -24,14 +24,14 @@ class ClassB(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        prt(f"ClassB@24 _set_logger  logger is {logger}")
+        prt(f"ClassA@24 _set_logger  logger is {logger}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
 
 
     def to_log(self, m):
-        print(f"@@@@@ CLASSA@29  log is {log}")
+        print(f"@@@@@ ClassA@29  log is {log}")
         log(m)
 
     def to_logrt(self, m):
@@ -42,9 +42,9 @@ class ClassB(ElemLoggerABC):
 
 
     def try_all_loggers(self):
-        log(  "LOG-MESG-ClassB-{self.num}-test@15")
-        logrt("LOGRT-MESG-ClassB-{self.num}-test@16")
-        logi(  "LOGI-MESG-ClassB-{self.num}-test@17")
+        log(f"LOG-MESG-ClassA-{self.num}-test@15")
+        logrt(f"LOGRT-MESG-ClassA-{self.num}-test@16")
+        logi(f"LOGI-MESG-ClassA-{self.num}-test@17")
 
 
     def __str__(self):

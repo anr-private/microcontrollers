@@ -80,6 +80,7 @@ ALL_DIRS=[
      "primitives",
      "sensors",
      "weblib",
+     "unit_tests/tests/shared/test_support_stuff/ztest_logger_elem",
     ]
 
 class ToPico:
@@ -100,7 +101,8 @@ class ToPico:
         if opts.verbose: V = True
         if opts.veryverbose: VV = True; V = True
         if opts.quiet: PRT = False
-        
+        ###print(f"@@@@ V is {V}"); sys.exit(9)
+
         if opts.dryrun: 
             self._dryrun = True
             # Do not update the marker file timestamp - unless FORCED
@@ -174,7 +176,7 @@ class ToPico:
 
 
     def do_pkg(self, pkg_name):
-        if V: print(f"\n+++ Pkg: {pkg_name}  -------")
+        if V: print(f"\n===  Pkg: {pkg_name}   =========================\n")
 
         pkg_dir_path = Path("./"+pkg_name)
         if not pkg_dir_path.is_dir():
