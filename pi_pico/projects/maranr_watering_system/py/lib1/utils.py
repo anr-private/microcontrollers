@@ -82,7 +82,7 @@ def format_number_with_commas(float_value: float, decimal_places: int) -> str:
     whole, fraction = divmod(scaled, factor)
 
     digits = str(whole)
-    groups = []
+    groups: list[str] = []
     while len(digits) > 3:
         groups.insert(0, digits[-3:])
         digits = digits[:-3]
@@ -156,7 +156,7 @@ def determine_machine_type() -> str:
 
 
 def main() -> None:
-    print(f"UTILS@199 FS SPACE: {get_fs_space_string()}")
+    print(f"UTILS@199 NOT YET")
 
 if __name__ == "__main__":
     main()

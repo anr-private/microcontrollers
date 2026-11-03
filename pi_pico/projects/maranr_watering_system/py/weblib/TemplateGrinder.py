@@ -3,8 +3,8 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
-from lib1.utils import get_memory_status_string
-from lib1.utils import get_fs_space_string
+from lib1.gc_utils import get_memory_status_string
+from lib1.file_system_utils import get_fs_space_string
 from lib2.TimeMgr import TimeMgr
 
 try: from typing import Any, Callable

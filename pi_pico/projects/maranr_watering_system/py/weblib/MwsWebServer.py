@@ -3,7 +3,7 @@
 import asyncio
 import gc
 
-from lib1.utils import gc_collect
+from lib1.gc_utils import gc_collect
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
 from logger_elem.ElemLoggerABC import ElemLoggerABC

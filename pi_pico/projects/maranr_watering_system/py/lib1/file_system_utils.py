@@ -23,7 +23,7 @@ from lib1.utils import format_number_with_commas
 ###@@@@@@Z__USE_CPYTHON_FILE_SYSTEM_ACCESS = False
 
 
-def calculate_flash_space(statvfs_values) -> [int, int]:
+def calculate_flash_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
     """ Given the 10-tuple returned by os.statvfs().
     Returns two values: total_space and free_space (in bytes)
     On Linux, both block_size and fragment_size are almost always 4096.

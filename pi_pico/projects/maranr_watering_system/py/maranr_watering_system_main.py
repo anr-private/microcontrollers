@@ -19,6 +19,10 @@ except ModuleNotFoundError:
     # import time      # type: ignore 
                 
 
+from lib1.utils import MWS_CONFIG
+
+from lib1.file_system_utils import get_fs_space_string
+from lib1.gc_utils import get_memory_status_string
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.DataBoard import DataBoard
 from lib2.TimeMgr import TimeMgr
@@ -27,9 +31,6 @@ from displays.MwsDisplays import MwsDisplays
 from sensors.MwsButtons import MwsButtons
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
-from lib1.utils import MWS_CONFIG
-from lib1.utils import get_fs_space_string
-from lib1.utils import get_memory_status_string
 
 from mws.MaranrWateringSystem import MaranrWateringSystem
 

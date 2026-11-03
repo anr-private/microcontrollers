@@ -15,6 +15,9 @@ except ModuleNotFoundError:
 # except Exception:
     # import time                 #Py3 unit tests
 
+from lib1.utils import determine_machine_type
+from lib1.file_system_utils import get_fs_space_string
+from lib1.gc_utils import get_memory_status_string
 from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
 from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
@@ -23,9 +26,6 @@ from displays.MwsDisplays import MwsDisplays
 from sensors.MwsButtons import MwsButtons
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
-from lib1.utils import determine_machine_type
-from lib1.utils import get_fs_space_string
-from lib1.utils import get_memory_status_string
 
 
 # Logging functions; provided by our parent class using set_log_functions()

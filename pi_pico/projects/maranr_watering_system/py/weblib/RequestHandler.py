@@ -7,10 +7,9 @@ import json
 try: from typing import Any
 except ImportError: pass
 
-from lib1.utils import gc_collect
 from lib1.utils import len_to_str
-from lib1.utils import get_fs_space_string
-from lib1.utils import get_memory_status_string
+from lib1.gc_utils import gc_collect, get_memory_status_string
+from lib1.file_system_utils import get_fs_space_string
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
