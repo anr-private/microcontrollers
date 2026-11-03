@@ -9,9 +9,33 @@ else
     exit 9
 fi
 
+THIS_SUBDIR='./lib1'
 
-clean_up_old_dirs_and_files() {
-    echo 'CLEANUP: copy the cleanup program and run it'
+verify_correct_directory() {
+    echo '@@@@@@@@ START verify_correct_directory'
+    if [ -d ${THIS_SUBDIR} ] ; then
+        echo 'FOUND the expected subdir: '  ${THIS_SUBDIR}
+        return
+    fi
+
+    echo '** NO SUCH SUBDIR in the current directory **'
+    echo '    Expected: ' ${THIS_SUBDIR}
+    exit 9
+}
+
+
+remove_pycache() {
+    echo \
+    "rm -rf __pycache__"
+     rm -rf __pycache__
+    echo \
+    "rm -rf ${THIS_SUBDIR}/__pycache__"
+     rm -rf ${THIS_SUBDIR}/__pycache__
+}
+
+
+clean_up_old_dirs_and_files_on_pico() {
+    echo 'CLEANUP PICO: copy the cleanup program and run it'
     echo '*** NOT IMPLEMENETED YET ***'
     #mpremote ${PREM_DEVICE} fs cp remove_old_watering_files.py  :/
     #echo '   Run the cleanup'
@@ -40,8 +64,10 @@ list_pico_filesystem_contents() {
 
 
 main() {
-    echo "PUSH_LIB1_FILES_TO_PICO"
-    clean_up_old_dirs_and_files
+    echo "PUSH_lib1_to_pico.sh"
+    verify_correct_directory
+    remove_pycache
+    clean_up_old_dirs_and_files_on_pico
     copy_release_files_to_the_pico
     list_pico_filesystem_contents
 }

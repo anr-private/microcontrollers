@@ -92,13 +92,13 @@ def test_convert_fs_space_to_string() -> None:
     total_stg = convert_fs_space_to_string(total_space)
     print(f"@@T@34  {total_stg=}")
     exp_total_stg = '12,345,678 bytes, 12,056.33 KB, 11.77 MB'
-    assert total_stg == exp_total_stg
+    assert total_stg == exp_total_stg, total_stg
 
     free_space = 987654
     free_stg = convert_fs_space_to_string(free_space)
     print(f"@@T@40  {free_stg=}")
     exp_free_stg = '987,654 bytes, 964.51 KB, 0.94 MB'
-    assert free_stg == exp_free_stg
+    assert free_stg == exp_free_stg, free_stg
 
 
 ###

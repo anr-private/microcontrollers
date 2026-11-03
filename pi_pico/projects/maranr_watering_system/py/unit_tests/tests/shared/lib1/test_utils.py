@@ -5,7 +5,7 @@
 import os
 
 from lib1.utils import seconds_to_hhmmss_string, seconds_to_hhmmss
-from lib1.utils import string_to_int, show_cc
+from lib1.utils import format_number_with_commas, string_to_int, show_cc
 
 # CPython only
 try: from cpython_test_support import CpythonTestSupport
@@ -61,6 +61,29 @@ def test_seconds_to_hhmmss() -> None:
     total_secs = 5 + 60*3 + 60*60*4
     v = seconds_to_hhmmss(total_secs)
     assert v == (4,3,5), v
+
+
+def test_format_number_with_commas() -> None:
+    tests = (
+        (1.0,        2,  "1.00"),
+        (1.01,       2,  "1.01"),
+        (1.99,       2,  "1.99"),
+        (1.999,      2,  "2.00"),
+        (12056.33,   2,  "12,056.33"),
+        (0,          2,  "0.00"),
+        (5,          2,  "5.00"),
+        (999.999,    2,  "1,000.00"),
+        (1000,       2,  "1,000.00"),
+        (99999.99,   2,  "99,999.99"),
+        (1234567,    2,  "1,234,567.00"),
+        (-1234.5,    2,  "-1,234.50"),
+        (-0.001,     2,  "0.00"),
+        (-0.00,      2,  "0.00"),
+        )
+    
+    for float_value, decimal_places, exp_stg in tests:
+        got_stg = format_number_with_commas(float_value, decimal_places)
+        assert exp_stg == got_stg, f"'{exp_stg}', '{got_stg}'"
 
 
 def test_string_to_int() -> None:

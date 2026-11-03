@@ -69,6 +69,34 @@ def seconds_to_hhmmss(total_secs: int) -> tuple[int, int, int]:
     return hours, minutes, secs
 
 
+def format_number_with_commas(float_value: float, decimal_places: int) -> str:
+    """ Format float_value with comma thousands separators and
+    `decimal_places` decimal places,
+    like '{:,.2f}' in CPython. 
+    Rounds once; works the same on MicroPython.
+    Why this is needed: MicroPython cannot handle ',' in a float format;
+    it just ignores it (it's a bug).
+    """
+    factor = 10 ** decimal_places
+    scaled = int(round(abs(float_value) * factor))     # whole number of 1/factor units
+    whole, fraction = divmod(scaled, factor)
+
+    digits = str(whole)
+    groups = []
+    while len(digits) > 3:
+        groups.insert(0, digits[-3:])
+        digits = digits[:-3]
+    groups.insert(0, digits)
+    text = ",".join(groups)
+
+    if decimal_places > 0:
+        fraction_stg = str(fraction)
+        text += "." + "0" * (decimal_places - len(fraction_stg)) + fraction_stg
+    if float_value < 0 and scaled != 0:   # do not produce '-0.00'
+        text = "-" + text
+    return text
+
+
 def string_to_int(s: str) -> int|None:
     try:
         return int(s)
@@ -95,37 +123,6 @@ def show_cc(line: str | None) -> str:
     parts = [_show_char(ch) for ch in line]
     return "".join(parts)
 
-# def show_cc(line: str|None) -> str:
-    # # convert line to a new line, replacing all control chars with visible rep 
-    # if line is None: line = ""
-    # chars = []
-    # for ch in line:
-        # if ch == "\r":
-            # chars.append("\\r")
-        # elif ch == "\n":
-            # chars.append("\\n")
-        # elif ch == "\t":
-            # chars.append("\\t")
-        # else:
-            # chars.append(ch)
-    # return "".join(chars)
-#
-# def show_cc(line: str | None) -> str:
-    # # Show control characters as visible text (\r, \n, \t, or \xNN)
-    # if line is None: return ""
-    # names = {"\r": "\\r", "\n": "\\n", "\t": "\\t"}
-    # return "".join(names.get(ch) or (f"\\x{ord(ch):02x}" if ord(ch) < 32 or ord(ch) >= 127 else ch)
-                   # for ch in line)
-
-
-#@@@@ TODO REMOVE
-# def show_len(item):
-    # # return as str the length of an object like a string or list 
-    # try:
-        # return str(len(item))
-    # except Exception as ex:
-        # return f"ITEM-HAS-NO-LEN {item=} {ex=}"
-
 
 def len_to_str(item: Any) -> str:
     # return as str the length of an object like a string or list 
@@ -139,12 +136,6 @@ len_to_string=len_to_str
 def determine_py_platform() -> str:
     # returns "micropython" or "cpython"  (some systems: "pypy", or something else)
     return sys.implementation.name
-#@@@@ TODO REMOVE BELOW:
-# def determine_py_platform() -> str:
-    # # returns "micropython", "cpython" 
-    # if "micropython" in platform.platform().lower():
-        # return "micropython"
-    # return "cpython"
 
 
 def determine_machine_type() -> str:
@@ -165,7 +156,7 @@ def determine_machine_type() -> str:
 
 
 def main() -> None:
-    print(f"UTILS@173 FS SPACE: {get_fs_space_string()}")
+    print(f"UTILS@199 FS SPACE: {get_fs_space_string()}")
 
 if __name__ == "__main__":
     main()
