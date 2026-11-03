@@ -4,6 +4,8 @@
 
 import os
 
+from lib1.utils import format_number_with_commas
+
 # "micropython" or "cpython"
 #if sys.implementation.name == "cpython":   # Py3
     
@@ -88,7 +90,11 @@ def convert_fs_space_to_string(fs_space: int) -> str:
 
     # Total space ex:  868,352 bytes, 848.00 KB, 0.83 MB
     # Free space ex:   507,904 bytes, 496.00 KB, 0.48 MB
-    return f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
+    bytes_stg = f"{fs_space:,}"
+    kb_stg = format_number_with_commas(fs_space/KB, 2)
+    mb_stg = format_number_with_commas(fs_space/MB, 2)
+    #return f"{fs_space:,} bytes, {(fs_space/KB):,.2f} KB, {(fs_space/MB):.2f} MB"
+    return f"{bytes_stg} bytes, {kb_stg} KB, {mb_stg} MB"
 
 def get_fs_space_string(sep:str="") -> str:
     ts, fs = get_flash_space()

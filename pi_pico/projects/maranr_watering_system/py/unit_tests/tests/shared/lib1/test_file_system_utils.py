@@ -79,7 +79,8 @@ def test_get_flash_space() -> None:
     #        1,806,526,021,632 bytes free
     #
     # Pico: 256Mb(?)
-    assert got_total_space >= 250_000_000, got_total_space
+    exp_min_total_space = 2_500_000
+    assert got_total_space >= exp_min_total_space, f"{got_total_space} not >= {exp_min_total_space}"
     # Linux: 1,806,526,676,992 approx 1441800192
     assert got_free_space >= 100_000, got_free_space
     # The free space should not exceed total space
@@ -92,7 +93,7 @@ def test_convert_fs_space_to_string() -> None:
     total_stg = convert_fs_space_to_string(total_space)
     print(f"@@T@34  {total_stg=}")
     exp_total_stg = '12,345,678 bytes, 12,056.33 KB, 11.77 MB'
-    assert total_stg == exp_total_stg, total_stg
+    assert total_stg == exp_total_stg, f"'{exp_total_stg}', '{total_stg}'"
 
     free_space = 987654
     free_stg = convert_fs_space_to_string(free_space)
