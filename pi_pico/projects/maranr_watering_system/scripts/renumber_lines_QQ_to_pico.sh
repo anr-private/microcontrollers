@@ -9,7 +9,7 @@ PYTHON_EXE=python3
 FDIR="../scripts"
 FNAME="QQ_to_pico"
 TARGET='QQ@'
-
+MAKE_FILE_EXECUTABLE=true
 
 FPATH="${FDIR}/${FNAME}"
 OUT_FPATH="${FPATH}.out"
@@ -39,7 +39,6 @@ echo \
 "$PYTHON_EXE $RENUM_LINES $FPATH  $TARGET"
  $PYTHON_EXE $RENUM_LINES $FPATH  $TARGET  1>>$LOG_FPATH
 
-
 if $DBG ; then
     echo '$$$   OUT  FILE: ' $OUT_FPATH
     echo '$$$   ls -l ' $(ls -l $OUT_FPATH)
@@ -52,7 +51,13 @@ if $DBG ; then
     "mv $OUT_FPATH  $FPATH"
 fi
      mv $OUT_FPATH  $FPATH
-    
+if $MAKE_FILE_EXECUTABLE ; then
+    echo 'MAKING THE FILE EXECUTABLE: ' $FPATH
+    echo \
+    "chmod +x $FPATH"
+    chmod +x $FPATH
+fi
+
 if $DBG ; then
     echo \
     "rm -f $BAK_FPATH"
@@ -60,7 +65,9 @@ fi
      rm -f $BAK_FPATH
 
 if $DBG ; then
-     cat $LOG_FPATH
+    echo '--- LOG FILE  ------------------'
+    cat $LOG_FPATH
+    echo '--- end of LOG FILE  ------------------'
 fi
      rm -f $LOG_FPATH
 

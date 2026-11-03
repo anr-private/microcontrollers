@@ -11,6 +11,9 @@ import subprocess
 import sys
 import time
 
+# How we detect if we are in a virtual environment
+EXPECTED_VENV_VARIABLE = "VIRTUAL_ENV"
+
 DBG = False
 PRT = True
 V = False
@@ -68,8 +71,8 @@ DEVICE_TO_IDENTIFIER = {
     "/dev/ttyacm3":     "a3",
     }
 
-# aka packages
-ALL_DIRS=[
+# Production (vs test) Pkgs  (in the order they will be updated)
+ALL_PRODUCTION_PKGS = (
      "displays",
      "lib",
      "lib0",
@@ -80,11 +83,44 @@ ALL_DIRS=[
      "primitives",
      "sensors",
      "weblib",
-     "unit_tests/tests/shared/test_support_stuff/ztest_logger_elem",
-    ]
+     )
+ALL_TEST_PKGS = (              
+     "ztest_logger_elem",
+     )
+
+# Where the pkg is found in the local (Linux) MWS repo dirs
+PKG_SRC_PATHS = {
+     "displays":     "displays",
+     "lib":          "lib",
+     "lib0":         "lib0",
+     "lib1":         "lib1",
+     "lib2":         "lib2",
+     "logger_elem":  "logger_elem",
+     "mws":          "mws",
+     "primitives":   "primitives",
+     "sensors":      "sensors",
+     "weblib":       "weblib",
+     "ztest_logger_elem": 
+                     "unit_tests/tests/shared/test_support_stuff/ztest_logger_elem",
+    }
+# Where the files in the pkg are placed on the remote PICO system
+PKG_DEST_PATHS = {
+     "displays":           "displays",
+     "lib":                "lib",
+     "lib0":               "lib0",
+     "lib1":               "lib1",
+     "lib2":               "lib2",
+     "logger_elem":        "logger_elem",
+     "mws":                "mws",
+     "primitives":         "primitives",
+     "sensors":            "sensors",
+     "weblib":             "weblib",
+     "ztest_logger_elem":  "ztest_logger_elem",
+    }
 
 class ToPico:
     def __init__(self):
+        # Contains @@@@@
         self.pkg_names = []
         # Force copying to the device regards of timestamps on the files
         self._force_update = False
@@ -96,7 +132,7 @@ class ToPico:
 
     def do_options(self, opts):
         global DBG, V, VV, STOP_ON_ERROR, PRT
-        #print(f"QQ@98 opts={opts}")
+        #print(f"QQ@135 opts={opts}")
         if opts.debug: DBG = True
         if opts.verbose: V = True
         if opts.veryverbose: VV = True; V = True
@@ -114,50 +150,63 @@ class ToPico:
         # 'a0', 'a1',...
         self._device_identifier = None
         # __QPUSH_MARKER__a0, etc.
-        self._marker_filename = None
+        ###@@@@@@self._marker_filename = None
 
 
         if len(opts.other_items) <= 0:
-            print(f"QQ@119 YOU MUST INCLUDE A DESTINATION DEVICE!")
+            print(f"QQ@157 YOU MUST INCLUDE A DESTINATION DEVICE!")
             print(f"               Try --help")
-            raise RuntimeError(f"QQ@121 YOU MUST INCLUDE A DESTINATION DEVICE on the command line!")
+            raise RuntimeError(f"QQ@159 YOU MUST INCLUDE A DESTINATION DEVICE on the command line!")
 
         # First non-option item must be a destination device 
         dev_stg = opts.other_items[0]
         requested_pkgs = opts.other_items[1:]
 
-        if V: print(f"QQ@127  Device '{dev_stg}'   Pkgs-requested: '{requested_pkgs}' ")
+        if V: print(f"QQ@165  Device '{dev_stg}'   Pkgs-requested: '{requested_pkgs}' ")
 
         dev_id = DEVICE_TO_IDENTIFIER.get(dev_stg)
         if not dev_id:
-            raise RuntimeError(f"QQ@131 Unknown mpremote device: '{dev_stg}'")
+            raise RuntimeError(f"QQ@169 Unknown mpremote device: '{dev_stg}'")
         self._device_identifier = dev_id
 
-        if len(requested_pkgs) == 0: requested_pkgs = ["ALL"]
+        if len(requested_pkgs) == 0: 
+            requested_pkgs = ["ALL"]
         if "ALL" in requested_pkgs:
             if len(requested_pkgs) != 1:
-                perr(f"QQ@137 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
+                perr(f"QQ@176 The 'ALL' pseudo-package must be specified by itself; no other pkgs allowed.")
                 sys.exit(1)
-            pkgs = set(ALL_DIRS)
+            pkgs = set(ALL_PRODUCTION_PKGS + ALL_TEST_PKGS)
         else:
             pkgs = set(requested_pkgs)
+
         # Verify the pkg names are known to us
-        for p in pkgs:
-            if p not in ALL_DIRS:
-                perr(f"QQ@145 Unrecognized package name '{p}'")
-                sys.exit(1)
+        if not self._validate_pkg_names(pkgs):
+            perr(f"QQ@184 Unrecognized package name(s) in '{pkgs}'")
+            sys.exit(1)
+
         # Create a list of requested packages (dirs), in order per ALL_DIRS
         self.pkg_names = []
-        for pkgname in ALL_DIRS:
+        for pkgname in ALL_PRODUCTION_PKGS + ALL_TEST_PKGS:
             if pkgname in pkgs:
                 self.pkg_names.append(pkgname)
-        if V: print(f"QQ@152 Pkgs to be updated: {self.pkg_names}")
+        if V: print(f"QQ@192 Pkgs to be updated: {self.pkg_names}")
 
 
     def run(self):
         if DBG or V:
-            print(f"QQ@157{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
-        if self._dryrun: print("QQ@158  ----------- DRY RUN  -------------------------")
+            print(f"QQ@197{DBG=}  {V=}  veryV={VV} PRT={PRT} stop_on_error={STOP_ON_ERROR}  ")
+        if self._dryrun: print("QQ@198  ----------- DRY RUN  -------------------------")
+
+        # Verify we are in a virtual environment - so we are using its 'mpremote'
+        if not self._verify_inside_virtual_environ():
+            print(f"QQ@202 **ERROR**  No virtual environment appears to be active(?)")
+            print(f"QQ@203   Expected virtual environ variable '{EXPECTED_VENV_VARIABLE}' ")
+            print(f"QQ@204   to be present and contain a .xxx_venv path'")
+            print(f"QQ@205   Got {EXPECTED_VENV_VARIABLE=}")
+            raise RuntimeError(f"QQ@206 No virtual environment appears to be active(?)")
+
+        if V:
+            print(f"QQ@209 pkg names: {self.pkg_names}")
 
         for pkg_name in self.pkg_names:
             self.do_pkg(pkg_name)
@@ -172,137 +221,157 @@ class ToPico:
             "fs", "cp", 
             main_fname, f":main.py")
         self._run_a_command(cmd_and_args)
-        if PRT: print(f"QQ@173 Copied MAIN to pico:  {" ".join(cmd_and_args)} ")
+        if PRT: print(f"QQ@224 Copied MAIN to pico:  {" ".join(cmd_and_args)} ")
 
 
     def do_pkg(self, pkg_name):
         if V: print(f"\n===  Pkg: {pkg_name}   =========================\n")
 
-        pkg_dir_path = Path("./"+pkg_name)
-        if not pkg_dir_path.is_dir():
-            perr(f"No such pkg dir: ./{pkg_name}")
+        ####pkg_dir_path = Path("./" + pkg_name)
+        pkg_src_dir_path_stg = PKG_SRC_PATHS.get(pkg_name)
+        pkg_src_dir_path = Path(pkg_src_dir_path_stg)
+
+        if not pkg_src_dir_path.is_dir():
+            perr(f"No such pkg dir: {pkg_src_dir_path_stg}")
             return
+        print(f"@@@185 {pkg_src_dir_path=}")
+
+        marker_file_info = self._get_marker_file_info(pkg_src_dir_path)
+
+        if V: print(f"QQ@241  {marker_file_info=}")
+
+        marker_filename, marker_fpath, marker_ts = marker_file_info
+
+
+        """ @@@@@@@@@@@ REMOVE
 
         self._marker_filename = MARKER_FILENAME_TEMPLATE.format(mpremote_device=self._device_identifier)
         if V: print(f"Marker filename='{self._marker_filename}'")
 
         # Get the marker file
         marker_fpath = pkg_dir_path / self._marker_filename
-        if V: print(f"QQ@189  {marker_fpath=}")
+        if V: print(f"QQ@253  {marker_fpath=}")
 
         if marker_fpath.is_dir():
-            perr(f"QQ@192 The marker is a DIRECTORY; expected a FILE!  '{marker_fpath}'")
+            perr(f"QQ@256 The marker is a DIRECTORY; expected a FILE!  '{marker_fpath}'")
         if not marker_fpath.exists():
-            if PRT: print(f"QQ@194  -- Marker file {marker_fpath} does not exist.  Creating it now...")
+            if PRT: print(f"QQ@258  -- Marker file {marker_fpath} does not exist.  Creating it now...")
             self._create_marker_file(marker_fpath)
         else:
-            if V: print(f"QQ@197 -- Marker file {marker_fpath} exists. ")
+            if V: print(f"QQ@261 -- Marker file {marker_fpath} exists. ")
         marker_ts = self._get_file_timestamp(marker_fpath)
-        if V: print(f"QQ@199 marker TIMESTAMP {marker_ts} ")
+        if V: print(f"QQ@263 marker TIMESTAMP {marker_ts} ")
         if self._force_update:
             marker_ts = 0
-            if V: print(f"QQ@202 marker FORCE UPDATE: zero the marker TIMESTAMP {marker_ts} ")
+            if V: print(f"QQ@266 marker FORCE UPDATE: zero the marker TIMESTAMP {marker_ts} ")
++++
+@@@@@@@@@@@@
+"""
 
-        filenames = self._get_files_in_pkg(pkg_dir_path)
-        if V: print(f"QQ@205 FILENAMES {filenames} " )
+        filenames = self._get_files_in_pkg(pkg_src_dir_path, marker_filename)
+        if V: print(f"QQ@272 FILENAMES {filenames} " )
 
         files_and_ts = list()
         for fname in filenames:
-            ts = self._get_file_timestamp(pkg_dir_path / fname)
+            ts = self._get_file_timestamp(pkg_src_dir_path / fname)
             files_and_ts.append ( (fname, ts) )
         if V: 
-            print(f"QQ@212 files_and_ts: ")
+            print(f"QQ@279 files_and_ts: ")
             for fname, ts in files_and_ts:
                 diff = ts - marker_ts
                 print(f"  {fname:>25s} {ts:10.1f} {diff:10.1f}")
 
         chosen_fnames = list()
         for fname, ts in files_and_ts:
-            if VV: print(f"QQ@219 {fname=}  {ts=}")
+            if VV: print(f"QQ@286 {fname=}  {ts=}")
             if ts >= marker_ts:
                 chosen_fnames.append(fname)
             else:
-                if VV: print(f"QQ@223  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
-        if V: print(f"QQ@224 Files to be copied: {chosen_fnames}")
+                if VV: print(f"QQ@290  OLD, not chosen:   {fname} ts={ts}   marker={marker_ts} ")
+        if V: print(f"QQ@291 Files to be copied: {chosen_fnames}")
 
-        self._copy_to_pico(pkg_dir_path, chosen_fnames)
+        self._copy_to_pico(pkg_name, pkg_src_dir_path, chosen_fnames)
 
         num_copied = len(chosen_fnames)
         if num_copied > 1:
-            if PRT: print(f"QQ@230 Copied {num_copied} files to the PICO  {pkg_name}")
+            if PRT: print(f"QQ@297 Copied {num_copied} files to the PICO  {pkg_name}")
         elif num_copied == 1:
-            if PRT: print(f"QQ@232 Copied 1 file to the PICO  {pkg_name}")
+            if PRT: print(f"QQ@299 Copied 1 file to the PICO  {pkg_name}")
         else:
-            if PRT: print(f"QQ@234  NO FILES copied to the PICO  {pkg_name}")
+            if PRT: print(f"QQ@301  NO FILES copied to the PICO  {pkg_name}")
 
         # Update the marker's timestamp(s)
         if not self._do_marker_file_touch: 
-            print(f"QQ@238: _do_marker_file_touch: FALSE!  Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
+            print(f"QQ@305: _do_marker_file_touch: FALSE!  Marker file '{marker_fpath}' TIMESTAMP has *NOT* been updated!")
         else:
             self._set_file_timestamps_to_now(marker_fpath)
             if V:
                 ts = self._get_file_timestamp(marker_fpath)
-                print(f"QQ@243  Marker file '{marker_fpath}' TIMESTAMP updated to {ts:.1f}")
+                print(f"QQ@310  Marker file '{marker_fpath}' TIMESTAMP updated to {ts:.1f}")
 
 
-    def _copy_to_pico(self, pkg_dir_path, chosen_fnames):
+    def _copy_to_pico(self, pkg_name, pkg_src_dir_path, chosen_fnames):
+        pico_dest_dir_path_stg = PKG_DEST_PATHS.get(pkg_name)
+
+        if pico_dest_dir_path_stg is None:
+            perr(f"QQ@317 No destination PICO dir for pkg_name '{pkg_name}'")
+            return False
+
+        pico_dest_dir_path = Path(pico_dest_dir_path_stg)
+
         cmd_and_args = (
                 "mpremote", "fs", "mkdir", 
-                f":/{pkg_dir_path}")
+                f":/{pico_dest_dir_path}")
+        if V: print(f"QQ@325 {cmd_and_args=}")
+
         self._run_a_command(cmd_and_args, ignore_failure=True)
 
         for fname in chosen_fnames:
             cmd_and_args = (
                 "mpremote", "fs", "cp", 
-                str(pkg_dir_path/fname), f":/{pkg_dir_path}/")
+                str(pkg_src_dir_path/fname), f":/{pico_dest_dir_path}/{fname}")
             self._run_a_command(cmd_and_args)
+        return True
 
 
     def _run_a_command(self, cmd_and_args, ignore_failure=False):
         # cmd_and_args is a list: ['cmd', 'arg', ...]
         # Run the command and capturing its output
-        if V: print(f"QQ@262  RUN CMD: {cmd_and_args} ")
+        if V: print(f"QQ@340  RUN CMD: {cmd_and_args} ")
         if self._dryrun:
-            print(f"QQ@264  DRY RUN: not performed:  {' '.join(cmd_and_args)}")
+            print(f"QQ@342  DRY RUN: not performed:  {' '.join(cmd_and_args)}")
             return
 
         result = subprocess.run(cmd_and_args, capture_output=True, text=True)
 
-        if VV: print("QQ@269  Return code:", result.returncode)
-        if VV: print("QQ@270STDOUT:", result.stdout)
-        if VV: print("QQ@271STDERR:", result.stderr)
+        if VV: print("QQ@347  Return code:", result.returncode)
+        if VV: print("QQ@348STDOUT:", result.stdout)
+        if VV: print("QQ@349STDERR:", result.stderr)
 
         # Check if the command was successful (return code 0)
         if result.returncode != 0:
             if ignore_failure:
-                if V: print(f"QQ@276     IGNORED FAILED command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
+                if V: print(f"QQ@354     IGNORED FAILED command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
             else:
-                perr(f"QQ@278 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
+                perr(f"QQ@356 Command {cmd_and_args} failed!   RESULT-CODE={result.returncode} ")
 
 
-    def _get_files_in_pkg(self, pkg_dir_path):
+    def _get_files_in_pkg(self, pkg_dir_path, skip_this_filename):
         files = list()
         for fname in os.listdir(pkg_dir_path):
             # skip dirs, etc
             if not os.path.isfile(os.path.join(pkg_dir_path, fname)):
                 continue
-            if fname == self._marker_filename:
+            # Skip the marker file
+            if fname == skip_this_filename:
                 continue
             files.append(fname)
         return files
 
 
-    def _create_marker_file(self, marker_fpath):
-        if VV: print(f"QQ@294 Create marker file: '{marker_fpath}' ")
-        with open(marker_fpath, "w") as f:
-            pass
-        access_time = 100000
-        modification_time = 100001
-        os.utime(marker_fpath, (access_time, modification_time))
-
     def _get_file_timestamp(self, fpath):
         s = os.stat(fpath)
-        if VV: print(f"QQ@303  fpath={fpath}  status={s} ")
+        if VV: print(f"QQ@374  fpath={fpath}  status={s} ")
         return s.st_mtime
 
     def _set_file_timestamps_to_now(self, fpath):
@@ -312,15 +381,88 @@ class ToPico:
         os.utime(fpath, (access_time, modification_time) )
 
 
+    def _verify_inside_virtual_environ(self):
+        """ Verify that we are running in a virtual 
+        environment.
+        """
+        val = os.getenv(EXPECTED_VENV_VARIABLE)
+        print(f"QQ@389  {EXPECTED_VENV_VARIABLE=} value='{val}'")
+        if val is None:
+            return False
+        # Should contain the path to our virtual env subdir
+        if not val.endswith(".mws_venv"):
+            return False
+        return True
+
+    def _validate_pkg_names(self, pkg_names):
+        """ Returns True if the names in pkg_names are all ones
+            we know about """
+        for p in pkg_names:
+            if p in ALL_PRODUCTION_PKGS + ALL_TEST_PKGS:
+                continue
+            print(f"QQ@403 Unrecognized package name '{p}' Not in either production or tests pkgs.")
+            print(f"QQ@404 PRODUCTION PACKAGES: {ALL_PRODUCTION_PKGS}")
+            print(f"QQ@405       TEST PACKAGES: {ALL_TEST_PKGS}")
+            perr(f"QQ@406 Unrecognized package name '{p}' Not in either production or tests pkgs.")
+            return False
+        return True
+
+    def _get_marker_file_info(self, pkg_src_dir_path):
+        """ Returns tuple of info:
+            (@@@@@
+        """
+        marker_filename = \
+            MARKER_FILENAME_TEMPLATE.format(mpremote_device=self._device_identifier)
+        if V: print(f"QQ@416 Marker filename='{marker_filename}'")
+
+        # Get the marker file
+        marker_fpath = pkg_src_dir_path / marker_filename
+        if V: print(f"QQ@420  {marker_fpath=}")
+
+        if marker_fpath.is_dir():
+            perr(f"QQ@423 The marker is a DIRECTORY; expected a FILE!  '{marker_fpath}'")
+        if not marker_fpath.exists():
+            if PRT: print(f"QQ@425  -- Marker file {marker_fpath} does not exist.  Creating it now...")
+            self._create_marker_file(marker_fpath)
+        else:
+            if V: print(f"QQ@428 -- Marker file {marker_fpath} exists. ")
+
+        marker_ts = self._get_file_timestamp(marker_fpath)
+        if V: print(f"QQ@431 marker TIMESTAMP {marker_ts} ")
+
+        if self._force_update:
+            marker_ts = 0
+            if V: print(f"QQ@435 marker FORCE UPDATE: zero the marker TIMESTAMP {marker_ts} ")
+        result = (marker_filename, marker_fpath, marker_ts)
+        print(f"QQ@437  Marker file info: {result}")
+        return result
+
+
+    def _create_marker_file(self, marker_fpath):
+        if VV: print(f"QQ@442 Create marker file: '{marker_fpath}' ")
+        with open(marker_fpath, "w") as f:
+            pass
+        access_time = 100000
+        modification_time = 100001
+        os.utime(marker_fpath, (access_time, modification_time))
+
+
+
+
+
+
+
+
+# === FUNCTIONS  ===================================
 
 def perr(err):
     print(f"**ERROR**  {err}")
     if STOP_ON_ERROR:
-        raise RuntimeError(f"QQ@317 STOPPING DUE TO ERROR: {err}")
+        raise RuntimeError(f"QQ@461 STOPPING DUE TO ERROR: {err}")
 
 
 
-####################################################################
+###  CLASSES    ########################################################
 
 class SimpleOptionsParser(object):
     """ Simplified options parser """
@@ -376,20 +518,20 @@ class SimpleOptionsParser(object):
 
             arg = args[argidx]; argidx += 1
 
-            if debug_itself: print(f"QQ@377 arg is '{arg}'")
+            if debug_itself: print(f"QQ@521 arg is '{arg}'")
 
             if arg.startswith("--"):
                 opt_stg = arg[2:]
             elif arg.startswith("-"):
                 opt_stg = arg[1:]
             else:
-                if debug_itself: print(f"QQ@384 NOT AN OPT {arg}")
+                if debug_itself: print(f"QQ@528 NOT AN OPT {arg}")
                 opts.other_items.append(arg)
                 continue
 
             ####optLc = opt.lower()
-            ###if debug_itself: print(f"QQ@389  OPT is {opt}    {optLc=} ")
-            if debug_itself: print(f"QQ@390  OPT is {opt}  ")
+            ###if debug_itself: print(f"QQ@533  OPT is {opt}    {optLc=} ")
+            if debug_itself: print(f"QQ@534  OPT is {opt}  ")
 
             if opt_stg in ("help","h"):
                 print(HELP_INFO)
@@ -435,13 +577,10 @@ class SimpleOptionsParser(object):
                 raise RuntimeError(s)
 
         if debug_itself:
-            print(f"QQ@436 $$$ SimpleOptionsParser Args: {args}")
-            print(f"QQ@437 parsed options: {opts}")
+            print(f"QQ@580 $$$ SimpleOptionsParser Args: {args}")
+            print(f"QQ@581 parsed options: {opts}")
 
         return opts
-
-
-    ################################################################
 
     def _isInt(self, stg):
         try:
@@ -451,20 +590,18 @@ class SimpleOptionsParser(object):
             pass
         return False
 
-    ################################################################
-
     def runTests(self):
         """ Run some simple tests """
 
         if 1:
             opts = self.parseOptions(["-zoptions", "-v"])
-            print(f"QQ@459  +++ opts={opts}")
+            print(f"QQ@598  +++ opts={opts}")
             assert opts.verbose is True
             assert opts.veryverbose is False
             assert req_items == []
         if 1:
             opts = self.parseOptions(["-zoptions", "a", "b"])
-            print(f"QQ@465  +++ opts={opts}")
+            print(f"QQ@604  +++ opts={opts}")
             assert req_items == ["a", "b"]
 
 
