@@ -77,24 +77,24 @@ class ElemLogFileTable:
 
 
 
-    def _set_max_log_file_size(self, new_max_size: int) -> None:
-        # unit test ONLY
-        print(f"ELFT@79  _set_max_log_file_size to {new_max_size} =======================================")
-        global MAX_LOG_FILE_SIZE
-        MAX_LOG_FILE_SIZE = new_max_size
-
-    def _set_log_fspace_high_watermark(self, new_high_watermark: int) -> None:
-        # unit test ONLY
-        print(f"ELFT@85  _set_log_fspace_high_watermark to {new_high_watermark} =======================================")
-        global LOG_FSPACE_HIGH_WATERMARK
-        LOG_FSPACE_HIGH_WATERMARK = new_high_watermark
-
-    def _set_log_fspace_low_watermark(self, new_low_watermark: int) -> None:
-        # unit test ONLY
-        print(f"ELFT@91  _set_log_fspace_low_watermark to {new_low_watermark} =======================================")
-        global LOG_FSPACE_LOW_WATERMARK
-        LOG_FSPACE_LOW_WATERMARK = new_low_watermark
-
+    # def _set_max_log_file_size(self, new_max_size: int) -> None:
+        # # unit test ONLY
+        # print(f"ELFT@79  _set_max_log_file_size to {new_max_size} =======================================")
+        # global MAX_LOG_FILE_SIZE
+        # MAX_LOG_FILE_SIZE = new_max_size
+# 
+    # def _set_log_fspace_high_watermark(self, new_high_watermark: int) -> None:
+        # # unit test ONLY
+        # print(f"ELFT@85  _set_log_fspace_high_watermark to {new_high_watermark} =======================================")
+        # global LOG_FSPACE_HIGH_WATERMARK
+        # LOG_FSPACE_HIGH_WATERMARK = new_high_watermark
+# 
+    # def _set_log_fspace_low_watermark(self, new_low_watermark: int) -> None:
+        # # unit test ONLY
+        # print(f"ELFT@91  _set_log_fspace_low_watermark to {new_low_watermark} =======================================")
+        # global LOG_FSPACE_LOW_WATERMARK
+        # LOG_FSPACE_LOW_WATERMARK = new_low_watermark
+# @@@@@@@@@@@@ REMOVE
 
     def get_current_log_fpath(self) -> str:
         return self._current_log_fpath
@@ -628,5 +628,32 @@ def Z__set_log_file_dir(new_dir: str) -> str:
     global LOG_FILES_SUBDIR
     old_dir = LOG_FILES_SUBDIR
     LOG_FILES_SUBDIR = new_dir
+    return old_dir
+
+def Z__set_max_log_file_size(new_max_size: int) -> int:
+    # unit test ONLY
+    print(f"ELFT@635  Z__set_max_log_file_size to {new_max_size} =======================================")
+    global MAX_LOG_FILE_SIZE
+    old = MAX_LOG_FILE_SIZE
+    MAX_LOG_FILE_SIZE = new_max_size
+    return old
+
+def Z__set_log_fspace_high_watermark(new_high_watermark: int) -> int:
+    # unit test ONLY
+    print(f"ELFT@641  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
+    global LOG_FSPACE_HIGH_WATERMARK
+    old = LOG_FSPACE_HIGH_WATERMARK
+    LOG_FSPACE_HIGH_WATERMARK = new_high_watermark
+    return old
+
+def Z__set_log_fspace_low_watermark(new_low_watermark: int) -> int:
+    # unit test ONLY
+    print(f"ELFT@647  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
+    global LOG_FSPACE_LOW_WATERMARK
+    old = LOG_FSPACE_LOW_WATERMARK
+    LOG_FSPACE_LOW_WATERMARK = new_low_watermark
+    return old
+
+
 
 ###

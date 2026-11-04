@@ -1,14 +1,9 @@
 # test_elem_log_control.py
 #
-# Shared test for logger_elem.ElemLogControl
+# Test for logger_elem.ElemLogControl.py
 
 import os
 
-if 1:
-    #@@@@@@@@@@@@@@@@@@@@@@@@
-    import sys
-    for s in sys.path:
-        print(f"PATH: {s}")
 
 from ztest_logger_elem.ClassA import ClassA
 from ztest_logger_elem.ClassB import ClassB
