@@ -19,4 +19,15 @@ def test_get_current_log_fpath() -> None:
     assert got_fsize == 0, got_fsize
 
 
+def test_get_log_table_item_when_empty() -> None:
+    elft = ElemLogFileTable()
+
+    # Table is empty initially
+    item = elft.get_log_table_item(0)
+    assert item is None
+
+
+
+
+
 ###

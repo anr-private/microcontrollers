@@ -8,10 +8,6 @@ import os
 from ztest_logger_elem.ClassA import ClassA
 from ztest_logger_elem.ClassB import ClassB
 
-#from lib1.file_utils import xxx
-#@@@@@@ NEEDED?
-from lib1.utils import string_to_int
-
 try: from cpython_glue import get_scratch_path
 except ImportError: pass
 
@@ -25,6 +21,7 @@ def test_USE_THIS_SKELETON_as_basis_for_all_tests() -> None:
     """ """
     # Replace the production logs/ dir with a test dir
     logs_dir = get_scratch_path("logs")
+    ###raise RuntimeError(f"TELC@28 @@@@@@@@@@@@@ scratch dir is {logs_dir}")
     # Clear out any leftover 'global' stuff in ElemLogControl
     ElemLogControl._nullify_instance()
     elc = ElemLogControl.get_instance()
@@ -63,7 +60,7 @@ def test_get_lines_from_log_file() -> None:
     try:
          # fill the log with recognizable pattern of lines
         for i in range(10):
-            elc.log_one_line(f"THIS is line {i+1}")
+            elc.log_one_line(f"ELFT: THIS is line {i+1}")
     
         relative_line_number = 4
         number_of_lines = 2
@@ -74,8 +71,8 @@ def test_get_lines_from_log_file() -> None:
         assert len(lines) == 2, len(lines)
         line1 = lines[0]
         line2 = lines[1]
-        assert line1 == "THIS is line 7", line1
-        assert line2 == "THIS is line 8", line2
+        assert line1 == "ELFT: THIS is line 7", line1
+        assert line2 == "ELFT: THIS is line 8", line2
     finally:
         # Leave no (log) files dangling open - esp on Pico
         elc.close_all_logging()

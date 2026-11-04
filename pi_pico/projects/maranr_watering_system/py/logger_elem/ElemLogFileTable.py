@@ -622,6 +622,7 @@ def _log_file_filter(fname, ftype, fsize):
 
 def Z__set_log_file_dir(new_dir: str) -> str:
     """ Replace the production dir with a test dir.
+    Also called at end of a test to restore the production dir.
     Keep test logs from polluting production dir.
     UNIT TEST ONLY
     """
@@ -631,24 +632,36 @@ def Z__set_log_file_dir(new_dir: str) -> str:
     return old_dir
 
 def Z__set_max_log_file_size(new_max_size: int) -> int:
-    # unit test ONLY
-    print(f"ELFT@635  Z__set_max_log_file_size to {new_max_size} =======================================")
+    """ Set the global MAX_LOG_FILE_SIZE.
+    Caller is normally a unit test and is expected to call this function
+    during its cleanup to restore the production value.
+    UNIT TEST ONLY
+    """
+    #print(f"ELFT@635  Z__set_max_log_file_size to {new_max_size} =======================================")
     global MAX_LOG_FILE_SIZE
     old = MAX_LOG_FILE_SIZE
     MAX_LOG_FILE_SIZE = new_max_size
     return old
 
 def Z__set_log_fspace_high_watermark(new_high_watermark: int) -> int:
-    # unit test ONLY
-    print(f"ELFT@641  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
+    """ Set the global LOG_FSPACE_HIGH_WATERMARK.
+    Caller is normally a unit test and is expected to call this function
+    during its cleanup to restore the production value.
+    UNIT TEST ONLY
+    """
+    #print(f"ELFT@641  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
     global LOG_FSPACE_HIGH_WATERMARK
     old = LOG_FSPACE_HIGH_WATERMARK
     LOG_FSPACE_HIGH_WATERMARK = new_high_watermark
     return old
 
 def Z__set_log_fspace_low_watermark(new_low_watermark: int) -> int:
-    # unit test ONLY
-    print(f"ELFT@647  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
+    """ Set the global LOG_FSPACE_LOW_WATERMARK.
+    Caller is normally a unit test and is expected to call this function
+    during its cleanup to restore the production value.
+    UNIT TEST ONLY
+    """
+    #print(f"ELFT@647  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
     global LOG_FSPACE_LOW_WATERMARK
     old = LOG_FSPACE_LOW_WATERMARK
     LOG_FSPACE_LOW_WATERMARK = new_low_watermark

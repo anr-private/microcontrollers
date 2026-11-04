@@ -10,14 +10,32 @@ import os
 import shutil
 import tempfile
 
+# If true, saves the scratch dir and its contents for viewing/debugging
+# The scratch dir(s) will be removed when Ubuntu reboots but are
+# preserved until then. If false, the dir and contents are removed
+# when each test completes.
+SAVE_THE_SCRATCH_FILES = True
+
 # One temp directory for the whole pytest run; removed when the run ends.
-_ROOT = tempfile.mkdtemp(prefix="tests_")
-atexit.register(shutil.rmtree, _ROOT, True)    # True = ignore errors
+_ROOT = tempfile.mkdtemp(prefix="MWS_tests_")
+
+def do_cleanup_at_exit():
+    if SAVE_THE_SCRATCH_FILES:
+        print(f"CPYTHON_GLUE@21 SAVING the scratch path: '{_ROOT}'")
+        return
+    shutil.rmtree(_ROOT, ignore_errors=True)
+
+###@@@@@@@atexit.register(shutil.rmtree, _ROOT, True)    # True = ignore errors
+atexit.register(do_cleanup_at_exit)
 
 
 def get_scratch_path(name: str) -> str:
     """ A path inside the temp directory for this run. Nothing is created. """
-    return os.path.join(_ROOT, name)
+    scratch_path = os.path.join(_ROOT, name)
+    if SAVE_THE_SCRATCH_FILES:
+        print(f"CPYTHON_GLUE@28 scratch path: '{scratch_path}'")
+    return scratch_path
+    #@@@@@@@@@@@@return os.path.join(_ROOT, name)
 
 
 def remove_scratch_path(path: str) -> None:
@@ -26,6 +44,10 @@ def remove_scratch_path(path: str) -> None:
     Does nothing if the path is not there. 
     Primary use is in finally blocks in unit tests.
     """
+    if SAVE_THE_SCRATCH_FILES:
+        print(f"CPYTHON_GLUE@30 remove_scratch_path is DISABLED")
+        return
+
     if not _does_path_exist(path):
         return
     try:
