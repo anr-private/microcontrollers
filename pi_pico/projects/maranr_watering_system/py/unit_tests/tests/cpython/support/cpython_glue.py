@@ -10,48 +10,50 @@ import os
 import shutil
 import tempfile
 
-# If true, saves the scratch dir and its contents for viewing/debugging
-# The scratch dir(s) will be removed when Ubuntu reboots but are
-# preserved until then. If false, the dir and contents are removed
-# when each test completes.
-SAVE_THE_SCRATCH_FILES = True
+# Set MWS_SAVE_SCRATCH=1 in the environment to keep scratch files for
+# viewing/debugging. When saving, remove_scratch_path() moves a path aside
+# (name.saved_1, name.saved_2, ...) instead of deleting it, so later tests
+# still see a clean slate. The saved files stay under /tmp until Ubuntu
+# clears it (reboot or the periodic age-based cleanup).
+SAVE_THE_SCRATCH_FILES = os.environ.get("MWS_SAVE_SCRATCH") is not None
 
-# One temp directory for the whole pytest run; removed when the run ends.
+# One temp directory for the whole pytest run. Removed when the run ends,
+# unless SAVE_THE_SCRATCH_FILES is true.
 _ROOT = tempfile.mkdtemp(prefix="MWS_tests_")
 
-def do_cleanup_at_exit():
+_saved_count = 0
+
+
+def _remove_scratch_root() -> None:
     if SAVE_THE_SCRATCH_FILES:
-        print(f"CPYTHON_GLUE@21 SAVING the scratch path: '{_ROOT}'")
+        print(f"cpython_glue@29: ++++   SAVED scratch files in '{_ROOT}' ++++++++++++++++++++++++++++++++")
         return
     shutil.rmtree(_ROOT, ignore_errors=True)
 
-###@@@@@@@atexit.register(shutil.rmtree, _ROOT, True)    # True = ignore errors
-atexit.register(do_cleanup_at_exit)
+
+atexit.register(_remove_scratch_root)
 
 
 def get_scratch_path(name: str) -> str:
     """ A path inside the temp directory for this run. Nothing is created. """
-    scratch_path = os.path.join(_ROOT, name)
-    if SAVE_THE_SCRATCH_FILES:
-        print(f"CPYTHON_GLUE@28 scratch path: '{scratch_path}'")
-    return scratch_path
-    #@@@@@@@@@@@@return os.path.join(_ROOT, name)
+    return os.path.join(_ROOT, name)
 
 
 def remove_scratch_path(path: str) -> None:
     """ Remove a file or a directory tree with specified path.
     The path is typically a path returned from get_scratch_path().
-    Does nothing if the path is not there. 
+    Does nothing if the path is not there.
+    When SAVE_THE_SCRATCH_FILES is true the path is moved aside, not deleted.
     Primary use is in finally blocks in unit tests.
     """
-    if SAVE_THE_SCRATCH_FILES:
-        print(f"CPYTHON_GLUE@30 remove_scratch_path is DISABLED")
-        return
-
+    global _saved_count
     if not _does_path_exist(path):
         return
     try:
-        if os.path.isdir(path):
+        if SAVE_THE_SCRATCH_FILES:
+            _saved_count += 1
+            os.rename(path, f"{path}.saved_{_saved_count}")
+        elif os.path.isdir(path):
             shutil.rmtree(path)
         else:
             os.remove(path)
