@@ -6,8 +6,8 @@ from lib1.gc_utils import get_memory_status_string, gc_collect
 
 
 def test_gc_collect() -> None:
-
-    got = gc_collect()
+    #@@@@ TODO  handle the micropython version; add result to Cpy version of fake
+    got = gc_collect()    # type: ignore [func-returns-value]
     assert got is None, got
     try:
         from gc_FAKE import _MOST_RECENT_THRESHOLD_ARG

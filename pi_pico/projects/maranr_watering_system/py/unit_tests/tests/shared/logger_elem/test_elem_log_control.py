@@ -105,6 +105,9 @@ def test_registry_access() -> None:
     b_logger = elc.registry.get("ClassB")
     print(f"@@TELC@87 class B logger is {b_logger}")
 
+    assert a_logger is not None
+    assert b_logger is not None
+
     a_logger.enable_log(True)
     print(f"@@TELC@90  a_logger is {a_logger}")
     for clsname, logger in elc.registry.items():

@@ -34,15 +34,18 @@ from logger_elem.ElemLogFileTable import LOG_FILES_SUBDIR
 
 from ztest_logger_elem.ClassA import ClassA
 
+try: from typing import Any
+except ImportError: pass
+
 
 class TestElemLoggerABC:
 
-    def setup_method(self, method) -> None:
+    def setup_method(self, method:Any) -> None:
         print("setup method call")
         # Remove any previous instance
         ElemLogControl._nullify_instance()
 
-    def teardown_method(self, method):
+    def teardown_method(self, method:Any) -> None:
         ###ElemLogControl.get_instance().remove_old_log_file()
         ElemLogControl._nullify_instance()
         
@@ -84,20 +87,22 @@ class TestElemLoggerABC:
         aa.to_log(logmesg_1)
 
         got = _read_log_file(elc)
+        assert got is not None
         print(f"@@T@80 log file contents len={len(got)}")
         ###assert len(got) == 100
         assert logmesg_1 in got
 
 
-def _read_log_file(elc):
+def _read_log_file(elc: ElemLogControl) -> str | None:
     elft = elc._log_file_table
     try:
         with open(elft._current_log_fpath, "r") as inf:
             return inf.read()
     except Exception as ex:
         print(f"@@T@91 Reading log file got ex={ex}")
+    return None
 
-def _remove_old_log_file(log_fpath):
+def _remove_old_log_file(log_fpath: str) -> None:
     print(f"@@T@94 Remove old log file, if any: path='{log_fpath}'")
     # remove old log if any
     try:
