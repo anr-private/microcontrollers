@@ -8,20 +8,22 @@ import os
 from ztest_logger_elem.ClassA import ClassA
 from ztest_logger_elem.ClassB import ClassB
 
-try: from cpython_glue import get_scratch_path
+try: from cpython_glue import get_scratch_path, remove_scratch_path
 except ImportError: pass
 
 from logger_elem.ElemLogControl import ElemLogControl
+from logger_elem.ElemLogFileTable import Z__set_log_file_dir
 
 # NOTE: the setup_method() and teardown_method() used by the 
 # 'old' CPython pytest classes are replaced by explicit calls
 # in each test that nullify ElemLogControl and do get_instance().
 
-def test_USE_THIS_SKELETON_as_basis_for_all_tests() -> None:
+def EXAMPLE_test_USE_THIS_SKELETON_as_basis_for_all_tests() -> None:
     """ """
     # Replace the production logs/ dir with a test dir
     logs_dir = get_scratch_path("logs")
-    ###raise RuntimeError(f"TELC@28 @@@@@@@@@@@@@ scratch dir is {logs_dir}")
+    remove_scratch_path(logs_dir)
+    old_logs_dir = Z__set_log_file_dir(logs_dir)
     # Clear out any leftover 'global' stuff in ElemLogControl
     ElemLogControl._nullify_instance()
     elc = ElemLogControl.get_instance()
@@ -31,6 +33,8 @@ def test_USE_THIS_SKELETON_as_basis_for_all_tests() -> None:
         # Leave no (log) files dangling open - esp on Pico
         elc.close_all_logging()
         ElemLogControl._nullify_instance()
+        Z__set_log_file_dir(old_logs_dir)
+        remove_scratch_path(logs_dir)
 
 
 def test_registry_trivial_case() -> None:
@@ -38,6 +42,8 @@ def test_registry_trivial_case() -> None:
     It is created when the instance is created.
     """
     logs_dir = get_scratch_path("logs")
+    remove_scratch_path(logs_dir)
+    old_logs_dir = Z__set_log_file_dir(logs_dir)
     ElemLogControl._nullify_instance()
     elc = ElemLogControl.get_instance()
     try:
@@ -46,17 +52,19 @@ def test_registry_trivial_case() -> None:
         # classes is a view object, does not support [0]
         assert list(classes)[0] == "ElemLogControl"
     finally:
-        # Leave no (log) files dangling open - esp on Pico
         elc.close_all_logging()
         ElemLogControl._nullify_instance()
+        Z__set_log_file_dir(old_logs_dir)
+        remove_scratch_path(logs_dir)
 
 
 def test_get_lines_from_log_file() -> None:
     """ Try a simple fetch of lines from a log file """
     logs_dir = get_scratch_path("logs")
+    remove_scratch_path(logs_dir)
+    old_logs_dir = Z__set_log_file_dir(logs_dir)
     ElemLogControl._nullify_instance()
     elc = ElemLogControl.get_instance()
-
     try:
          # fill the log with recognizable pattern of lines
         for i in range(10):
@@ -74,21 +82,23 @@ def test_get_lines_from_log_file() -> None:
         assert line1 == "ELFT: THIS is line 7", line1
         assert line2 == "ELFT: THIS is line 8", line2
     finally:
-        # Leave no (log) files dangling open - esp on Pico
         elc.close_all_logging()
         ElemLogControl._nullify_instance()
+        Z__set_log_file_dir(old_logs_dir)
+        remove_scratch_path(logs_dir)
 
 
 
 def test_registry_access() -> None:
-    """ Test simplest access to the registery of 
+    """ Test simplest access to the registry of 
     registered classes that are loggers - that is, classes
     that invoke log() functions to write to a log.
     """
     logs_dir = get_scratch_path("logs")
+    remove_scratch_path(logs_dir)
+    old_logs_dir = Z__set_log_file_dir(logs_dir)
     ElemLogControl._nullify_instance()
     elc = ElemLogControl.get_instance()
-
     try:
         # By default the ElemLogControl class registers itself
         assert len(elc.registry) == 1
@@ -148,9 +158,10 @@ def test_registry_access() -> None:
             assert logger.log_enabled is False
 
     finally:
-        # Leave no (log) files dangling open - esp on Pico
         elc.close_all_logging()
         ElemLogControl._nullify_instance()
+        Z__set_log_file_dir(old_logs_dir)
+        remove_scratch_path(logs_dir)
 
 
 
