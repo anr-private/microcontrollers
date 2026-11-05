@@ -101,16 +101,16 @@ def test_log_one_line() -> None:
     elft = ElemLogFileTable()
     try:
         curr_log_path = elft.get_current_log_fpath()
-        print(f"TELF@98 {curr_log_path=}")
+        print(f"TELF@104 {curr_log_path=}")
 
-        elft.log_one_line("TELF@100 test_log_one_line Writing just one line to log")
+        elft.log_one_line("TELF@106 test_log_one_line Writing just one line to log")
     
         curr_log_path = elft.get_current_log_fpath()
-        print(f"TELF@103 {curr_log_path=}")
+        print(f"TELF@109 {curr_log_path=}")
         assert curr_log_path.startswith(logs_dir + "/"), (curr_log_path, logs_dir)
 
         file_stg = read_a_file_as_string(curr_log_path)
-        print(f"TELF@108  {file_stg=}")
+        print(f"TELF@113  {file_stg=}")
         assert file_stg is not None, file_stg
         assert "OPENED NEW LOG" in file_stg, file_stg
 
@@ -136,7 +136,7 @@ def check_production_log_dir_unchanged(old_logs_dir: str, old_logs_dir_items_bef
     after = list_dir_names(old_logs_dir)
     if after == old_logs_dir_items_before:
         return True
-    print(f"TELF@137: production log dir CHANGED: {old_logs_dir}, before: {old_logs_dir_items_before}, after: {after}")
+    print(f"TELF@139: production log dir CHANGED: {old_logs_dir}, before: {old_logs_dir_items_before}, after: {after}")
     return False
 
 
