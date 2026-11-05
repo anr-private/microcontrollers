@@ -75,33 +75,34 @@ DEVICE_TO_IDENTIFIER = {
 
 # Production (vs test) Pkgs  (in the order they will be updated)
 ALL_PRODUCTION_PKGS = (
-     "displays",
-     "lib",
-     "lib0",
-     "lib1",
-     "lib2",
-     "logger_elem",
-     "mws",
-     "primitives",
-     "sensors",
-     "weblib",
+    "displays",
+    "lib",
+    "lib0",
+    "lib1",
+    "lib2",
+    "logger_elem",
+    "mws",
+    "primitives",
+    "sensors",
+    "weblib",
+    )
+ALL_TEST_PKGS = (
+    "ztest_common",
+    "ztest_logger_elem",
      )
-ALL_TEST_PKGS = (              
-     "ztest_logger_elem",
-     )
-
 # Where the pkg is found in the local (Linux) MWS repo dirs
 PKG_SRC_PATHS = {
-     "displays":     "displays",
-     "lib":          "lib",
-     "lib0":         "lib0",
-     "lib1":         "lib1",
-     "lib2":         "lib2",
-     "logger_elem":  "logger_elem",
-     "mws":          "mws",
-     "primitives":   "primitives",
-     "sensors":      "sensors",
-     "weblib":       "weblib",
+     "displays":      "displays",
+     "lib":           "lib",
+     "lib0":          "lib0",
+     "lib1":          "lib1",
+     "lib2":          "lib2",
+     "logger_elem":   "logger_elem",
+     "mws":           "mws",
+     "primitives":    "primitives",
+     "sensors":       "sensors",
+     "weblib":        "weblib",
+     "ztest_common":  "unit_tests/tests/shared/test_support_stuff/ztest_common",
      "ztest_logger_elem": 
                      "unit_tests/tests/shared/test_support_stuff/ztest_logger_elem",
     }
@@ -117,6 +118,7 @@ PKG_DEST_PATHS = {
      "primitives":         "primitives",
      "sensors":            "sensors",
      "weblib":             "weblib",
+     "ztest_common":       "ztest_common",
      "ztest_logger_elem":  "ztest_logger_elem",
     }
 

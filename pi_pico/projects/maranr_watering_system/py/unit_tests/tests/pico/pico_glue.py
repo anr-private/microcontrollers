@@ -16,6 +16,12 @@
 # even if a test forgets to clean up. 
 # If the subdir remains after a crashed run or badly-formed test,
 # it is removed at the start of the next run.
+#
+# The items herein are imported into shared/test*py like this:
+#  try: from cpython_glue import get_scratch_path
+#  except ImportError: pass
+# This does an import in CPython tests and nothing in Pico tests
+# (this glue file provides them).
 
 import os
 import sys

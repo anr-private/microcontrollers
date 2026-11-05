@@ -19,7 +19,7 @@ class ElemLogger:
         self.class_name = simplified_class_name
         self.log_enabled = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self._log_control = log_control
-        prt(f"ELOG@21 init {self.class_name=}")
+        prt(f"ELOG@22 init {self.class_name=}")
 
 
     def is_enabled(self):

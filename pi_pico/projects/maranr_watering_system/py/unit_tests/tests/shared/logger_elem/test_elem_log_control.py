@@ -18,7 +18,7 @@ from logger_elem.ElemLogFileTable import Z__set_log_file_dir
 # 'old' CPython pytest classes are replaced by explicit calls
 # in each test that nullify ElemLogControl and do get_instance().
 
-def EXAMPLE_test_USE_THIS_SKELETON_as_basis_for_all_tests() -> None:
+def EXAMPLE_test_SKELETON_for_tests() -> None:
     """ """
     # Replace the production logs/ dir with a test dir
     logs_dir = get_scratch_path("logs")
@@ -88,7 +88,6 @@ def test_get_lines_from_log_file() -> None:
         remove_scratch_path(logs_dir)
 
 
-
 def test_registry_access() -> None:
     """ Test simplest access to the registry of 
     registered classes that are loggers - that is, classes
@@ -109,21 +108,21 @@ def test_registry_access() -> None:
         bbb = ClassB(4)
     
         for clsname, logger in elc.registry.items():
-            print(f"@@TELC@110  {clsname=}  {logger} ")
+            print(f"@@TELC@111  {clsname=}  {logger} ")
             assert logger.is_enabled() is False
     
         a_logger = elc.registry.get("ClassA")
-        print(f"@@TELC@114 class A logger is {a_logger}")
+        print(f"@@TELC@115 class A logger is {a_logger}")
         b_logger = elc.registry.get("ClassB")
-        print(f"@@TELC@116 class B logger is {b_logger}")
+        print(f"@@TELC@117 class B logger is {b_logger}")
     
         assert a_logger is not None
         assert b_logger is not None
     
         a_logger.enable_log(True)
-        print(f"@@TELC@122  a_logger is {a_logger}")
+        print(f"@@TELC@123  a_logger is {a_logger}")
         for clsname, logger in elc.registry.items():
-            print(f"@@TELC@124  {clsname=}  {logger} ")
+            print(f"@@TELC@125  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -135,9 +134,9 @@ def test_registry_access() -> None:
                 assert False, f"UNKNOWN LOGGER {logger}"
     
         b_logger.enable_log(True)
-        print(f"@@TELC@136  b_logger is {b_logger}")
+        print(f"@@TELC@137  b_logger is {b_logger}")
         for clsname, logger in elc.registry.items():
-            print(f"@@TELC@138  {clsname=}  {logger} ")
+            print(f"@@TELC@139  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -151,7 +150,7 @@ def test_registry_access() -> None:
         a_logger.enable_log(False)
         b_logger.enable_log(False)
         for clsname, logger in elc.registry.items():
-            print(f"@@TELC@152  {clsname=}  {logger} ")
+            print(f"@@TELC@153  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
