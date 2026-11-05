@@ -47,6 +47,10 @@ def test_validate_memory_status_string() -> None:
     assert not ok
     ok = _validate_memory_status_string("gc.mem_alloc()=12345   gc.mem_free()=2345XX")
     assert not ok
+    ok = _validate_memory_status_string("gc.mem_alloc")
+    assert not ok
+    ok = _validate_memory_status_string("")
+    assert not ok
 
 
 def _validate_memory_status_string(status_string: str) -> bool:
