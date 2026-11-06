@@ -556,7 +556,7 @@ class SimpleOptionsParser(object):
                 print("VERY VERBOSE MODE")
 
             elif opt_stg in ("X", "stop", "stop-on-error"):
-                opts.debug = True
+                opts.stop_on_error = True
 
             elif opt_stg in ("F", "force", "force-update",):
                 opts.force_update = True
@@ -568,7 +568,7 @@ class SimpleOptionsParser(object):
                 opts.force_marker_file_update = True
 
             elif opt_stg in ("Z", "z", "debug"):
-                opts.stop_on_error = True
+                opts.debug = True
 
             elif opt_stg in ("zz", "ZZ", "zoption", "zoptions", "debug_itself"):
                 debug_itself = True
