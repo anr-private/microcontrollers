@@ -1,6 +1,7 @@
 # read_last_n_lines.py
 #
 # Micropython function to read lines from the tail of a file (e.g., a log)
+# LINEMARKER=RLNL
 
 try: from typing import Callable
 except ImportError: pass

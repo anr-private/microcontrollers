@@ -101,11 +101,11 @@ def string_to_int(s: str) -> int|None:
     try:
         return int(s)
     except (ValueError,TypeError) as ex:
-        print(f"UTILS@104 string_to_int  NOT AN INT: '{s}'  ex={ex}")
+        print(f"UTILS$104 string_to_int  NOT AN INT: '{s}'  ex={ex}")
         return None
     #@@@ TODO remove the below
     #except Exception  as ex:
-    #    print(f"UTILS@108 string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
+    #    print(f"UTILS$108 string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
     #    return None
 
 def _show_char(ch: str) -> str:
@@ -156,7 +156,7 @@ def determine_machine_type() -> str:
 
 
 def main() -> None:
-    print(f"UTILS@159 NOT YET")
+    print(f"UTILS$159 NOT YET")
 
 if __name__ == "__main__":
     main()

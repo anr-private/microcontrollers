@@ -1,26 +1,11 @@
 # file_system_utils.py
 #
 # Utils for accessing info about the file system.
+# LINEMARKER=FSUT
 
 import os
 
 from lib1.utils import format_number_with_commas
-
-# "micropython" or "cpython"
-#if sys.implementation.name == "cpython":   # Py3
-    
-    # from cpython_test_support import CpythonTestSupport   # ZZtype:ignore
-    # cpyt = CpythonTestSupport.get_instance()
-    # GET_FLASH_SPACE = cpyt.fake_get_flash_space
-# else:
-    # # use the 'real' filespace info
-    # GET_FLASH_SPACE = None
-
-# Used by unit test to cause this module to use CPython / linux
-# library for accessing the file system info.
-# By default this is False so the Pico / Micropython library
-# is used.
-###@@@@@@Z__USE_CPYTHON_FILE_SYSTEM_ACCESS = False
 
 
 def calculate_flash_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
@@ -56,14 +41,14 @@ def calculate_flash_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
 def get_flash_space() -> tuple[int,int]:
 
     # if  GET_FLASH_SPACE is not None:
-        # print(f"UTILS@109 Using FAKE for get_flash_space(): {GET_FLASH_SPACE} ")
+        # print(f"FSUT$44 Using FAKE for get_flash_space(): {GET_FLASH_SPACE} ")
         # return GET_FLASH_SPACE()
 
     # Get filesystem statistics for the root directory ("/")
     # This works on both Pico and CPython/linux, mac.
     # (Does not work on Windoze but so what).
     # On uPy it is os.statvfs("/"); on CPy it uses faker CpythonTestSupport
-    print(f"UTILS@114 Using 'real' filespace info")
+    print(f"FSUT$51 Using 'real' filespace info")
     # os.statvfs(...) returns a tuple:
     #  [0] f_bsize: File system block size Linux: 4096  Pico: 4096 (or 512)
     #  [1] f_frsize: Fragment size  Usu same as f_bsize
