@@ -1,4 +1,6 @@
 # ClassA.py
+# 
+# LINEMARKER=ClassA
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 

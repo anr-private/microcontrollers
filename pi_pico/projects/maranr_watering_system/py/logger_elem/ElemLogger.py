@@ -1,6 +1,7 @@
 # ElemLogger.py
 #
 # Elementary logger
+# LINEMARKER=ELOG
 
 import os
 import sys
@@ -19,7 +20,7 @@ class ElemLogger:
         self.class_name = simplified_class_name
         self.log_enabled = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self._log_control = log_control
-        prt(f"ELOG@22 init {self.class_name=}")
+        prt(f"ELOG$23 init {self.class_name=}")
 
 
     def is_enabled(self):
@@ -33,18 +34,18 @@ class ElemLogger:
 
     def log(self, mesg):
         if self.log_enabled:
-            #print(f"ELOG@36.log '{mesg=}' ")
+            #print(f"ELOG$37.log '{mesg=}' ")
             print(f"LOG: {mesg}")
             self._log_control.log_one_line(mesg)
 
     def logrt(self, mesg):
-        ###print(f"ELOG@41.logrt '{mesg=}' ")
+        ###print(f"ELOG$42.logrt '{mesg=}' ")
         print(f"LOGRT: {mesg}")
         self._log_control.log_one_line(mesg)
         raise RuntimeError(mesg)
 
     def logi(self, mesg):
-        #print(f"ELOG@47.logi '{mesg=}' ")
+        #print(f"ELOG$48.logi '{mesg=}' ")
         print(mesg)
         self._log_control.log_one_line(mesg)
 

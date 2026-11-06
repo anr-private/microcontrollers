@@ -1,4 +1,6 @@
 # ElemLoggerABC.py
+#
+# LINEMARKER=ELABC
 
 import sys
 
@@ -16,14 +18,14 @@ class ElemLoggerABC:
 
     def __init__(self):
         try:
-            prt(f"ELABC@19.init  self is {self}")
+            prt(f"ELABC$21.init  self is {self}")
         except Exception as ex:
-            prt(f"ELABC@21.init  'str(self)' failed. Ctor not completed(?)  ex={repr(ex)}  {str(ex)}")
+            prt(f"ELABC$23.init  'str(self)' failed. Ctor not completed(?)  ex={repr(ex)}  {str(ex)}")
 
         elc = ElemLogControl.get_instance()
-        prt(f"ELABC@24.init ElemLogControl obj is {elc}")
+        prt(f"ELABC$26.init ElemLogControl obj is {elc}")
         logger = elc.register_user_class(self)
-        prt(f"ELABC@26.init  logger is: {logger}")
+        prt(f"ELABC$28.init  logger is: {logger}")
         # Tell the subclass what to use for its logging functions
         self._set_logger(logger)
 
