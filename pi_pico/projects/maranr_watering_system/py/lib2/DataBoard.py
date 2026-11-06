@@ -3,6 +3,7 @@
 # Global data board
 #
 # Running average:   Average =+ (next_value - Average) / new-sample-count
+# LINEMARKER=DBRD
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
@@ -80,7 +81,7 @@ class DataBoard(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        #print(f"DataBoard@69 _set_logger: {repr(logger)}")
+        #print(f"DBRD$84 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -89,7 +90,7 @@ class DataBoard(ElemLoggerABC):
     def set_ip_and_port(self, ipaddr, port):
         self.ipaddr = ipaddr
         self.port = port
-        print(f"DataBoard@78  SET IPADDR={self.ipaddr}  PORT={self.port} ")
+        print(f"DBRD$93  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
     def set_wifi_restarts_counter(self, new_restarts_counter):
         self.wifi_restarts_counter = new_restarts_counter
