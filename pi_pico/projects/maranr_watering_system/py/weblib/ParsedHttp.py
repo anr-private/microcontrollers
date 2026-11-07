@@ -1,4 +1,6 @@
 # ParsedHttp.py
+#
+# LINEMARKER=HPRSH
 
 
 METHOD_NAMES = ("GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE")
@@ -109,7 +111,7 @@ class ParsedHttp:
             e = "ParsedHttp.is_request called but flag has not been set yet."
             #raise RuntimeError(e)
             #@@@@ temp: later, convert back to RuntimeError
-            m = f"PH@114 *********INTERNAL-ERROR**** "+e
+            m = f"HPRSH$114 *********INTERNAL-ERROR**** "+e
             print(m)
         return self.request_flag
 

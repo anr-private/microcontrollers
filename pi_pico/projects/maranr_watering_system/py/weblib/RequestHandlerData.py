@@ -1,4 +1,6 @@
 # RequestHandlerData.py
+#
+# LINEMARKER=RHDATA
 
 import asyncio
 import gc
@@ -52,7 +54,7 @@ class RequestHandlerData(ElemLoggerABC):
 
         params = parsed_http.url_query_parameters
 
-        LL(f"RHDATA@55  DATA REQ  params={params}")
+        LL(f"RHDATA$57  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
@@ -81,7 +83,7 @@ class RequestHandlerData(ElemLoggerABC):
             data_dict["wifi_state"] = str(MwsWifi.state_visibility)
 
         json_stg = json.dumps(data_dict)
-        log(f"RHDATA@84 body: JSON-string:...")  
+        log(f"RHDATA$86 body: JSON-string:...")  
         log(json_stg)
 
         # Build a reply that provides the log lines
@@ -93,9 +95,9 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        m = f"RHDATA@96  HTTP REPLY to DATA REQUEST:"
+        m = f"RHDATA$98  HTTP REPLY to DATA REQUEST:"
         LL(m)
-        mlines = reply.get_loggable_lines(prefix="RHDATA@98")
+        mlines = reply.get_loggable_lines(prefix="RHDATA$100")
         for m in mlines:
             LL(m)
 
@@ -105,7 +107,7 @@ class RequestHandlerData(ElemLoggerABC):
     def handle_echo_request(self, parsed_http):
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         LL=log
-        log(f"RHDATA@108  _handle_echo_request  ph={parsed_http}")
+        log(f"RHDATA$110  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -147,9 +149,9 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RHDATA@150 HTTP REPLY to ECHO request "
+        m = f"RHDATA$152 HTTP REPLY to ECHO request "
         LL(m)
-        m = f"RHDATA@152  {reply.long_string()}"
+        m = f"RHDATA$154  {reply.long_string()}"
         LL(m)
         return reply
 

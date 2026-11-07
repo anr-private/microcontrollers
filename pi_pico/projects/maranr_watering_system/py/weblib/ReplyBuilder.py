@@ -1,4 +1,6 @@
 # ReplyBuilder.py
+#
+# LINEMARKER=RBLDR
 
 import sys
 
@@ -64,7 +66,7 @@ class ReplyBuilder(ElemLoggerABC):
 
         reply = self._build_reply()
 
-        log(f"RB@67 build_textual_file_reply: {str(reply)}")
+        log(f"RBLDR$69 build_textual_file_reply: {str(reply)}")
         return reply
 
 
@@ -78,7 +80,7 @@ class ReplyBuilder(ElemLoggerABC):
 
         reply = self._build_reply()
 
-        log(f"RB@81.build_binary_file_reply: {str(reply)}")
+        log(f"RBLDR$83.build_binary_file_reply: {str(reply)}")
         return reply
 
 
@@ -89,16 +91,16 @@ class ReplyBuilder(ElemLoggerABC):
         valsdict = {"RESOURCE" : resource_not_found}
         fmt_lines = []
         for line in NOT_FOUND_HTML_LINES:
-            log(f"RB@92  {line=}  {valsdict=}")
+            log(f"RBLDR$94  {line=}  {valsdict=}")
             fmt_line = line.format(**valsdict)
-            log(f"RB@94  {fmt_line=}  {valsdict=}")
+            log(f"RBLDR$96  {fmt_line=}  {valsdict=}")
             fmt_lines.append(fmt_line)
         body_lines = add_eol_to_lines(fmt_lines)
         self.body = "".join(body_lines)
 
         reply = self._build_reply()
 
-        log(f"RB@101.build_reply_404: {str(reply)}")
+        log(f"RBLDR$103.build_reply_404: {str(reply)}")
         return reply
 
     def _build_reply(self):
@@ -115,7 +117,7 @@ class ReplyBuilder(ElemLoggerABC):
         lines = add_eol_to_lines(lines)
         header_stg = "".join(lines)
         #for line in lines:
-        #    PRINT(f"RB@118 {show_cc(line)}")
+        #    PRINT(f"RBLDR$120 {show_cc(line)}")
 
         reply = HttpReply()
         reply.set_reply(header_stg, self.body)

@@ -1,4 +1,7 @@
 # HttpReply.py
+#
+# LINEMARKER=HREPLY
+
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib1.utils import show_cc
@@ -27,7 +30,6 @@ class HttpReply(ElemLoggerABC):
     def set_reply(self, header, body):
 
         # header should be a str and should end with \r\n\r\n
-        ###@@@@@@@if typ e(header) is not str:
         if not isinstance(header, str):
             raise RuntimeError(f"HttpReply.set_reply header is not str: {type(header)}")
         # header should have at least "HTTP/1.0 200 OK\r\n\r\n"
@@ -47,7 +49,6 @@ class HttpReply(ElemLoggerABC):
 
 
     def get_loggable_header_lines(self, prefix):
-        # for logging. prefix is "MwsWebServer@DDD "
         if not self._header:
             return f"{prefix}HttpReply has NO HEADER"
         lines = self._header.split("\r\n")
@@ -59,7 +60,6 @@ class HttpReply(ElemLoggerABC):
 
 
     def get_loggable_body_lines(self, prefix):
-        # for logging. prefix is "MwsWebServer@DDD "
         if not self._body:
             return f"{prefix}HttpReply has NO BODY"
         try:

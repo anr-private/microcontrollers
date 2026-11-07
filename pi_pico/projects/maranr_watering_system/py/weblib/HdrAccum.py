@@ -1,4 +1,6 @@
 # HdrAccum.py
+#
+# LINEMARKER=HCUM
 
 from lib1.utils import show_cc
 from logger_elem.ElemLoggerABC import ElemLoggerABC
@@ -24,7 +26,7 @@ class HdrAccum(ElemLoggerABC):
 
 
     def accum_header_line(self, line):
-        log(f"HdrAccum@28 '{show_cc(line)}'")
+        log(f"HCUM$29 '{show_cc(line)}'")
         self._mesg += line
         # found the end of the header?  
         pos = self._mesg.find("\r\n\r\n")

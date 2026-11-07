@@ -1,4 +1,6 @@
 # RequestHandler.py
+#
+# LINEMARKER=HRQH
 
 import asyncio
 import gc
@@ -62,24 +64,24 @@ class RequestHandler(ElemLoggerABC):
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         LL=log
 
-        m = f"RH@66 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {TimeMgr.get_formatted_date_time_string()} ^^^^^^^^^^^^^"
+        m = f"HRQH$67 ^^^^^  HANDLE NEW CLIENT REQUEST  ^^^^^^  {TimeMgr.get_formatted_date_time_string()} ^^^^^^^^^^^^^"
         LL(m)
-        m = f"RH@68  -=-=-=  run lib/gc_collect()  -=-=-= "
+        m = f"HRQH$69  -=-=-=  run lib/gc_collect()  -=-=-= "
         LL(m)
         gc_collect()
 
         httpParser = HttpParser()
 
         parsed_http = httpParser.parse_header_data(header)
-        ###do_gc("RH@75.after-parser-header")
+        ###do_gc("HRQH$76.after-parser-header")
         if parsed_http is None:
-            print(f"RH@77 REQUEST PARSE ERROR: {httpParser.latest_error()}")
-            logi(f"RH@78 REQUEST PARSE ERROR: {httpParser.latest_error()}")
+            print(f"HRQH$78 REQUEST PARSE ERROR: {httpParser.latest_error()}")
+            logi(f"HRQH$79 REQUEST PARSE ERROR: {httpParser.latest_error()}")
             #@@@@@ handle an error TODO
-        logi(f"RH@80 PARSED-REQUEST: {str(parsed_http)}")
-        m1 = f"RH@81 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
-        m2a = parsed_http.long_str(sep="\nRH@82")
-        m2 = f"RH@83 {m2a}"
+        logi(f"HRQH$81 PARSED-REQUEST: {str(parsed_http)}")
+        m1 = f"HRQH$82 CLIENT REQUEST   latest-parse-err: '{httpParser.latest_error()}' "
+        m2a = parsed_http.long_str(sep="\n"+"HRQH$83")
+        m2 = f"HRQH$84 {m2a}"
         LL(m1); LL(m2)
 
         if parsed_http.method == "GET":
@@ -87,13 +89,13 @@ class RequestHandler(ElemLoggerABC):
             if reply:
                 return reply
 
-        m = f"RH@91 RequestHandler REQUEST {parsed_http=} NOT IMPL YET.  TODO @@@ "
+        m = f"HRQH$92 RequestHandler REQUEST {parsed_http=} NOT IMPL YET.  TODO @@@ "
         logi(m)
         print(m)
 
         rb = ReplyBuilder()
         reply = rb.build_reply_404(parsed_http.url_path)
-        logi(f"RH@97 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        logi(f"HRQH$98 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
             
 
@@ -102,25 +104,25 @@ class RequestHandler(ElemLoggerABC):
         url_path = parsed_http.url_path
 
         if url_path == "/data":
-            log(f"RH@106  DATA request: {parsed_http}")
+            log(f"HRQH$107  DATA request: {parsed_http}")
             reply = self._rh_data.handle_data_request(parsed_http)
             if reply: return reply
         elif url_path == "/log":
-            log(f"RH@110  LOG request: {parsed_http}")
+            log(f"HRQH$111  LOG request: {parsed_http}")
             reply = self._rh_log.handle_log_request(parsed_http)
             if reply: return reply
         elif url_path == "/echo":
-            log(f"RH@114  ECHO request: {parsed_http}")
+            log(f"HRQH$115  ECHO request: {parsed_http}")
             reply = self._rh_data.handle_echo_request(parsed_http)
             if reply: return reply
         else:
             reply = self._handle_file_request(parsed_http)
             if reply: return reply
         # if fall through, we don't know how to handle
-        logi(f"RH@121  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
+        logi(f"HRQH$122  _handle_get_request REPLY=404. CANNOT HANDLE GET-REQ {parsed_http}")
         rb = ReplyBuilder()
         reply = rb.build_reply_404(url_path)
-        #log(f"RH@124 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
+        #log(f"HRQH$125 REPLY WITH 404.  DONT KNOW HOW TO HANDLE THIS: {parsed_http}")
         return reply
 
 
@@ -129,20 +131,20 @@ class RequestHandler(ElemLoggerABC):
         file_path = parsed_http.url_path
 
         if file_path is None or len(file_path) <= 0 or file_path == "/":
-            log(f"RH@133 Default file requested") 
+            log(f"HRQH$134 Default file requested") 
             file_path = self.default_file
         
-        log(f"RH@136 {file_path=}")
+        log(f"HRQH$137 {file_path=}")
 
         # See if file exists - maybe in /pages/ or etc
         # Don't worry about what type of file yet - do binary read.
         # Try the default_subdir as well.
         fu = FileObtainer()
-        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="RH@142"):
+        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="HRQH$143"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"RH@146 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$147 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
             return reply
 
 
@@ -153,7 +155,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"RH@157 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$158 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -165,8 +167,8 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to build a Reply."
             reply = rb.build_reply_404(m)
-            log(f"RH@169 REPLY WITH 404.  {file_path=}  {content_type=}")
-            log(f"RH@170 {m=}")
+            log(f"HRQH$170 REPLY WITH 404.  {file_path=}  {content_type=}")
+            log(f"HRQH$171 {m=}")
             return reply
 
         return reply
@@ -177,17 +179,17 @@ class RequestHandler(ElemLoggerABC):
         # Read the file
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@181")
+                prefix_dir=self.default_subdir, w="HRQH$182")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@187 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
-            log(f"RH@188 {m=}")
+            log(f"HRQH$188 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$189 {m=}")
             return reply
 
-        log(f"RH@191  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
+        log(f"HRQH$192  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
             updated_file_contents = self._grinder.grind_file_contents(file_contents)
@@ -210,17 +212,17 @@ class RequestHandler(ElemLoggerABC):
         fu = FileObtainer()
         file_contents = fu.obtain_input_file(file_path, 
                 binary=True, read_contents=True, 
-                prefix_dir=self.default_subdir, w="RH@214")
+                prefix_dir=self.default_subdir, w="HRQH$215")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"RH@220 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
-            log(f"RH@221 {m=}")
+            log(f"HRQH$221 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$222 {m=}")
             return reply
 
-        log(f"RH@224  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
+        log(f"HRQH$225  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()

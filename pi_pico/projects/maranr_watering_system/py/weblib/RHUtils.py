@@ -1,4 +1,6 @@
 # RHUtils.py
+#
+# LINEMARKER=RHUTL
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
@@ -53,9 +55,9 @@ class RHUtils(ElemLoggerABC):
         elif ext in ["json",]:
             t = "application/json"
         else:
-            log(r"RHUtils@51 **ERROR** Unknow Content-Type for file '{file_path}'")
+            log(r"RHUTL$58 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
-        log(f"RHUtils@53 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+        log(f"RHUTL$60 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
 
