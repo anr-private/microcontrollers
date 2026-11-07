@@ -3,6 +3,12 @@
 # Interface to the 'gc' module
 # LINEMARKER=GCUTL
 
+# NOTE: the uses of mem_free,mem_alloc,threshold all cause mypy 
+# 'attr-defined' errors ("Module has no attribute mem_free", etc.)
+# FIXED THIS in the mypy.ini:
+#  [mypy-lib1.gc_utils]
+#   disable_error_code = attr-defined
+
 
 try:
     import gc
