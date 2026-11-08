@@ -35,7 +35,8 @@ except ImportError:
 
 
 ### TODO update the annotation
-def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
+def filter_dir_contents(dir_path:str, file_filter:Any) -> \
+                                        list[tuple[str, str, int, Any]]:
     # Filter the filenames in a directory.
     # Returns a collection of tuples:
     #   (fname, ftype, fsize, result-value)
@@ -76,7 +77,7 @@ def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
         (fname, ftype, fsize) = item
         #print(f"FUTL$77  {fname=}  {ftype=}  {fsize=} ")
 
-        ok = file_filter(fname, ftype, fsize)
+        ok: Any = file_filter(fname, ftype, fsize)
 
         #print(f"FUTL$81 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
 

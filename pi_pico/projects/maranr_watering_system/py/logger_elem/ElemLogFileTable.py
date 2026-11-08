@@ -48,7 +48,7 @@ class ElemLogFileTable:
     # A log file gets deleted (removed) if/when system file space
     # runs low.
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Table of all logfiles (except currently-open logfile)
         # Contains tuples of form:
         #   (log-filename:str, fsize: int, extant-flag)
@@ -85,7 +85,7 @@ class ElemLogFileTable:
         return self._current_log_fsize
 
 
-    def get_logs_totals(self, include_currently_open_file) -> tuple[int, int, int]:
+    def get_logs_totals(self, include_currently_open_file: bool) -> tuple[int, int, int]:
         # get the total values / stats 
         # Returns a tuple of these values:
         # 1. The number of extant log files (ie ones that have not
@@ -149,13 +149,13 @@ class ElemLogFileTable:
         return total_size
 
 
-    def get_log_table_item(self, item_index) -> Any:
+    def get_log_table_item(self, item_index: int) -> Any:
         try:
             return self._log_file_table[item_index]
         except IndexError:
             return None
 
-    def get_status_lines(self):
+    def get_status_lines(self) -> tuple[str,...]:
         # Returns a collection of str values that describe
         # the state of the log files and table.
         # Suitable for display on a webpage
@@ -167,7 +167,8 @@ class ElemLogFileTable:
         return tuple(lines)
 
 
-    def get_lines_from_log_file(self, relative_line_number, number_of_lines):
+    def get_lines_from_log_file(self, relative_line_number: int, 
+                                      number_of_lines: int) -> list[str]:
         # get lines from the log file
         # relative_line_number is the line number of the first line
         # being requested, relative to the end of the file.
@@ -180,7 +181,7 @@ class ElemLogFileTable:
         return lines
 
 
-    def _append_to_log_file_table(self, fname, fsize):
+    def _append_to_log_file_table(self, fname: str, fsize: int) -> None:
         # Append a new item
         # This represents a new log file having been created.
         # So the item is always marked LOGFILE_IS_EXTANT
@@ -188,7 +189,7 @@ class ElemLogFileTable:
         self._log_file_table.append(log_file_info)
         print(f"ELFT$189 _append_to_log_file_table  Append: {log_file_info} TableSize now={len(self._log_file_table)}")
 
-    def _mark_file_was_removed(self, fitem_index):
+    def _mark_file_was_removed(self, fitem_index: int) -> bool:
         # mark the specified item as 'LOGFILE_WAS_REMOVED'
         # It should currently be 'LOGFILE_IS_EXTANT"
         # Returns True if ok, else False
@@ -211,7 +212,7 @@ class ElemLogFileTable:
         return True
 
 
-    def log_one_line(self, line):
+    def log_one_line(self, line:str) -> None:
 
         if self._logf is None:
             self._start_a_new_logfile()
@@ -222,7 +223,7 @@ class ElemLogFileTable:
             print(f"ELFT$222  curr log size > MAX curr={self._current_log_fsize} max={MAX_LOG_FILE_SIZE}")
             self._close_current_log_file("log_one_line")
 
-    def _log_a_line(self, line):
+    def _log_a_line(self, line: str) -> None:
         # low-level write to log file
         if line is None: line = ""
 
@@ -251,7 +252,7 @@ class ElemLogFileTable:
             print(f"ELFT$251 {line=}")
 
 
-    def _start_a_new_logfile(self):
+    def _start_a_new_logfile(self) -> None:
         # If there has no log file ever been written in this session,
         # we look to see if there are any previously-extant logfiles.
         # If so, we want to choose a file extension NNN that is
@@ -292,7 +293,7 @@ class ElemLogFileTable:
         self._remove_logs_if_fspace_needed()
 
 
-    def _make_new_log_fpath(self):
+    def _make_new_log_fpath(self) -> str:
         if self._fname_next_ctr < 0:
             # Determine the file extension of the first logfile that
             # we are going to write in this session.
@@ -312,7 +313,7 @@ class ElemLogFileTable:
         return fpath
 
 
-    def _determine_starting_fname_extension_value(self):
+    def _determine_starting_fname_extension_value(self) -> int:
         # Look for old log files. 
         # Pick the one with the highest value 000-900 as its extension.
         # Use that value as a basis for creating a new extension value
@@ -346,7 +347,7 @@ class ElemLogFileTable:
         return new_extension_value
 
 
-    def _determine_biggest_existing_log_fname_extension_value(self):
+    def _determine_biggest_existing_log_fname_extension_value(self) -> int | None:
         # Look for old log files. 
         # Pick the one with the highest value 000-900 as its extension.
         # Return the int value of that file extension.
@@ -362,14 +363,15 @@ class ElemLogFileTable:
         if len(existing_logs_info) == 0: 
             return None
 
-        biggest = max([fitem[3] for fitem in existing_logs_info])
+        biggest: int = max([fitem[3] for fitem in existing_logs_info])
 
         print(f"ELFT$367 max _determine_biggest_existing_log_fname_extension_value is {biggest=}")
 
         return biggest
 
 
-    def _determine_new_starting_extension_value(self, biggest_existing_extension_value):
+    def _determine_new_starting_extension_value(self, 
+                        biggest_existing_extension_value: int) -> int:
         # find a new extension value that is bigger than the
         # biggest_prior_value. 
         # Returns int value
@@ -391,7 +393,7 @@ class ElemLogFileTable:
         return new_value
 
 
-    def _remove_logs_if_fspace_needed(self):
+    def _remove_logs_if_fspace_needed(self) -> None:
         # See if filespace is running low. If so, remove some old logs.
         total_fsize = self.get_fsize_of_extant_logfiles()
         if total_fsize < LOG_FSPACE_HIGH_WATERMARK:
@@ -402,7 +404,7 @@ class ElemLogFileTable:
         self._reduce_file_usage_to_below_low_watermark()
 
 
-    def _reduce_file_usage_to_below_low_watermark(self):
+    def _reduce_file_usage_to_below_low_watermark(self) -> None:
         m = f"ELFT$406 _reduce_file_usage_to_below_low_watermark extant-fsize={self.get_fsize_of_extant_logfiles()}"
         print(m)
         self._log_a_line(m)
@@ -424,7 +426,7 @@ class ElemLogFileTable:
         self._log_a_line(m)
 
 
-    def _remove_the_oldest_extant_logfile(self):
+    def _remove_the_oldest_extant_logfile(self) -> bool:
         m = f"ELFT$428 _remove_the_oldest_extant_logfile extant-fsize={self.get_fsize_of_extant_logfiles()}"
         print(m)
         self._log_a_line(m)
@@ -464,7 +466,7 @@ class ElemLogFileTable:
         return True
 
 
-    def _find_the_oldest_extant_logfile(self):
+    def _find_the_oldest_extant_logfile(self) -> int | None:
         # Find the oldest file in the file table that is still extant.
         # Update the table to show it has been removed.
 
@@ -478,7 +480,7 @@ class ElemLogFileTable:
         return oldest_extant_idx
 
 
-    def close_logging(self):
+    def close_logging(self) -> None:
         # close the logger
         # Save the file status info
         self.dump_file_table("from-ELFT$484")
@@ -486,7 +488,7 @@ class ElemLogFileTable:
         self._close_current_log_file("close_logging")
 
 
-    def _create_the_logs_subdir(self):
+    def _create_the_logs_subdir(self) -> None:
         # create the subdir into which we write log files
         try:
             os.mkdir(LOG_FILES_SUBDIR)
@@ -498,7 +500,7 @@ class ElemLogFileTable:
                 print(f"ELFT$498 *ERROR* {LOG_FILES_SUBDIR} errno={ex.errno} dir  cannot be created")
 
 
-    def _close_current_log_file(self, who):
+    def _close_current_log_file(self, who:str) -> None:
         if self._logf is not None:
             m = f"ELFT$503 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}' size={self._current_log_fsize}"
             print(m)
@@ -521,7 +523,7 @@ class ElemLogFileTable:
         self._current_log_fsize = 0
 
 
-    def dump_file_table(self, comment, to_log=True):
+    def dump_file_table(self, comment:str, to_log:bool=True) -> None:
         # write the file table into the log
         if len(self._log_file_table) <= 0:
             m = f"ELFT$527 DUMP FILE TABLE:  the table is empty  {comment}"
@@ -561,7 +563,7 @@ class ElemLogFileTable:
 
 ### SUPPORT  FUNCTIONS  #################################################
 
-def is_3_digit_int(s):
+def is_3_digit_int(s:str) -> int | None:
     # Returns int(s) if s is a 3-digit number; else None.
     if not  s: return None
     if len(s) != 3: return None
@@ -573,9 +575,9 @@ def is_3_digit_int(s):
     return ival
 
 
-def _log_file_filter(fname, ftype, fsize):
+def _log_file_filter(fname:str, ftype: str, fsize: int) -> int | None:
     # Returns None if the file is not chosen.
-    # Returns the filename extention value (an int) if chosen
+    # Returns the filename extension value (an int) if chosen
     print(f"ELFT$579 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None

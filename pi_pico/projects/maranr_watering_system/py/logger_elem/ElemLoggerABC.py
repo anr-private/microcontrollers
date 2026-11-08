@@ -8,7 +8,7 @@ try: from typing import Any
 except ImportError: pass
 
 from .ElemLogControl import ElemLogControl
-from .ElemLogControl import ElemLogger
+from .ElemLogger import ElemLogger
 
 PRT=False
 def prt(s:str) -> None:
@@ -42,7 +42,7 @@ class ElemLoggerABC:
 
 
     @classmethod
-    def _enable_prt(self, enabled=True) -> None:
+    def _enable_prt(cls, enabled:bool=True) -> None:
         # unit test
         global PRT 
         PRT = not not enabled

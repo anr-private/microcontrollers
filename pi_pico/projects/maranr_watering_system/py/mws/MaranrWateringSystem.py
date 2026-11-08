@@ -20,7 +20,8 @@ except ModuleNotFoundError:
 from lib1.utils import determine_machine_type
 from lib1.file_system_utils import get_fs_space_string
 from lib1.gc_utils import get_memory_status_string
-from logger_elem.ElemLoggerABC import ElemLoggerABC, ElemLogControl
+from logger_elem.ElemLoggerABC import ElemLoggerABC
+from logger_elem.ElemLogControl import ElemLogControl
 from lib2.DataBoard import DataBoard
 from lib2.MwsWifi import MwsWifi
 from lib2.TimeMgr import TimeMgr

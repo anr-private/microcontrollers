@@ -43,12 +43,6 @@ class ElemLogControl:
         cls._instance = ElemLogControl(VALIDATE)
         return cls._instance
 
-    # @classmethod
-    # def _nullify_instance(cls):
-        # #print(f"ELC$48  NULLIFY INSTANCE  =======================================")
-        # # UNIT TEST ONLY
-        # ElemLogControl._instance = None
-        # ElemLogControl.registry = {}
     @classmethod
     def _nullify_instance(cls) -> None:
         # UNIT TEST ONLY
@@ -56,7 +50,7 @@ class ElemLogControl:
         ElemLogControl.registry = {}
 
 
-    def __init__(self, validate=None):
+    def __init__(self, validate:int=0) -> None:
         if validate != VALIDATE:
             m = f"ELC$61 CALLED CTOR use get_instance()"
             raise RuntimeError(m)
@@ -180,8 +174,9 @@ class ElemLogControl:
 
 ### FUNCTIONS  ###########################################################
 
-def is_3_digit_int(s):
-    # Returns int(s) if s is a 3-digit number; else None.
+def is_3_digit_int(s:str) -> int | None:
+    # Returns int(s) if s is a str containing a 3-digit number 000 to 999; 
+    # else None.
     if not  s: return None
     if len(s) != 3: return None
     try:
@@ -192,9 +187,9 @@ def is_3_digit_int(s):
     return ival
 
 
-def _log_file_filter(fname, ftype, fsize):
+def _log_file_filter(fname: str, ftype: str, fsize:int) -> int | None:
     # Returns None if the file is not chosen.
-    # Returns the filename extention value (an int) if chosen
+    # Returns the filename extension value (an int) if chosen
     print(f"ELC$198 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None
@@ -212,7 +207,7 @@ def _log_file_filter(fname, ftype, fsize):
     return ext_val
 
 
-def extract_simplified_classname(obj_instance):
+def extract_simplified_classname(obj_instance: Any) -> str:
     # given a full class name string like "abc.def.MyClass"; return "MyClass"
     # Obtain the string using  str(obj.__class__)
     obj_repr = repr(obj_instance)
