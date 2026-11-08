@@ -3,6 +3,8 @@
 # ANR NOTES:
 #  For use with the QAPASS and other LCD1602/1604/etc that use the
 #  PCF 8754 T  chip  and I2C interface.
+#
+# LINEMARKER=LIBLCD
 
 '''
     uPy drive for I2C LCD1602
@@ -36,7 +38,7 @@ class LCD():
 
         self.i2c = i2c
 
-        m = f"LIBLCD@32 Try to locate the LCD as an I2C device."
+        m = f"LIBLCD$41 Try to locate the LCD as an I2C device."
         logi(m)
         print(m)
 
@@ -46,10 +48,10 @@ class LCD():
             scan_result = i2c.scan()
             if scan_result:
                 break
-            print("LIBLCD@39 Cannot Locate I2C Device")
+            print("LIBLCD$51 Cannot Locate I2C Device")
             retry_ctr += 1
             if retry_ctr >= retry_ctr_max:
-                print("LIBLCD@342 FAILED TO FIND the LCD - abandoned trying to i2c.scan()")
+                print("LIBLCD$54 FAILED TO FIND the LCD - abandoned trying to i2c.scan()")
                 return
             time.sleep_ms(10)
 
