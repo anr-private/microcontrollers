@@ -1,4 +1,6 @@
 # MaranrWateringSystem.py
+#
+# LINEMARKER=MWSMWS
 
 import asyncio
 import machine  # probably not needed
@@ -54,13 +56,13 @@ class MaranrWateringSystem(ElemLoggerABC):
         displays = MwsDisplays.get_instance()
         ok = displays.locate_the_lcd()
         if not ok:
-            m = "MWSMAIN@51 FAILED TO LOCATE THE LCD."
+            m = "MWSMWS$59 FAILED TO LOCATE THE LCD."
             logi(m)
             print(m)
 
 
     async def main_task(self):
-        logi(f"MWSMAIN@57  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
+        logi(f"MWSMWS$65  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
 
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@ TODO enable global exception handler
         # set a global exception handler - for debugging an async program.
@@ -76,8 +78,8 @@ class MaranrWateringSystem(ElemLoggerABC):
         #
         # Create this first: most other classes use it immediately
         dataBoard = DataBoard.get_instance()
-        logi(f"MWSMAIN@73 Created DataBoard. state=...")
-        mlines = dataBoard.get_loggable_lines(prefix="MWSMAIN@74 ", suffix="")
+        logi(f"MWSMWS$81 Created DataBoard. state=...")
+        mlines = dataBoard.get_loggable_lines(prefix="MWSMWS$82 ", suffix="")
         for m in mlines:
             logi(m)
         del m,mlines
@@ -88,29 +90,29 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         wifi = MwsWifi.get_instance()
         wifi_task = asyncio.create_task(wifi.wifi_task())
-        logi(f"MWSMAIN@85 wifi task is {wifi_task} ")
+        logi(f"MWSMWS$93 wifi task is {wifi_task} ")
 
         sensors = MwsSensors.get_instance()
         sensors_task = sensors.start_the_task()
-        logi(f"MWSMAIN@89 {sensors_task=}")
+        logi(f"MWSMWS$97 {sensors_task=}")
         
         displays = MwsDisplays.get_instance()
         displays_task = displays.start_the_task()
-        logi(f"MWSMAIN@93 {displays_task=}")
+        logi(f"MWSMWS$101 {displays_task=}")
 
         buttons = MwsButtons.get_instance()
         buttons_task = buttons.start_the_task()
-        logi(f"MWSMAIN@97 {buttons_task=}")
+        logi(f"MWSMWS$105 {buttons_task=}")
         
         webserver = MwsWebServer.get_instance()
         webserver_task = webserver.start_the_task()
-        logi(f"MWSMAIN@101 {webserver_task=}")
+        logi(f"MWSMWS$109 {webserver_task=}")
     
         sleep_secs = 3
         logging_ctr = 999
         logging_ctr_limit = 60 / sleep_secs  # log the time every 60 seconds
         while 1:
-            log(f"MWSMAIN@107 MAIN TASK running TopOfLoop   ")
+            log(f"MWSMWS$115 MAIN TASK running TopOfLoop   ")
 
             logging_ctr += 1
             if logging_ctr >= logging_ctr_limit:
@@ -131,10 +133,10 @@ class MaranrWateringSystem(ElemLoggerABC):
             _=""" #$$$$$ TODO finish this
             log(f"  Who is done:  web={webserver_task.done()}  "+\
                    f"displays={displays_task.done()}  sensors={sensors_task.done()}")
-            pr int(f"MWSMAIN@128 FS: {get_fs_space_string()}")
-            pr int(f"MWSMAIN@129 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+            pr int(f"MWSMWS$136 FS: {get_fs_space_string()}")
+            pr int(f"MWSMWS$137 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
             gc_collect()
-            pr int(f"MWSMAIN@131 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+            pr int(f"MWSMWS$139 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
             #log(f"   state: {sensors_task.state}")  # bool
             #log(f"   data: {sensors_task.data}")    # None
@@ -143,11 +145,11 @@ class MaranrWateringSystem(ElemLoggerABC):
             ###done, pending = await asyncio.wait(tasks, timeout=1)
     
             if webserver_done and sensors_done and displays_done:
-                log("MWSMAIN@140  MAIN_TASK: all tasks are done!")
+                log("MWSMWS$148  MAIN_TASK: all tasks are done!")
                 break
             """
 
-            log(f"MWSMAIN@144  MAIN TASK running  SLEEP 3  ")
+            log(f"MWSMWS$152  MAIN TASK running  SLEEP 3  ")
             await asyncio.sleep(sleep_secs)
             self._toggle_onboad_led()
 
@@ -156,14 +158,14 @@ class MaranrWateringSystem(ElemLoggerABC):
 
         logi("--- MaranrWateringSystem --- BEGIN run_mws()  =======================")
 
-        #pr int(f"MWSMAIN@153 FS: {get_fs_space_string()}")
-        #pr int(f"MWSMAIN@154 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
-        #pr int(f"MWSMAIN@155  +++++ DO GC COLLECT   ++++++++++++++++++")
+        #pr int(f"MWSMWS$161 FS: {get_fs_space_string()}")
+        #pr int(f"MWSMWS$162 MEMORY: {get_memory_status_string(do_garbage_collect=False)}")
+        #pr int(f"MWSMWS$163  +++++ DO GC COLLECT   ++++++++++++++++++")
         #gc.collect()@@@ OR gc_collect() from lib/
-        #pr int(f"MWSMAIN@157 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
+        #pr int(f"MWSMWS$165 MEMORY AFTER GC: {get_memory_status_string(do_garbage_collect=False)}")
 
         ###@@@host,port = self.connect_to_wifi()
-        logi("MWSMAIN@160  START THE MAIN TASK")
+        logi("MWSMWS$168  START THE MAIN TASK")
         try:
             # Start the event loop and run the main server coroutine
             asyncio.run(self.main_task())
@@ -171,14 +173,14 @@ class MaranrWateringSystem(ElemLoggerABC):
         except KeyboardInterrupt:
             #@@@@@@@@ TODO Handle keyboard in MWS main
             #date_stg, time_stg = get_formatted_local_time()
-            #m = f"MWSMAIN@168 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
+            #m = f"MWSMWS$176 {date_stg} {time_stg}  Server stopped by user KeyboardInterrupt."
             #logi(m)
-            print("MWSMAIN@170 interrupt from keyboard")
+            print("MWSMWS$178 interrupt from keyboard")
 
         finally:
             # Clean up the event loop (optional, but good practice)
             asyncio.new_event_loop()
-            print(f"MWSMAIN@175 CLOSE THE LOGGING / LOGGER")
+            print(f"MWSMWS$183 CLOSE THE LOGGING / LOGGER")
             elc = ElemLogControl.get_instance()
             elc.close_all_logging()
 
