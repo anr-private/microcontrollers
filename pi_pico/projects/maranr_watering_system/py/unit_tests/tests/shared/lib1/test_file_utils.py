@@ -122,12 +122,12 @@ def test_list_dir_contents() -> None:
     create_scratch_dir(d)
     try:
         got = list_dir_contents(d)
-        assert isinstance(got, list), got
+        assert isinstance(got, tuple), got
         assert all(isinstance(item, tuple) and len(item) == 3 for item in got), got
         assert normalize_listing(got) == EXPECTED_LISTING, (normalize_listing(got), EXPECTED_LISTING)
         assert "inner.txt" not in [item[0] for item in got], ("went into sub/", got)
         empty = list_dir_contents(d + "/emptydir")
-        assert empty == [], empty
+        assert empty == tuple([]), empty
     finally:
         remove_subdir(d)
 

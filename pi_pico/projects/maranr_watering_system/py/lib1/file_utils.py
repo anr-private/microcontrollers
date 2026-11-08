@@ -87,7 +87,7 @@ def filter_dir_contents(dir_path:Any, file_filter:Any) -> Any:
     return  selected_items
 
 
-def list_dir_contents(dir_path):
+def list_dir_contents(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
     # Returns dir contents as tuples (in no particular order):
     #   (fname, ftype, fsize)
     # fname is filename (no path info)
@@ -109,8 +109,9 @@ def list_dir_contents(dir_path):
         # print(f"FUTL$109 Cannot find dir='{dir_path}'")
     # return results
 
-def list_dir_python(dir_path): # 'real' python
-    results = []
+def list_dir_python(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
+    """ CPython """
+    results: list[ tuple[str, str, int]] = []
     try:
         with os.scandir(dir_path) as entries:
             for entry in entries:
@@ -139,10 +140,11 @@ def list_dir_python(dir_path): # 'real' python
     except Exception as ex:
         print(f"FUTL$140 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
         raise RuntimeError(f"list_dir_python FAILED. EX={ex} {str(ex)}")
-    return results
+    return tuple(results)
 
-def list_dir_micropython(dir_path):
-    results = []
+
+def list_dir_micropython(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
+    results: list[ tuple[str, str, int]] = []
     try:
         for entry in os.ilistdir(dir_path):   # type: ignore[attr-defined]
             fname = entry[0] # may be the dir name
@@ -168,16 +170,16 @@ def list_dir_micropython(dir_path):
         print(f"FUTL$168 {m}")
         raise RuntimeError(m)
 
-    return results
+    return tuple(results)
 
 
-def remove_subdir(path):
+def remove_subdir(path: str) -> None:
     if SHUTIL_IS_AVAILABLE:
         remove_subdir_py3(path)
     else:
         remove_subdir_micropython(path)
 
-def remove_subdir_py3(path):
+def remove_subdir_py3(path: str) -> None:
     # Python3 version
     try:
         shutil.rmtree(path)
@@ -206,7 +208,7 @@ def remove_subdir_micropython(path: str) -> None:
         # Handle cases where the path doesn't exist or permissions fail
         print("FUTL$207 Failed to remove:", path)
 
-def remove_file(fpath):
+def remove_file(fpath: str) -> bool:
     #print(f"FUTL$210 Remove file '{fpath}'")
     try:
         os.remove(fpath)

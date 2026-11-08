@@ -1,6 +1,5 @@
 # utils.py
 
-###@@@@ REMOVE import micropython
 import os
 import platform
 import sys
@@ -8,18 +7,6 @@ import time
 
 try: from typing import Any
 except ImportError: pass
-
-# try:
-    # import time
-# except ModuleNotFoundError:
-    # import utime as time
-#### @@@ TODO remove the above
-
-# if "micropython" in platform.platform().lower():
-    # PLATFORM : str = "micropython"
-# else:
-    # PLATFORM : str = "cpython"
-#@@@@ TODO REMOVE THE ABOVE
 
 MWS_CONFIG = {
     "btn_left_gpio":     15,
@@ -38,13 +25,6 @@ MWS_CONFIG = {
     "log_file_path":  "mws_log.txt",
     }
 #TODO ADD table for daylight savings time changes
-
-#@@@ TODO REMOVE THIS
-def junk(s:str, i:int, f:float):
-    if s is None: return [s,i,f]
-    if i > 100: return [i,s,f]
-    if f < -10.0: return [f,i,s]
-    return [f,i,None]
 
 
 def seconds_to_hhmmss_string(total_secs: int) -> str:

@@ -67,6 +67,30 @@ f: "IO[str] | None" = None
 ...
 f = open("myfile", "r")
 
+--- Complex annotation examples  ---------------------------
+
+From redo_line_markers:
+  def parse_line(lno: int, whole_line: str) -> 
+                           tuple[tuple[tuple[str, str],...], str]:
+Returns a tuple of 2 items:
+  tuple[ [tuple[str,str], ...]   
+ First item: a tuple of N items, each of which is a tuple of 2 str:
+    (  ('a','b'), ('d','e'), ...)
+ Second item: a simple str
+
+
+===  OPTIONS  ===================================================
+
+strict = True      # applies only globally
+# individual options that 'add up' to 'strict':
+disallow_untyped_defs = True
+disallow_incomplete_defs = True
+disallow_untyped_calls = True
+disallow_untyped_decorators = True
+disallow_any_generics = True
+check_untyped_defs = True
+warn_return_any = True
+no_implicit_optional = True
 
 ===============================================================
 
