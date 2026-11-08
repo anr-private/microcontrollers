@@ -40,9 +40,7 @@ from lib2.DataBoard import DataBoard
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib2.TimeMgr import TimeMgr
 
-try: from typing import Callable
-except ImportError: pass
-try: from typing import Any
+try: from typing import Callable, Any
 except ImportError: pass
 
 # Logging functions; our parent class sets using _set_logger()
@@ -64,7 +62,7 @@ class _State:
     # active _State
     ###state = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.restarts_counter = 0
 
         self.state = 1
@@ -73,14 +71,14 @@ class _State:
         self.status_retries = 0
         self.check_connected_ctr = 0
 
-    def nullify(self):
+    def nullify(self) -> None:
         self.state = 1
         self.wlan = None
         self.sleep_secs = 1
         self.status_retries = 0
         self.check_connected_ctr = 0
         
-    def __str__(self):
+    def __str__(self) -> str:
         s = []
         s.append("state=%s" % str(self.state))
         s.append("wlan=%s" % str(self.wlan))
@@ -114,7 +112,7 @@ class MwsWifi(ElemLoggerABC):
         return f"{obj._ipaddr}:{obj._port}"
 
 
-    def __init__(self, do_not_call_directly):
+    def __init__(self, do_not_call_directly: int) -> None:
         if do_not_call_directly != 1234567:
             raise RuntimeError("MwsWifi.init DO NOT CALL")
         self._databoard = DataBoard.get_instance()
@@ -124,7 +122,7 @@ class MwsWifi(ElemLoggerABC):
         super().__init__()
 
 
-    def _set_logger(self, logger):
+    def _set_logger(self, logger: Any) -> None:
         global log, logrt, logi
         log = logger.log
         logrt = logger.logrt

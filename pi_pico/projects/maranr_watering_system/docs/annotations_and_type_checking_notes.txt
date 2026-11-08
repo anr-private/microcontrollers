@@ -4,11 +4,21 @@ QUICK REFS
 
 +++ IMPORTs you often need   +++++++++++++++++++++
 
+a:
 try: from typing import Any
 except ImportError: pass
 
+c:
 try: from typing import Callable
 except ImportError: pass
+
+t:
+try: from typing import Callable, Any
+except ImportError: pass
+
+n:    ' -> None'
+
+Letters 'c:' are ctl-R ctl-V in JEdit.
 
 +++ SINGLETON  +++++++++++++++++++++++++++++++++++
 
@@ -66,6 +76,18 @@ except ImportError: pass
 f: "IO[str] | None" = None
 ...
 f = open("myfile", "r")
+
+--- 'self' in unusual cases  ------------------------------
+
+# Need 'TypeVar'
+try:
+    from typing import TypeVar
+except ImportError:  # MicroPython without the typing stub installed
+    def TypeVar(name, *args, **kwargs):  # type: ignore[no-redef]
+        return None
+T = TypeVar("T")
+# then annotate self as
+  ... self: T ...
 
 --- Complex annotation examples  ---------------------------
 
@@ -149,6 +171,36 @@ _instance = None  # type: ignore[assignment]
 py/typing_FAKES/
 Has fakes for typing module.
 So far not needed - have simpler work-arounds; see below.
+
+
+=== BUILDER method that returns 'self'  ====================
+
+try:
+    from typing import TypeVar
+except ImportError:  # MicroPython without the typing stub installed
+    def TypeVar(name, *args, **kwargs):  # type: ignore[no-redef]
+        return None
+
+T_Base = TypeVar("T_Base", bound="Base")
+
+class Base:
+    def __init__(self) -> None:
+        self.items: list[str] = []
+
+    def add_item(self: T_Base, item: str) -> T_Base:
+        self.items.append(item)
+        return self
+
+class Child(Base):
+    def child_only(self) -> None:
+        print("only in Child")
+
+NOTES
+If add_item were annotated -> Base instead, mypy would report that Base has no attribute child_only, because the subclass type was lost.
+
+bound="Base": it restricts T_Base to Base and its subclasses, so mypy knows self.items exists. The quotes are needed because Base isn’t defined yet when the TypeVar line runs.
+MicroPython: the TypeVar fallback from my last answer applies. With it, bound="Base" is passed to the dummy function and ignored, and the annotations are never evaluated.
+Newer syntax: on CPython 3.11 and newer, typing.Self does this more simply (def add_item(self, item: str) -> Self), but it adds another name to guard for MicroPython, and the TypeVar form works on older versions too.
 
 
 === Callable and other stuff importing from 'typing' module =====
@@ -282,5 +334,5 @@ When we start, please re-attach the current copies of all three files, since the
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-:wrap=soft:
+:wrap=soft:mode=python:
 ###

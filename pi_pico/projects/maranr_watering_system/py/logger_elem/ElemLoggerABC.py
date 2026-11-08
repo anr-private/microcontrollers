@@ -11,12 +11,12 @@ from .ElemLogControl import ElemLogControl
 from .ElemLogControl import ElemLogger
 
 PRT=False
-def prt(s):
+def prt(s:str) -> None:
     if PRT: print (s)
 
 class ElemLoggerABC:
 
-    def __init__(self):
+    def __init__(self) -> None:
         try:
             prt(f"ELABC$21.init  self is {self}")
         except Exception as ex:
@@ -29,12 +29,12 @@ class ElemLoggerABC:
         # Tell the subclass what to use for its logging functions
         self._set_logger(logger)
 
-    def _get_control_instance(self):
+    def _get_control_instance(self) -> "ElemLogControl":
         return ElemLogControl.get_instance()
 
 
     ### @abstractmethod   NOT AVAILABLE IN micropython 1.29.0
-    def _set_logger(self, logger: "ElemLogger"):
+    def _set_logger(self, logger: "ElemLogger") -> None:
         """ Tell the subclass what to use as its logger 
         This is an abstract method: the subclass must implement.
         """
@@ -42,7 +42,7 @@ class ElemLoggerABC:
 
 
     @classmethod
-    def _enable_prt(self, enabled=True):
+    def _enable_prt(self, enabled=True) -> None:
         # unit test
         global PRT 
         PRT = not not enabled
