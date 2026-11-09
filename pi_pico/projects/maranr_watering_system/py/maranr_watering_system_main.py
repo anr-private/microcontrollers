@@ -10,14 +10,6 @@ try:
     import time
 except ModuleNotFoundError:
     import utime as time          # type: ignore
-# THE ABOVE REPLACES THE BELOW CODE: to match other similar import usages
-#    and to allow mypy to run
-# try:
-    # import utime as time        #uPy
-# except Exception:
-    # # Py3 unit tests
-    # import time      # type: ignore 
-                
 
 from lib1.utils import MWS_CONFIG
 
@@ -34,16 +26,8 @@ from weblib.MwsWebServer import MwsWebServer
 
 from mws.MaranrWateringSystem import MaranrWateringSystem
 
-#if determine_py_platform() == "micropython":
-#    sys.path.append("/http")
-#else:
-#    sys.path.append("../http")
 
-
-# Logging functions are NOT AVAILABLE: log,logrt,logi. Use log_control.xxx()
-
-
-def main():
+def main() -> None:
     
     print("MAIN: MARANR Watering System starting...")
     print(f"MAIN@39  {MWS_CONFIG=}")
@@ -54,13 +38,13 @@ def main():
     # The goal is to call get_instance() just once.  HUH??
     # DataBoard is created first - it contains refs to all the other
     # major objects.
-    databoard = DataBoard.get_instance()
-    databoard.time_mgr = TimeMgr.get_instance()
-    databoard.displays = MwsDisplays.get_instance()
-    databoard.buttons = MwsButtons.get_instance()
-    databoard.sensors = MwsSensors.get_instance()
-    databoard.wifi = MwsWifi.get_instance()
-    databoard.web_server = MwsWebServer.get_instance()
+    databoard: DataBoard = DataBoard.get_instance()
+    databoard.time_mgr:    TimeMgr = TimeMgr.get_instance()
+    databoard.displays:    MwsDisplays = MwsDisplays.get_instance()
+    databoard.buttons:     MwsButtons = MwsButtons.get_instance()
+    databoard.sensors:     MwsSensors = MwsSensors.get_instance()
+    databoard.wifi:        MwsWifi = MwsWifi.get_instance()
+    databoard.web_server:  MwsWebServer = MwsWebServer.get_instance()
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 

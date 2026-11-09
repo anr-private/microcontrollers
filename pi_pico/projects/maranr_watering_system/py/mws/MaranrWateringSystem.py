@@ -30,6 +30,8 @@ from sensors.MwsButtons import MwsButtons
 from sensors.MwsSensors import MwsSensors
 from weblib.MwsWebServer import MwsWebServer
 
+try: from typing import Callable, Any
+except ImportError: pass
 
 # Logging functions; provided by our parent class using set_log_functions()
 log = None
@@ -39,17 +41,17 @@ logi = None
 
 class MaranrWateringSystem(ElemLoggerABC):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._onboard_led = None
         super().__init__()
 
-    def _set_logger(self, logger):
+    def _set_logger(self, logger: Any) -> None:
         global log, logrt, logi
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
 
-    def perform_pre_asyncio_setups(self):
+    def perform_pre_asyncio_setups(self) -> None:
         # Perform any setups that must be done before we start the
         # main_task. These are typically setups that require
         # relatively long time periods to get completed.
@@ -62,7 +64,7 @@ class MaranrWateringSystem(ElemLoggerABC):
             print(m)
 
 
-    async def main_task(self):
+    async def main_task(self) -> None:
         logi(f"MWSMWS$65  MAIN TASK STARTED {TimeMgr.get_formatted_date_time_string()}");
 
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@ TODO enable global exception handler
@@ -155,7 +157,7 @@ class MaranrWateringSystem(ElemLoggerABC):
             self._toggle_onboad_led()
 
 
-    def run_mws(self):
+    def run_mws(self) -> None:
 
         logi("--- MaranrWateringSystem --- BEGIN run_mws()  =======================")
 
@@ -185,11 +187,11 @@ class MaranrWateringSystem(ElemLoggerABC):
             elc = ElemLogControl.get_instance()
             elc.close_all_logging()
 
-    def _toggle_onboad_led(self):
+    def _toggle_onboad_led(self) -> None:
         if self._onboard_led is not None:
             self._onboard_led.toggle()
 
-    def _get_onboard_led(self):
+    def _get_onboard_led(self) -> Any:
         this_machine = determine_machine_type()
 
         if this_machine in ["pi pico w", "pi pico 2 w"]:

@@ -74,31 +74,31 @@ class ElemLogControl:
         self._log_file_table = ElemLogFileTable()
     #
     # FAKE having a logger
-    def enable_log(self, enabled):
+    def enable_log(self, enabled: bool) -> None:
         # Fake the ElemLogger method - so we can be registered as if
         # we were using that class as our logger
         self._log_enabled = not not enabled
-    def is_enabled(self):
+    def is_enabled(self) -> bool:
         return self._log_enabled
 
-    def close_all_logging(self):
+    def close_all_logging(self) -> None:
         # close logging - program is terminating
         print(f"ELC$92 CLOSE ALL LOGGING")
         self._log_file_table.close_logging()
 
-    def get_current_log_fpath(self):
+    def get_current_log_fpath(self) -> str:
         return self._log_file_table.get_current_log_fpath()
 
-    def get_current_log_fsize(self):
+    def get_current_log_fsize(self) -> int:
         return self._log_file_table.get_current_log_fsize()
 
-    def get_logs_totals(self, include_currently_open_file):
+    def get_logs_totals(self, include_currently_open_file: bool) -> tuple[int, int, int]:
         return self._log_file_table.get_logs_totals(include_currently_open_file)
 
-    def get_log_table_item(self, item_index):
+    def get_log_table_item(self, item_index: int) -> tuple[str, int, int] | None:
         return self._log_file_table.get_log_table_item(item_index)
 
-    def get_log_table_status_lines(self):
+    def get_log_table_status_lines(self) -> tuple[str,...]:
         return self._log_file_table.get_status_lines()
 
 
@@ -121,11 +121,11 @@ class ElemLogControl:
         return logger
 
 
-    def get_registered_classes(self):
-        return self.registry.keys()
+    def get_registered_classes(self) -> tuple[str,...]:
+        return tuple(self.registry.keys())
 
 
-    def LOG(self, m):
+    def LOG(self, m:str) -> None:
         # simulates the log() method of a 'regular' class
         # IE a class not part of logging
         # Part of FAKE-ing the ElemLogger - this class has no associated ElemLogger
@@ -133,7 +133,7 @@ class ElemLogControl:
             self.log_and_print_one_line(m)
 
 
-    def enable_logging(self, class_name, enabled):
+    def enable_logging(self, class_name: str, enabled: bool) -> None:
         # enable/disable logging for the specified class
         logger = self.registry.get(class_name)
         m = f"ELC$145 logger is {logger}  {enabled=} {class_name=}"
@@ -149,20 +149,21 @@ class ElemLogControl:
         logger.enable_log(enabled)
 
 
-    def log_and_print_one_line(self, line):
+    def log_and_print_one_line(self, line: str) -> None:
         self.log_one_line(line)
         print(line)
 
-    def log_one_line(self, line):
+    def log_one_line(self, line:str) -> None:
         self._log_file_table.log_one_line(line)
 
 
-    def get_lines_from_log_file(self, relative_line_number, number_of_lines):
+    def get_lines_from_log_file(self, relative_line_number: int,
+                                number_of_lines: int) -> list[str]:
         lines = self._log_file_table.get_lines_from_log_file(relative_line_number, number_of_lines)
         return lines
 
 
-    def dump_registered_loggers(self):
+    def dump_registered_loggers(self) -> None:
         m = "ELC$172  Classes registered in ElemLogControl:"
         print(m)
         self.log_one_line(m)

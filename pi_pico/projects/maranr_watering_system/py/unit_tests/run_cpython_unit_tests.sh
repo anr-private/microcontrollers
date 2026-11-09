@@ -10,6 +10,6 @@ if (( $# >= 1 )) ; then
     echo 'run_cpython_unit_tests.sh: ****** SAVING THE SCRATCH DIRS and FILES using env var MWS_SAVE_SCRATCH    ******************************'
 fi
 
-pytest
+pytest $*
 
 ###

@@ -149,7 +149,7 @@ class ElemLogFileTable:
         return total_size
 
 
-    def get_log_table_item(self, item_index: int) -> Any:
+    def get_log_table_item(self, item_index: int) -> tuple[str, int, int] | None:
         try:
             return self._log_file_table[item_index]
         except IndexError:
