@@ -19,6 +19,12 @@ SEEK_SET = 0  # relative to the start of file
 SEEK_CURR = 1  # relative to current file position
 SEEK_END = 2	# relative to end of file
 
+# Each test makes its own scratch directory (get_scratch_path(), using the 
+# platform glue) and removes it in a try/finally.
+# CPython: the real module tests/cpython/cpython_glue.py.
+# Pico: there is no such module; run_pico_tests.py appends get_scratch_path().
+try: from cpython_glue import get_scratch_path
+except ImportError: pass
 
 class FileObtainer(ElemLoggerABC):
 
@@ -50,7 +56,7 @@ class FileObtainer(ElemLoggerABC):
 
     #@@@@@@@@@@@@@@@@@@@ make 2 functions!
     def obtain_entire_text_file_contents(self,
-            fpath: str, *, 
+            fpath: str, 
             #@@@@@@@binary:bool=False, read_contents:bool=False, 
             prefix_dir:str="",
             w:str="?WHO?") -> str | None:
@@ -85,7 +91,7 @@ class FileObtainer(ElemLoggerABC):
             return contents
 
         # Failed with simple fpath - try adding prefix_dir
-        if prefix_dir is not None:
+        if prefix_dir:
             log(f"FOBT$89:{w}  Add {prefix_dir=} to {actual_path=} and try again")
             actual_path = self._add_prefix_dir(fpath, prefix_dir, w)
             tried_paths.append(actual_path)

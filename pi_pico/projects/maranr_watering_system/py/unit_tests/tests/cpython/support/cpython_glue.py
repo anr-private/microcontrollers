@@ -49,7 +49,7 @@ def remove_scratch_path(path: str) -> None:
     The path is typically a path returned from get_scratch_path().
     Does nothing if the path is not there.
     When SAVE_THE_SCRATCH_FILES is true the path is moved aside, not deleted.
-    Primary use is in finally blocks in unit tests.
+    Primary use is in try/finally blocks in unit tests.
     """
     global _saved_count
     if not _does_path_exist(path):
