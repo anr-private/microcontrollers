@@ -10,9 +10,9 @@ try: from typing import Callable, Any
 except ImportError: pass
 
 # Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 # os module does not define these (unlike Py3)
 SEEK_SET = 0  # relative to the start of file

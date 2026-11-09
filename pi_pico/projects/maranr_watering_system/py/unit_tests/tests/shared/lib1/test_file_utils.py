@@ -43,8 +43,8 @@ EXPECTED_LISTING = sorted([
     ("data.bin", "f", BIG_SIZE),
     ("empty.txt", "f", 0),
     ("name with spaces.txt", "f", 2),
-    ("emptydir", "d", None),
-    ("sub", "d", None),
+    ("emptydir", "d", 0),
+    ("sub", "d", 0),
 ])
 
 # What filter_dir_contents() should return for filter_big_files(): the files only
@@ -95,14 +95,14 @@ def create_scratch_dir(path: str) -> None:
     create_file(path + "/sub/inner.txt", 7)
 
 
-def normalize_listing(items: list) -> list:
+def normalize_listing(items: list[tuple[str,str,int]]) -> list:
     """ Sort by name and set the size of directories to None (it differs
     between platforms and the application does not use it). """
     out = []
     for item in items:
         name, ftype, fsize = item[0], item[1], item[2]
         if ftype == "d":
-            fsize = None
+            fsize = 0
         out.append((name, ftype, fsize))
     return sorted(out)
 
@@ -122,12 +122,12 @@ def test_list_dir_contents() -> None:
     create_scratch_dir(d)
     try:
         got = list_dir_contents(d)
-        assert isinstance(got, tuple), got
+        assert isinstance(got, list), got
         assert all(isinstance(item, tuple) and len(item) == 3 for item in got), got
         assert normalize_listing(got) == EXPECTED_LISTING, (normalize_listing(got), EXPECTED_LISTING)
         assert "inner.txt" not in [item[0] for item in got], ("went into sub/", got)
         empty = list_dir_contents(d + "/emptydir")
-        assert empty == tuple([]), empty
+        assert empty == [], empty
     finally:
         remove_subdir(d)
 

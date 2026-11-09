@@ -88,7 +88,7 @@ def filter_dir_contents(dir_path:str, file_filter:Any) -> \
     return  selected_items
 
 
-def list_dir_contents(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
+def list_dir_contents(dir_path: str) -> list[ tuple[str, str, int]]:
     # Returns dir contents as tuples (in no particular order):
     #   (fname, ftype, fsize)
     # fname is filename (no path info)
@@ -110,7 +110,7 @@ def list_dir_contents(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
         # print(f"FUTL$109 Cannot find dir='{dir_path}'")
     # return results
 
-def list_dir_python(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
+def list_dir_python(dir_path: str) -> list[ tuple[str, str, int]]:
     """ CPython """
     results: list[ tuple[str, str, int]] = []
     try:
@@ -141,10 +141,10 @@ def list_dir_python(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
     except Exception as ex:
         print(f"FUTL$140 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
         raise RuntimeError(f"list_dir_python FAILED. EX={ex} {str(ex)}")
-    return tuple(results)
+    return results
 
 
-def list_dir_micropython(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
+def list_dir_micropython(dir_path: str) -> list[ tuple[str, str, int]]:
     results: list[ tuple[str, str, int]] = []
     try:
         for entry in os.ilistdir(dir_path):   # type: ignore[attr-defined]
@@ -171,7 +171,7 @@ def list_dir_micropython(dir_path: str) -> tuple[ tuple[str, str, int], ...]:
         print(f"FUTL$168 {m}")
         raise RuntimeError(m)
 
-    return tuple(results)
+    return results
 
 
 def remove_subdir(path: str) -> None:
