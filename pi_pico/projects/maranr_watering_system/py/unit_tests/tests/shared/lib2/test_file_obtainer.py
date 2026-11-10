@@ -211,7 +211,7 @@ def _create_text_file(fpath: str, content: str) -> None:
     with open(fpath, "w") as f:
         f.write(content)
 
-def _create_binary_file(fpath: str, binary_content: str) -> None:
+def _create_binary_file(fpath: str, binary_content: bytes) -> None:
     with open(fpath, "wb") as f:
         f.write(binary_content)
 
