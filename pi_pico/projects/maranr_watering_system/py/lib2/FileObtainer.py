@@ -19,12 +19,6 @@ SEEK_SET = 0  # relative to the start of file
 SEEK_CURR = 1  # relative to current file position
 SEEK_END = 2	# relative to end of file
 
-# Each test makes its own scratch directory (get_scratch_path(), using the 
-# platform glue) and removes it in a try/finally.
-# CPython: the real module tests/cpython/cpython_glue.py.
-# Pico: there is no such module; run_pico_tests.py appends get_scratch_path().
-try: from cpython_glue import get_scratch_path
-except ImportError: pass
 
 class FileObtainer(ElemLoggerABC):
 
@@ -44,7 +38,7 @@ class FileObtainer(ElemLoggerABC):
 
     def _set_logger(self, logger: Any) -> None:
         global log, logrt, logi
-        #print(f"FOBT$39 _set_logger: {repr(logger)}")
+        #print(f"FOBT$41 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -54,13 +48,32 @@ class FileObtainer(ElemLoggerABC):
         return self._SIM_USING_PY3
 
 
-    #@@@@@@@@@@@@@@@@@@@ make 2 functions!
-    def obtain_entire_text_file_contents(self,
+    def obtain_entire_binary_file_contents(self,
             fpath: str, 
-            #@@@@@@@binary:bool=False, read_contents:bool=False, 
             prefix_dir:str="",
             w:str="?WHO?") -> str | None:
-        log(f"FOBT$53 obtain_entire_text_file_contents {fpath=!r}  {prefix_dir=!r} {w=!r}")
+        contents = self._obtain_entire_file_contents(fpath, prefix_dir,
+                                                     True, w)
+        return contents
+
+        #print(f"FOBT$59  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");print(f" {STOP}")
+        #return None
+
+    def obtain_entire_text_file_contents(self,
+            fpath: str, 
+            prefix_dir:str="",
+            w:str="?WHO?") -> str | None:
+        contents = self._obtain_entire_file_contents(fpath, prefix_dir,
+                                                     False, w)
+        return contents
+
+
+    def _obtain_entire_file_contents(self,
+            fpath: str, 
+            prefix_dir:str="",
+            binary_mode:bool=False,
+            #####read_contents:bool=False, 
+            w:str="?WHO?") -> str | None:
         """ Read the contents of the specified file. 
         Returns the entire contents of the file if read goes ok.
         Returns None if cannot read the file (either with or without prefix).
@@ -74,60 +87,66 @@ class FileObtainer(ElemLoggerABC):
          NOTE that if prefix_dir does not start with "/", it is added.
            So prefix_dir="pages" and prefix_dir="/pages" are equivalent.
 
-        w is the caller ex "RH@34" ie a LINE MARKER
+        w is the caller ex "RH $ 91" ie a LINE MARKER
         """
+        log(f"FOBT$92 obtain_entire_text_file_contents {fpath=!r}  {prefix_dir=!r} {binary_mode=!r} {w=!r}")
+
         tried_paths: list[str] = []
 
         actual_path = fpath
         tried_paths.append(actual_path)
         if self._SIM_USING_PY3:
             actual_path = self._adjust_actual_path(actual_path)
-            log(f"FOBT$73:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
+            log(f"FOBT$100:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
     
-        contents = self._try_reading_entire_file(actual_path, w)
+        contents = self._try_reading_entire_file(actual_path, binary_mode, w)
 
         if contents is not None:
-            log(f"FOBT$80:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {prefix_dir=} LEN={len(contents)}")
+            log(f"FOBT$105:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {prefix_dir=} LEN={len(contents)}")
             return contents
 
         # Failed with simple fpath - try adding prefix_dir
         if prefix_dir:
-            log(f"FOBT$89:{w}  Add {prefix_dir=} to {actual_path=} and try again")
+            log(f"FOBT$110:{w}  Add {prefix_dir=} to {actual_path=} and try again")
             actual_path = self._add_prefix_dir(fpath, prefix_dir, w)
             tried_paths.append(actual_path)
             if self._SIM_USING_PY3:
                 old_actual = actual_path
                 actual_path = self._adjust_actual_path(actual_path)
-                log(f"FOBT$94:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
+                log(f"FOBT$116:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
 
-            contents = self._try_reading_entire_file(actual_path, w)
+            contents = self._try_reading_entire_file(actual_path, binary_mode, w)
         
             if contents is not None:
-                log(f"FOBT$99:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {prefix_dir=} LEN={len(contents)}")
+                log(f"FOBT$121:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {prefix_dir=} LEN={len(contents)}")
                 return contents
     
         # FAILED!
-        log(f"FOBT$107:{w}  obtain_entire_text_file_contents **FAILED** Return None!   {fpath=!r} {prefix_dir=!r}")
-        log(f"FOBT$108:{w}    ... {tried_paths=}  who='{w!r}' ")
+        log(f"FOBT$125:{w}  _obtain_entire_file_contents **FAILED** Return None!   {fpath=!r} {prefix_dir=!r}  {binary_mode=!r}")
+        log(f"FOBT$126:{w}    ... {tried_paths=}  who='{w!r}' ")
         return None
 
 
-    def _try_reading_entire_file(self, actual_path: str, w:str) -> str | None:
+    def _try_reading_entire_file(self, actual_path: str, 
+                                    binary_mode: bool, w:str) -> str | None:
         """ Try reading the specified file.
         If successful, returns the entire file content as str.
         If not returns None.
         """
-        log(f"FOBT$113:{w} Try _try_reading_entire_file {actual_path=!r} ")
+        log(f"FOBT$136:{w} Try _try_reading_entire_file {actual_path=!r} {binary_mode=!r} {w=!r} ")
         try:
-            with open(actual_path, "r") as inf:
-                log(f"FOBT$117:{w} try to read {actual_path=!r} contents.")
+            mode_stg = "rb" if binary_mode else "r"
+            with open(actual_path, mode_stg) as inf:
+                log(f"FOBT$140:{w} {mode_stg!r} try to read {actual_path=!r} contents.")
                 contents = inf.read()
-                log(f"FOBT$119:{w!r} from {actual_path=!r}: len(contents)={len(contents)}")
+                log(f"FOBT$142:{w!r} {mode_stg!r} from {actual_path=!r}: len(contents)={len(contents)}")
                 return contents
         except OSError as ex:
-            log(f"FOBT$124:{w}  Reading {actual_path=!r} got EX={repr(ex)}  EX='{str(ex)}' ")
+            log(f"FOBT$145:{w}  Reading {actual_path=!r} got OSError EX={repr(ex)}  EX='{str(ex)}' ")
+        except UnicodeDecodeError as ex:
+            log(f"FOBT$147:{w}  Reading {actual_path=!r} got EX=UnicodeDecodeError EX={repr(ex)}  EX='{str(ex)}' ")
         except Exception as ex:
-            log(f"FOBT$126:{w}  Reading {actual_path=!r} got EX={repr(ex)}  EX='{str(ex)}' ")
+            log(f"FOBT$149:{w}  Reading {actual_path=!r} got EXC={repr(ex)}  EX='{str(ex)}' ")
         return None
 
 
@@ -141,7 +160,7 @@ class FileObtainer(ElemLoggerABC):
 
 
     def _add_prefix_dir(self, fpath: str, prefix_dir: str, w: str) -> str:
-        log(f"FOBT$130:{w} Add {prefix_dir=} to {fpath=}")
+        log(f"FOBT$163:{w} Add {prefix_dir=} to {fpath=}")
         if not fpath or not prefix_dir: return fpath
 
         sep1 = ""
@@ -151,96 +170,8 @@ class FileObtainer(ElemLoggerABC):
         if fpath[0] != '/':
             sep2 = '/'
         new_fpath = sep1 + prefix_dir + sep2 + fpath
-        log(f"FOBT$140:{w} {new_fpath=} -- Added {prefix_dir=} to {fpath=}")
+        log(f"FOBT$173:{w} {new_fpath=} -- Added {prefix_dir=} to {fpath=}")
         return new_fpath
-
-
-
-
-    #@@@@@@@@@@@@@@@@@@@@@@@ REMOVE
-###    def NOT__USED__obtain_input_file(self,
-###            fpath: str, *, 
-###            binary:bool=False, read_contents:bool=False, prefix_dir:str|None=None,
-###            w:str="?WHO?") -> int:
-###        log(f"FOBT$53 obtain_input_file {fpath=}  {binary=}  {read_contents=}  {prefix_dir=}")
-###
-###        # fpath - the path. On pico you typically see "/pages/some.html", starts with '/'.
-###        # binary - if True, read as binary else read as text
-###        # read_contents if True, read and return the file contents.
-###        #   if False, just open the file and return True if file exists else False.
-###        # prefix_dir - if not None, use this as a prefix to the fpath if trying
-###        #  to open 'fpath' fails. Ex: fpath="some.html" and prefix_dir="/pages";
-###        #  if open(some.html) fails, create path "/pages/some.html"
-###        #  NOTE that if prefix_dir does not start with "/", it is added.
-###        #    So prefix_dir="pages" and prefix_dir="/pages" are equivalent.
-###        # w is the caller ex "RH@34" where RH is shortened class name and
-###        #    digits are line number.
-###        # Returns False-y (ex None) if request fails. Returns the file
-###        # contents if read_contents is True; else returns just True
-###        # if the file was just opened and then closed.
-###    
-###        actual_path = fpath
-###        if self._SIM_USING_PY3:
-###            actual_path = self._adjust_actual_path(actual_path)
-###            log(f"FOBT$73:{w} USE SIMULATED FILE PATHS  {fpath=} {actual_path=}  ***********************")
-###    
-###        mode = "rb" if binary else "r"
-###    
-###        result = self._try_accessing_file(actual_path, mode, read_contents, w)
-###
-###        if result is not None:
-###            log(f"FOBT$80:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
-###            if result is True:
-###                log(f"FOBT$82:{w} ...  return TRUE - just checked for file exists, did not read contents.")
-###            else:
-###                log(f"FOBT$84:{w} ...  return file contents  LEN={len(result)}")
-###            return result
-###
-###        # Failed with simple fpath - try adding prefix_dir
-###        if prefix_dir is not None:
-###            log(f"FOBT$89:{w}  Add {prefix_dir=} to {actual_path=} and try again")
-###            actual_path = self._add_prefix_dir(fpath, prefix_dir, w)
-###            if self._SIM_USING_PY3:
-###                old_actual = actual_path
-###                actual_path = self._adjust_actual_path(actual_path)
-###                log(f"FOBT$94:{w} USE SIMULATED FILE PATHS  {old_actual=} {actual_path=}  ***********************")
-###
-###            result = self._try_accessing_file(actual_path, mode, read_contents, w)
-###    
-###            if result is not None:
-###                log(f"FOBT$99:{w} SUCCESS  accessed {fpath=}  {actual_path=}  {binary=}  {mode=}  {read_contents=}  {prefix_dir=}")
-###                if result is True:
-###                    log(f"FOBT$101:{w} ...  return TRUE - just checked for file exists, did not read contents.")
-###                else:
-###                    log(f"FOBT$103:{w} ...  return file contents  LEN={len(result)}")
-###                return result
-###    
-###        # FAILED!
-###        log(f"FOBT$107:{w}  obtain_input_file **FAILED** Return None!   {fpath=} {actual_path=}")
-###        log(f"FOBT$108:{w}    ... {binary=}  {read_contents=}  {prefix_dir=}  who='{w}' ")
-###        return None
-###
-###
-###    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-###    def NOTUSED_try_accessing_file(self, actual_path: str, mode: str, 
-###                                  read_contents: bool, w:str) -> bool:
-###        log(f"FOBT$113:{w} Try accessing {actual_path=}  {mode=} ")
-###        try:
-###            with open(actual_path, mode) as inf:
-###                if read_contents:
-###                    log(f"FOBT$117:{w}  read {actual_path=} contents.")
-###                    contents = inf.read()
-###                    log(f"FOBT$119:{w} from {actual_path=} len(contents)={len(contents)}")
-###                    return contents
-###                log(f"FOBT$121:{w} opened/closed {actual_path=} ok; return True")
-###                return True
-###        except OSError as ex:
-###            log(f"FOBT$124:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
-###        except Exception as ex:
-###            log(f"FOBT$126:{w}  Reading {actual_path=} got EX={repr(ex)}  EX='{str(ex)}' ")
-###    
-###
-    
 
 
 ###

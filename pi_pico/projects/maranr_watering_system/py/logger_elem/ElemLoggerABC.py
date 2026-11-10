@@ -22,15 +22,19 @@ class ElemLoggerABC:
         except Exception as ex:
             prt(f"ELABC$23.init  'str(self)' failed. Ctor not completed(?)  ex={repr(ex)}  {str(ex)}")
 
-        elc = ElemLogControl.get_instance()
-        prt(f"ELABC$26.init ElemLogControl obj is {elc}")
-        logger = elc.register_user_class(self)
+        self.elc = ElemLogControl.get_instance()
+        prt(f"ELABC$26.init ElemLogControl obj is {self.elc}")
+        logger = self.elc.register_user_class(self)
         prt(f"ELABC$28.init  logger is: {logger}")
         # Tell the subclass what to use for its logging functions
         self._set_logger(logger)
 
-    def _get_control_instance(self) -> "ElemLogControl":
+    #### REMOVE?
+    def _get_control_instance_NOTUSED(self) -> "ElemLogControl":
         return ElemLogControl.get_instance()
+
+    def _get_log_control_instance(self) -> "ElemLogControl":
+        return self.elc
 
 
     ### @abstractmethod   NOT AVAILABLE IN micropython 1.29.0

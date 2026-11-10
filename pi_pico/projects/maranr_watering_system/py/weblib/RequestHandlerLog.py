@@ -79,7 +79,8 @@ class RequestHandlerLog(ElemLoggerABC):
             relative_line_number = 20
             numlines = 20
         log(f"RHLOG$81  {relative_line_number=}  {numlines=}")
-        elc = self._get_control_instance()
+        # Get log-control from our parent class (ElemLogControlABC)
+        elc = self._get_log_control_instance()
 
         lines = elc.get_lines_from_log_file(relative_line_number, numlines)
         log(f"RHLOG$85 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
@@ -113,7 +114,8 @@ class RequestHandlerLog(ElemLoggerABC):
             line = line.replace('<br>', '')
             line += "<br>"
             html_lines.append(line)
-        lines = None
+        del line, lines
+
         html_lines.extend(html_tail)
         body_string = "\n".join(html_lines)
         del html_lines

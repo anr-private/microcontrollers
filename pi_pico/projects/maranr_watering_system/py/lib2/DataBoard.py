@@ -83,7 +83,7 @@ class DataBoard(ElemLoggerABC):
 
     def _set_logger(self, logger: Any) -> None:
         global log, logrt, logi
-        #print(f"DBRD$84 _set_logger: {repr(logger)}")
+        #print(f"DBRD$86 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -92,7 +92,7 @@ class DataBoard(ElemLoggerABC):
     def set_ip_and_port(self, ipaddr: str, port:int) -> None:
         self.ipaddr = ipaddr
         self.port = port
-        print(f"DBRD$93  SET IPADDR={self.ipaddr}  PORT={self.port} ")
+        print(f"DBRD$95  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
     def set_wifi_restarts_counter(self, new_restarts_counter: int) -> None:
         self.wifi_restarts_counter = new_restarts_counter
@@ -145,7 +145,7 @@ class DataBoard(ElemLoggerABC):
         self.memory_free_max = max(self.memory_free_max, mem_free)
 
     def get_loggable_lines(self, prefix:str="", suffix:str="") -> list[str]:
-        # for logging, prefix is usu 'RHDATA@99', suffix is '<br>\n'
+        # for logging, prefix is usu 'RHDATA$148', suffix is '<br>\n'
         lines = []
         lines.append(f"{prefix}DataBoard State:  {self.system_state} {suffix}")
         lines.append(f"{prefix} NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates} {suffix}")
