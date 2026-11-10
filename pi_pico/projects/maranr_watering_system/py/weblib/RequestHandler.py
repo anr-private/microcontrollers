@@ -139,8 +139,11 @@ class RequestHandler(ElemLoggerABC):
         # See if file exists - maybe in /pages/ or etc
         # Don't worry about what type of file yet - do binary read.
         # Try the default_subdir as well.
-        fu = FileObtainer()
-        if not fu.obtain_input_file(file_path, binary=True, prefix_dir=self.default_subdir, w="HRQH$143"):
+        fob = FileObtainer()
+        if not fob.obtain_entire_binary_file_contents(
+                                            file_path, 
+                                            prefix_dir=self.default_subdir, 
+                                            w="HRQH$143"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
@@ -177,9 +180,11 @@ class RequestHandler(ElemLoggerABC):
     def _handle_textual_file_request(self, file_path, content_type):
 
         # Read the file
-        fu = FileObtainer()
-        file_contents = fu.obtain_input_file(file_path, read_contents=True, 
-                prefix_dir=self.default_subdir, w="HRQH$182")
+        fob = FileObtainer()
+        file_contents = fob.obtain_entire_text_file_contents(
+                                            file_path, 
+                                            prefix_dir=self.default_subdir, 
+                                            w="HRQH$182")
 
         if file_contents is None:
             rb = ReplyBuilder()
@@ -209,11 +214,11 @@ class RequestHandler(ElemLoggerABC):
     def _handle_binary_file_request(self, file_path, content_type):
 
         # Read the file
-        fu = FileObtainer()
-        file_contents = fu.obtain_input_file(file_path, 
-                binary=True, read_contents=True, 
-                prefix_dir=self.default_subdir, w="HRQH$215")
-
+        fob = FileObtainer()
+        file_contents = fob.obtain_entire_binary_file_contents(
+                                                file_path, 
+                                                prefix_dir=self.default_subdir, 
+                                                w="HRQH$215")
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."

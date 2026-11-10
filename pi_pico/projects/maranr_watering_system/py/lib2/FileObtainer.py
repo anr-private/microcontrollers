@@ -49,20 +49,18 @@ class FileObtainer(ElemLoggerABC):
 
 
     def obtain_entire_binary_file_contents(self,
-            fpath: str, 
-            prefix_dir:str="",
-            w:str="?WHO?") -> str | None:
+                                           fpath: str, 
+                                           prefix_dir:str="",
+                                           w:str="?WHO?") -> str | None:
         contents = self._obtain_entire_file_contents(fpath, prefix_dir,
                                                      True, w)
         return contents
 
-        #print(f"FOBT$59  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");print(f" {STOP}")
-        #return None
 
     def obtain_entire_text_file_contents(self,
-            fpath: str, 
-            prefix_dir:str="",
-            w:str="?WHO?") -> str | None:
+                                         fpath: str, 
+                                         prefix_dir:str="",
+                                         w:str="?WHO?") -> str | None:
         contents = self._obtain_entire_file_contents(fpath, prefix_dir,
                                                      False, w)
         return contents
