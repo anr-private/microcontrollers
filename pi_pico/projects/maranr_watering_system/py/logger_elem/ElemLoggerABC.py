@@ -42,7 +42,7 @@ class ElemLoggerABC:
         """ Tell the subclass what to use as its logger 
         This is an abstract method: the subclass must implement.
         """
-        raise NotImplementedError(f"Obj={self} _set_logger() is not implemented in the ElemLogControlABC subclass")
+        raise NotImplementedError(f"Obj={self} _set_logger() is ABSTRACT: so not implemented in the ElemLogControlABC subclass")
 
 
     @classmethod
