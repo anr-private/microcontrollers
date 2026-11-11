@@ -3,7 +3,6 @@ ANNOTATIONS and TYPE CHECKING NOTES  for Maranr Watering System
 QUICK REFS
 
 
-
 To see what annotation is associated with XXX
     reveal_type(XXX)
 
