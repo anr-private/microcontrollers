@@ -526,12 +526,12 @@ class ElemLogFileTable:
     def dump_file_table(self, comment:str, to_log:bool=True) -> None:
         # write the file table into the log
         if len(self._log_file_table) <= 0:
-            m = f"ELFT$527 DUMP FILE TABLE:  the table is empty  {comment}"
+            m = f"ELFT$527 DUMP LOG-FILE-TABLE:  the table is empty  {comment}"
             print(m)
             if to_log: self._log_a_line(m)
             return
 
-        m = f"+++  LOG FILE TABLE  +++++++++++  {comment}  ++++++++++++++++++++++++++  ELFT$532"
+        m = f"+++  LOG FILE TABLE  Dump  +++++++++++  {comment}  ++++++++++++++++++++++++++  ELFT$532"
         print(m)
         if to_log: self._log_a_line(m)
         for finfo in self._log_file_table:

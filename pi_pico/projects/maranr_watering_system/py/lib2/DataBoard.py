@@ -145,7 +145,9 @@ class DataBoard(ElemLoggerABC):
         self.memory_free_max = max(self.memory_free_max, mem_free)
 
     def get_loggable_lines(self, prefix:str="", suffix:str="") -> list[str]:
-        # for logging, prefix is usu 'RHDATA$148', suffix is '<br>\n'
+        # for logging, prefix is usu a line-marker like 'RHDATA $ 148'
+        # (spaces added to avoid redo_line_markers renumbering)
+        # suffix is '<br>\n'
         lines = []
         lines.append(f"{prefix}DataBoard State:  {self.system_state} {suffix}")
         lines.append(f"{prefix} NTP Latest update: {self.time_mgr_latest_ntp_update_secs}  number-of-NTP-updates {self.time_mgr_number_of_ntp_updates} {suffix}")
