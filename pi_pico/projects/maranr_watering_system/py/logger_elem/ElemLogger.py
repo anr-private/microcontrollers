@@ -20,7 +20,7 @@ class ElemLogger:
 
     def __init__(self, log_control: Any, simplified_class_name: str) -> None:
         self.class_name: str = simplified_class_name
-        self.log_enabled: bool = False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        self.log_enabled: bool = True #  False #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         self._log_control: Any = log_control
         prt(f"ELOG$23 init {self.class_name=}")
 
