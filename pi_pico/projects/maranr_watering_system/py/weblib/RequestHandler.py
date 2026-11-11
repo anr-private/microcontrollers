@@ -143,11 +143,11 @@ class RequestHandler(ElemLoggerABC):
         if not fob.obtain_entire_binary_file_contents(
                                             file_path, 
                                             prefix_dir=self.default_subdir, 
-                                            w="HRQH$143"):
+                                            w="HRQH$146"):
             rb = ReplyBuilder()
             m = f"Requested item {file_path} not found (as a file)"
             reply = rb.build_reply_404(m)
-            log(f"HRQH$147 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$150 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
             return reply
 
 
@@ -158,7 +158,7 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"Requested item {file_path}: Cannot determine Content-Type"
             reply = rb.build_reply_404(m)
-            log(f"HRQH$158 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$161 REPLY WITH 404. '{m}' {file_path=}  len={len_to_str(reply)}")
             return reply
 
         # handle the file depending on its Content-Type
@@ -170,8 +170,8 @@ class RequestHandler(ElemLoggerABC):
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to build a Reply."
             reply = rb.build_reply_404(m)
-            log(f"HRQH$170 REPLY WITH 404.  {file_path=}  {content_type=}")
-            log(f"HRQH$171 {m=}")
+            log(f"HRQH$173 REPLY WITH 404.  {file_path=}  {content_type=}")
+            log(f"HRQH$174 {m=}")
             return reply
 
         return reply
@@ -184,17 +184,17 @@ class RequestHandler(ElemLoggerABC):
         file_contents = fob.obtain_entire_text_file_contents(
                                             file_path, 
                                             prefix_dir=self.default_subdir, 
-                                            w="HRQH$182")
+                                            w="HRQH$187")
 
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"HRQH$188 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
-            log(f"HRQH$189 {m=}")
+            log(f"HRQH$193 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$194 {m=}")
             return reply
 
-        log(f"HRQH$192  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
+        log(f"HRQH$197  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
         
         if file_path.lower().endswith(".htmlp"):
             updated_file_contents = self._grinder.grind_file_contents(file_contents)
@@ -218,16 +218,16 @@ class RequestHandler(ElemLoggerABC):
         file_contents = fob.obtain_entire_binary_file_contents(
                                                 file_path, 
                                                 prefix_dir=self.default_subdir, 
-                                                w="HRQH$215")
+                                                w="HRQH$221")
         if file_contents is None:
             rb = ReplyBuilder()
             m = f"{file_path=} {content_type=} Failed to read the file."
             reply = rb.build_reply_404(m)
-            log(f"HRQH$221 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
-            log(f"HRQH$222 {m=}")
+            log(f"HRQH$226 REPLY WITH 404.  {file_path=}  len={len_to_str(reply)}")
+            log(f"HRQH$227 {m=}")
             return reply
 
-        log(f"HRQH$225  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
+        log(f"HRQH$230  {file_path=} {content_type=}  len={len_to_str(file_contents)}")
         
         # Build a reply that provides the file
         rb = ReplyBuilder()

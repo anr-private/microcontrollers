@@ -226,7 +226,7 @@ class HttpParser(ElemLoggerABC):
             return None
         http_part = parts[0]
         version = parts[1]
-        log(f"HP.parse_http_version@175 http_part {http_part}  version {version}")
+        log(f"HPRS$229 parse_http_version http_part {http_part}  version {version}")
         if http_part not in ("HTTP", "http"):
             self.err(177,f"UNKNOWN 'HTTP' part. version string: '{ver}'")
             return None
@@ -248,7 +248,7 @@ class HttpParser(ElemLoggerABC):
 
         log(f"HPRS$249 elt line '{line}'")
         if len(line) < 3:
-            e = f"HttpParser.parse_element_line@185 Field-value line too short. len={len(line)}  line='{line}'"
+            e = f"HPRS$251 parse_element_line Field-value line too short. len={len(line)}  line='{line}'"
             return e
 
         # split into 2 parts: keyword and value

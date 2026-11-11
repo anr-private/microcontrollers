@@ -31,12 +31,12 @@ class RHUtils(ElemLoggerABC):
     def guess_file_content_type(file_path):
         # parts is ".../filename", "html" etc
         parts = file_path.rsplit(".", 1)
-        #log(f"RH@389 _guess_file_content_type {parts=} {file_path=} ")
+        #log(f"RHUTL$34 _guess_file_content_type {parts=} {file_path=} ")
         if len(parts) < 2:
             # no extension found
             return None
         ext = parts[1].lower()
-        #log(f"RH@394 _guess_file_content_type {ext=} {file_path=} ")
+        #log(f"RHUTL$39 _guess_file_content_type {ext=} {file_path=} ")
         if ext in ["html", "htm", "htmlp"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
