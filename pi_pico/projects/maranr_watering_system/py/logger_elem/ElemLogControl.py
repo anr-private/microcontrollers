@@ -64,7 +64,8 @@ class ElemLogControl:
         print(f"ELC$70 {our_simplified_class_name=}")
         ####@@@@ TODO clean this up
         ######   WAS  self.registry[simplified_class_name] = self
-        self.registry[our_simplified_class_name] = ElemLogger(self, our_simplified_class_name)
+        self.registry[our_simplified_class_name] = \
+                        ElemLogger(self, our_simplified_class_name)
         
         # Table of log files that have been created and are now closed
         # List contains tuples:

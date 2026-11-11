@@ -104,12 +104,17 @@ class MwsWifi(ElemLoggerABC):
         return MwsWifi._instance
 
     @classmethod
-    def get_ip_and_port(cls) -> str:
-        obj = MwsWifi._instance
-        if obj is None: return "MwsWifi-NO_INSTANCE"
-        if not obj._ipaddr: return "IP:ADDR-unavail"
-        if not obj._port: return "IP:PORT-unavail"
-        return f"{obj._ipaddr}:{obj._port}"
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        MwsWifi._instance = None
+
+    ###@classmethod
+    # def get_ip_and_port(self) -> str:
+        # obj = MwsWifi._instance
+        # if obj is None: return "MwsWifi-NO_INSTANCE"
+        # if not obj._ipaddr: return "IP:ADDR-unavail"
+        # if not obj._port: return "IP:PORT-unavail"
+        # return f"{obj._ipaddr}:{obj._port}"
 
 
     def __init__(self, do_not_call_directly: int) -> None:
@@ -262,6 +267,11 @@ class MwsWifi(ElemLoggerABC):
             wlan.active(False)
             wlan.disconnect()
 
+
+    def get_ip_and_port(self) -> str:
+        ip_stg = self._ipaddr if self._ipaddr else "IP:ADDR-unavail"
+        port_stg = str(self._port)
+        return f"{ip_stg}:{port_stg}"
 
     def _set_ipaddr_and_port(self, wlan: Any):
         info = wlan.ifconfig()

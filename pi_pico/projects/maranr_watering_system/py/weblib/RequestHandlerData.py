@@ -74,7 +74,7 @@ class RequestHandlerData(ElemLoggerABC):
             data_dict["log_file_table_status"] = hlines
         if "settings" in params:
             include_databoard_status = True
-            data_dict["wifi_ip_and_port"] = MwsWifi.get_ip_and_port()
+            data_dict["wifi_ip_and_port"] = MwsWifi.get_instance().get_ip_and_port()
         if include_databoard_status:
             dblines = self._databoard.get_loggable_lines(prefix="",
                                                          suffix = "<br>\n")

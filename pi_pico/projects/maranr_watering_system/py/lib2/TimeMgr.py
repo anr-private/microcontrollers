@@ -65,8 +65,6 @@ class TimeMgr(ElemLoggerABC):
     def _nullify_instance(cls):
         # UNIT TEST ONLY
         TimeMgr._instance = None
-        # Remove any messages - unit test only
-        #ElemLogControl._clear_latest_messages()
 
 
     def __init__(self, validate=None):
