@@ -1,0 +1,85 @@
+LOGGING NOTES
+
+How logger_elem package's modules are used.
+
+Consider an object instance of class X that logs messages (i.e., lines,
+i.e., instances of str).
+It uses the log functions that are module-global variables in its X module.
+Those variables are given values by the X._set_logger() method, which
+is an abstract method defined in class X. Each such variable is a reference
+to a function that takes one str and logs in to a 'current' log file.
+
+Every such class X must inherit from abstract base class ('ABC'),
+namely ElemLoggerABC. 
+This ABC has its __init__ invoked from each child class X.__init__ 
+when an instance of class X is created. The ABC __init__ obtains a 
+reference ('elc') to the singleton instance of ElemLogControl; it uses that
+reference to call elc.register_user_class(self) - where 'self' refers
+(obviously) to the instance of X (and so to its parent ElemLoggerABC).
+This allows ElemLogControl ('ELC') to keep a registry of all classes that 
+wish to perform logging.
+
+Currently the ELC is implemented as a singleton.
+
+In addition to maintaining a registry of objects doing logging,
+the ELC provides a suitable instance of ElemLogger (the 'logger')
+to each ABC instance. The ABC uses the methods of this 'logger' in
+order to inject bound methods from logger into the module-global variables
+of X. The ElemLogger instance is created by ELC and is provided
+a reference back to the ELC. This allows the ElemLogger to access
+the ELC.log_one_line() method, providing the means to log a line
+to a log file.
+
+When X invokes log("log mesg"), it calls the bound method 'log' from
+its ElemLogger (i.e., the value associated with the module-global
+variable). The bound method of ElemLogger in turn calls an
+appropriate logging method ('log_one_line') on ElemLogControl.
+When ElemLogControl was instantiated (again, as a singleton),
+it creates an instance of ElemLogFileTable ('elft'). 
+This elft instance manages the creation and deletion of log files
+as well as providing a method 'log_one_line' that writes one
+line (str) into the currently-active log file (and creates such a file,
+if needed, including rotation to a new file if that is needed).
+The ElemLogControl.log_one_line method uses the elft.log_one_line()
+method to write the line (str) to the log.
+
+For testing purposes, ElemLogControl includes a class method 
+'_nullify_instance()' which removes the singleton instance from
+its class-level attribute _instance. (This is where the singleton
+reference to the ElemLogControl is stored.) In doing so, it leaves any
+extant ElemLoggerABC and ElemLogger instances (and so any extant X 
+instances) with a reference to the 'old' ElemLogControl.
+This 'old' instance holds a reference to its ElemLogFileTable
+instance, which is managing the log files.
+All of the extant instances of X can therefor continue to perform logging.
+
+If another test creates another ('new') instance of X, a new
+singleton instance of ElemLogControl will be created along with 
+a new ElemLogFileTable instance. The latter will begin trying to
+create new log files to receive logged lines from objects
+such as X (and other object instances) as these start
+performing logging function calls. This obviously can cause 
+collisions in the file space as the two instances of 
+ElemLogFileTable will be unaware of each other.
+
+It is important then that every test ensures that any and all
+object instances of X and other such classes that perform logging 
+are no longer active. This can be an issue of a class that performs 
+logging exists as a singleton: the singleton instance must be 
+discarded ('nullified') if a second test on that class is performed.
+A singleton (of a class that logs) that is 'left over' from a previous 
+test would continue to log using the 'old' logger objects and hence the
+'old' log file directory and files.
+
+In addition, it is very desirable for the unit test facility to ensure 
+that the logging subsystem does not attempt to log into the production
+logs directory - to avoid polluting 'real' production logs with
+logs created by testing. This is achieved by having the unit test
+'glue' facilities set up / configure the logging facility such that the
+latter enters a 'testing' mode which causes it to always write to
+logging directorie(s) that are distinct from the production directory.
+Such a mode would be implemented to strictly preclude execution path that 
+could cause it to fall back to writing to the production logs directory.
+
+
+
