@@ -10,12 +10,6 @@ try:
     import time
 except ModuleNotFoundError:
     import utime as time          # type: ignore
-# THE ABOVE REPLACES THE BELOW CODE: to match other similar import usages
-#    and to allow mypy to run
-# try:
-    # import utime as time        #uPy
-# except Exception:
-    # import time                 #Py3 unit tests
 
 from lib1.utils import determine_machine_type
 from lib1.file_system_utils import get_fs_space_string
@@ -33,16 +27,19 @@ from weblib.MwsWebServer import MwsWebServer
 try: from typing import Callable, Any
 except ImportError: pass
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+try: from typing import Callable, Any
+except ImportError: pass
+
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 
 class MaranrWateringSystem(ElemLoggerABC):
 
     def __init__(self) -> None:
-        self._onboard_led = None
+        self._onboard_led: machine.Pin | None = None
         super().__init__()
 
     def _set_logger(self, logger: Any) -> None:
@@ -191,7 +188,7 @@ class MaranrWateringSystem(ElemLoggerABC):
         if self._onboard_led is not None:
             self._onboard_led.toggle()
 
-    def _get_onboard_led(self) -> Any:
+    def _get_onboard_led(self) -> machine.Pin | None:
         this_machine = determine_machine_type()
 
         if this_machine in ["pi pico w", "pi pico 2 w"]:
@@ -201,5 +198,6 @@ class MaranrWateringSystem(ElemLoggerABC):
             logi(f"**ERROR**  unknown machine '{this_machine}'")
             led = machine.Pin(25, machine.Pin.OUT)
         return led
+
 
 ### end ###

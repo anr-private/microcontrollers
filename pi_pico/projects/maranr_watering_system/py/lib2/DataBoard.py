@@ -90,8 +90,8 @@ class DataBoard(ElemLoggerABC):
 
 
     def set_ip_and_port(self, ipaddr: str, port:int) -> None:
-        self.ipaddr = ipaddr
-        self.port = port
+        self.ipaddr = ipaddr if isinstance(ipaddr, str) else ""
+        self.port = port if isinstance(port, int) else 0
         print(f"DBRD$95  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
     def set_wifi_restarts_counter(self, new_restarts_counter: int) -> None:

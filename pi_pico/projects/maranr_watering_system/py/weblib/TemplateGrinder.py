@@ -38,7 +38,7 @@ VALIDATE = 7020405
 
 class TemplateGrinder(ElemLoggerABC):
     
-    _instance = None
+    _instance: "TemplateGrinder | None" = None
 
     @classmethod
     def get_instance(cls):

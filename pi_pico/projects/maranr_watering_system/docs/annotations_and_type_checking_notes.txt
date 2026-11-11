@@ -2,7 +2,34 @@ ANNOTATIONS and TYPE CHECKING NOTES  for Maranr Watering System
 
 QUICK REFS
 
+
+
+To see what annotation is associated with XXX
+    reveal_type(XXX)
+
++++ REVEAL TYPE  ++++++++++++++++++++++++++++++++++++++++
+
+Put into source code and run mypy:
+  reveal_type(machine.Pin) 
+ Output of mypy:
+   "def (Any, mode: int =, pull: int =, *, value: Any =, drive: int | None =,
+          alt: int | None =) -> machine.Pin"
+
+Put in source code:
+  reveal_type(machine.Pin("LED", machine.Pin.OUT))
+ Output:
+   Revealed type is "machine.Pin"
+
+
++++ IGNORE ++++++++++++++++++++++++++++++++++++++++++++
+
+Add to the end of the source py line:
+ # type: ignore[no-redef]
+ # type: ignore[unreachable]
+
 +++ IMPORTs you often need   +++++++++++++++++++++
+
+The 'letter:' is ^R^V <letter>  to paste from memory
 
 a:
 try: from typing import Any
@@ -31,6 +58,10 @@ class MwsWifi(ElemLoggerABC):
         if cls._instance is None:
             cls._instance = cls(1234567)
         return cls._instance
+    @classmethod
+    def _nullify_instance(cls):
+        # UNIT TEST ONLY
+        XXXXXXXXXXXX_XXXXX_XXXXX._instance = None
 
 +++ LOGGING FUNCTIONS  +++++++++++++++++++++++++++
 try: from typing import Any
@@ -39,6 +70,13 @@ except ImportError: pass
 log:   Any = None
 logrt: Any = None
 logi:  Any = None
+
+    def _set_logger(self, logger: Any) -> None:
+        global log, logrt, logi
+        #print(f"FOBT$41 _set_logger: {repr(logger)}")
+        log = logger.log
+        logrt = logger.logrt
+        logi = logger.logi
 
 +++ CALLABLE  +++++++++++++++++++++++++++++++
 
@@ -89,6 +127,17 @@ T = TypeVar("T")
 # then annotate self as
   ... self: T ...
 
+
++++ MYPY Config specified in the source code in comments  ++++++++++++++++++
+
+These (generally?) apply to the ENTIRE FILE in which they appear.
+They must start in column 1.
+# mypy: ignore-errors
+# mypy: disable-error-code="assignment"
+# mypy: disable-error-code="assignment, union-attr"
+# mypy: check-untyped-defs
+
+
 --- Complex annotation examples  ---------------------------
 
 From redo_line_markers:
@@ -101,7 +150,15 @@ Returns a tuple of 2 items:
  Second item: a simple str
 
 
-===  OPTIONS  ===================================================
++++ OPTIONS for mypy command line  ++++++++++++++++++++++++++
+
+--warn-unreachable
+
+./run_mypy_on_project_code.sh --any-exprs-report /tmp/anyrep \
+                              py/mws/MaranrWateringSystem.py
+cat /tmp/anyrep/any-exprs.txt
+
+===  OPTIONS  in mypy.ini ===================================================
 
 strict = True      # applies only globally
 # individual options that 'add up' to 'strict':

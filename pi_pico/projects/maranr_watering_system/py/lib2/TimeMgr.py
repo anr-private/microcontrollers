@@ -95,7 +95,8 @@ class TimeMgr(ElemLoggerABC):
         # TODO handle automatic switch to DAYLIGHT_TIME_OFFSET
         STD_TIME_OFFSET = -6 # hours
         DAYLIGHT_TIME_OFFSET = -5 # hours
-        offset = DAYLIGHT_TIME_OFFSET * 3600 # seconds
+        offset = STD_TIME_OFFSET
+        offset = offset * 3600 # seconds
         local_time = time.localtime(time.time() + offset)
         return local_time
 
