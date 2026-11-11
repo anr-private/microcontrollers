@@ -157,6 +157,7 @@ Returns a tuple of 2 items:
                               py/mws/MaranrWateringSystem.py
 cat /tmp/anyrep/any-exprs.txt
 
+
 ===  OPTIONS  in mypy.ini ===================================================
 
 strict = True      # applies only globally

@@ -40,6 +40,10 @@ else
     targets=("${default_targets[@]}")
 fi
 
-mypy --cache-dir=/dev/null --config-file mypy.ini "${targets[@]}" 2>&1
+mypy \
+--cache-dir=/dev/null \
+--config-file mypy.ini \
+--any-exprs-report MYPY_reports/type_Any \
+"${targets[@]}" 2>&1
 
 ###

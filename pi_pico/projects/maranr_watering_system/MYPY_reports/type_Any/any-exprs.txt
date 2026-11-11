@@ -1,0 +1,39 @@
+                              Name   Anys   Exprs   Coverage
+------------------------------------------------------------
+              displays.MwsDisplays      3      14     78.57%
+displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
+                      lib1.details      0       2    100.00%
+            lib1.file_system_utils      0      92    100.00%
+                   lib1.file_utils     39     327     88.07%
+                     lib1.gc_utils      1      50     98.00%
+            lib1.read_last_n_lines      0     148    100.00%
+                        lib1.utils     15     217     93.09%
+                    lib2.DataBoard     12     407     97.05%
+                 lib2.FileObtainer     49     449     89.09%
+                      lib2.MwsWifi     33     215     84.65%
+                      lib2.TimeMgr     10      39     74.36%
+        logger_elem.ElemLogControl      5     389     98.71%
+      logger_elem.ElemLogFileTable      4    1199     99.67%
+            logger_elem.ElemLogger     12     109     88.99%
+         logger_elem.ElemLoggerABC      0      89    100.00%
+       maranr_watering_system_main      3      92     96.74%
+          mws.MaranrWateringSystem     84     260     67.69%
+                        primitives      0       6    100.00%
+               primitives.delay_ms      0       5    100.00%
+             primitives.pushbutton      0       8    100.00%
+                  primitives.queue      5       7     28.57%
+                sensors.MwsButtons      3       9     66.67%
+                sensors.MwsSensors      3      25     88.00%
+                   weblib.HdrAccum      0       3    100.00%
+                 weblib.HttpParser      1      29     96.55%
+                  weblib.HttpReply      0       3    100.00%
+               weblib.MwsWebServer     16      58     72.41%
+                 weblib.ParsedHttp      0       3    100.00%
+                    weblib.RHUtils      3       4     25.00%
+               weblib.ReplyBuilder      3      10     70.00%
+             weblib.RequestHandler      3       4     25.00%
+         weblib.RequestHandlerData      0       3    100.00%
+          weblib.RequestHandlerLog      0       3    100.00%
+            weblib.TemplateGrinder      3      43     93.02%
+------------------------------------------------------------
+                             Total    311    4323     92.81%
