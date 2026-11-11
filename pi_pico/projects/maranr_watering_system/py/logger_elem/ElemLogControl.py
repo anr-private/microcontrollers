@@ -103,7 +103,7 @@ class ElemLogControl:
 
 
     def register_user_class(self, obj_instance: Any) -> "ElemLogger":
-        # obj is a user obj that subclasses ElemLogControlABC
+        # obj is a user obj that subclasses ElemLoggerABC
         # Returns a logger obj the caller should use
 
         self.LOG(f"ELC$115 register_user_class  obj is {repr(obj_instance)} ")
