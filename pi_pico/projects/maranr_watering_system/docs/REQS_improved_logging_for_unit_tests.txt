@@ -2,10 +2,13 @@ Draft 2: requirements
 
 Logging policy (production and tests)
 
-ElemLogger.log_enabled defaults to True.
-ElemLogControl gets disable_log_for_all_classes(), enable_log_for_classes(*names) and enable_log_for_all_classes(). The setting is remembered and applied to loggers as they register, so main() can call them before any class registers.
-Only log() is filtered. logi and logrt always write.
-The existing enable_logging(class_name, enabled), used by RequestHandlerLog, keeps working. (Proposed, not yet confirmed: it becomes a per-name override in the same table, so it also works before the class registers, and the calls in item 2 are additive.)
+1- ElemLogger.log_enabled defaults to True.
+
+2- ElemLogControl gets disable_log_for_all_classes(), enable_log_for_classes(*names) and enable_log_for_all_classes(). The setting is remembered and applied to loggers as they register, so main() can call them before any class registers.
+
+3- Only log() is filtered. logi and logrt always write.
+
+4- The existing enable_logging(class_name, enabled), used by RequestHandlerLog, keeps working. (Proposed, not yet confirmed: it becomes a per-name override in the same table, so it also works before the class registers, and the calls in item 2 are additive.)
 
 Structure of ElemLogControl
 5. The registry becomes an instance attribute.
