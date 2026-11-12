@@ -1,0 +1,28 @@
+Draft 2: requirements
+
+Logging policy (production and tests)
+
+ElemLogger.log_enabled defaults to True.
+ElemLogControl gets disable_log_for_all_classes(), enable_log_for_classes(*names) and enable_log_for_all_classes(). The setting is remembered and applied to loggers as they register, so main() can call them before any class registers.
+Only log() is filtered. logi and logrt always write.
+The existing enable_logging(class_name, enabled), used by RequestHandlerLog, keeps working. (Proposed, not yet confirmed: it becomes a per-name override in the same table, so it also works before the class registers, and the calls in item 2 are additive.)
+
+Structure of ElemLogControl
+5. The registry becomes an instance attribute.
+6. There is one control object per process, reset in place. _nullify_instance() stays but tests stop using it.
+7. The test-mode lock lives at class or module level, so a control object created after _nullify_instance() also comes up in test mode.
+8. The control exposes the test hooks (log directory, maximum file size, the two watermarks) as Z__ names, so tests import only ElemLogControl.
+
+Test mode and the glue
+9. Enter test mode. The glue calls it once, before tests run: conftest.py on the PC, run_all_tests() on the Pico. It is one-way, and it raises if the file table has already opened or written a file.
+10. Disposed state. In test mode with no directory set, a log call raises.
+11. Per-test reset. The glue calls it around every test: it removes the scratch directory, resets, runs the test, disposes and removes the directory again. The reset closes the files, installs a new file table pointing at the scratch directory, restores the default policy and the default size and watermark settings, and keeps the registry. Tests never call it.
+12. Full reset. Also clears the registry and recreates the control’s own logger. Only the logger_elem tests call it, explicitly.
+13. A Z__ function inside logger_elem returns all lines logged since the last reset, which means since the start of the test function. It reads the files the table recorded, in order. It needs no flush. Files pruned during the test are gone.
+
+Consequences for tests
+14. Most tests lose the skeleton and its try/finally. Logging tests just create their objects and call the reader.
+15. check_production_log_dir_unchanged and the before/after listing are probably redundant now, since test mode makes production writes impossible. Keep one check at the glue level.
+
+:wrap=soft:
+### 
