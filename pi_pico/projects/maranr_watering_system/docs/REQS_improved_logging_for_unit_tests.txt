@@ -24,5 +24,16 @@ Consequences for tests
 14. Most tests lose the skeleton and its try/finally. Logging tests just create their objects and call the reader.
 15. check_production_log_dir_unchanged and the before/after listing are probably redundant now, since test mode makes production writes impossible. Keep one check at the glue level.
 
+
+Still open
+
+The semantics in item 4.
+Does constructing the control and the table in production state touch the production logs directory? I haven’t seen the answer.
+The control’s own registered logger versus its separate _log_enabled flag.
+Who deletes the files at reset: I’d choose the glue.
+Does mpremote run start from a soft reset? It is unverified.
+Where conftest.py lives. It needs to sit above the shared and cpython tests, so tests/ itself.
+
+
 :wrap=soft:
 ### 
