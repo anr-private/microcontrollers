@@ -1,15 +1,28 @@
 Here are the stages as they stand:
 
 1. **Registry:** it becomes a private instance attribute of `ElemLogControl`. Outside users, such as the `self.elc_instance.registry.xxx` calls, go through methods on the control.
+
 2. **Policy and own logger:** the default `log_enabled = True`; `disable_log_for_all_classes()`, `enable_log_for_classes(*names)` and `enable_log_for_all_classes()`, remembered and applied as classes register; the per-name `enable_logging(class_name, enabled)` working before registration. The control's own logger is kept in an instance attribute and `LOG()` uses it, with one flag, the same default as every other logger. `main()` sets the default policy right after it creates the control.
+
 3. **Test mode:** the one-way lock at class or module level, which survives `_nullify_instance()`. Entering it is idempotent and raises if a file has already been opened or written. There is a disposed state in which a log call raises. The per-test reset keeps the registry. The full reset also clears the registry and recreates the control's own logger. The `Z__` test hooks are exposed through the control.
+
 4. **Read-lines function:** a `Z__` function that returns all lines logged since the last reset. It reads the files the table recorded, in order. The public `flush_logging` method on the control also arrives here, and the reader and `get_lines_from_log_file` call it first. It does nothing when nothing is unflushed.
+
 5. **Glue:** `tests/conftest.py` on the PC, `run_all_tests()` on the Pico. They enter test mode once and run the per-test reset around every test. The glue deletes the scratch files.
+
 6. **`logger_elem` tests moved onto the new scheme,** and the skeleton removed.
+
 7. **Batched flushing:** `log()` lines flush every N = 50 lines, and `logi` and `logrt` flush at once. There are also flush points at file close, at rotation and in `close_logging`. N has a `Z__` hook. The logger has no time trigger. *(That is my reading of your "flush task outside the logger". Tell me if you want T kept in the logger.)*
+
 8. **Cross-boot pruning:** the table is filled from the existing `mws_log.NNN` files when the session's first file is created, or pruning works from real free space.
 
-**Later, after the basic fixes:** an asyncio flush task outside the logger. It calls `flush_logging` every T seconds, with T = 5 s as a starting value.
+**Later, after the basic fixes:** 
+- an asyncio flush task outside the logger. It calls `flush_logging` every T 
+  seconds, with T = 5 s as a starting value.
+- an internal flush every T seconds, with logger getting time from an
+  injected source
+
+
 
 ===============================================================
 
