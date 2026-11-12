@@ -29,7 +29,9 @@ def time_the_writes(flush_each_line: bool, flush_every_N:int) -> int:
 
 print("flush each line:", time_the_writes(True, 0), "ms for", LINE_COUNT, "lines")
 print("no flush:       ", time_the_writes(False, 0), "ms for", LINE_COUNT, "lines")
-print("flush every 10: ", time_the_writes(False, 10), "ms for", LINE_COUNT, "lines")
+print("flush every  10: ", time_the_writes(False, 10), "ms for", LINE_COUNT, "lines")
+print("flush every  50: ", time_the_writes(False, 50), "ms for", LINE_COUNT, "lines")
+print("flush every 1000: ", time_the_writes(False, 100), "ms for", LINE_COUNT, "lines")
 os.remove("junk_flush_test.txt")
 
 ###
