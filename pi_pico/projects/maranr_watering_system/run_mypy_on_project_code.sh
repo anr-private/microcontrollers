@@ -36,14 +36,23 @@ default_targets=(
 
 if [ "$#" -gt 0 ]; then
     targets=("$@")
+    RUN_ANY_REPORTS_1=""
+    RUN_ANY_REPORTS_2=""
 else
     targets=("${default_targets[@]}")
+    RUN_ANY_REPORTS_1="--any-exprs-report"
+    RUN_ANY_REPORTS_2="MYPY_reports/type_Any"
 fi
 
 mypy \
 --cache-dir=/dev/null \
 --config-file mypy.ini \
---any-exprs-report MYPY_reports/type_Any \
+${RUN_ANY_REPORTS_1} ${RUN_ANY_REPORTS_2} \
 "${targets[@]}" 2>&1
+
+if [ -n "${RUN_ANY_REPORTS_2}" ] ; then
+    echo "The 'Any Reports' are available in ${RUN_ANY_REPORTS_2}"
+fi
+
 
 ###

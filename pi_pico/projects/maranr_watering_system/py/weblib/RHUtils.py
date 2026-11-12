@@ -4,7 +4,8 @@
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
-try: from typing import Any
+
+try: from typing import Callable, Any
 except ImportError: pass
 
 # Logging functions; our parent class sets using _set_logger()
