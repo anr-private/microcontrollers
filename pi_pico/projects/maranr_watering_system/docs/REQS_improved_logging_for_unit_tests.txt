@@ -28,15 +28,30 @@ Consequences for tests
 15. check_production_log_dir_unchanged and the before/after listing are probably redundant now, since test mode makes production writes impossible. Keep one check at the glue level.
 
 
-Still open
+Still open - ANSWERS
 
 The semantics in item 4.
-Does constructing the control and the table in production state touch the production logs directory? I haven’t seen the answer.
-The control’s own registered logger versus its separate _log_enabled flag.
-Who deletes the files at reset: I’d choose the glue.
-Does mpremote run start from a soft reset? It is unverified.
-Where conftest.py lives. It needs to sit above the shared and cpython tests, so tests/ itself.
+Yes, as proposed/described in item 4. 
 
+Does constructing the control and the table in production state touch the 
+production logs directory? 
+ElemLogControl and ElemLogFileTable are fully lazy in creating the logs
+directory, determining the NNN 3-digit extension for the first log file
+that the process will create, and writing the first log line to this file.
+(Is that the question?)
+
+The control’s own registered logger versus its separate _log_enabled flag.
+This needs to get fixed.
+
+Who deletes the files at reset: I’d choose the glue.
+the glue
+
+Does mpremote run start from a soft reset? It is unverified.
+I believe so - but we could verify, tell me what to run to do
+a test that would be definitive.
+
+Where conftest.py lives. It needs to sit above the shared and cpython tests, so tests/ itself.
+tests/conftest.py
 
 :wrap=soft:
 ### 
