@@ -36,8 +36,10 @@ def remove_the_fill() -> None:
     os.rmdir(FILL_DIR)
 
 def time_with_full_filesystem():
+    print("TIME WITH FULL FILE SYSTEM")
     try:
         print("fill files created:", fill_the_filesystem(), " free blocks:", count_free_blocks())
+        print("no flush:       ", time_the_writes(False, 0), "ms for", LINE_COUNT, "lines")
         print("flush each line:", time_the_writes(True, 0), "ms for", LINE_COUNT, "lines")
         print("flush every 10: ", time_the_writes(False, 10), "ms for", LINE_COUNT, "lines")
         print("flush every 50: ", time_the_writes(False, 50), "ms for", LINE_COUNT, "lines")

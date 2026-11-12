@@ -28,5 +28,11 @@ Added more test:
   flush every  10:  1249 ms for 200 lines
   flush every  50:  379 ms for 200 lines
   flush every 100:  265 ms for 200 lines
+Added 'fill the file system' tests
+  fill files created: 84  free blocks: 39
+  no flush:        279 ms for 200 lines
+  flush each line: 10586 ms for 200 lines
+  flush every 10:  1375 ms for 200 lines
+  flush every 50:  376 ms for 200 lines
 ###
 
