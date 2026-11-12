@@ -17,7 +17,10 @@ reference ('elc') to the singleton instance of ElemLogControl; it uses that
 reference to call elc.register_user_class(self) - where 'self' refers
 (obviously) to the instance of X (and so to its parent ElemLoggerABC).
 This allows ElemLogControl ('ELC') to keep a registry of all classes that 
-wish to perform logging.
+wish to perform logging. Every instance of class X gets the same
+ElemLogger. Typically there is only once instance of any class X,
+but there can be more than once instance. The enabled/disabled state
+of the ElemLogger affects all instances of class X.
 
 Currently the ELC is implemented as a singleton.
 
@@ -28,13 +31,17 @@ order to inject bound methods from logger into the module-global variables
 of X. The ElemLogger instance is created by ELC and is provided
 a reference back to the ELC. This allows the ElemLogger to access
 the ELC.log_one_line() method, providing the means to log a line
-to a log file.
+to a log file. Because the log,logrt, and logi are module-global,
+creating a new instance of X rebinds them in the X module.
+Because every instance of X uses these global functions, all 
+extant instances of X will start using the new logger.
 
 When X invokes log("log mesg"), it calls the bound method 'log' from
 its ElemLogger (i.e., the value associated with the module-global
 variable). The bound method of ElemLogger in turn calls an
 appropriate logging method ('log_one_line') on ElemLogControl.
-When ElemLogControl was instantiated (again, as a singleton),
+
+When ElemLogControl is instantiated (again, as a singleton),
 it creates an instance of ElemLogFileTable ('elft'). 
 This elft instance manages the creation and deletion of log files
 as well as providing a method 'log_one_line' that writes one
@@ -52,6 +59,22 @@ instances) with a reference to the 'old' ElemLogControl.
 This 'old' instance holds a reference to its ElemLogFileTable
 instance, which is managing the log files.
 All of the extant instances of X can therefor continue to perform logging.
+Under normal circumstances, both production and unit testing, 
+a single instance of ElemLogControl is created and held.
+The _nullify_instance() is not normally called - so may be eliminated(?)
+There is a TBD function that will 'clear out' most of the contents
+of the ElemLogControl. But it will probably leave the registry
+as is, but go through the registry and remove existing loggers(?)
+
+UPDATE:
+Per-name enable_logging works before the class registers.
+The ELC has a dict mapping class-name to log-enabled state.
+This is applied at registration. 
+This means a per-class setting of the log-enabled state is known
+even before a class tries to register itself for logging; this allows
+the correct log-enabled state to be applied to it when it registers.
+The dict is kept for the life of the process; a per-test reset empties it 
+and sets every registered logger’s enabled flag back to the default.
 
 If another test creates another ('new') instance of X, a new
 singleton instance of ElemLogControl will be created along with 
@@ -81,5 +104,32 @@ logging directorie(s) that are distinct from the production directory.
 Such a mode would be implemented to strictly preclude execution path that 
 could cause it to fall back to writing to the production logs directory.
 
+Creating ElemLogControl or ElemLogFileTable never touches the logs dir.
+The logs dir is created and scanned only inside log_one_line(), 
+which in turn calls _start_a_new_logfile() which in turn creates the
+log dif (if not yet extant) and determines the name of the first
+log file that the current process will use. Thus the logs dir
+is created in a very lazy fashion; this helps ensure that 
+the ELC is created and configured well before any logging is done.
+
+The ELC provides a method:
+   enable_logging(self, class_name: str, enabled: bool) -> None:
+that is used by the webserver RequestHandlerLog. It allows a web user
+to turn logging on and off (enable/disabled) on an individual class basis.
+
+Current implementation notes:
+- lazy open on the first line logged
+- a flush is performed after every line is logged
+- log file names take the form mws_log.NNN where NNN is 010 ... 999
+- each new program execution finds a suitably large NNN for its first
+  log file name, so that prior log files are not overwritten.
+- logs are rotated when they reach a size of 25,000 bytes
+- the logger removes log files if the high watermark and continues
+  removing until the total size of the remaining/extant log files
+  goes to or below the low water mark. Oldest files are removed first.
+- ElemLogControl.get_lines_from_log_file() allows the 'log' page within
+  the webserver to obtain specified lines from the currently-active 
+  log file.
 
 
+###
