@@ -10,10 +10,10 @@ from logger_elem.ElemLoggerABC import ElemLoggerABC
 try: from typing import Callable, Any
 except ImportError: pass
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+# Logging functions; our parent class sets using _set_logger()
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 VALIDATE = 192756
 

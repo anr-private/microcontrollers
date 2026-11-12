@@ -173,38 +173,38 @@ class ElemLogControl:
 
 ### FUNCTIONS  ###########################################################
 
-def is_3_digit_int(s:str) -> int | None:
-    # Returns int(s) if s is a str containing a 3-digit number 000 to 999; 
-    # else None.
-    if not  s: return None
-    if len(s) != 3: return None
-    try:
-        ival = int(s)
-    except (TypeError, ValueError):
-        return None
-    if ival <= 0 or ival > 999: return None
-    return ival
-
-
-def _log_file_filter(fname: str, ftype: str, fsize:int) -> int | None:
-    # Returns None if the file is not chosen.
-    # Returns the filename extension value (an int) if chosen
-    print(f"ELC$198 _log_file_filter  fname='{fname}'  {fsize=}")
-
-    if ftype != "f": return None
-    #
-    parts = fname.rsplit('.',1)
-    if len(parts) != 2: return None
-    #
-    fpart    = parts[0]
-    ext_part = parts[1]
-    #
-    if fpart != "mws_log": return None
-    ext_val = is_3_digit_int(ext_part)
-    ###print(f"ELC$210   extension is_3_digit_int('{ext_part}') is {ext_val}")
-    if ext_val is None: return None
-    return ext_val
-
+#def is_3_digit_int(s:str) -> int | None:
+#    # Returns int(s) if s is a str containing a 3-digit number 000 to 999; 
+#    # else None.
+#    if not  s: return None
+#    if len(s) != 3: return None
+#    try:
+#        ival = int(s)
+#    except (TypeError, ValueError):
+#        return None
+#    if ival <= 0 or ival > 999: return None
+#    return ival
+#
+#
+#def _log_file_filter(fname: str, ftype: str, fsize:int) -> int | None:
+#    # Returns None if the file is not chosen.
+#    # Returns the filename extension value (an int) if chosen
+#    print(f"ELC$198 _log_file_filter  fname='{fname}'  {fsize=}")
+#
+#    if ftype != "f": return None
+#    #
+#    parts = fname.rsplit('.',1)
+#    if len(parts) != 2: return None
+#    #
+#    fpart    = parts[0]
+#    ext_part = parts[1]
+#    #
+#    if fpart != "mws_log": return None
+#    ext_val = is_3_digit_int(ext_part)
+#    ###print(f"ELC$210   extension is_3_digit_int('{ext_part}') is {ext_val}")
+#    if ext_val is None: return None
+#    return ext_val
+#
 
 def extract_simplified_classname(obj_instance: Any) -> str:
     # given a full class name string like "abc.def.MyClass"; return "MyClass"
