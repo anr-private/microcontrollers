@@ -18,6 +18,15 @@ From Claude.
 Running on Pico 2 W:
    flush each line: 10347 ms for 200 lines
    no flush:        270 ms for 200 lines
-
+After adding flush every 10 lines:
+  flush each line: 10430 ms for 200 lines
+  no flush:        273 ms for 200 lines
+  flush every 10:  1194 ms for 200 lines
+Added more test:
+  flush each line: 10506 ms for 200 lines
+  no flush:        211 ms for 200 lines
+  flush every  10:  1249 ms for 200 lines
+  flush every  50:  379 ms for 200 lines
+  flush every 100:  265 ms for 200 lines
 ###
 
