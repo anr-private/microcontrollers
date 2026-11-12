@@ -2,6 +2,74 @@ Draft 2: requirements
 
 Logging policy (production and tests)
 
+Here is the full restated list. A "(decided)" marks something you confirmed. "(proposed)" marks something I suggested that you haven't confirmed.
+
+**A. Logging policy (production and tests)**
+1. `ElemLogger.log_enabled` defaults to `True` (decided).
+2. `ElemLogControl` gets `disable_log_for_all_classes()`, `enable_log_for_classes(*names)` and `enable_log_for_all_classes()`. The setting is remembered and applied to loggers as they register, so `main()` can call them before any class registers. The calls are additive (decided).
+3. Only `log()` is filtered. `logi` and `logrt` always write (decided).
+4. The existing `enable_logging(class_name, enabled)`, used by `RequestHandlerLog`, keeps working and becomes a per-name override in the same table, so it also works before the class registers (decided).
+5. The control's own logger behaves like every other logger and follows the same default. The control keeps a reference to its own `ElemLogger` in an instance attribute, and `LOG()` calls `log()` on it, so there is one flag. The old `_log_enabled` goes away, or `enable_log` and `is_enabled` delegate to the logger. This is your call, since it touches existing names.
+
+**B. Structure of `ElemLogControl`**
+6. There is one control object for the life of the process, and it is reset in place. `_nullify_instance()` stays but tests stop using it.
+7. The registry is an instance attribute and is private to the control. Code outside the control, such as the `self.elc_instance.registry.xxx` uses you found, goes through methods on the control. `get_registered_classes()` already exists, and it returns a live view of the keys, so it should return a copy. If a caller needs a logger by class name, add a small lookup method. Renaming the attribute to `_registry` is worth doing, but it is your identifier, so I'm waiting for your OK.
+8. The control exposes the test hooks (log directory, maximum file size, the two watermarks) as `Z__` names, so tests import only `ElemLogControl`. They delegate to the existing hooks in `ElemLogFileTable`.
+
+**C. Test mode and the glue**
+9. **Enter test mode.** The glue calls it once, from `tests/conftest.py` on the PC and `run_all_tests()` on the Pico. It is one-way and idempotent. It raises if the file table has already opened a file or written a line. Construction touches nothing, because directory creation, the `NNN` choice and the first write are all lazy.
+10. **The lock** lives at class or module level, so a control object created after `_nullify_instance()` also comes up in test mode.
+11. **Disposed state.** In test mode with no directory set, a log call raises.
+12. **Per-test reset**, run only by the glue. For every test: remove the scratch directory, reset, run the test, dispose, remove the directory. The reset closes the files, installs a new file table, restores the default policy and the default size and watermark settings, and keeps the registry and the loggers.
+13. **Full reset**, for the `logger_elem` tests only, called explicitly. It also clears the registry and recreates the control's own logger.
+14. A `Z__` function inside `logger_elem` returns all lines logged since the last reset, which means since the start of the test function. It reads the files the table recorded, in order. It needs no flush, since every write is flushed. Files pruned during the test are gone.
+15. The glue deletes the files, using `remove_scratch_path` (decided).
+
+**D. Consequences**
+16. Most tests lose the skeleton and its `try/finally`. Only the `logger_elem` tests control the logger explicitly.
+17. `check_production_log_dir_unchanged` and the before/after listing become redundant. Keep one check at the glue level.
+18. Verified: each `mpremote run` starts from a soft reset, so each test file gets a fresh interpreter on the Pico. pytest runs all files in one process, so leftover singletons survive across files there.
+
+**E. Work order (decided)**
+1. Fix logging (stages: registry, policy and own logger, test mode and resets, read-lines function, glue, `logger_elem` tests moved onto the scheme).
+2. Migrate the old pytest tests, one package at a time, `lib2` first.
+3. Annotate the remaining classes last, with the migrated tests running.
+
+**F. Decisions left to you**
+- The names of the new `Z__` functions and of the registry lookup method.
+- The fate of `_log_enabled`.
+- Whether to rename the registry to `_registry`.
+
+
+==================================================================
+
+IMPLEMENTATION NOTES
+
+ElemLogControl (the control) is one object for the whole process.
+ It owns the registry that maps classname to ElemLogger instance
+ for that class. It owns the ElemLogFileTable instance (which is
+ not a singletone). The table is private to ElemLogControl. 
+ Any 'outside' access to the table must go through ElemLogControl.
+
+ElemLogger is one instance per class name. 
+ It holds the enable flag and a reference to the ElemLogControl singleton. 
+ The injected log, logrt and logi are its bound methods.
+
+ElemLogFileTable belongs to the ElemLogControl singleton.
+ A reset on the ElemLogControl replaces it. 
+ Nothing else about the control changes.
+
+So everything a class holds, the logger and the control, stays valid
+ forever. Only the table underneath changes.
+
+
+
+
+
+
+===== DRAFT  =========================================
+
+
 1- ElemLogger.log_enabled defaults to True.
 
 2- ElemLogControl gets disable_log_for_all_classes(), enable_log_for_classes(*names) and enable_log_for_all_classes(). The setting is remembered and applied to loggers as they register, so main() can call them before any class registers.
@@ -52,6 +120,10 @@ a test that would be definitive.
 
 Where conftest.py lives. It needs to sit above the shared and cpython tests, so tests/ itself.
 tests/conftest.py
+
+
+
+
 
 :wrap=soft:
 ### 

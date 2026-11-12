@@ -1,6 +1,15 @@
 ANNOTATIONS and TYPE CHECKING NOTES  for Maranr Watering System
 
-QUICK REFS
+1- Logging first. It is small and self-contained. The migration is where the
+ setup and teardown boilerplate would otherwise be copied into dozens of tests.
+2- Migrate the old tests next, one package at a time (lib2 first). 
+   They then act as a safety net.
+3- Annotate last, class by class, with the migrated tests running as you go.
+ Annotating changes code, and your goal is to minimise functional changes. 
+Tests are what show that you didn’t change any.
+
+
+===  QUICK REFS  ========================================
 
 
 To see what annotation is associated with XXX
