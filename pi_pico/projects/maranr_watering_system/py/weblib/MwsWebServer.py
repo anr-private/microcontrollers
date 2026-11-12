@@ -29,7 +29,7 @@ VALIDATE = 743520
 class MwsWebServer(ElemLoggerABC):
     #  top-level webserver class 
 
-    _instance: "MwsWebServer"|None = None
+    _instance: "MwsWebServer|None" = None
 
     @classmethod
     def get_instance(cls) -> "MwsWebServer":
