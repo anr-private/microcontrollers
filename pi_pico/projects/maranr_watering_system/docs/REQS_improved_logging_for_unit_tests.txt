@@ -1,3 +1,58 @@
+Here are the stages as they stand:
+
+1. **Registry:** it becomes a private instance attribute of `ElemLogControl`. Outside users, such as the `self.elc_instance.registry.xxx` calls, go through methods on the control.
+2. **Policy and own logger:** the default `log_enabled = True`; `disable_log_for_all_classes()`, `enable_log_for_classes(*names)` and `enable_log_for_all_classes()`, remembered and applied as classes register; the per-name `enable_logging(class_name, enabled)` working before registration. The control's own logger is kept in an instance attribute and `LOG()` uses it, with one flag, the same default as every other logger. `main()` sets the default policy right after it creates the control.
+3. **Test mode:** the one-way lock at class or module level, which survives `_nullify_instance()`. Entering it is idempotent and raises if a file has already been opened or written. There is a disposed state in which a log call raises. The per-test reset keeps the registry. The full reset also clears the registry and recreates the control's own logger. The `Z__` test hooks are exposed through the control.
+4. **Read-lines function:** a `Z__` function that returns all lines logged since the last reset. It reads the files the table recorded, in order. The public `flush_logging` method on the control also arrives here, and the reader and `get_lines_from_log_file` call it first. It does nothing when nothing is unflushed.
+5. **Glue:** `tests/conftest.py` on the PC, `run_all_tests()` on the Pico. They enter test mode once and run the per-test reset around every test. The glue deletes the scratch files.
+6. **`logger_elem` tests moved onto the new scheme,** and the skeleton removed.
+7. **Batched flushing:** `log()` lines flush every N = 50 lines, and `logi` and `logrt` flush at once. There are also flush points at file close, at rotation and in `close_logging`. N has a `Z__` hook. The logger has no time trigger. *(That is my reading of your "flush task outside the logger". Tell me if you want T kept in the logger.)*
+8. **Cross-boot pruning:** the table is filled from the existing `mws_log.NNN` files when the session's first file is created, or pruning works from real free space.
+
+**Later, after the basic fixes:** an asyncio flush task outside the logger. It calls `flush_logging` every T seconds, with T = 5 s as a starting value.
+
+===============================================================
+
+**Draft 4: requirements**
+
+*A. Logging policy (stages 1 and 2)*
+1. `ElemLogger.log_enabled` defaults to `True`.
+2. `ElemLogControl` gets `disable_log_for_all_classes()`, `enable_log_for_classes(*names)` and `enable_log_for_all_classes()`. They are remembered, applied as classes register, and additive. `main()` calls one of them right after it creates the control. Only `main()` creates the control, and it does so first.
+3. Only `log()` is filtered. `logi` and `logrt` always write.
+4. The existing `enable_logging(class_name, enabled)` stays and becomes a per-name override that also works before the class registers. `main()` can enable everything and then switch off the noisy classes.
+5. The control's own logger is kept in an instance attribute. `LOG()` uses it, there is one flag, and it follows the same default as every other logger.
+
+*B. Structure*
+6. There is one control object per process, reset in place. `_nullify_instance()` stays, and tests stop using it.
+7. The registry is a private instance attribute. Code outside the control goes through methods, and `get_registered_classes()` returns a copy.
+8. The test hooks (log directory, maximum file size, the two watermarks, N) are exposed through the control as `Z__` names.
+9. The logger is reusable. It has no tie to asyncio, test code or anything external, and `lib1` travels with it.
+
+*C. Test mode and the glue (stages 3, 5 and 6)*
+10. The glue enters test mode once, from `tests/conftest.py` on the PC and `run_all_tests()` on the Pico. It is one-way and idempotent. It raises if the file table has already opened a file or written a line. Construction touches nothing, because opening and directory creation are lazy.
+11. The lock lives at class or module level, so it survives `_nullify_instance()`.
+12. In the disposed state, a log call raises.
+13. The per-test reset is run only by the glue. For every test it removes the scratch directory, resets, runs the test, disposes and removes the directory again. It closes the files, installs a new table, restores the default policy and the default size, watermark and N settings, and keeps the registry. The glue deletes the scratch files with `remove_scratch_path`.
+14. The full reset is called explicitly, and only by the `logger_elem` tests. It also clears the registry and recreates the control's own logger.
+15. Most tests lose the skeleton and its `try/finally`. `check_production_log_dir_unchanged` becomes redundant, and one glue-level check replaces it.
+
+*D. Reading and flushing (stages 4 and 7)*
+16. A `Z__` function in `logger_elem` returns all lines logged since the last reset. It reads the files the table recorded, in order, and flushes first.
+17. The control has a public `flush_logging` method that delegates to the table. It does nothing when nothing is unflushed, using a dirty flag. The readers, the close points and the future task call it.
+18. `log()` lines flush every N = 50 lines. `logi` and `logrt` flush at once, through a flush-now argument on `log_one_line`. There are also flushes at file close, at rotation and in `close_logging`. The logger has no time trigger. I measured about 50 ms per flush, independent of how full the flash is, and about 1 ms per line without one.
+
+*E. File space (stage 8)*
+19. The table is filled from the existing `mws_log.NNN` files when the session's first file is created, oldest first. Alternatively, pruning works from real free space. Tests create fake files first and use the small hooks.
+
+*F. Later and related decisions*
+20. An asyncio flush task outside the logger calls `flush_logging` every T seconds, with T = 5 s as a starting value. Until then the quiet-period gap is accepted.
+21. Unit tests use fakes for all collaborators. Removing the singletons, except the log control, is a possible task after the test migration. The logging design works either way.
+22. The order is logging stages 1 to 8, then migrating the old tests, then annotating.
+
+**Still open:** whether to keep or delete `_log_enabled`, the `_registry` rename, the names of the new functions, whether the real control in test mode is an accepted exception to the fakes rule, and the timing of the singleton removal.
+
+
+===============================================================
 Draft 2: requirements
 
 Logging policy (production and tests)
@@ -39,6 +94,14 @@ Here is the full restated list. A "(decided)" marks something you confirmed. "(p
 - The names of the new `Z__` functions and of the registry lookup method.
 - The fate of `_log_enabled`.
 - Whether to rename the registry to `_registry`.
+
+STILL TODO
+
+Base pruning of log files on all log files found, not just ones
+created by current execution. Or use the total file space as
+a guide.
+
+task to periodically flush the log
 
 
 ==================================================================
