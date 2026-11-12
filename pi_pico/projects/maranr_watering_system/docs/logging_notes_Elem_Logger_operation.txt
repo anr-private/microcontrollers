@@ -1,5 +1,15 @@
 LOGGING NOTES
 
+TBD NOTES  +=======================================
+Lines 46 to 72, the nullify-and-discard rules, become: 
+one control object for the process, reset in place, and no discarding of 
+singletons for logging.
+Lines 74 to 82, test mode, get the details we settled: one-way, 
+entered by the glue, an entry check, a lock that survives _nullify_instance, 
+and a disposed state that raises.
+==================================================
+
+
 How logger_elem package's modules are used.
 
 Consider an object instance of class X that logs messages (i.e., lines,
