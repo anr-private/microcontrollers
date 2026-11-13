@@ -177,7 +177,7 @@ class RequestHandlerLog(ElemLoggerABC):
             #@@@@@@@@@@@@@@@@@@@@ remove below:
             # # find the logger for the class
             # elc = self._get_log_control_instance()
-            # logger = elc.registry.get(cls_name)
+            # logger = elc.regisXXXtry.get(cls_name)
             # log(f"RHLOG$169 {cls_name} {enable_requested=}  logger={logger}")
             # if logger is not None:
                 # logger.enable_log(enable_requested)
@@ -188,12 +188,12 @@ class RequestHandlerLog(ElemLoggerABC):
         data_dict = {"datetime": TimeMgr.get_formatted_date_time_string() }
             
         # classes_dict = dict()
-        # for class_name, logger in self._elc.registry.items():
+        # for class_name, logger in self._elc.regisXXXtry.items():
             # classes_dict[class_name] = 1 if logger.is_enabled() else 0
         # data_dict["classes"] = classes_dict
         #@@@@@@@@@@@@ REMOVE THE ABOVE
         classes_dict = dict()
-        ###for class_name, logger in self._elc.registry.items():
+        ###for class_name, logger in self._elc.regisXXXtry.items():
         for class_name in self._elc.get_registered_classes():
             logger = self._elc.get_logger_for_class(class_name)
             if logger is None:

@@ -100,7 +100,7 @@ def test_registry_access() -> None:
     elc = ElemLogControl.get_instance()
     try:
         # By default the ElemLogControl class registers itself
-        #@@@@@@@assert len(elc.registry) == 1
+        #@@@@@@@assert len(elc.regisXXXtry) == 1
         registry_size = elc.get_registry_size()
         assert registry_size == 1, registry_size
     
@@ -109,7 +109,7 @@ def test_registry_access() -> None:
         aaa = ClassA(3)
         bbb = ClassB(4)
     
-        #@@@@@for clsname, logger in elc.registry.items():
+        #@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
@@ -127,7 +127,7 @@ def test_registry_access() -> None:
     
         a_logger.enable_log(True)
         print(f"@@TELC@123  a_logger is {a_logger}")
-        #@@@@@for clsname, logger in elc.registry.items():
+        #@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
             print(f"@@TELC@125  {clsname=}  {logger} ")
@@ -145,7 +145,7 @@ def test_registry_access() -> None:
     
         b_logger.enable_log(True)
         print(f"@@TELC@137  b_logger is {b_logger}")
-        #@@@@@@@@@@@@for clsname, logger in elc.registry.items():
+        #@@@@@@@@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
@@ -162,7 +162,7 @@ def test_registry_access() -> None:
     
         a_logger.enable_log(False)
         b_logger.enable_log(False)
-        #@@@@@@@@@@for clsname, logger in elc.registry.items():
+        #@@@@@@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 

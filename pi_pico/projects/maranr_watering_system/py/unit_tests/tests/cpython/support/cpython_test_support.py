@@ -41,7 +41,7 @@ class CpythonTestSupport:
         #print(f"CPYS@34  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         CpythonTestSupport._instance = None
-        #@@@@@@@@@@CpythonTestSupport.registry = {}
+        #@@@@@@@@@@CpythonTestSupport.regisXXXtry = {}
         # Remove any messages - unit test only
         #CpythonTestSupport._clear_latest_messages()
 
@@ -88,7 +88,7 @@ class FileHelper:
         #print(f"CPYS@81  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         FileHelper._instance = None
-        #@@@@@@@@@@@@2FileHelper.registry = {}
+        #@@@@@@@@@@@@2FileHelper.regisXXXtry = {}
 
 
     def __init__(self, validate):
