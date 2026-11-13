@@ -50,7 +50,7 @@ class ElemLogControl:
         # Registry of loggers - must exist before anything registers
         # (including our own registration below)
         # key: simplified class name   value: ElemLogger for that class
-        self.registry: dict[str, "ElemLogger"] = {}
+        self._registry: dict[str, "ElemLogger"] = {}
 
         # FAKE having an ElemLogger - to allow controlling logging from log-control webpage
         self._log_enabled = False
@@ -60,8 +60,8 @@ class ElemLogControl:
         our_simplified_class_name = extract_simplified_classname(self)
         print(f"ELC$70 {our_simplified_class_name=}")
         ####@@@@ TODO clean this up
-        ######   WAS  self.registry[simplified_class_name] = self
-        self.registry[our_simplified_class_name] = \
+        ######   WAS  self._registry[simplified_class_name] = self
+        self._registry[our_simplified_class_name] = \
                         ElemLogger(self, our_simplified_class_name)
         
         # Table of log files that have been created and are now closed
@@ -99,6 +99,11 @@ class ElemLogControl:
     def get_log_table_status_lines(self) -> tuple[str,...]:
         return self._log_file_table.get_status_lines()
 
+    def get_registry_size(self) -> int:
+        """ Return the size of the registry: the number of classes
+        that have registered.
+        """
+        return len(self._registry)
 
     def register_user_class(self, obj_instance: Any) -> "ElemLogger":
         # obj is a user obj that subclasses ElemLoggerABC
@@ -110,24 +115,24 @@ class ElemLogControl:
         self.LOG(f"ELC$118 register_user_class {simplified_class_name=}")
 
         # does this class have a logger assigned?
-        logger = self.registry.get(simplified_class_name)
+        logger = self._registry.get(simplified_class_name)
         self.LOG(f"ELC$122 register_user_class logger of {simplified_class_name} is {logger}")
         if logger is None:
             logger = ElemLogger(self, simplified_class_name)
-            self.registry[simplified_class_name] = logger
+            self._registry[simplified_class_name] = logger
         if 0: self.dump_registered_loggers()
         return logger
 
 
     def get_registered_classes(self) -> tuple[str,...]:
-        return tuple(self.registry.keys())
+        return tuple(self._registry.keys())
 
     def get_logger_for_class(self, class_name: str) -> ElemLogger | None:
         """ Get the logger associated with the specified class_name
         (which must be a simplified class name).
         Returns the ElemLogger or None if none found.
         """
-        return self.registry.get(class_name, None)
+        return self._registry.get(class_name, None)
 
 
     def LOG(self, m:str) -> None:
@@ -145,7 +150,7 @@ class ElemLogControl:
         Returns True if successful, False if any problem.
         """
 
-        logger = self.registry.get(class_name)
+        logger = self._registry.get(class_name)
         m = f"ELC$145 logger is {logger}  {enabled=} {class_name=}"
         print(m)
         self.log_one_line(m)
@@ -177,7 +182,7 @@ class ElemLogControl:
         m = "ELC$172  Classes registered in ElemLogControl:"
         print(m)
         self.log_one_line(m)
-        for k,v in self.registry.items():
+        for k,v in self._registry.items():
             m = f"  {k}  {v}"
             print(m)
             self.log_one_line(m)
