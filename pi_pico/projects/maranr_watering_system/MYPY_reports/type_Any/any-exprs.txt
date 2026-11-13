@@ -12,7 +12,7 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                  lib2.FileObtainer     49     449     89.09%
                       lib2.MwsWifi     33     215     84.65%
                       lib2.TimeMgr     10      39     74.36%
-        logger_elem.ElemLogControl      5     351     98.58%
+        logger_elem.ElemLogControl      5     372     98.66%
       logger_elem.ElemLogFileTable      4    1199     99.67%
             logger_elem.ElemLogger     12     114     89.47%
          logger_elem.ElemLoggerABC      0      89    100.00%
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
           weblib.RequestHandlerLog      0       3    100.00%
             weblib.TemplateGrinder      3      43     93.02%
 ------------------------------------------------------------
-                             Total    318    4291     92.59%
+                             Total    318    4312     92.63%

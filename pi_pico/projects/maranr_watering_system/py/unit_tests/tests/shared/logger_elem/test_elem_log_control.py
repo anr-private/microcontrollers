@@ -1,6 +1,7 @@
 # test_elem_log_control.py
 #
 # Test for logger_elem.ElemLogControl.py
+# # LINEMARKER=TELC
 
 import os
 
@@ -73,7 +74,7 @@ def test_get_lines_from_log_file() -> None:
         relative_line_number = 4
         number_of_lines = 2
         lines = elc.get_lines_from_log_file(relative_line_number, number_of_lines)
-        print(f"@@TELC@76 lines:...")
+        print(f"TELC$76 lines:...")
         print(lines)
     
         assert len(lines) == 2, len(lines)
@@ -100,7 +101,6 @@ def test_registry_access() -> None:
     elc = ElemLogControl.get_instance()
     try:
         # By default the ElemLogControl class registers itself
-        #@@@@@@@assert len(elc.regisXXXtry) == 1
         registry_size = elc.get_registry_size()
         assert registry_size == 1, registry_size
     
@@ -109,30 +109,27 @@ def test_registry_access() -> None:
         aaa = ClassA(3)
         bbb = ClassB(4)
     
-        #@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
             assert logger is not None
-            print(f"@@TELC@111  {clsname=}  {logger} ")
+            print(f"TELC$111  {clsname=}  {logger} ")
             assert logger.is_enabled() is True
-            #@@@@@@@assert logger.is_enabled() is False
     
         a_logger = elc.get_logger_for_class("ClassA")
-        print(f"@@TELC@115 class A logger is {a_logger}")
+        print(f"TELC$115 class A logger is {a_logger}")
         b_logger = elc.get_logger_for_class("ClassB")
-        print(f"@@TELC@117 class B logger is {b_logger}")
+        print(f"TELC$117 class B logger is {b_logger}")
     
         assert a_logger is not None
         assert b_logger is not None
     
         a_logger.enable_log(True)
-        print(f"@@TELC@123  a_logger is {a_logger}")
-        #@@@@@for clsname, logger in elc.regisXXXtry.items():
+        print(f"TELC$123  a_logger is {a_logger}")
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
             assert logger is not None, clsname
-            print(f"@@TELC@125  {clsname=}  {logger} ")
+            print(f"TELC$125  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -146,14 +143,13 @@ def test_registry_access() -> None:
                 assert False, f"UNKNOWN LOGGER {logger}"
     
         b_logger.enable_log(True)
-        print(f"@@TELC@137  b_logger is {b_logger}")
-        #@@@@@@@@@@@@for clsname, logger in elc.regisXXXtry.items():
+        print(f"TELC$137  b_logger is {b_logger}")
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
             assert logger is not None, clsname
 
-            print(f"@@TELC@139  {clsname=}  {logger} ")
+            print(f"TELC$139  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -166,13 +162,12 @@ def test_registry_access() -> None:
     
         a_logger.enable_log(False)
         b_logger.enable_log(False)
-        #@@@@@@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
             assert logger is not None, clsname
 
-            print(f"@@TELC@153  {clsname=}  {logger} ")
+            print(f"TELC$153  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -183,6 +178,42 @@ def test_registry_access() -> None:
         ElemLogControl._nullify_instance()
         Z__set_log_file_dir(old_logs_dir)
         remove_scratch_path(logs_dir)
+
+def test_get_unmatched_override_classnames() -> None:
+    """ """
+    # Replace the production logs/ dir with a test dir
+    logs_dir = get_scratch_path("logs")
+    remove_scratch_path(logs_dir)
+    old_logs_dir = Z__set_log_file_dir(logs_dir)
+    # Clear out any leftover 'global' stuff in ElemLogControl
+    ElemLogControl._nullify_instance()
+    elc = ElemLogControl.get_instance()
+    try:
+        aa = ClassA(1)
+        bb = ClassB(2)
+        aaa = ClassA(3)
+        bbb = ClassB(4)
+
+        registered = elc.get_registered_classes()
+
+        print(f"TELC$199 {registered=}")
+
+        # ClassA, ClassB, ElemLogControl itself
+        assert elc.get_registry_size() == 3
+        
+        unmatched = elc.get_unmatched_override_classnames()
+        assert len(unmatched) == 0
+
+        
+
+        
+    finally:
+        # Leave no (log) files dangling open - esp on Pico
+        elc.close_all_logging()
+        ElemLogControl._nullify_instance()
+        Z__set_log_file_dir(old_logs_dir)
+        remove_scratch_path(logs_dir)
+
 
 
 

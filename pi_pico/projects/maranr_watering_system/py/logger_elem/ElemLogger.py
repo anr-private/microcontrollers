@@ -21,7 +21,7 @@ class ElemLogger:
     def __init__(self, log_control: Any, 
                        simplified_class_name: str, 
                        logging_enabled_initially:bool) -> None:
-        """ Called provides itself (ElemLogControl, usu.);
+        """ Caller provides itself (ElemLogControl, usu.);
         the simplified class name of the class that will be
         using this as its logger; and
         the initial state of logging enabled/disabled.

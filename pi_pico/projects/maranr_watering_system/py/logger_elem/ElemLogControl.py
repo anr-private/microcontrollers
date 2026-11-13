@@ -57,6 +57,8 @@ class ElemLogControl:
         # E.g., main() can request that class "Abc" have a specified
         # logging state before an Abc instance ever gets created.
         # @@@ does this persist through a reset?
+        # @@@ probably both kinds of reset clear _logging_enabled_overrides 
+        # @@@ and restore _default_logging_enabled to True. 
         # If there is no entry for a class name, the presumed value
         # is _default_logging_enabled.
         # KEY: simplified class name
@@ -169,14 +171,23 @@ class ElemLogControl:
         """
         return self._registry.get(class_name, None)
 
+    def get_unmatched_override_classnames(self) -> tuple[str,...]:
+        """ Get a tuple containing each classname that was specified
+        to have a logging-enabled override but that classname
+        has never been registered. It's probably a typo
+        in the classname. This method is obviously useful
+        mainly after initial startup is completed and all
+        classes have registered.
+        """
+        found: list[str] = list()
+        for classname in self._logging_enabled_overrides.keys():
+            if classname not in self._registry:
+                found.append(classname)
+        return tuple(found)
+
 
     def LOG(self, m:str) -> None:
         # simulates the log() method of a 'regular' class
-        # IE a class not part of logging
-        # Part of FAKE-ing the ElemLogger - this class has no associated ElemLogger
-        ###if self._log_enabled:
-        ###    self.log_and_print_one_line(m)
-        ### REMOVE THE ABOVE
         self._our_own_logger.log(m)
 
     def enable_logging(self, class_name: str, enabled: bool) -> bool:
