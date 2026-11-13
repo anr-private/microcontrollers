@@ -163,13 +163,25 @@ class RequestHandlerLog(ElemLoggerABC):
                 continue
             cls_name = raw_cls_name;
             if cls_name.endswith("ID"): cls_name = cls_name[:-2]
+
             enable_requested = state_stg != "0"
-            # find the logger for the class
-            logger = self._elc.registry.get(cls_name)
-            log(f"RHLOG$169 {cls_name} {enable_requested=}  logger={logger}")
-            if logger is not None:
-                logger.enable_log(enable_requested)
-                logi(f"RHLOG$172 LOGGER {cls_name} IS NOW {enable_requested=}")
+
+            elc = self._get_log_control_instance()
+            ok = elc.enable_logging(cls_name, enable_requested)
+
+            if ok:
+                log(f"RHLOG$169 Log state change SUCCESSFUL {cls_name=!r} {enable_requested=}  ")
+            else:
+                log(f"RHLOG$169 Log state change FAILED {cls_name=!r} {enable_requested=}  ")
+
+            #@@@@@@@@@@@@@@@@@@@@ remove below:
+            # # find the logger for the class
+            # elc = self._get_log_control_instance()
+            # logger = elc.registry.get(cls_name)
+            # log(f"RHLOG$169 {cls_name} {enable_requested=}  logger={logger}")
+            # if logger is not None:
+                # logger.enable_log(enable_requested)
+                # logi(f"RHLOG$172 LOGGER {cls_name} IS NOW {enable_requested=}")
 
         # Assemble the response
 

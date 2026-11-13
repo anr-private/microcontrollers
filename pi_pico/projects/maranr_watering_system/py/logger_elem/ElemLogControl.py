@@ -131,8 +131,13 @@ class ElemLogControl:
             self.log_and_print_one_line(m)
 
 
-    def enable_logging(self, class_name: str, enabled: bool) -> None:
-        # enable/disable logging for the specified class
+    def enable_logging(self, class_name: str, enabled: bool) -> bool:
+        """ Enable/disable logging for the specified class
+        (class_name must be the simple class name).
+        Set its logging state to enabled/disabled per arg 'enabled'.
+        Returns True if successful, False if any problem.
+        """
+
         logger = self.registry.get(class_name)
         m = f"ELC$145 logger is {logger}  {enabled=} {class_name=}"
         print(m)
@@ -143,9 +148,9 @@ class ElemLogControl:
             m = f"ELC$151 logger is NONE for {class_name=}  {enabled=}"
             print(m)
             self.log_one_line(m)
-            return
+            return False
         logger.enable_log(enabled)
-
+        return True
 
     def log_and_print_one_line(self, line: str) -> None:
         self.log_one_line(line)
