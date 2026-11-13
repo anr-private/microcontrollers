@@ -8,11 +8,11 @@ displays.lib_lcd1602_2004_with_i2c             0          1            0        
                      lib1.gc_utils             0          0            0                  0       0              0                         0
             lib1.read_last_n_lines             0          1            0                 23       0              0                         0
                         lib1.utils             0         17            0                  4       0              0                         0
-                    lib2.DataBoard             0         15            0                184       0              0                         0
+                    lib2.DataBoard             0         18            0                184       0              0                         0
                  lib2.FileObtainer             0         54            0                  0       0              0                         0
                       lib2.MwsWifi             5         22            8                  0       0              0                         0
                       lib2.TimeMgr             2          0            8                  0       0              0                         0
-        logger_elem.ElemLogControl             0          9            0                  4       0              0                         0
+        logger_elem.ElemLogControl             0          9            0                  6       0              0                         0
       logger_elem.ElemLogFileTable             0         44            0                 47       0              0                         0
             logger_elem.ElemLogger             0         12            0                  0       0              0                         0
          logger_elem.ElemLoggerABC             0          1            0                  0       0              0                         0
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c             0          1            0        
           weblib.RequestHandlerLog             0          0            0                  0       0              0                         0
             weblib.TemplateGrinder             2         63            0                  2       0              0                         0
 --------------------------------------------------------------------------------------------------------------------------------------------
-                             Total            94        346           16                275      33              0                         0
+                             Total            94        349           16                277      33              0                         0

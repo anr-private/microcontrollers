@@ -85,7 +85,7 @@ class RequestHandlerLog(ElemLoggerABC):
         lines = elc.get_lines_from_log_file(relative_line_number, numlines)
         log(f"RHLOG$86 len={len(lines) if lines is not None else 'no-lines!'} {lines=}")
         # should never happen - lines is list[str]
-        if lines is None: return None  # type: ignore[unreachable]
+        if lines is None: return None  
 
 
         html_lines = [
@@ -187,9 +187,21 @@ class RequestHandlerLog(ElemLoggerABC):
 
         data_dict = {"datetime": TimeMgr.get_formatted_date_time_string() }
             
+        # classes_dict = dict()
+        # for class_name, logger in self._elc.registry.items():
+            # classes_dict[class_name] = 1 if logger.is_enabled() else 0
+        # data_dict["classes"] = classes_dict
+        #@@@@@@@@@@@@ REMOVE THE ABOVE
         classes_dict = dict()
-        for class_name, logger in self._elc.registry.items():
-            classes_dict[class_name] = 1 if logger.is_enabled() else 0
+        ###for class_name, logger in self._elc.registry.items():
+        for class_name in self._elc.get_registered_classes():
+            logger = self._elc.get_logger_for_class(class_name)
+            if logger is None:
+                logi("RHLOG$200 INTERNAL ERROR: {class_name=!r} has no ElemLogger in the registry")
+                enabled_flag = 0
+            else:
+                enabled_flag = 1 if logger.is_enabled() else 0
+            classes_dict[class_name] = enabled_flag
         data_dict["classes"] = classes_dict
 
         json_stg = json.dumps(data_dict)

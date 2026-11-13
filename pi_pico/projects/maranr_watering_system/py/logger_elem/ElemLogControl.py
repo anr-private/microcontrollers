@@ -122,6 +122,13 @@ class ElemLogControl:
     def get_registered_classes(self) -> tuple[str,...]:
         return tuple(self.registry.keys())
 
+    def get_logger_for_class(self, class_name: str) -> ElemLogger | None:
+        """ Get the logger associated with the specified class_name
+        (which must be a simplified class name).
+        Returns the ElemLogger or None if none found.
+        """
+        return self.registry.get(class_name, None)
+
 
     def LOG(self, m:str) -> None:
         # simulates the log() method of a 'regular' class
