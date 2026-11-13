@@ -113,6 +113,7 @@ def test_registry_access() -> None:
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
+            assert logger is not None
             print(f"@@TELC@111  {clsname=}  {logger} ")
             assert logger.is_enabled() is True
             #@@@@@@@assert logger.is_enabled() is False
@@ -130,16 +131,17 @@ def test_registry_access() -> None:
         #@@@@@for clsname, logger in elc.regisXXXtry.items():
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
+            assert logger is not None, clsname
             print(f"@@TELC@125  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
             if logger.class_name == "ClassA":
-                assert logger.log_enabled is True
+                assert logger.is_enabled() is True
             elif logger.class_name == "ClassB":
                 #@@@@@@@@@@@@@@@@@@@@ by default logging is enabled in ElemLogger
-                assert logger.log_enabled is True
-                #@@@@@@@assert logger.log_enabled is False
+                assert logger.is_enabled() is True
+                #@@@@@@@assert logger.is_enabled() is False
             else:
                 assert False, f"UNKNOWN LOGGER {logger}"
     
@@ -149,14 +151,16 @@ def test_registry_access() -> None:
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
+            assert logger is not None, clsname
+
             print(f"@@TELC@139  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
             if logger.class_name == "ClassA":
-                assert logger.log_enabled is True
+                assert logger.is_enabled() is True
             elif logger.class_name == "ClassB":
-                assert logger.log_enabled is True
+                assert logger.is_enabled() is True
             else:
                 assert False, f"UNKNOWN LOGGER {logger}"
     
@@ -166,11 +170,13 @@ def test_registry_access() -> None:
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
+            assert logger is not None, clsname
+
             print(f"@@TELC@153  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
-            assert logger.log_enabled is False
+            assert logger.is_enabled() is False
 
     finally:
         elc.close_all_logging()

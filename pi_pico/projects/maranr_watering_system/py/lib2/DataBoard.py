@@ -53,6 +53,7 @@ class DataBoard(ElemLoggerABC):
         self.buttons: Any = None     # MwsButtons
         self.sensors: Any = None     # MwsSensors
         self.wifi: Any = None        # MwsWifi
+        self.web_server: Any = None  # MwsWebServer
         # 
         self.system_state: int = self.SYS_STATE_STARTUP
         self.ipaddr: str = ""

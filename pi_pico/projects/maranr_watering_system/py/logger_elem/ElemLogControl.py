@@ -47,37 +47,68 @@ class ElemLogControl:
             m = f"ELC$61 CALLED CTOR use get_instance()"
             raise RuntimeError(m)
 
+        # The default logging mode that all loggers start with
+        self._default_logging_enabled: bool = True
+
+        # Keep track of classes that have had explicit request(s)
+        # to set the logging-enabled state.
+        # This allows the state to be specified before an instance
+        # of the class is created.
+        # E.g., main() can request that class "Abc" have a specified
+        # logging state before an Abc instance ever gets created.
+        # @@@ does this persist through a reset?
+        # If there is no entry for a class name, the presumed value
+        # is _default_logging_enabled.
+        # KEY: simplified class name
+        # VALUE: the logging-enabled state it will be given
+        # when the class is created 
+        self._logging_enabled_overrides: dict[str, bool] = {}
+
         # Registry of loggers - must exist before anything registers
         # (including our own registration below)
         # key: simplified class name   value: ElemLogger for that class
         self._registry: dict[str, "ElemLogger"] = {}
 
+        #@@@@@@@@@ REMOVE
         # FAKE having an ElemLogger - to allow controlling logging from log-control webpage
-        self._log_enabled = False
+        #@@@@@@@@self._log_enabled = False
 
-        print(f"ELC$67 ******************************$@$@$@$*$*$")
-        print(f"ELC$68 ****** REGISTER OURSELF")
-        our_simplified_class_name = extract_simplified_classname(self)
-        print(f"ELC$70 {our_simplified_class_name=}")
-        ####@@@@ TODO clean this up
-        ######   WAS  self._registry[simplified_class_name] = self
-        self._registry[our_simplified_class_name] = \
-                        ElemLogger(self, our_simplified_class_name)
-        
         # Table of log files that have been created and are now closed
         # List contains tuples:
         #   (log-filename:str, fsize: int, extant-flag)
         # The extant-flag is 1 if file is extant, 0 if file has been
         # removed to reclaim file space.
         self._log_file_table = ElemLogFileTable()
-    #
+
+        # Register ourself and give ourself an ElemLogger, just like
+        # every other class.
+        # NOTE we must do this AFTER creating the ElemLogFileTable
+        # b/c ElemLogger.__init__ might try to do logging -- 
+        # we give it a reference to ourself, so it could call
+        # our LOG() or log_one_line() methods.
+        print(f"ELC$67 *****@@@@@@@@@@@@@@@@@@***$@$@$@$*$*$")
+        print(f"ELC$68 ****** REGISTER OURSELF")
+        our_simplified_class_name = extract_simplified_classname(self)
+        print(f"ELC$70 {our_simplified_class_name=}")
+        ####@@@@ TODO clean this up
+        ######   WAS  self._registry[simplified_class_name] = self
+        our_logging_enabled_initially = \
+                self._logging_enabled_overrides.get(our_simplified_class_name,
+                                                     self._default_logging_enabled)
+        self._our_own_logger = \
+                ElemLogger(self, our_simplified_class_name,
+                                 our_logging_enabled_initially)
+        self._registry[our_simplified_class_name] = self._our_own_logger
+
+
+    # @@@@@@@@@@@@@@ REMOVE THESE
     # FAKE having a logger
-    def enable_log(self, enabled: bool) -> None:
-        # Fake the ElemLogger method - so we can be registered as if
-        # we were using that class as our logger
-        self._log_enabled = not not enabled
-    def is_enabled(self) -> bool:
-        return self._log_enabled
+    # def enable_log(self, enabled: bool) -> None:
+        # # Fake the ElemLogger method - so we can be registered as if
+        # # we were using that class as our logger
+        # self._log_enabled = not not enabled
+    # def is_enabled(self) -> bool:
+        # return self._log_enabled
 
     def close_all_logging(self) -> None:
         # close logging - program is terminating
@@ -114,11 +145,15 @@ class ElemLogControl:
         simplified_class_name = extract_simplified_classname(obj_instance)
         self.LOG(f"ELC$118 register_user_class {simplified_class_name=}")
 
-        # does this class have a logger assigned?
+        # does this class have a logger assigned (yet)?
         logger = self._registry.get(simplified_class_name)
         self.LOG(f"ELC$122 register_user_class logger of {simplified_class_name} is {logger}")
         if logger is None:
-            logger = ElemLogger(self, simplified_class_name)
+            logging_enabled_initially = \
+                self._logging_enabled_overrides.get(simplified_class_name,
+                                                    self._default_logging_enabled)
+            logger = ElemLogger(self, simplified_class_name,
+                                      logging_enabled_initially)
             self._registry[simplified_class_name] = logger
         if 0: self.dump_registered_loggers()
         return logger
@@ -139,9 +174,10 @@ class ElemLogControl:
         # simulates the log() method of a 'regular' class
         # IE a class not part of logging
         # Part of FAKE-ing the ElemLogger - this class has no associated ElemLogger
-        if self._log_enabled:
-            self.log_and_print_one_line(m)
-
+        ###if self._log_enabled:
+        ###    self.log_and_print_one_line(m)
+        ### REMOVE THE ABOVE
+        self._our_own_logger.log(m)
 
     def enable_logging(self, class_name: str, enabled: bool) -> bool:
         """ Enable/disable logging for the specified class

@@ -8,13 +8,13 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                      lib1.gc_utils      1      50     98.00%
             lib1.read_last_n_lines      0     148    100.00%
                         lib1.utils     15     217     93.09%
-                    lib2.DataBoard     18     407     95.58%
+                    lib2.DataBoard     19     408     95.34%
                  lib2.FileObtainer     49     449     89.09%
                       lib2.MwsWifi     33     215     84.65%
                       lib2.TimeMgr     10      39     74.36%
-        logger_elem.ElemLogControl      5     336     98.51%
+        logger_elem.ElemLogControl      5     351     98.58%
       logger_elem.ElemLogFileTable      4    1199     99.67%
-            logger_elem.ElemLogger     12     109     88.99%
+            logger_elem.ElemLogger     12     114     89.47%
          logger_elem.ElemLoggerABC      0      89    100.00%
        maranr_watering_system_main      3      92     96.74%
           mws.MaranrWateringSystem     84     260     67.69%
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
           weblib.RequestHandlerLog      0       3    100.00%
             weblib.TemplateGrinder      3      43     93.02%
 ------------------------------------------------------------
-                             Total    317    4270     92.58%
+                             Total    318    4291     92.59%
