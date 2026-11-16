@@ -83,4 +83,17 @@ basic async framework: webserver, displays, sensors
 2026-2-19
 basic webserver working
 
+2026-11-16
+Replace logger_elem with LEM logger_embed_module
+REPO tagged using TAG_GIT_REPO.sh:  
+   MWS-begin-logging-redesign
+This is the microcontrollers repo copied just before integrating the 'new' LEM logger_embed_module logger
+into Maranr Watering System (MWS) - to replace logger_elem.
+LEM has a simpler design that supports unit testing better: it separates the 'writes the log files'
+(LemLogFileTable.py) from the LemLogControl.py 'main controller'. So the main control can be used
+with a 'fake log write' ./tests/shared/test_support_stuff/ztest_logger_embed_module/ZLemLogFileTable.py
+that just keeps logged lines in a list instead of writing to a file.
+
+
+~                       
 ### end ###
