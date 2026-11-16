@@ -135,6 +135,30 @@ T = TypeVar("T")
 # then annotate self as
   ... self: T ...
 
+--- Context Manager  ----------------------------------
+
+try: from typing import Any, Literal
+except ImportError: pass
+class LemTestContext():
+    def __init__(self) -> None:
+        self._llft: LemLogFileTable | None = None
+    def __enter__(self) -> LemLogFileTable:
+        print(f"ENTER lem test context...")
+        logs_dir = get_scratch_path("logs")
+        remove_scratch_path(logs_dir)
+        self._llft = LemLogFileTable(logs_dir)
+        print(f"ZLLFT$46: ENTER  {self._llft=!r}")
+        # This is what the 'as' variable receives
+        return self._llft
+    def __exit__(self, 
+        exc_type: "type[BaseException] | None",
+        exc_val: "BaseException | None",
+        # exc_tb - use "TracebackType | None" if imported under TYPE_CHECKING
+        exc_tb: "object",  
+        ) -> "Literal[False]":    ###bool | None:
+        # ...
+        return False # raise any exception(s)
+
 
 +++ MYPY Config specified in the source code in comments  ++++++++++++++++++
 
@@ -179,6 +203,23 @@ disallow_any_generics = True
 check_untyped_defs = True
 warn_return_any = True
 no_implicit_optional = True
+
+[mypy]
+#  (^\/)  match must start with either a non-file char or '/'
+#           so avoids abcjunk.py
+exclude = (^|/)junk.*\.py$
+
+Combined example:
+ exclude = (?ix)(
+    ^test_lem_classes/
+    | ^py/unit_tests/
+    | ^unit_tests/
+    | (^|/)build/
+    | junk[^/]*\.py$
+    )
+# the ^unit_tests/   is useful only if mypy is run in py/
+# where unit_tests/ is a top-level dir
+
 
 ===============================================================
 
