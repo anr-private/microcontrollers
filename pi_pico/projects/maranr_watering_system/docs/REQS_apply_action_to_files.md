@@ -2,7 +2,7 @@
 
 # apply_action_to_files: Requirements
 
-Status: requirements draft 5 (2026-11-16). No open questions.
+Status: requirements draft 6 (2026-11-16). No open questions. Implemented in `apply_action_to_files` (first version).
 
 ## 1. Purpose
 
@@ -144,3 +144,11 @@ The same report lines are printed in both run mode and dry-run mode. Paths are s
 ## 9. Notes
 
 - Unlike `rg`, this program does not read `.gitignore`. Anything gitignored is skipped only if a rule here says so.
+
+## 10. Implementation decisions (approved)
+
+1. Line 1 is the shebang `#!/usr/bin/env python3` (needed to run from `~/bin`); line 2 is the filename comment; line 3 is `# marker prefix: AATF`.
+2. Report lines (`RUN` / `WOULD RUN` / `SKIP ...`) and the summary carry no line markers, so dry-run reports from before and after a rule change can be compared with `diff`. Only NOTE, ERROR, FAILED and exit-status lines carry `AATF$nnn` markers.
+3. `do_it_to_this_path(file_path: str) -> bool` gets the command from `_command_words`, a module-level variable set once by `main()`. A hand-written replacement can ignore it.
+4. A root that is itself a symlink is walked (roots are never tested). Symlinks below a root are skipped as in Stage 1.
+5. ERROR lines go to stderr; everything else goes to stdout. To save a run's output to a file with each command's error messages in place, use `2>&1`.
