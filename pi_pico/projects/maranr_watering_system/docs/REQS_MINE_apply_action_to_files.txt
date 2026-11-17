@@ -1,0 +1,105 @@
+The program (or 'script' or whatever, lets call it 'the program')
+would perform a sequence of the follwing steps.
+For easy maintenance, these would be done by independent, clearly
+separated blocks of code (functions, most likely).
+The overall structure would be therefore
+  - find the files that are candidates
+  - apply filters that screen out non-desired items; filters are applied
+    in a fixed sequence, with the output of one filter being fed as input to the
+    next filter in the sequence.
+  - apply an executable file to those that survive the filtering
+    (executables that are found on PATH such as seen in a 
+    terminal running Bash when you enter 'echo $PATH')
+
+Sample usage:
+   apply_action_to_files  -g '*.py' -c redo_line_markers
+meaning:
+   find *.py files
+   apply all the filters (filters described below)  
+   apply the command 'redo_line_markers  FILE_PATH'
+     to each file/path that survives the filtering.
+
+The filter functions would be controlled by 'data' that specify
+filtering using well-known syntax such as 'plain' glob'ing.
+Then adding add additional filter would be a matter of adding
+some kind of string to the list of such 'data' rather than
+writing code to do the job.
+
+Such 'data' could be lists as plain, flat Python literals such as
+a tuple of directory roots, a tuple of glob-exclude patterns, 
+maybe a short tuple of regex-exclude patterns.
+This in preference to burying the policy inside conditional logic. 
+That keeps future edits to "add a line to a list" rather than 
+"understand and modify control flow."
+
+Rather than having one complicated filter, it is better to have
+a sequence of filters that each apply a set of 'simple' 
+filter patterns or such. Particularly undesired would be 'data'
+that would be a list of complex regular expression patterns
+due to their inherent complexity of writing, updating, testing,
+and the like.
+ 
+The goal is to have a set of 'relative simple' building block
+filtering functions that are composed together to produce
+a stream of 'output paths' of files.
+
+1. Find all *.py files in a specified set of directories and 
+all subdirs of them such as:
+   ./py/
+   ./py_2/
+
+2. Filter based on the directory path of the directory in which
+each file resides. For example, one of the specifications of 
+this filtering would do this:
+Skip *.py files that are in directories whose names contain
+a pattern like:
+   .*_venv/  - meaning one dot, some chars, a single underscore,
+               and finally the literal 'venv' (and the final '/'
+               meaning 'the end of the directory name matches here'
+This would filter out any file whose path includes the pattern.
+
+3. The above finds and filters py filenames. Next is to apply
+additional filters to just the filename (not the directory path).
+This is very similar to how the git ignore specifications work.
+Exclusion pattern examples:
+   *OLD.py        A file like myclass_OLD.py or itsOLD.py
+   *DEPRECATED.py  Similarly 
+   *NOTUSED.py
+   *NOT_USED.py
+   *JUNK*.py
+   *junk*.py
+   *IGNORE.py
+   *IGNORED.py
+   *SAVE.py
+
+4. The program would then apply some regular expression style
+pattern-matching based exclusions:
+    *_V\d+\.py$    meaning exclude anything with _V1.py, _V2.py at the
+                   end of the name
+Due to the inherent complexity of writing and updating and testing these,
+this step is kept separate from the previous steps. The goal is for 
+these to be as simple as possible.
+
+5. Finally, apply the executable to each surviving file (using its path).
+
+There should be a dry-run / report-only mode as a first-class feature.
+Because this this is a batch rewrite tool, before it actually calls
+the executable (such as 'redo_line_markers') on a file, the dry run 
+woud allow printing — for every file under the allowed directories — whether
+the file (ie path to the file) would be processed or skipped.
+If skipped, it should print which exclude rule caught it.
+The goal is to produce an audit trail every time the program is updated
+such as when adding a new exclude pattern, so it is possible to immediately
+see the effect of the change across the whole tree before the executable
+is actually applied (in a subsequent non-dry-run).
+This also doubles as a sanity check that the directory allow-list doesn't have typos silently causing a directory to be skipped entirely.
+
+It would also be nice of the program could be manually 'fixed up'
+to do a custom action on the surviving paths/files rather than
+running an executable. This would be done on a 'throw-away' copy of
+the program (or it might get saved as 'another program', if it turns out
+to have long-term value). This fixup would be easily done if there is
+a clear point of intercepting the program's sequence - such as a
+'do_it_to_this_path(file_path:str)' function that applies the
+executable. Then I could just replace that function with a 
+hand-written one.

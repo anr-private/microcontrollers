@@ -1,0 +1,92 @@
+THIS IS YOUR LIST OF ISSUES WITH MY REPLY/ANSWER AFTER EACH ITEM.
+They are marked with 'A:' at the start of each reply.
+-----
+The requirements are clear, and the structure works: find, then a fixed chain of simple filters driven by data, then one hook function for the action. Below is what I noticed, numbered so you can answer by number. Nothing here needs code yet.
+
+**About the patterns as written**
+
+1. **Step 2, `.*_venv/`: glob or regex?** You describe it as "one dot, some chars, underscore, venv". That reads as a glob, where `.` is a literal dot and `*` means "any chars". In a regex, `.*` means "anything", so the leading literal dot would be lost. My suggestion is to make the directory filter glob-based and test it against each directory name in the path separately (e.g. `.mws_venv`). Then the trailing `/` isn't needed, because a name test already means "the whole directory name". One consequence: as a glob, `.*_venv` matches `.mws_venv` but not `mws_venv`. Is that what you want?
+A: yes a glob-based matching would work fine
+
+2. **Step 4, `*_V\d+\.py$` isn't a valid regex.** A leading `*` is a regex error. I'd use `_V\d+\.py$` and run it with `re.search`, which finds a match anywhere, so no leading `.*` is needed. Your step 4 patterns would then always use search-anywhere-in-the-filename, with `$` anchoring the end. OK?
+A: yes, in addition I would expect to be able to specify '^' for 'at the start' and other such. If the filter supports any RE pattern, that would be good - I assume that is an easy to implement behavior. I just am trying to minimize the complexity of any regex patters and not wind up having the program to be implemented using a bunch of complex patterns -- when the program could do the same job more simply, say in a different step (for example)
+
+3. **Case sensitivity.** You listed both `*JUNK*.py` and `*junk*.py`, so I take it matching is case-sensitive. That leaves `*Junk*.py` uncaught. Options: (a) always case-sensitive, and you list each variant; (b) a separate case-insensitive pattern list. I'd use `fnmatch.fnmatchcase`, which behaves the same on every OS, rather than plain `fnmatch`, which is case-insensitive on Windows. Which do you want?
+A: match case please
+(but is there a simple way to say 'case insensitive'? I'm not aware of one.)
+
+4. **Which part of the path step 2 tests.** I'd test only the directory names below each root, not the parent directories above it. Otherwise an unrelated name higher up, such as something in your home path, could exclude a whole tree.
+A: yes, definitely - parent directories should not be tested, only the directories explicitly-specified on the program's command line and subdirs thereof.
+
+**Roots and the command line**
+
+5. **Where the roots come from.** The sample usage has `-g` and `-c` but no roots. Should the roots be a tuple in the file (like the filter data), command-line arguments, or both (file default, overridable)? Are they relative to the current directory, so you'd run it from `maranr_watering_system`?
+A: Yes, they would be specified explicitly - presumably at the end of the command-line arguments/options(?) This program will likely be run from a simple 1 line Bash script in which the options and specified directories are hard coded. It would live in /home/xxx/yyy/xxx/maranr_watering_system/run_renumbering.sh for example.
+That file would contain something like
+   apply_action_to_files -c redo_line_markers -g '*.py'  py/ py2/
+No need for 'in the file' tuple.
+
+6. **A root that doesn't exist.** I suggest a hard error before anything runs, since that's your "typo in the allow-list" check made strict. Or would you rather get a warning and have it carry on?
+A: a hard error is fine - this will be run 'interactively' and I will fix such errors as they pop up. presumably these would happen mostly when changing the tree structure, and once fixed the program will be run many times with no such errors occurring
+
+7. **What `-g '*.py'` means.** It's a glob on the filename that selects the starting candidates, as opposed to the excludes. Can `-g` be given more than once?
+A: for now, just once is ok - no plans right now that would need more. If more is needed, I'd just add to the small Bash script a second or third invocation of apply_action_to_files
+
+8. **Overlapping roots.** If both `py/` and `py/lib1/` are listed, the same file would be found twice. I suggest dropping duplicates by real path, and printing a note when roots overlap.
+A: agree
+
+9. **Symlinks.** Follow symlinked directories or not? Not following them is safer.
+A: do not follow sym-links, either directories OR files please
+
+
+**Dry-run and the report**
+
+10. **Which mode is the default.** For a batch rewrite tool, the safer default is dry-run, with a flag such as `--apply` needed to actually run the command. The other way is to run by default and use `-n`/`--dry-run` to only report. Which do you prefer?
+A: for now please run by default. I'll be careful. And there's always 'git restore'
+
+11. **Excluded directories in the report.** Step 2 can either skip a whole directory without looking inside it, or check every file in it. Skipping is much faster for a venv, which can hold thousands of `.py` files. In the dry-run report, I'd show one line per skipped directory (`SKIP DIR py/.mws_venv  [dir rule: .*_venv]`) rather than one line per file inside it. Is that acceptable as "every file is accounted for"?
+A: Yes
+
+12. **Report contents.** One line per file showing `RUN` or `SKIP`, plus the stage and the exact pattern that caught it. Paths sorted, so two dry-run reports can be diffed after you add a pattern. Then a summary of counts per rule.
+A: yes, great
+
+13. **Patterns that matched nothing (optional).** The summary could also list rules that matched no file. That catches a mistyped exclude pattern the same way an allow-list typo would be caught. It's the same idea as your ElemLogControl `get_unmatched_override_classnames()`. Want it?
+A: yes
+
+**Running the command**
+
+14. **Check the command up front.** The program would check once at startup that the `-c` command is found on `PATH`, and stop if it isn't. It would run the command once per file as `redo_line_markers FILE_PATH`, without going through a shell, so paths with spaces are safe.
+A: yes, great 
+
+15. **Extra arguments.** Will a command ever need its own arguments, such as `-c 'redo_line_markers --check'`? If so, the program needs a rule for splitting that string.
+A: Yes, splitting based on 'normal' Bash command-line parsing. Nesting comments would be nice:
+  -c 'the_cmd  -opt "opt-value"'
+would be run as 
+     the_cmd  -opt "opt-value" FILE_PATH
+
+16. **When the command fails on a file.** Keep going and list the failures at the end, or stop at the first failure? Should the command's own output pass straight through? What exit code should the program return?
+A: An option '--stop-on-error' would be useful.
+The commands output should appear in 'its place' in the output along with output from the program itself. So that would mean the program would have to print a one-line header in front of the output of the command, so the relevant file-path would be known. The program can return exit code zero if ok, 1 if any error - that's the correct protocol for commands run on Linux (right?)
+
+**The `do_it_to_this_path(file_path: str)` hook**
+
+17. **Keep dry-run out of the hook.** I'd make the dry-run decision before the hook is called, so a hand-written replacement never has to know about dry-run. Should the hook return success or failure (e.g. a bool) so the summary still works when you swap in your own?
+A: yes
+
+
+**From the old reply**
+
+Your requirements already cover most of it: data instead of logic, dry-run as a main feature, filename separate from directory, the venv safety net. The idea of importing `redo_line_markers` instead of running it conflicts with your "any executable on `PATH`" requirement, so I'd drop it. The hook in item 17 already gives you a place for in-process actions.
+A: ok
+
+**Housekeeping for when we write it:** Python standard library only, run on the PC. I'll follow your conventions: first-line filename comment, `###` at the end, verb + object names, and line markers on print lines. Do you have a marker prefix in mind (e.g. `AATF`)? Is the file `~/bin/apply_action_to_files` with no `.py` extension, like `redo_line_markers`?
+A: Good, follow conventions. The program shall be runnable under Linux, Python 3.12 (Ubuntu 24.04 latest update).
+AATF is fine. 
+Yes, no .py - it will live in ~/bin/apply_action_to_files 
+(it's actually a sym-link from bin/ to the git repo in which I keep my linux config / setup stuff, but that should not have any impact on you)
+
+Once these are settled, I can save the final requirements as a doc in the MWS system Project if you want them kept there.
+A: yes, let's create an artifact for the final requirements. I also request that you provide a download for the artifact so I can download and check into the MWS git repo.
+
+Ignore the following line - my editor uses this as the cue to do 'soft' word-wrapping:
+:wrap=soft:

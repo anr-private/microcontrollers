@@ -1,0 +1,20 @@
+
+###############################################
+
+A few ideas on how to structure it:
+
+**Two independent filters, not one combined pattern.** You've got two different kinds of exclusion logic here — "which directories to walk" and "which filenames within those directories to skip" — and they don't need to be solved with the same mechanism. The directory list is just a small, explicit set of root paths (`py/lib1`, `py/lib2`, `py/unit_tests`, `py/unit_tests/tests/shared/test_support_stuff`, etc.) that you recursively walk from. The filename exclusions are a separate pass applied to whatever `.py` files that walk turns up.
+
+**For the filename exclusions, split "simple suffix" patterns from "numbered suffix" patterns.** `*COPY.py`, `*SAVE.py`, `*OLD.py` are all the same shape and fit cleanly as plain glob patterns (`fnmatch`-style) in a list you can keep growing. `*_V1.py`, `*_V2.py`, ... don't fit a single literal glob as cleanly if the number is open-ended — you'd either need a glob with a character class (which gets awkward past single digits) or a tiny regex specifically for that one case (`_V\d+\.py$`). I'd keep the plain-glob list as your main, easy-to-extend mechanism for the common case, and let one or two regex checks handle the "has a variable component" cases, rather than forcing everything through one matching style. That way "lots more" exceptions mostly just means "add another string to the glob list," which is the low-friction path you want since you expect this list to keep growing.
+
+**Decide whether exclusion checks the basename or the full path.** Almost certainly you want these glob/regex checks run against just the filename, not the full relative path — `*COPY.py` should mean "ends in COPY.py" regardless of which directory it's sitting in. Worth being deliberate about this though, since it's an easy thing to get subtly wrong (matching full path by accident would make a pattern behave differently depending on directory nesting).
+
+**Make the allow-list and exclude-list look like data, not logic.** Since you said you expect this to need ongoing editing, I'd keep both lists as plain, flat Python literals near the top of the file — a tuple of directory roots, a tuple of glob-exclude patterns, maybe a short tuple of regex-exclude patterns — rather than burying the policy inside conditional logic. That keeps future edits to "add a line to a list" rather than "understand and modify control flow."
+
+**Consider a dry-run / report mode as a first-class feature, not an afterthought.** Since this is a batch rewrite tool, before it actually calls `redo_line_markers` on a file, it's worth being able to print — for every file under the allowed directories — whether it would be processed or skipped, and if skipped, *which* exclude rule caught it. That gives you an audit trail every time you add a new exclude pattern, so you can immediately see the effect of the change across the whole tree before it touches anything. This also doubles as a sanity check that your directory allow-list doesn't have typos silently causing a directory to be skipped entirely.
+
+**Think about whether `redo_line_markers` is itself a script you'd shell out to, or logic you can import and call as a function.** If it's already a Python module/function, calling it in-process per file (rather than spawning a subprocess per file) will be both faster and easier to wire dry-run/reporting into, since you get a normal return value or exception per file instead of parsing subprocess output.
+
+**One belt-and-suspenders idea, optional:** even with an explicit directory allow-list, you could still layer a defensive "skip any directory component matching `.*_venv`" check into the walk itself, in case something ever gets nested inside one of your allowed roots unexpectedly (e.g., someone creates a venv inside `py/lib1` by mistake). Not strictly necessary if you trust the allow-list, but cheap insurance given the cost of this script accidentally rewriting the wrong file.
+
+:wrap=soft:

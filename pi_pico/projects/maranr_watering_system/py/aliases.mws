@@ -1,3 +1,4 @@
+alias renum='clear  ; find . -path "./.logger_embed_module_venv" -prune -o -name \*.py  -exec redo_line_markers {} \; '
 
 alias USE_A0='export PREM_DEVICE="a0"'
 alias USE_A1='export PREM_DEVICE="a1"'
