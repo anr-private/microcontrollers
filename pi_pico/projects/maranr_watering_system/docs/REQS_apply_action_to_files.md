@@ -2,7 +2,7 @@
 
 # apply_action_to_files: Requirements
 
-Status: requirements draft 6 (2026-11-16). No open questions. Implemented in `apply_action_to_files` (first version).
+Status: requirements draft 7 (2026-11-17). No open questions. Matches `apply_action_to_files` VERSION 2026-11-17_1945.
 
 ## 1. Purpose
 
@@ -32,6 +32,7 @@ apply_action_to_files -c redo_line_markers -g '*.py' py/ py2/
 | `-g GLOB` | Filename glob that selects the candidate files, e.g. `'*.py'`. Given once. Required. |
 | `-n`, `--dry-run` | Report only: show what would be run or skipped, and run nothing. |
 | `--stop-on-error` | Stop at the first file whose command fails. Without it, the program keeps going and lists the failures at the end. |
+| `--version` | Print `VERSION <value of the VERSION constant>` as the first output line (printed before the command line is checked), then carry on exactly as without it. The other options and the roots are still required: `--version` alone prints the version, then the usage message, and exits with status 2. |
 | `--verbose` | Also print the report lines that are hidden by default: one `SKIP LINK` line per symlink skipped, and one `SKIP NOMATCH` line per file that does not match `-g`. |
 | `ROOT ...` | One or more root directories, after the options. Relative paths are taken from the current directory. At least one is required. |
 
@@ -60,8 +61,19 @@ Each stage is a separate, simple function. Stages run in this fixed order; each 
 .*_venv
 .git
 __pycache__
+.pytest_cache
+.mypy_cache
 *COPY*
 *IGNORE*
+*NOT_USED*
+*NOTUSED*
+DEPRECATED*
+primitives        (MWS specific, as are the rest)
+build
+*ARCHIVE*
+*_FAKE
+*_FAKES
+OLD
 ```
 
 - Symlinks, to directories **or** to files, are not followed and not processed. Each one gets a `SKIP LINK` report line only with `--verbose`; the summary always shows how many were skipped.
@@ -80,8 +92,8 @@ __pycache__
 ```
 *OLD.py
 *DEPRECATED.py
-*NOTUSED.py
-*NOT_USED.py
+*NOTUSED*.py
+*NOT_USED*.py
 *JUNK*.py
 *junk*.py
 *IGNORE.py
@@ -147,8 +159,9 @@ The same report lines are printed in both run mode and dry-run mode. Paths are s
 
 ## 10. Implementation decisions (approved)
 
-1. Line 1 is the shebang `#!/usr/bin/env python3` (needed to run from `~/bin`); line 2 is the filename comment; line 3 is `# marker prefix: AATF`.
+1. Line 1 is the shebang `#!/usr/bin/env python3` (needed to run from `~/bin`); line 2 is the filename comment; the header comment also holds the line-marker declaration `# LINEMARKER=AATF`.
 2. Report lines (`RUN` / `WOULD RUN` / `SKIP ...`) and the summary carry no line markers, so dry-run reports from before and after a rule change can be compared with `diff`. Only NOTE, ERROR, FAILED and exit-status lines carry `AATF$nnn` markers.
 3. `do_it_to_this_path(file_path: str) -> bool` gets the command from `_command_words`, a module-level variable set once by `main()`. A hand-written replacement can ignore it.
 4. A root that is itself a symlink is walked (roots are never tested). Symlinks below a root are skipped as in Stage 1.
 5. ERROR lines go to stderr; everything else goes to stdout. To save a run's output to a file with each command's error messages in place, use `2>&1`.
+6. The module-level constant `VERSION` (a string such as `"2026-11-17_1129"`) sits just below the module docstring, so the docstring stays the file's first statement. Update it whenever the program changes.
