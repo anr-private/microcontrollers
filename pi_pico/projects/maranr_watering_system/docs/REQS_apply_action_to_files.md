@@ -32,7 +32,7 @@ apply_action_to_files -c redo_line_markers -g '*.py' py/ py2/
 | `-g GLOB` | Filename glob that selects the candidate files, e.g. `'*.py'`. Given once. Required. |
 | `-n`, `--dry-run` | Report only: show what would be run or skipped, and run nothing. |
 | `--stop-on-error` | Stop at the first file whose command fails. Without it, the program keeps going and lists the failures at the end. |
-| `--version` | Print `VERSION <value of the VERSION constant>` as the first output line (printed before the command line is checked), then carry on exactly as without it. The other options and the roots are still required: `--version` alone prints the version, then the usage message, and exits with status 2. |
+| `--version` | Print `VERSION <value of the VERSION constant>` as the first output line (printed before the command line is checked), then carry on exactly as without it. The other options and the roots stare still required: `--version` alone prints the version, then the usage message, and exits with status 2. |
 | `--verbose` | Also print the report lines that are hidden by default: one `SKIP LINK` line per symlink skipped, and one `SKIP NOMATCH` line per file that does not match `-g`. |
 | `ROOT ...` | One or more root directories, after the options. Relative paths are taken from the current directory. At least one is required. |
 
