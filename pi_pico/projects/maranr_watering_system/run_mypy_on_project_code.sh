@@ -16,7 +16,7 @@
 # A report file. mypy --linecount-report /tmp/rep <your usual arguments> 
 # should write /tmp/rep/linecount.txt with one line for every file it processed.
 #
-# Comment out that file’s ignore_errors = True in mypy.ini first. 
+# Comment out that file’s ignore_errors = True in mypy_for_project_code.ini first. 
 # Otherwise mypy reports nothing for that file.
 #
 # mypy still follows imports. Errors can show up in modules the 
@@ -46,7 +46,7 @@ fi
 
 mypy \
 --cache-dir=/dev/null \
---config-file mypy.ini \
+--config-file mypy_for_project_code.ini \
 ${RUN_ANY_REPORTS_1} ${RUN_ANY_REPORTS_2} \
 "${targets[@]}" 2>&1
 
