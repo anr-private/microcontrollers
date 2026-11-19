@@ -1,5 +1,7 @@
 # test_utils.py
 #
+# LINEMARKER=TEST_UTILS_PY
+#
 # You can run this either locally on the linux system by
 # opening this file in Thonny and then running it.
 # (That is the easiest way)

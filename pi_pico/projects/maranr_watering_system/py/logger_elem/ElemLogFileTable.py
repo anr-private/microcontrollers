@@ -268,7 +268,7 @@ class ElemLogFileTable:
 
         # This should never happen!
         if self._logf is not None:
-            m = f"ECL$271 _start_a_new_logfile OLD LOG FILE IS NOT CLOSED!"
+            m = f"ELFT$271 _start_a_new_logfile OLD LOG FILE IS NOT CLOSED!"
             print(m)
             raise RuntimeError(m)
 

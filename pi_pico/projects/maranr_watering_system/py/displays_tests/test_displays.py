@@ -1,5 +1,7 @@
 # test_displays.py
 #
+# LINEMARKER=TEST_DISPLAYS
+#
 # You can run this either of 2 ways.
 # You can run it locally on the linux system by
 # opening this file in Thonny and then running it.
@@ -27,15 +29,15 @@ async def test1():
     ok = displays.locate_the_lcd()
 
     if not ok:
-        m = f"@30 FAILED TO LOCATE the lcd!"
+        m = f"TEST_DISPLAYS$32 FAILED TO LOCATE the lcd!"
         print(m)
 
     displays_task = displays.start_the_task()
 
-    print(f"@35  {displays_task=}")
+    print(f"TEST_DISPLAYS$37  {displays_task=}")
 
     while 1:
-        print("@38 sleeping.   displays_task.done={displays_task.done()}")
+        print("TEST_DISPLAYS$40 sleeping.   displays_task.done={displays_task.done()}")
         await asyncio.sleep(1)
 
 
@@ -49,7 +51,7 @@ def main(*args):
         asyncio.run(test1())
 
     except KeyboardInterrupt:
-        print("@52 interrupt from keyboard")
+        print("TEST_DISPLAYS$54 interrupt from keyboard")
 
     finally:
         # Clean up the event loop (optional, but good practice)

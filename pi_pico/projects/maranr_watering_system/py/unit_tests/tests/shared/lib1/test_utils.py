@@ -1,6 +1,8 @@
 # test_utils.py
 #
 # Shared test for lib1/utils.py
+#
+# LINEMARKER=TEST_UTILS__PY
 
 import os
 

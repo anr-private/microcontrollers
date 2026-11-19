@@ -1,6 +1,8 @@
 # maranr_watering_system_main.py
 #
 # Main startup for MWS
+# LINEMARKER="MAIN"
+
 
 import sys
 import platform
@@ -29,8 +31,8 @@ from mws.MaranrWateringSystem import MaranrWateringSystem
 
 def main() -> None:
     
-    print("MAIN: MARANR Watering System starting...")
-    print(f"MAIN$33  {MWS_CONFIG=}")
+    print("MAIN$34: MARANR Watering System starting...")
+    print(f"MAIN$35  {MWS_CONFIG=}")
 
     log_control = ElemLogControl.get_instance()
 

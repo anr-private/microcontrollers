@@ -1,5 +1,7 @@
 # test_list_dir_contents.py
-# 
+#
+# LINEMARKER=TEST_LIST_DIR_CONTENTS_PY
+#
 # quick test
 
 import os

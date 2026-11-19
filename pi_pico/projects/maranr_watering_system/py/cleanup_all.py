@@ -1,5 +1,6 @@
 print("*** THIS IS REPLACED BY remove_old_watering_files.py *****")
 import sys; sys.exit(9)
+# LINEMARKER=CLEANUP_ALL_PY
 
 
 

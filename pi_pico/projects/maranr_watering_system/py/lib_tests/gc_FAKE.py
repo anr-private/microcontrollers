@@ -1,5 +1,7 @@
 # gc_FAKE.py
 #
+# LINEMARKER=GC_FAKE_PY
+
 
 print(f"______ USING gc_FAKE.py  - NO MICROPTYON VERSION AVAILABLE _________________")
 
