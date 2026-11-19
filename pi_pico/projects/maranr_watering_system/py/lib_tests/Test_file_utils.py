@@ -45,10 +45,10 @@ class Test_file_utils:
         assert exp_last_line == "This is line 50"
         got_first_line = lines[0]
         got_last_line = lines[-1]
-        print(f"@@T@48 exp-first: {exp_first_line}")
-        print(f"@@T@49 got-first: {got_first_line}")
-        print(f"@@T@50 exp-last:  {exp_last_line}")
-        print(f"@@T@51 exp-last:  {got_last_line}")
+        print(f"@@T$48 exp-first: {exp_first_line}")
+        print(f"@@T$49 got-first: {got_first_line}")
+        print(f"@@T$50 exp-last:  {exp_last_line}")
+        print(f"@@T$51 exp-last:  {got_last_line}")
         assert got_first_line == exp_first_line
         assert got_last_line == exp_last_line
 
@@ -61,18 +61,18 @@ class Test_file_utils:
         lines = read_last_n_lines(fpath, relative_line_number, nlines)
 
         print(f"Result is {len(lines)=}")
-        print(f"@@T@64  {lines[0]=}")
-        print(f"@@T@65  {lines[-1]=}")
+        print(f"@@T$64  {lines[0]=}")
+        print(f"@@T$65  {lines[-1]=}")
 
         assert len(lines) == nlines
         exp_first_line = f"This is line {50-relative_line_number+1}"
         exp_last_line = f"This is line {50-relative_line_number+nlines}"
         got_first_line = lines[0]
         got_last_line = lines[-1]
-        print(f"@@T@72 exp-first: {exp_first_line}")
-        print(f"@@T@73 got-first: {got_first_line}")
-        print(f"@@T@74 exp-last:  {exp_last_line}")
-        print(f"@@T@75 got-last:  {got_last_line}")
+        print(f"@@T$72 exp-first: {exp_first_line}")
+        print(f"@@T$73 got-first: {got_first_line}")
+        print(f"@@T$74 exp-last:  {exp_last_line}")
+        print(f"@@T$75 got-last:  {got_last_line}")
         assert got_first_line == exp_first_line
         assert got_last_line == exp_last_line
  
@@ -85,18 +85,18 @@ class Test_file_utils:
         lines = read_last_n_lines(fpath, relative_line_number, nlines)
 
         print(f"Result is {len(lines)=}")
-        print(f"@@T@88  {lines[0]=}")
-        print(f"@@T@89  {lines[-1]=}")
+        print(f"@@T$88  {lines[0]=}")
+        print(f"@@T$89  {lines[-1]=}")
 
         assert len(lines) == nlines
         exp_first_line = f"This is line {50-relative_line_number+1}"
         exp_last_line = f"This is line {50-relative_line_number+nlines}"
         got_first_line = lines[0]
         got_last_line = lines[-1]
-        print(f"@@T@96 exp-first: {exp_first_line}")
-        print(f"@@T@97 got-first: {got_first_line}")
-        print(f"@@T@98 exp-last:  {exp_last_line}")
-        print(f"@@T@99 got-last:  {got_last_line}")
+        print(f"@@T$96 exp-first: {exp_first_line}")
+        print(f"@@T$97 got-first: {got_first_line}")
+        print(f"@@T$98 exp-last:  {exp_last_line}")
+        print(f"@@T$99 got-last:  {got_last_line}")
         assert got_first_line == exp_first_line
         assert got_last_line == exp_last_line
 
@@ -111,7 +111,7 @@ class Test_file_utils:
             "mws_log.012": ("mws_log.012", "f", 53),
         }
         fnames = tuple(exp_items.keys())
-        print(f"@@T@114  fnames: {fnames}")
+        print(f"@@T$114  fnames: {fnames}")
 
         _create_test_subdir(subdir, fnames)
 
@@ -138,7 +138,7 @@ class Test_file_utils:
             "mws_log.012": ("mws_log.012", "f", 53),
         }
         fnames = tuple(exp_items.keys())
-        print(f"@@T@141  fnames: {fnames}")
+        print(f"@@T$141  fnames: {fnames}")
 
         _create_test_subdir(subdir, fnames)
 
@@ -147,7 +147,7 @@ class Test_file_utils:
         assert len(items) == len(exp_items), f"@@@"
 
         for j, item in enumerate(items):
-            print(f"@@T@150 file-item {j=} is {item}")
+            print(f"@@T$150 file-item {j=} is {item}")
             fname = item[0]
             exp_item = exp_items.get(fname)
             assert item == exp_item, f"{j=}"
@@ -174,7 +174,7 @@ class Test_file_utils:
                         "mws_log.1000", "mws_log.0100",
                         "other.txt", "another.txt", "no-extention",
                         "has.extra.dots.txt"])
-        print(f"@@T@177  fnames: {fnames}")
+        print(f"@@T$177  fnames: {fnames}")
 
         _create_test_subdir(subdir, fnames)
 
@@ -191,7 +191,7 @@ class Test_file_utils:
 
         def _file_filt(fname, ftype, fsize):
             # returns None to exclude the file
-            print(f"@@T@194  _file_filt  {fname=}  {ftype=}  {fsize=} " )
+            print(f"@@T$194  _file_filt  {fname=}  {ftype=}  {fsize=} " )
             if ftype != "f": return None
             #
             parts = fname.rsplit('.',1)
@@ -203,13 +203,13 @@ class Test_file_utils:
             #
             if fpart != "mws_log": return None
             ext_val = is_3_digit_int(ext_part)
-            print(f"@@T@206   extension is_3_digit_int('{ext_part}') is {ext_val}")
+            print(f"@@T$206   extension is_3_digit_int('{ext_part}') is {ext_val}")
             if ext_val is None: return None
             return ext_val
 
         got_items = filter_dir_contents(subdir, _file_filt)
 
-        print(f"@@T@212 filtered-got_items = {got_items}")
+        print(f"@@T$212 filtered-got_items = {got_items}")
 
         assert len(got_items) == len(exp_items)
 
@@ -288,7 +288,7 @@ if pytest is None:
     
     
     def main():
-        print("MAIN @@T@291 starting -- RUNNING UNDER MICROPYTHON ---")
+        print("MAIN @@T$291 starting -- RUNNING UNDER MICROPYTHON ---")
         test_1()
         test_2()
         test_3()
@@ -296,7 +296,7 @@ if pytest is None:
         test_5()
         test_6()
         
-        print("MAIN @@T@299 finished")
+        print("MAIN @@T$299 finished")
         
     main()
 

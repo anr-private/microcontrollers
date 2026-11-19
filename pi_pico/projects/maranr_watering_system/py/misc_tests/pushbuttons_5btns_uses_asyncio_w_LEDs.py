@@ -1,5 +1,7 @@
 # pushbuttons_5btns_uses_asyncio_w_LEDs.py
 #
+# LINEMARKER=PB5LEDS
+#
 # Test program for the 5 pushbuttons on the Maranr Watering System
 # prototype board/system/setup.
 # 
@@ -86,11 +88,11 @@ LONG_CTR = 0
 async def handle_short(btn, btn_name):
     global SHORT_CTR
     SHORT_CTR += 1
-    print(f"@31  SHORT PRESS  btn={btn} {btn_name}")
+    print(f"PB5LEDS$91  SHORT PRESS  btn={btn} {btn_name}")
     if 0:
-        print(f"@33    WAITing in handle_short() - should not stall the main loop!")
+        print(f"PB5LEDS$93    WAITing in handle_short() - should not stall the main loop!")
         await asyncio.sleep(3)
-        print(f"@35    DONE-WAITing in handle_short()")
+        print(f"PB5LEDS$95    DONE-WAITing in handle_short()")
     if btn_name == "Up":
         led06.toggle()
         led10.toggle()
@@ -109,13 +111,13 @@ async def handle_short(btn, btn_name):
 async def handle_double(btn, btn_name):
     global DOUBLE_CTR
     DOUBLE_CTR += 1
-    print(f"@18 DOUBLE PRESS  btn={btn} {btn_name}")
+    print(f"PB5LEDS$114 DOUBLE PRESS  btn={btn} {btn_name}")
 
 async def handle_long(btn, btn_name):
     global LONG_CTR
     global RUN_FLAG
     LONG_CTR += 1
-    print(f"@21  LONG PRESS  btn={btn} {btn_name}")
+    print(f"PB5LEDS$120  LONG PRESS  btn={btn} {btn_name}")
     if btn_name == "Up":
         update_blinking(led06)
         update_blinking(led10)
@@ -149,7 +151,7 @@ async def OLD__task_1(): # fake task
     while 1:
         TASK_1_CTR += 1
         if TASK_1_CTR % 500 == 0:
-            print(f"@10 task_1  ctr={TASK_1_CTR}")
+            print(f"PB5LEDS$154 task_1  ctr={TASK_1_CTR}")
         await asyncio.sleep(0)
 
 
@@ -166,10 +168,10 @@ async def main():
     turn_all_off()
 
     if 1:
-        print("MAIN@162  Starting blinking_task")
+        print("PB5LEDS$171  Starting blinking_task")
         asyncio.create_task(blinking_task())
 
-    print(f"MAIN@24 STARTed  Buttons are:")
+    print(f"PB5LEDS$174 STARTed  Buttons are:")
     print(f"  UP      {UP_BUTTON_GPIO_PIN}")
     print(f"  LEFT    {LEFT_BUTTON_GPIO_PIN}")
     print(f"  CENTER  {CENTER_BUTTON_GPIO_PIN}")
@@ -189,7 +191,7 @@ async def main():
     if 1:
         # slow down the polling
         Pushbutton.debounce_ms *= 2
-    print(f"@32  Pushbutton.debounce_ms is {Pushbutton.debounce_ms}")
+    print(f"PB5LEDS$194  Pushbutton.debounce_ms is {Pushbutton.debounce_ms}")
 
     # pb = Pushbutton(btn, suppress=True)
     # pb.release_func(handle_short, (btn,))
@@ -208,14 +210,14 @@ async def main():
     while RUN_FLAG:
         elapsed += 1
         actual_elapsed = time.time() - start_time
-        print(f"@44                     MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
+        print(f"PB5LEDS$213                     PB5LEDS: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
         await asyncio.sleep(1)
 try:
     asyncio.run(main())
 except KeyboardInterrupt:
-    print("@53    KEYBOARD interrupt")
+    print("PB5LEDS$218    KEYBOARD interrupt")
 finally:
-    print("@55   <<<  Create a new event loop, as cleanup >>>")
+    print("PB5LEDS$220   <<<  Create a new event loop, as cleanup >>>")
     asyncio.new_event_loop()
     turn_all_off()
     

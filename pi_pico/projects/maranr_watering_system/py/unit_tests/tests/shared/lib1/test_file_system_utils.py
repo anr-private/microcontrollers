@@ -73,7 +73,7 @@ def test_get_flash_space() -> None:
 
     got_total_space, got_free_space = get_flash_space()
 
-    print(f"@@T@38  {got_total_space=}  {got_free_space=}")
+    print(f"@@T$76  {got_total_space=}  {got_free_space=}")
     
     # Linux: 1,966,736,678,912 bytes total (2Tb)
     #        1,806,526,021,632 bytes free
@@ -91,13 +91,13 @@ def test_get_flash_space() -> None:
 def test_convert_fs_space_to_string() -> None:
     total_space = 12345678
     total_stg = convert_fs_space_to_string(total_space)
-    print(f"@@T@34  {total_stg=}")
+    print(f"@@T$94  {total_stg=}")
     exp_total_stg = '12,345,678 bytes, 12,056.33 KB, 11.77 MB'
     assert total_stg == exp_total_stg, f"'{exp_total_stg}', '{total_stg}'"
 
     free_space = 987654
     free_stg = convert_fs_space_to_string(free_space)
-    print(f"@@T@40  {free_stg=}")
+    print(f"@@T$100  {free_stg=}")
     exp_free_stg = '987,654 bytes, 964.51 KB, 0.94 MB'
     assert free_stg == exp_free_stg, free_stg
 

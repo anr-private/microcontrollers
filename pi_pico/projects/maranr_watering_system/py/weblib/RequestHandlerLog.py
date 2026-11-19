@@ -170,18 +170,18 @@ class RequestHandlerLog(ElemLoggerABC):
             ok = elc.enable_logging(cls_name, enable_requested)
 
             if ok:
-                log(f"RHLOG$169 Log state change SUCCESSFUL {cls_name=!r} {enable_requested=}  ")
+                log(f"RHLOG$173 Log state change SUCCESSFUL {cls_name=!r} {enable_requested=}  ")
             else:
-                log(f"RHLOG$169 Log state change FAILED {cls_name=!r} {enable_requested=}  ")
+                log(f"RHLOG$175 Log state change FAILED {cls_name=!r} {enable_requested=}  ")
 
             #@@@@@@@@@@@@@@@@@@@@ remove below:
             # # find the logger for the class
             # elc = self._get_log_control_instance()
             # logger = elc.regisXXXtry.get(cls_name)
-            # log(f"RHLOG$169 {cls_name} {enable_requested=}  logger={logger}")
+            # log(f"RHLOG$181 {cls_name} {enable_requested=}  logger={logger}")
             # if logger is not None:
                 # logger.enable_log(enable_requested)
-                # logi(f"RHLOG$172 LOGGER {cls_name} IS NOW {enable_requested=}")
+                # logi(f"RHLOG$184 LOGGER {cls_name} IS NOW {enable_requested=}")
 
         # Assemble the response
 
@@ -205,7 +205,7 @@ class RequestHandlerLog(ElemLoggerABC):
         data_dict["classes"] = classes_dict
 
         json_stg = json.dumps(data_dict)
-        log(f"RHLOG$184 body: JSON-string:...")  
+        log(f"RHLOG$208 body: JSON-string:...")  
         log(json_stg)
 
         # Build a reply that provides the log lines
@@ -217,9 +217,9 @@ class RequestHandlerLog(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
-        m = f"RHLOG$196  HTTP REPLY to DATA REQUEST:"
+        m = f"RHLOG$220  HTTP REPLY to DATA REQUEST:"
         LL(m)
-        mlines = reply.get_loggable_lines(prefix="RHLOG$198")
+        mlines = reply.get_loggable_lines(prefix="RHLOG$222")
         for m in mlines:
             LL(m)
 

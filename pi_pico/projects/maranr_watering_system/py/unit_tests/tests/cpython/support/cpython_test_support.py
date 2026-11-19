@@ -38,7 +38,7 @@ class CpythonTestSupport:
 
     @classmethod
     def _nullify_instance(cls):
-        #print(f"CPYS@34  NULLIFY INSTANCE  =======================================")
+        #print(f"CPYS$41  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         CpythonTestSupport._instance = None
         #@@@@@@@@@@CpythonTestSupport.regisXXXtry = {}
@@ -85,7 +85,7 @@ class FileHelper:
 
     @classmethod
     def _nullify_instance(cls):
-        #print(f"CPYS@81  NULLIFY INSTANCE  =======================================")
+        #print(f"CPYS$88  NULLIFY INSTANCE  =======================================")
         # UNIT TEST ONLY
         FileHelper._instance = None
         #@@@@@@@@@@@@2FileHelper.regisXXXtry = {}
@@ -97,15 +97,15 @@ class FileHelper:
 
 
     def read_file(self, the_fpath):
-        print(f"CPYS@93 Read log file '{the_fpath}'")
+        print(f"CPYS$100 Read log file '{the_fpath}'")
         try:
             with open(the_fpath, "r") as inf:
                 data = inf.read()
-                #print(f"CPYS@97 Got input from file '{the_fpath}':  len={len(data)}")
-                #print(f"CPYS@98 Got input from file '{the_fpath}':  data='{data}'")
+                #print(f"CPYS$104 Got input from file '{the_fpath}':  len={len(data)}")
+                #print(f"CPYS$105 Got input from file '{the_fpath}':  data='{data}'")
                 return data
         except Exception as ex:
-            print(f"CPYS@101 Reading file '{the_fpath}'  got ex={ex}")
+            print(f"CPYS$108 Reading file '{the_fpath}'  got ex={ex}")
     
 
     def create_subdir_with_files(self, subdir, fnames, min_file_size=0):
@@ -164,7 +164,7 @@ class FileHelper:
         except FileNotFoundError as ex:
             pass
         except Exception as ex:
-            print(f"CPYS@158 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+            print(f"CPYS$167 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
     
     #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # def remove_subdir_micropython(self, path):
@@ -185,7 +185,7 @@ class FileHelper:
             # os.rmdir(path)
         # except OSError:
             # # Handle cases where the path doesn't exist or permissions fail
-            # print("CPYS@178 Failed to remove:", path)
+            # print("CPYS$188 Failed to remove:", path)
     # 
 
 

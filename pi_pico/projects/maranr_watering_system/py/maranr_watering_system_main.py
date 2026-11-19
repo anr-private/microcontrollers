@@ -30,7 +30,7 @@ from mws.MaranrWateringSystem import MaranrWateringSystem
 def main() -> None:
     
     print("MAIN: MARANR Watering System starting...")
-    print(f"MAIN@39  {MWS_CONFIG=}")
+    print(f"MAIN$33  {MWS_CONFIG=}")
 
     log_control = ElemLogControl.get_instance()
 

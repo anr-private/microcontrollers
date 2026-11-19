@@ -1,4 +1,6 @@
 # show_memory_status.py
+#
+# LINEMARKER=SHOWMEMSTATE
 
 import gc
 import micropython

@@ -74,7 +74,7 @@ def test_get_lines_from_log_file() -> None:
         relative_line_number = 4
         number_of_lines = 2
         lines = elc.get_lines_from_log_file(relative_line_number, number_of_lines)
-        print(f"TELC$76 lines:...")
+        print(f"TELC$77 lines:...")
         print(lines)
     
         assert len(lines) == 2, len(lines)
@@ -113,23 +113,23 @@ def test_registry_access() -> None:
             logger = elc.get_logger_for_class(clsname)
 
             assert logger is not None
-            print(f"TELC$111  {clsname=}  {logger} ")
+            print(f"TELC$116  {clsname=}  {logger} ")
             assert logger.is_enabled() is True
     
         a_logger = elc.get_logger_for_class("ClassA")
-        print(f"TELC$115 class A logger is {a_logger}")
+        print(f"TELC$120 class A logger is {a_logger}")
         b_logger = elc.get_logger_for_class("ClassB")
-        print(f"TELC$117 class B logger is {b_logger}")
+        print(f"TELC$122 class B logger is {b_logger}")
     
         assert a_logger is not None
         assert b_logger is not None
     
         a_logger.enable_log(True)
-        print(f"TELC$123  a_logger is {a_logger}")
+        print(f"TELC$128  a_logger is {a_logger}")
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
             assert logger is not None, clsname
-            print(f"TELC$125  {clsname=}  {logger} ")
+            print(f"TELC$132  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -143,13 +143,13 @@ def test_registry_access() -> None:
                 assert False, f"UNKNOWN LOGGER {logger}"
     
         b_logger.enable_log(True)
-        print(f"TELC$137  b_logger is {b_logger}")
+        print(f"TELC$146  b_logger is {b_logger}")
         for clsname in elc.get_registered_classes():
             logger = elc.get_logger_for_class(clsname)
 
             assert logger is not None, clsname
 
-            print(f"TELC$139  {clsname=}  {logger} ")
+            print(f"TELC$152  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue
@@ -167,7 +167,7 @@ def test_registry_access() -> None:
 
             assert logger is not None, clsname
 
-            print(f"TELC$153  {clsname=}  {logger} ")
+            print(f"TELC$170  {clsname=}  {logger} ")
             if clsname == "ElemLogControl":
                 # skip  - it uses faked logger/logging
                 continue

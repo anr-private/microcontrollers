@@ -84,7 +84,7 @@ class DataBoard(ElemLoggerABC):
 
     def _set_logger(self, logger: Any) -> None:
         global log, logrt, logi
-        #print(f"DBRD$86 _set_logger: {repr(logger)}")
+        #print(f"DBRD$87 _set_logger: {repr(logger)}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
@@ -93,7 +93,7 @@ class DataBoard(ElemLoggerABC):
     def set_ip_and_port(self, ipaddr: str, port:int) -> None:
         self.ipaddr = ipaddr if isinstance(ipaddr, str) else ""
         self.port = port if isinstance(port, int) else 0
-        print(f"DBRD$95  SET IPADDR={self.ipaddr}  PORT={self.port} ")
+        print(f"DBRD$96  SET IPADDR={self.ipaddr}  PORT={self.port} ")
 
     def set_wifi_restarts_counter(self, new_restarts_counter: int) -> None:
         self.wifi_restarts_counter = new_restarts_counter

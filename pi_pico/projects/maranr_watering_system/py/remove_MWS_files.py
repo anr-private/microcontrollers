@@ -1,6 +1,8 @@
 # remove_MWS_files.py
 #
 # Remove the MWS files from the Pico.
+#
+# LINEMARKER=REMOVE_MWS_FILES
 
 import os
 
@@ -45,22 +47,22 @@ def remove_file_by_path(fpath: str):
         try:
             os.remove(fpath)
         except Exception as ex:
-            print(f"*** FAILED TO REMOVE {fpath}")
-            print(f"    ex: {ex}")
+            print(f"REMOVE_MWS_FILES$50 *** FAILED TO REMOVE {fpath}")
+            print(f"REMOVE_MWS_FILES$51     ex: {ex}")
     else:
-        print(f"        dry run - file not removed")
+        print(f"REMOVE_MWS_FILES$53         dry run - file not removed")
 
 def get_files_in_directory(dir_path: str) -> list:
     try:
         return [ff[0] for ff in os.ilistdir(dir_path) if ff[1] == FILE_MARKER]  # type: ignore[attr-defined]
     except Exception as ex:
-        print(f"*** FAILED to find anything in directory {dir_path}")
-        print(f"      ex={repr(ex)}  ex.str={str(ex)}")
+        print(f"REMOVE_MWS_FILES$59 *** FAILED to find anything in directory {dir_path}")
+        print(f"        ex={repr(ex)}  ex.str={str(ex)}")
         return list()
 
 def remove_the_listed_files():
     """ remove the files in the explicit files_to_remove list """
-    print("REMOVE THE FILES in the explicit remove list")
+    print("REMOVE_MWS_FILES$65 REMOVE THE FILES in the explicit remove list")
     for fpath in files_to_remove:
         #prt(f" Remove: {fpath}")
         remove_file_by_path(fpath)
@@ -68,7 +70,7 @@ def remove_the_listed_files():
 def remove_the_files_from_listed_dirs():
     """ Remove the files in the explicit dirs_to_empty_out list. """
 
-    print("REMOVE THE FILES in the explicitly-listed dirs")
+    print("REMOVE_MWS_FILES$73 REMOVE THE FILES in the explicitly-listed dirs")
     for dir_path in dirs_to_empty_out:
         file_names = get_files_in_directory(dir_path)
         prt(f"  dir={dir_path}  files={file_names}")
@@ -78,10 +80,10 @@ def remove_the_files_from_listed_dirs():
             remove_file_by_path(fpath)
 
 def main():
-    print("=== REMOVE THE OLD FILES of the WATERING PROJECT ==================")
+    print("REMOVE_MWS_FILES$83 === REMOVE THE OLD FILES of the WATERING PROJECT ==================")
     remove_the_listed_files()
     remove_the_files_from_listed_dirs()
-    print("=== end of REMOVE THE OLD FILES of the WATERING PROJECT ==================")
+    print("REMOVE_MWS_FILES$86 === end of REMOVE THE OLD FILES of the WATERING PROJECT ==================")
 
 if __name__ == "__main__":
     main()

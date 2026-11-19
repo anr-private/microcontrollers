@@ -1,5 +1,7 @@
 # pico_glue.py
 #
+# LINEMARKER=PICOGLUE
+#
 # Platform glue for shared tests, Pico side. NEVER imported: run_pico_tests.py
 # appends this text AFTER the test file's source, then sends the result with
 # mpremote run. Because it comes after, line numbers in a traceback are the
@@ -82,12 +84,13 @@ def run_all_tests() -> None:
                 globals()[name]()
             except Exception as ex:  # AssertionError too
                 failed.append(name)
-                print("FAILED:", name)
+                print("PICOGLUE$87 FAILED:", name)
                 sys.print_exception(ex)
     finally:
         remove_scratch_path(_SCRATCH_ROOT)
-    print(len(names), "tests,", len(failed), "failed")
-    print("RESULT: " + ("FAILED" if failed else "PASSED"))
+    result_stg = "FAILED" if failed else "PASSED"
+    print(f"PICOGLUE$92 {len(names)} tests.  {len(failed)} failed.")
+    print(f"PICOGLUE$93 RESULT: {result_stg}")
 
 
 run_all_tests()

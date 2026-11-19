@@ -1,5 +1,7 @@
 # main_Hello_World_ANR_fancy.py
 #
+# LINEMARKER=MHWAF
+#
 # ANR version of hello world - fancier version
 #
 # Works with PCF8754T LCD displays  ('non-waveshare')

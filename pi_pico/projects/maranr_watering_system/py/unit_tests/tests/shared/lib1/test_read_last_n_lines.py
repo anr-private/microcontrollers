@@ -1,5 +1,7 @@
 # test_read_last_n_lines.py
 #
+# LINEMARKER=ZRLNL
+#
 # Shared test for lib1/read_last_n_lines.py. It runs
 #   - on the PC under pytest (CPython), and
 #   - on the Pico: run_pico_tests.py appends tests/pico/pico_glue.py to a copy of

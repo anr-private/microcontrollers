@@ -29,7 +29,7 @@ class ElemLogger:
         self.class_name: str = simplified_class_name
         self._log_enabled: bool = logging_enabled_initially
         self._log_control: Any = log_control
-        prt(f"ELOG$23 init {self.class_name=!r} {logging_enabled_initially=}")
+        prt(f"ELOG$32 init {self.class_name=!r} {logging_enabled_initially=}")
 
 
     def is_enabled(self) -> bool:
@@ -43,18 +43,18 @@ class ElemLogger:
 
     def log(self, mesg: str) -> None:
         if self._log_enabled:
-            #print(f"ELOG$37.log '{mesg=}' ")
+            #print(f"ELOG$46.log '{mesg=}' ")
             print(f"LOG: {mesg}")
             self._log_control.log_one_line(mesg)
 
     def logrt(self, mesg: str) -> None:
-        ###print(f"ELOG$42.logrt '{mesg=}' ")
+        ###print(f"ELOG$51.logrt '{mesg=}' ")
         print(f"LOGRT: {mesg}")
         self._log_control.log_one_line(mesg)
         raise RuntimeError(mesg)
 
     def logi(self, mesg: str) -> None:
-        #print(f"ELOG$48.logi '{mesg=}' ")
+        #print(f"ELOG$57.logi '{mesg=}' ")
         print(mesg)
         self._log_control.log_one_line(mesg)
 

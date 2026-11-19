@@ -1,5 +1,7 @@
 # pushbuttons_5btns_uses_asyncio.py
 #
+# LINEMARKER=PB5UA
+#
 # Test program for the 5 pushbuttons on the Maranr Watering System
 # prototype board/system/setup.
 # 
@@ -50,22 +52,22 @@ LONG_CTR = 0
 async def handle_short(btn, btn_name):
     global SHORT_CTR
     SHORT_CTR += 1
-    print(f"@31  SHORT PRESS  btn={btn} {btn_name}")
+    print(f"PB5UA$55  SHORT PRESS  btn={btn} {btn_name}")
     if 1:
-        print(f"@33    WAITing in handle_short() - should not stall the main loop!")
+        print(f"PB5UA$57    WAITing in handle_short() - should not stall the main loop!")
         await asyncio.sleep(3)
-        print(f"@35    DONE-WAITing in handle_short()")
+        print(f"PB5UA$59    DONE-WAITing in handle_short()")
         
 
 async def handle_double(btn, btn_name):
     global DOUBLE_CTR
     DOUBLE_CTR += 1
-    print(f"@18 DOUBLE PRESS  btn={btn} {btn_name}")
+    print(f"PB5UA$65 DOUBLE PRESS  btn={btn} {btn_name}")
 
 async def handle_long(btn, btn_name):
     global LONG_CTR
     LONG_CTR += 1
-    print(f"@21  LONG PRESS  btn={btn} {btn_name}")
+    print(f"PB5UA$70  LONG PRESS  btn={btn} {btn_name}")
 
 
 async def task_1(): # fake task
@@ -74,7 +76,7 @@ async def task_1(): # fake task
     while 1:
         TASK_1_CTR += 1
         if TASK_1_CTR % 500 == 0:
-            print(f"@10 task_1  ctr={TASK_1_CTR}")
+            print(f"PB5UA$79 task_1  ctr={TASK_1_CTR}")
         await asyncio.sleep(0)
 
 
@@ -87,7 +89,7 @@ def init_one_button(btn, btn_name):
 
 
 async def main():
-    print(f"MAIN@24 STARTed  Buttons are:")
+    print(f"PB5UA$92 STARTed  Buttons are:")
     print(f"  UP      {UP_BUTTON_GPIO_PIN}")
     print(f"  LEFT    {LEFT_BUTTON_GPIO_PIN}")
     print(f"  CENTER  {CENTER_BUTTON_GPIO_PIN}")
@@ -107,7 +109,7 @@ async def main():
     if 1:
         # slow down the polling
         Pushbutton.debounce_ms *= 2
-    print(f"@32  Pushbutton.debounce_ms is {Pushbutton.debounce_ms}")
+    print(f"PB5UA$112  Pushbutton.debounce_ms is {Pushbutton.debounce_ms}")
 
     # pb = Pushbutton(btn, suppress=True)
     # pb.release_func(handle_short, (btn,))
@@ -125,14 +127,14 @@ async def main():
     while elapsed < 60:  # Run for one minute
         elapsed += 1
         actual_elapsed = time.time() - start_time
-        print(f"@44                     MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
+        print(f"PB5UA$130                     MAIN: waited {elapsed} secs  ACTUAL delay: {actual_elapsed} secs  short={SHORT_CTR}  double={DOUBLE_CTR}  long={LONG_CTR}")
         await asyncio.sleep(1)
 try:
     asyncio.run(main())
 except KeyboardInterrupt:
-    print("@53    KEYBOARD interrupt")
+    print("PB5UA$135    KEYBOARD interrupt")
 finally:
-    print("@55   <<<  Create a new event loop, as cleanup >>>")
+    print("PB5UA$137   <<<  Create a new event loop, as cleanup >>>")
     asyncio.new_event_loop()
     
 ###

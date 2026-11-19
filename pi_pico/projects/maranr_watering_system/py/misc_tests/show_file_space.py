@@ -1,6 +1,6 @@
 # show_file_space.py
 #
-#
+# LINEMARKER=SHOWFS
 
 import sys
 import os

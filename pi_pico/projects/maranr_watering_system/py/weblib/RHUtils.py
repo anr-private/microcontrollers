@@ -32,12 +32,12 @@ class RHUtils(ElemLoggerABC):
     def guess_file_content_type(file_path):
         # parts is ".../filename", "html" etc
         parts = file_path.rsplit(".", 1)
-        #log(f"RHUTL$34 _guess_file_content_type {parts=} {file_path=} ")
+        #log(f"RHUTL$35 _guess_file_content_type {parts=} {file_path=} ")
         if len(parts) < 2:
             # no extension found
             return None
         ext = parts[1].lower()
-        #log(f"RHUTL$39 _guess_file_content_type {ext=} {file_path=} ")
+        #log(f"RHUTL$40 _guess_file_content_type {ext=} {file_path=} ")
         if ext in ["html", "htm", "htmlp"]:
             #@@@@ maybe use "text/html; charset=UTF-8"?
             t = "text/html"
@@ -56,9 +56,9 @@ class RHUtils(ElemLoggerABC):
         elif ext in ["json",]:
             t = "application/json"
         else:
-            log(r"RHUTL$58 **ERROR** Unknow Content-Type for file '{file_path}'")
+            log(r"RHUTL$59 **ERROR** Unknow Content-Type for file '{file_path}'")
             t = None
-        log(f"RHUTL$60 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
+        log(f"RHUTL$61 _guess_file_content_type {ext=} {file_path=} guessed-type='{t}'")
         return t
 
 

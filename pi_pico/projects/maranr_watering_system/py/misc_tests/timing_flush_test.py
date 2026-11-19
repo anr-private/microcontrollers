@@ -1,4 +1,6 @@
 # timing_flush_test.py
+#
+# LINEMARKER=TIMING_FLUSH_TEST
 
 import os
 import time
@@ -36,7 +38,7 @@ def remove_the_fill() -> None:
     os.rmdir(FILL_DIR)
 
 def time_with_full_filesystem():
-    print("TIME WITH FULL FILE SYSTEM")
+    print("TIMING_FLUSH_TEST$41 TIME WITH FULL FILE SYSTEM")
     try:
         print("fill files created:", fill_the_filesystem(), " free blocks:", count_free_blocks())
         print("no flush:       ", time_the_writes(False, 0), "ms for", LINE_COUNT, "lines")

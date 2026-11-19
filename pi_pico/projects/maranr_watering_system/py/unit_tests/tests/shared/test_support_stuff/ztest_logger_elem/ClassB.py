@@ -1,4 +1,6 @@
 # ClassB.py
+#
+# LINEMARKER=ClassB
 
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 
@@ -24,14 +26,14 @@ class ClassB(ElemLoggerABC):
 
     def _set_logger(self, logger):
         global log, logrt, logi
-        prt(f"ClassB@24 _set_logger  logger is {logger}")
+        prt(f"ClassB$27 _set_logger  logger is {logger}")
         log = logger.log
         logrt = logger.logrt
         logi = logger.logi
 
 
     def to_log(self, m):
-        print(f"@@@@@ ClassB@29  log is {log}")
+        print(f"@@@@@ ClassB$34  log is {log}")
         log(m)
 
     def to_logrt(self, m):
@@ -42,9 +44,9 @@ class ClassB(ElemLoggerABC):
 
 
     def try_all_loggers(self):
-        log(f"LOG-MESG-ClassB-{self.num}-test@15")
-        logrt(f"LOGRT-MESG-ClassB-{self.num}-test@16")
-        logi(f"LOGI-MESG-ClassB-{self.num}-test@17")
+        log(f"LOG-MESG-ClassB-{self.num}-test$45")
+        logrt(f"LOGRT-MESG-ClassB-{self.num}-test$46")
+        logi(f"LOGI-MESG-ClassB-{self.num}-test$47")
 
 
     def __str__(self):

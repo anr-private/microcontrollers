@@ -75,7 +75,7 @@ def _validate_memory_status_string(status_string: str) -> bool:
     try:
         _ = int(parts[1])
     except (TypeError, ValueError) as ex:
-        print(f"TGU@77  Expected int after '=': {mem_alloc_part}")
+        print(f"TGU$78  Expected int after '=': {mem_alloc_part}")
         return False
 
     # Parts: 'gc.mem_alloc()' and '12345'
@@ -85,7 +85,7 @@ def _validate_memory_status_string(status_string: str) -> bool:
     try:
         _ = int(parts[1])
     except (TypeError, ValueError) as ex:
-        print(f"TGU@87  Expected int after '=': {mem_free_part}")
+        print(f"TGU$88  Expected int after '=': {mem_free_part}")
         return False
 
     return True

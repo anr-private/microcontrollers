@@ -14,11 +14,11 @@ try:
     import gc
     _ = gc.mem_free
 except Exception as ex:
-    print(f"GCUTL$11 utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
+    print(f"GCUTL$17 utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
     del gc   
     #                       # 'type ignore' is for mypy                         
     import gc_FAKE as gc    # type: ignore
-    print(f"GCUTL$15 utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(f"GCUTL$21 utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 def gc_collect() -> None:
@@ -36,7 +36,7 @@ def get_memory_status_string(do_garbage_collect:bool=False) -> str:
 
 
 def main() -> None:
-    print(f"GCUTL$33 MEMORY: {get_memory_status_string()} ")
+    print(f"GCUTL$39 MEMORY: {get_memory_status_string()} ")
 
 if __name__ == "__main__":
     main()

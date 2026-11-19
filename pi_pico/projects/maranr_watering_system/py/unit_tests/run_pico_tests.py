@@ -1,5 +1,7 @@
 # run_pico_tests.py
 #
+# LINEMARKER="RUN_PICO_TESTS"
+#
 # PC-side driver (CPython) for the tests that run on the Pico. Run it from the repo root:
 #     python3 run_pico_tests.py [what ...]      (--help shows examples)
 # Each "what" is a test file, a directory, or a package name (like lib1, meaning
@@ -99,7 +101,7 @@ examples (run from the repo root):
 
 def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run the Pico tests on the board with `mpremote run`; "
+        description="RUN_PICO_TESTS$104 Run the Pico tests on the board with `mpremote run`; "
                     "print one result line per test file.",
         epilog=USAGE_EXAMPLES,
         formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -113,7 +115,7 @@ def main() -> int:
     bad = 0
     test_files = find_test_files(parse_arguments().what)
     if not test_files:
-        print("NO TEST FILES FOUND")
+        print("RUN_PICO_TESTS$118 NO TEST FILES FOUND")
         return 1
     for test_file in test_files:
         output = run_script(assemble_script(test_file) if is_shared_test(test_file) else test_file)
@@ -122,7 +124,7 @@ def main() -> int:
         if "PASSED" not in result:
             bad += 1
             print(output)
-    print("ALL PASSED" if bad == 0 else "%d FILE(S) DID NOT PASS" % bad)
+    print("RUN_PICO_TESTS$127 ALL PASSED" if bad == 0 else "%d FILE(S) DID NOT PASS" % bad)
     return 1 if bad else 0
 
 

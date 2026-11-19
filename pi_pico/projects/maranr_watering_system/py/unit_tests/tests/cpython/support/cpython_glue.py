@@ -31,10 +31,10 @@ _saved_count = 0
 
 def _remove_scratch_root() -> None:
     if SAVE_THE_SCRATCH_FILES:
-        print(f"cpython_glue@34: ++++   SAVED scratch files in '{_ROOT}' ++++++++++++++++++++++++++++++++")
+        print(f"cpython_glue$34: ++++   SAVED scratch files in '{_ROOT}' ++++++++++++++++++++++++++++++++")
         return
     shutil.rmtree(_ROOT, ignore_errors=True)
-    print(f"cpython_glue@37 REMOVE SCRATCH ROOT: {_ROOT}")
+    print(f"cpython_glue$37 REMOVE SCRATCH ROOT: {_ROOT}")
 
 atexit.register(_remove_scratch_root)
 
@@ -60,10 +60,10 @@ def remove_scratch_path(path: str) -> None:
             os.rename(path, f"{path}.saved_{_saved_count}")
         elif os.path.isdir(path):
             shutil.rmtree(path)
-            print(f"cpython_glue@64 REMOVE SCRATCH PATH (tree): {path}")
+            print(f"cpython_glue$63 REMOVE SCRATCH PATH (tree): {path}")
         else:
             os.remove(path)
-            print(f"cpython_glue@36 REMOVE SCRATCH Path: {path}")
+            print(f"cpython_glue$66 REMOVE SCRATCH Path: {path}")
     except OSError as ex:
         print(f"cpython_glue.remove_scratch_path **Error** {path} : {ex.strerror}")
 

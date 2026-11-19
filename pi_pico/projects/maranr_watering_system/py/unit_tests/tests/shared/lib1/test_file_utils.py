@@ -134,14 +134,14 @@ def test_list_dir_contents() -> None:
 
 def test_list_missing_dir_raises() -> None:
     """ list_dir_contents() on a directory that does not exist raises. """
-    print("TFUT@136: Next: listing a directory that does not exist, on purpose.")
-    print("TFUT@137: file_utils should print ONE error line and raise. That is expected.")
+    print("TFUT$137: Next: listing a directory that does not exist, on purpose.")
+    print("TFUT$138: file_utils should print ONE error line and raise. That is expected.")
     raised: Exception | None = None
     try:
         list_dir_contents(get_scratch_path("does_not_exist"))
     except Exception as ex:
         raised = ex
-    print("TFUT@143: (end of the expected error output)")
+    print("TFUT$144: (end of the expected error output)")
     assert raised is not None, "no exception was raised"
 
 
@@ -169,10 +169,10 @@ def test_remove_file() -> None:
         removed = remove_file(path)
         assert removed is True, removed
         assert not does_path_exist(path), "file is still there"
-        print("TFUT@171: Next: removing a file that does not exist, on purpose.")
-        print("TFUT@172: file_utils should print TWO error lines and return False. That is expected.")
+        print("TFUT$172: Next: removing a file that does not exist, on purpose.")
+        print("TFUT$173: file_utils should print TWO error lines and return False. That is expected.")
         removed_again = remove_file(path)
-        print("TFUT@174: (end of the expected error output)")
+        print("TFUT$175: (end of the expected error output)")
         assert removed_again is False, removed_again
     finally:
         remove_subdir(d)
@@ -197,14 +197,14 @@ def test_remove_subdir_removes_tree() -> None:
 def test_remove_subdir_missing_path_does_not_raise() -> None:
     """ remove_subdir() of a path that is not there does not raise
     (on the Pico it prints ONE error line then). """
-    print("TFUT@199: Next: removing a directory that does not exist, on purpose.")
-    print("TFUT@200: On the Pico file_utils prints ONE error line (none on CPython). That is expected.")
+    print("TFUT$200: Next: removing a directory that does not exist, on purpose.")
+    print("TFUT$201: On the Pico file_utils prints ONE error line (none on CPython). That is expected.")
     raised: Exception | None = None
     try:
         remove_subdir(get_scratch_path("does_not_exist"))
     except Exception as ex:
         raised = ex
-    print("TFUT@206: (end of the expected error output)")
+    print("TFUT$207: (end of the expected error output)")
     assert raised is None, raised
 
 """ Claude's comments: what this tests:
