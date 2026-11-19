@@ -3,6 +3,7 @@
 # LINEMARKER=FUTL
 
 import os
+import errno
 
 # no 'stat' in micropython
 try: import stat
@@ -48,6 +49,7 @@ def filter_dir_contents(dir_path:str, file_filter:Any) -> \
     #  result-value is the result of the file_filter() function
     #    called like this:
     #      file_filter(fname, ftype, fsize)
+    #    Usually an int (file extension DDD from mws_log.DDD?)
     # If the file_filter returns None, the fname (and its info)
     # is dropped and not included in the result collection.
     # The result-value allows the file_filter() function to 
@@ -59,13 +61,15 @@ def filter_dir_contents(dir_path:str, file_filter:Any) -> \
     # The file_filter MUST RETURN None to exclude the item.
     #
     # Details: the file_filter is a function:
-    #   file_filter: Callable[ [str, int], bool ]
+    #   file_filter: Callable[ [ftype:str, ftype:str, int:fsize], Any ]
     #   file_filter(fname:str, fsize:int) -> bool
     # Sample call made by this filter_dir_contents function:
-    #    selected = file_filter("some-filename', 123) 
-    # It is asking: do you want this file? Its name is 'some-filename'
-    # and its size is 123 bytes. Return True if you want it,
-    # False to exclude from the list returned by filter_dir_contents.
+    #    selected = file_filter("some-filename', 'f', 123) 
+    # It is asking: do you want this file? Its name is 'some-filename',
+    # it's a file, and its size is 123 bytes.
+    # Returns None to say 'drop this item' else returns a value:Any
+    # that is added to the result tuple for the item.
+    # The list of such tuples is returned by filter_dir_contents().
 
     dir_contents = list_dir_contents(dir_path)
 
@@ -136,7 +140,7 @@ def list_dir_python(dir_path: str) -> list[ tuple[str, str, int]]:
                 elif stat.S_ISCHR(item_mode):
                     item_type = 'C'
                 else:
-                    item_type = "unknown"
+                    item_type = "?"
                 results.append( (item_name, item_type, file_size) )
     except Exception as ex:
         print(f"FUTL$140 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
@@ -187,7 +191,7 @@ def remove_subdir_py3(path: str) -> None:
     except FileNotFoundError as ex:
         pass
     except Exception as ex:
-        print(f"FUTL$187 CANNOT REMOVE LOG SUBDIR '{path}'  ex={ex}  {str(ex)}")
+        print(f"FUTL$187 CANNOT REMOVE SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
 def remove_subdir_micropython(path: str) -> None:
     # Micropython version
@@ -195,19 +199,22 @@ def remove_subdir_micropython(path: str) -> None:
     try:
         # Get list of items in the directory
         for entry in os.ilistdir(path):    # type: ignore[attr-defined]
-            name, type = entry[0], entry[1]
+            name, item_type = entry[0], entry[1]
             full_path = f"{path}/{name}"
             
-            if type == 0x8000: # It's a file
+            if item_type == 0x8000: # It's a file
                 os.remove(full_path)
-            elif type == 0x4000: # It's a directory
+            elif item_type == 0x4000: # It's a directory
                 remove_subdir_micropython(full_path) # Recurse into subdirectory
         
         # Finally, remove the now-empty directory
         os.rmdir(path)
-    except OSError:
-        # Handle cases where the path doesn't exist or permissions fail
-        print("FUTL$207 Failed to remove:", path)
+    except OSError as ex:
+        if ex.errno == errno.ENOENT:  # errno.ENOENT is 2
+            pass # file not found
+        else:
+            # Handle cases where the path doesn't exist or permissions fail
+            print("FUTL$207 Failed to remove:", path)
 
 def remove_file(fpath: str) -> bool:
     #print(f"FUTL$210 Remove file '{fpath}'")

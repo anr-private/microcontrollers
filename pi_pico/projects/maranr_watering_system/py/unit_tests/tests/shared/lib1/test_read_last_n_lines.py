@@ -30,7 +30,7 @@ from lib1.read_last_n_lines import read_last_n_lines, Z__set_chunk_size, Z__set_
 
 # CPython: the real module tests/cpython/cpython_glue.py.
 # Pico: there is no such module; run_pico_tests.py appends get_scratch_path().
-try: from cpython_glue import get_scratch_path
+try: from cpython_glue import get_scratch_path, remove_scratch_path
 except ImportError: pass
 
 # Only the NUMBERS differ by platform: every case writes a file, and the Pico's flash
@@ -181,7 +181,7 @@ def test_random_cases() -> None:
     assert not failures, (len(failures), failures[:5])
 
 
-def test_invalid_utf8_is_replaced() -> None:
+def test_invalid_utf8_is_replaced_1() -> None:
     old_chunk = Z__set_chunk_size(CHUNK_SIZES[0])
     try:
         for chunk in (1, 3, 128):
@@ -197,6 +197,19 @@ def test_invalid_utf8_is_replaced() -> None:
     finally:
         Z__set_chunk_size(old_chunk)
         remove_scratch_file()
+
+
+def test_invalid_utf8_is_replaced_2() -> None:
+    # see if 'bad' utf-8 file is handled
+    fpath = get_scratch_path("bad_utf8.txt")
+    remove_scratch_path(fpath)
+    try:
+        with open(fpath, "wb") as outf:
+            outf.write(b"ok\n\xff\n")
+        got_lines = read_last_n_lines(fpath, 2, 2)
+        assert got_lines == ["ok", "\ufffd"], got_lines
+    finally:
+        remove_scratch_path(fpath)
 
 
 def test_set_chunk_size() -> None:
@@ -231,5 +244,6 @@ def test_missing_file_prints_one_message_and_returns_empty() -> None:
     assert got == [], got
     assert len(capture.captured) == 1, capture.captured
     assert "errno=2" in capture.captured[0], capture.captured
+
 
 ###
