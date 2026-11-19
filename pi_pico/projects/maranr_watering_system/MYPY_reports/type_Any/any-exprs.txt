@@ -4,7 +4,7 @@
 displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                       lib1.details      0       2    100.00%
             lib1.file_system_utils      0      92    100.00%
-                   lib1.file_utils     39     327     88.07%
+                   lib1.file_utils     39     332     88.25%
                      lib1.gc_utils      1      50     98.00%
             lib1.read_last_n_lines      0     148    100.00%
                         lib1.utils     15     217     93.09%
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
           weblib.RequestHandlerLog      0       3    100.00%
             weblib.TemplateGrinder      3      43     93.02%
 ------------------------------------------------------------
-                             Total    318    4312     92.63%
+                             Total    318    4317     92.63%
