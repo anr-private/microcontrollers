@@ -10,8 +10,8 @@
 # The filtering params are (still) hard-coded in the apply_action_to_files script
 
 echo \
-"apply_action_to_files $* -n -c redo_line_markers -g '*.py' py/ "
- apply_action_to_files $* -n -c redo_line_markers -g '*.py' py/ 
+"apply_action_to_files $*  -c redo_line_markers -g '*.py' py/ "
+ apply_action_to_files $*  -c redo_line_markers -g '*.py' py/ 
 
 ###
 
