@@ -6,10 +6,12 @@
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from lib1.utils import show_cc
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+try: from typing import Callable, Any
+except ImportError: pass
+
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 
 class HttpReply(ElemLoggerABC):
