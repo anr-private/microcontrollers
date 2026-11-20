@@ -31,7 +31,7 @@ def read_a_file_as_string(fpath: str) -> str|None:
             data = inf.read()
             return data
     except Exception as ex:
-        print(f"FHFT$32 read_a_file_as_string FAILED: '{fpath}' ex={ex}")
+        print(f"FHFT$34 read_a_file_as_string FAILED: '{fpath}' ex={ex}")
     return None
 
 
@@ -46,7 +46,7 @@ def read_a_file_as_lines(fpath: str) -> list[str] | None:
             data = inf.read().splitlines()
             return data
     except Exception as ex:
-        print(f"FHFT$47 read_a_file_as_string FAILED: '{fpath}' ex={ex}")
+        print(f"FHFT$49 read_a_file_as_string FAILED: '{fpath}' ex={ex}")
     return None
 
 
@@ -60,7 +60,7 @@ def write_these_lines_to_file(lines: list[str], fpath: str) -> None:
                 outf.write(line)
                 outf.write("\n")
     except Exception as ex:
-        print(f"FHFT$61 write_these_lines_to_file FAILED: '{fpath}' ex={ex}")
+        print(f"FHFT$63 write_these_lines_to_file FAILED: '{fpath}' ex={ex}")
     return None
 
 
