@@ -26,7 +26,7 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                 sensors.MwsSensors      3      25     88.00%
                    weblib.HdrAccum      3       4     25.00%
                  weblib.HttpParser      4      30     86.67%
-                  weblib.HttpReply      0       3    100.00%
+                  weblib.HttpReply      3       4     25.00%
                weblib.MwsWebServer     16      62     74.19%
                  weblib.ParsedHttp      0       3    100.00%
                     weblib.RHUtils      3       4     25.00%
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
           weblib.RequestHandlerLog      3       4     25.00%
             weblib.TemplateGrinder      3      43     93.02%
 ------------------------------------------------------------
-                             Total    375    4688     92.00%
+                             Total    378    4689     91.94%

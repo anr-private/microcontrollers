@@ -26,7 +26,7 @@ displays.lib_lcd1602_2004_with_i2c             0          1            0        
                 sensors.MwsSensors             1          3            0                  0       0              0                         0
                    weblib.HdrAccum             0          3            0                  0       0              0                         0
                  weblib.HttpParser             1          3            0                  0       0              0                         0
-                  weblib.HttpReply             0          0            0                  0       0              0                         0
+                  weblib.HttpReply             0          3            0                  0       0              0                         0
                weblib.MwsWebServer             7         16            0                  0       0              0                         0
                  weblib.ParsedHttp             4          0            0                  0       0              0                         0
                     weblib.RHUtils             0          3            0                  0       0              0                         0
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c             0          1            0        
           weblib.RequestHandlerLog             0          3            0                  0       0              0                         0
             weblib.TemplateGrinder             1         63            0                  2       0              0                         0
 --------------------------------------------------------------------------------------------------------------------------------------------
-                             Total           108        398           18                308      33              0                         0
+                             Total           108        401           18                308      33              0                         0
