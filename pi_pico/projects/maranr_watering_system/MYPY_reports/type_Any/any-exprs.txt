@@ -11,12 +11,12 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                     lib2.DataBoard     19     408     95.34%
                  lib2.FileObtainer     49     449     89.09%
                       lib2.MwsWifi     33     215     84.65%
-                      lib2.TimeMgr     10      39     74.36%
+                      lib2.TimeMgr     13      40     67.50%
         logger_elem.ElemLogControl      5     372     98.66%
       logger_elem.ElemLogFileTable      4    1199     99.67%
             logger_elem.ElemLogger     12     114     89.47%
          logger_elem.ElemLoggerABC      0      89    100.00%
-       maranr_watering_system_main      3      92     96.74%
+       maranr_watering_system_main      9      98     90.82%
           mws.MaranrWateringSystem     84     260     67.69%
                         primitives      0       6    100.00%
                primitives.delay_ms      0       5    100.00%
@@ -24,16 +24,16 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                   primitives.queue      5       7     28.57%
                 sensors.MwsButtons      3       9     66.67%
                 sensors.MwsSensors      3      25     88.00%
-                   weblib.HdrAccum      0       3    100.00%
-                 weblib.HttpParser      1      29     96.55%
+                   weblib.HdrAccum      3       4     25.00%
+                 weblib.HttpParser      4      30     86.67%
                   weblib.HttpReply      0       3    100.00%
                weblib.MwsWebServer     16      58     72.41%
                  weblib.ParsedHttp      0       3    100.00%
                     weblib.RHUtils      3       4     25.00%
                weblib.ReplyBuilder      3      10     70.00%
              weblib.RequestHandler      3       4     25.00%
-         weblib.RequestHandlerData      0       3    100.00%
-          weblib.RequestHandlerLog      0       3    100.00%
+         weblib.RequestHandlerData      3       4     25.00%
+          weblib.RequestHandlerLog      3       4     25.00%
             weblib.TemplateGrinder      3      43     93.02%
 ------------------------------------------------------------
-                             Total    318    4320     92.64%
+                             Total    339    4331     92.17%

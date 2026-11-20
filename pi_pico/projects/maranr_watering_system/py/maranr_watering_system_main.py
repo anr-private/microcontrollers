@@ -41,12 +41,12 @@ def main() -> None:
     # DataBoard is created first - it contains refs to all the other
     # major objects.
     databoard: DataBoard = DataBoard.get_instance()
-    databoard.time_mgr:    TimeMgr = TimeMgr.get_instance()
-    databoard.displays:    MwsDisplays = MwsDisplays.get_instance()
-    databoard.buttons:     MwsButtons = MwsButtons.get_instance()
-    databoard.sensors:     MwsSensors = MwsSensors.get_instance()
-    databoard.wifi:        MwsWifi = MwsWifi.get_instance()
-    databoard.web_server:  MwsWebServer = MwsWebServer.get_instance()
+    databoard.time_mgr   = TimeMgr.get_instance()
+    databoard.displays   = MwsDisplays.get_instance()
+    databoard.buttons    = MwsButtons.get_instance()
+    databoard.sensors    = MwsSensors.get_instance()
+    databoard.wifi       = MwsWifi.get_instance()
+    databoard.web_server = MwsWebServer.get_instance()
 
     log_control.log_and_print_one_line("===  MARANR WATERING SYSTEM  -- MWS -- BEGIN EXECUTION  =======================")
 

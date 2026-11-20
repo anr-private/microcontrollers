@@ -22,15 +22,17 @@ from .ReplyBuilder import ReplyBuilder
 from .TemplateGrinder import TemplateGrinder
 from .RHUtils import RHUtils
 
+try: from typing import Callable, Any
+except ImportError: pass
+
 # Content-Type values
 # application/x-www-form-urlencoded  - posting a FORM(?)
 # application/json  - posting JSON data
 # multipart/form-data; boundary=--------------------------833994107218074559113347
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 class RequestHandlerData(ElemLoggerABC):
     def __init__(self):
@@ -49,12 +51,10 @@ class RequestHandlerData(ElemLoggerABC):
 
 
     def handle_data_request(self, parsed_http):
-        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        LL=log
 
         params = parsed_http.url_query_parameters
 
-        LL(f"RHDATA$57  DATA REQ  params={params}")
+        log(f"RHDATA$57  DATA REQ  params={params}")
 
         #     '{"age": 30, "hobbies": ["reading", "gaming", "hiking"], "name": "Alice", "city": "New York", "is_active": true}'
         ###json_stg = f'{"age": 1, "name": "Bob", "datetime": {TimeMgr.get_formatted_date_time_string()} }'
@@ -96,18 +96,16 @@ class RequestHandlerData(ElemLoggerABC):
         reply = rb.build_textual_file_reply(content_type, json_stg)
 
         m = f"RHDATA$98  HTTP REPLY to DATA REQUEST:"
-        LL(m)
+        log(m)
         mlines = reply.get_loggable_lines(prefix="RHDATA$100")
         for m in mlines:
-            LL(m)
+            log(m)
 
         return reply
 
             
     def handle_echo_request(self, parsed_http):
-        #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        LL=log
-        log(f"RHDATA$110  _handle_echo_request  ph={parsed_http}")
+        log(f"RHDATA$108  _handle_echo_request  ph={parsed_http}")
 
         params = parsed_http.url_query_parameters
 
@@ -149,10 +147,10 @@ class RequestHandlerData(ElemLoggerABC):
         # content type: use 
         reply = rb.build_textual_file_reply(content_type, body_string)
 
-        m = f"RHDATA$152 HTTP REPLY to ECHO request "
-        LL(m)
-        m = f"RHDATA$154  {reply.long_string()}"
-        LL(m)
+        m = f"RHDATA$150 HTTP REPLY to ECHO request "
+        log(m)
+        m = f"RHDATA$152  {reply.long_string()}"
+        log(m)
         return reply
 
 

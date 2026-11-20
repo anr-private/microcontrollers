@@ -9,11 +9,12 @@ from lib1.utils import string_to_int
 
 from .ParsedHttp import ParsedHttp, METHOD_NAMES
 
+try: from typing import Callable, Any
+except ImportError: pass
 
-# Logging functions; provided by our parent class using set_log_functions()
-log = None
-logrt = None
-logi = None
+log:   Any = None
+logrt: Any = None
+logi:  Any = None
 
 
 class HttpParser(ElemLoggerABC):
