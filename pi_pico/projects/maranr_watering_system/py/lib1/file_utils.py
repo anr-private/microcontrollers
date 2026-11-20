@@ -35,7 +35,6 @@ except ImportError:
 #logi:  Any = None
 
 
-### TODO update the annotation
 def filter_dir_contents(dir_path:str, file_filter:Any) -> \
                                         list[tuple[str, str, int, Any]]:
     # Filter the filenames in a directory.
@@ -73,22 +72,22 @@ def filter_dir_contents(dir_path:str, file_filter:Any) -> \
 
     dir_contents = list_dir_contents(dir_path)
 
-    #print(f"FUTL$76 dir_contents={dir_contents}")
+    #print(f"FUTL$75 dir_contents={dir_contents}")
 
     selected_items = []
 
     for item in dir_contents:
         (fname, ftype, fsize) = item
-        #print(f"FUTL$82  {fname=}  {ftype=}  {fsize=} ")
+        #print(f"FUTL$81  {fname=}  {ftype=}  {fsize=} ")
 
         ok: Any = file_filter(fname, ftype, fsize)
 
-        #print(f"FUTL$86 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
+        #print(f"FUTL$85 filter_dir_contents {ok=}  {fname=}  {ftype=}  {fsize=} ")
 
         if ok is not None:
             selected_items.append( (fname, ftype, fsize, ok) )
 
-    #print(f"FUTL$91  {selected_items=}  {dir_path=} ")
+    #print(f"FUTL$90  {selected_items=}  {dir_path=} ")
     return  selected_items
 
 
@@ -102,17 +101,6 @@ def list_dir_contents(dir_path: str) -> list[ tuple[str, str, int]]:
     if use_os_ilistdir: return list_dir_micropython(dir_path)
     return list_dir_python(dir_path)
 
-# def list_dir_python(dir_path): # 'real' python
-    # results = []
-    # try:
-        # for fname in os.listdir(dir_path):
-            # fpath = dir_path + "/" + fname
-            # #print(f"FUTL$110 {fname=}  {fpath=}")
-            # fsize = os.path.getsize(fpath)
-            # results.append ( (fname, "f", fsize) )
-    # except FileNotFoundError as ex:
-        # print(f"FUTL$114 Cannot find dir='{dir_path}'")
-    # return results
 
 def list_dir_python(dir_path: str) -> list[ tuple[str, str, int]]:
     """ CPython """
@@ -143,7 +131,7 @@ def list_dir_python(dir_path: str) -> list[ tuple[str, str, int]]:
                     item_type = "?"
                 results.append( (item_name, item_type, file_size) )
     except Exception as ex:
-        print(f"FUTL$146 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
+        print(f"FUTL$134 FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}")
         raise RuntimeError(f"list_dir_python FAILED. EX={ex} {str(ex)}")
     return results
 
@@ -162,17 +150,17 @@ def list_dir_micropython(dir_path: str) -> list[ tuple[str, str, int]]:
     
             if entry_type == 0x8000:
                 ftype = "f"
-                ###print(f"FUTL$165 File: {fname}")
+                ###print(f"FUTL$153 File: {fname}")
             elif entry_type == 0x4000:
                 ftype = "d"
-                ###print(f"FUTL$168 Directory: {fname}")
+                ###print(f"FUTL$156 Directory: {fname}")
             else:
                 ftype = "?"
     
             results.append ( (fname, ftype, fsize) )
     except Exception as ex:
         m = f"list_dir_micropython FAILED TO LISTDIR '{dir_path}'  ex={ex} {str(ex)}"
-        print(f"FUTL$175 {m}")
+        print(f"FUTL$163 {m}")
         raise RuntimeError(m)
 
     return results
@@ -191,7 +179,7 @@ def remove_subdir_py3(path: str) -> None:
     except FileNotFoundError as ex:
         pass
     except Exception as ex:
-        print(f"FUTL$194 CANNOT REMOVE SUBDIR '{path}'  ex={ex}  {str(ex)}")
+        print(f"FUTL$182 CANNOT REMOVE SUBDIR '{path}'  ex={ex}  {str(ex)}")
 
 def remove_subdir_micropython(path: str) -> None:
     # Micropython version
@@ -214,20 +202,20 @@ def remove_subdir_micropython(path: str) -> None:
             pass # file not found
         else:
             # Handle cases where the path doesn't exist or permissions fail
-            print("FUTL$217 Failed to remove:", path)
+            print("FUTL$205 Failed to remove:", path)
 
 def remove_file(fpath: str) -> bool:
-    #print(f"FUTL$220 Remove file '{fpath}'")
+    #print(f"FUTL$208 Remove file '{fpath}'")
     try:
         os.remove(fpath)
         return True
     except OSError as ex:
-        m = f"FUTL$225 remove_file '{fpath}' FAILED. OSError={ex} {str(ex)}"
+        m = f"FUTL$213 remove_file '{fpath}' FAILED. OSError={ex} {str(ex)}"
         print(m)
-        m = f"FUTL$227 remove_file '{fpath}' FAILED. errno={ex.errno}"
+        m = f"FUTL$215 remove_file '{fpath}' FAILED. errno={ex.errno}"
         print(m)
     except Exception as ex:
-        m = f"FUTL$230 remove_file '{fpath}' FAILED. EX={ex} {str(ex)}"
+        m = f"FUTL$218 remove_file '{fpath}' FAILED. EX={ex} {str(ex)}"
         print(m)
     return False
 

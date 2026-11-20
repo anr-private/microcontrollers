@@ -14,11 +14,11 @@ try:
     import gc
     _ = gc.mem_free
 except Exception as ex:
-    print(f"GCUTL$17 utils.py  CANNOT IMPORT MICROPYTHON VERSION of 'gc' !!!!!")
+    print(f"GCUTL$17 CANNOT IMPORT MICROPYTHON VERSION of 'gc' {ex=}")
     del gc   
     #                       # 'type ignore' is for mypy                         
     import gc_FAKE as gc    # type: ignore
-    print(f"GCUTL$21 utils.py  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(f"GCUTL$21  USING FAKE VERSION OF 'gc'  !!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
 def gc_collect() -> None:

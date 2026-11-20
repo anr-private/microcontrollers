@@ -39,16 +39,10 @@ def calculate_flash_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
 
 
 def get_flash_space() -> tuple[int,int]:
-
-    # if  GET_FLASH_SPACE is not None:
-        # print(f"FSUT$44 Using FAKE for get_flash_space(): {GET_FLASH_SPACE} ")
-        # return GET_FLASH_SPACE()
-
     # Get filesystem statistics for the root directory ("/")
     # This works on both Pico and CPython/linux, mac.
     # (Does not work on Windoze but so what).
-    # On uPy it is os.statvfs("/"); on CPy it uses faker CpythonTestSupport
-    print(f"FSUT$51 Using 'real' filespace info")
+    #print(f"FSUT$45 Using 'real' filespace info")
     # os.statvfs(...) returns a tuple:
     #  [0] f_bsize: File system block size Linux: 4096  Pico: 4096 (or 512)
     #  [1] f_frsize: Fragment size  Usu same as f_bsize
@@ -61,6 +55,7 @@ def get_flash_space() -> tuple[int,int]:
     #  [8] f_flag: Mount flags
     #  [9] f_namemax: Maximum filename length
     # See test_file_system_utils.py for more details.
+
     statvfs_values = os.statvfs("/")
 
     total_space, free_space = calculate_flash_space(statvfs_values)
@@ -82,10 +77,10 @@ def convert_fs_space_to_string(fs_space: int) -> str:
     return f"{bytes_stg} bytes, {kb_stg} KB, {mb_stg} MB"
 
 def get_fs_space_string(sep:str="") -> str:
-    ts, fs = get_flash_space()
-    tss = convert_fs_space_to_string(ts)
-    fss = convert_fs_space_to_string(fs)
-    return f"TOTAL SPACE {tss}   {sep}FREE SPACE {fss}"
+    total_space, free_space = get_flash_space()
+    total_space_stg = convert_fs_space_to_string(total_space)
+    free_space_stg = convert_fs_space_to_string(free_space)
+    return f"TOTAL SPACE {total_space_stg}   {sep}FREE SPACE {free_space_stg}"
 
 
 ###

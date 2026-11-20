@@ -1,9 +1,9 @@
 # utils.py
+#
+# LINEMARKER=LIB1_UTILS
 
 import os
-import platform
 import sys
-import time
 
 try: from typing import Any
 except ImportError: pass
@@ -21,8 +21,6 @@ MWS_CONFIG = {
 
     "lcd1602_sda_pin": 2,
     "lcd1602_scl_pin": 3,
-
-    "log_file_path":  "mws_log.txt",
     }
 #TODO ADD table for daylight savings time changes
 
@@ -39,6 +37,7 @@ def seconds_to_hhmmss(total_secs: int) -> tuple[int, int, int]:
     # converts secs to hours,mins,seconds
     # For use with counters that count seconds,
     # NOT FOR USE with date-time expressed as seconds
+    ### WAS:
     ###minutes = total_secs // 60
     ###s = total_secs - minutes*60
     ###hours = minutes // 60
@@ -81,11 +80,11 @@ def string_to_int(s: str) -> int|None:
     try:
         return int(s)
     except (ValueError,TypeError) as ex:
-        print(f"UTILS$84 string_to_int  NOT AN INT: '{s}'  ex={ex}")
+        print(f"LIB1_UTILS$83 string_to_int  NOT AN INT: '{s}'  ex={ex}")
         return None
     #@@@ TODO remove the below
     #except Exception  as ex:
-    #    print(f"UTILS$88 string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
+    #    print(f"LIB1_UTILS$87 string_to_int  UNKNOWN EXCEPTION: '{s}'  ex={ex}")
     #    return None
 
 def _show_char(ch: str) -> str:
@@ -136,9 +135,9 @@ def determine_machine_type() -> str:
 
 
 def main() -> None:
-    print(f"UTILS$139 NOT YET")
+    print(f"LIB1_UTILS$138 NOT YET")
 
 if __name__ == "__main__":
     main()
 
-### end ###
+###
