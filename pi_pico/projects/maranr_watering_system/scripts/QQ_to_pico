@@ -81,6 +81,7 @@ ALL_PRODUCTION_PKGS = (
     "lib1",
     "lib2",
     "logger_elem",
+    "logger_embed_module",
     "mws",
     "primitives",
     "sensors",
@@ -89,37 +90,43 @@ ALL_PRODUCTION_PKGS = (
 ALL_TEST_PKGS = (
     "ztest_common",
     "ztest_logger_elem",
+    "ztest_logger_embed_module",
      )
 # Where the pkg is found in the local (Linux) MWS repo dirs
 PKG_SRC_PATHS = {
-     "displays":      "displays",
-     "lib":           "lib",
-     "lib0":          "lib0",
-     "lib1":          "lib1",
-     "lib2":          "lib2",
-     "logger_elem":   "logger_elem",
-     "mws":           "mws",
-     "primitives":    "primitives",
-     "sensors":       "sensors",
-     "weblib":        "weblib",
+     "displays":             "displays",
+     "lib":                  "lib",
+     "lib0":                 "lib0",
+     "lib1":                 "lib1",
+     "lib2":                 "lib2",
+     "logger_elem":          "logger_elem",
+     "logger_embed_module":  "logger_embed_module",
+     "mws":                  "mws",
+     "primitives":           "primitives",
+     "sensors":              "sensors",
+     "weblib":               "weblib",
      "ztest_common":  "unit_tests/tests/shared/test_support_stuff/ztest_common",
      "ztest_logger_elem": 
                      "unit_tests/tests/shared/test_support_stuff/ztest_logger_elem",
+     "ztest_logger_embed_module":
+                     "unit_tests/tests/shared/test_support_stuff/ztest_logger_embed_module",
     }
 # Where the files in the pkg are placed on the remote PICO system
 PKG_DEST_PATHS = {
-     "displays":           "displays",
-     "lib":                "lib",
-     "lib0":               "lib0",
-     "lib1":               "lib1",
-     "lib2":               "lib2",
-     "logger_elem":        "logger_elem",
-     "mws":                "mws",
-     "primitives":         "primitives",
-     "sensors":            "sensors",
-     "weblib":             "weblib",
-     "ztest_common":       "ztest_common",
-     "ztest_logger_elem":  "ztest_logger_elem",
+     "displays":                  "displays",
+     "lib":                       "lib",
+     "lib0":                      "lib0",
+     "lib1":                      "lib1",
+     "lib2":                      "lib2",
+     "logger_elem":               "logger_elem",
+     "logger_embed_module":       "logger_embed_module",
+     "mws":                       "mws",
+     "primitives":                "primitives",
+     "sensors":                   "sensors",
+     "weblib":                    "weblib",
+     "ztest_common":              "ztest_common",
+     "ztest_logger_elem":         "ztest_logger_elem",
+     "ztest_logger_embed_module": "ztest_logger_embed_module",
     }
 
 class ToPico:

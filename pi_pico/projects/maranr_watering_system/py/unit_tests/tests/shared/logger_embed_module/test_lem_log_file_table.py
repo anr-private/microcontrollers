@@ -5,6 +5,21 @@
 # #@pytest.mark.skip(reason="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 #
 # LINEMARKER=ZLLFT
+#
+# *** NOTE  ***
+# The log files differ on Pico vs local Cpython3 tests:
+# the logged info includes the path of the log file,
+# which is longer for local logs: /tmp/MWS_tmp_abcdefgg/
+# vs /_scratch_dir on PICO. 
+# So tests on the number of bytes and number of lines in a log file
+# differ.
+# The tests currently accommodate this by allowing a 'fuzz' diff
+# in the expected numbers.
+# The fuzz variables in the tests are called 'allowed_xxx_diff'.
+# NOTE the fuzz is currently applied to BOTH platforms
+# as there is no 'standard' way for a test to know which
+# platform it is running on.
+
 
 import os
 
@@ -43,7 +58,7 @@ class LemTestContext():
         logs_dir = get_scratch_path("logs")
         remove_scratch_path(logs_dir)
         self._llft = LemLogFileTable(logs_dir, self._log_parameters_selector)
-        print(f"ZLLFT$46: ENTER  {self._llft=!r}")
+        print(f"ZLLFT$61: ENTER  {self._llft=!r}")
         # This is what the 'as' variable receives
         return self._llft
 
@@ -53,7 +68,7 @@ class LemTestContext():
         exc_tb: "object",  # Or "TracebackType | None" if imported under TYPE_CHECKING
         ) -> "Literal[False]":    ###bool | None:
 
-        print(f"ZLLFT$56: EXIT lem test context.  {self._llft=!r}")
+        print(f"ZLLFT$71: EXIT lem test context.  {self._llft=!r}")
         logs_dir: str|None = None
         if self._llft is not None:
             logs_dir = self._llft.get_logs_directory()
@@ -71,8 +86,8 @@ def test_log_parameters_selector() -> None:
     # NOTE this test will cause LemLogFileTable to print an error
     # because we never 
     with LemTestContext() as llft:
-        print(f"ZLLFT$74 context: {llft=!r}")
-        print(f"ZLLFT$75 context: str='{str(llft)}'")
+        print(f"ZLLFT$89 context: {llft=!r}")
+        print(f"ZLLFT$90 context: str='{str(llft)}'")
 
 
 def test_SKELETON_for_tests() -> None:
@@ -94,7 +109,7 @@ def test_get_current_log_fpath_no_files_open() -> None:
     """ Trivial case: no files open yet """
 
     with LemTestContext() as llft:
-        print(f"ZLLFT$97  start test  {llft=!r}")
+        print(f"ZLLFT$112  start test  {llft=!r}")
 
         got_path = llft.get_current_log_fpath()
         assert got_path == EMPTY_LOG_FPATH_MARKER_STG, got_path
@@ -130,18 +145,18 @@ def test_log_one_line() -> None:
     # Also a simple test for close_logging()
     with LemTestContext() as llft:
         curr_log_path = llft.get_current_log_fpath()
-        print(f"ZLLFT$133 {curr_log_path=}")
+        print(f"ZLLFT$148 {curr_log_path=}")
 
-        llft.log_one_line("ZLLFT$135 test_log_one_line Writing just one line to log")
+        llft.log_one_line("ZLLFT$150 test_log_one_line Writing just one line to log")
     
         curr_log_path = llft.get_current_log_fpath()
-        print(f"ZLLFT$138 {curr_log_path=}")
+        print(f"ZLLFT$153 {curr_log_path=}")
         logs_dir = llft.get_logs_directory()
         assert logs_dir is not None
         assert curr_log_path.startswith(logs_dir + "/"), (curr_log_path, logs_dir)
 
         file_stg = read_a_file_as_string(curr_log_path)
-        print(f"ZLLFT$144  {file_stg=}")
+        print(f"ZLLFT$159  {file_stg=}")
         assert file_stg is not None, file_stg
         assert "OPENED NEW LOG" in file_stg, file_stg
 
@@ -159,18 +174,18 @@ def test_logging_after_closing() -> None:
         saved_llft = llft
 
         curr_log_path = llft.get_current_log_fpath()
-        print(f"ZLLFT$162 {curr_log_path=}")
+        print(f"ZLLFT$177 {curr_log_path=}")
 
-        llft.log_one_line("ZLLFT$164 test_log_one_line Writing just one line to log")
+        llft.log_one_line("ZLLFT$179 test_log_one_line Writing just one line to log")
         
         curr_log_path = llft.get_current_log_fpath()
-        print(f"ZLLFT$167 {curr_log_path=}")
+        print(f"ZLLFT$182 {curr_log_path=}")
         logs_dir = llft.get_logs_directory()
         assert logs_dir is not None
         assert curr_log_path.startswith(logs_dir + "/"), (curr_log_path, logs_dir)
 
         file_stg = read_a_file_as_string(curr_log_path)
-        print(f"ZLLFT$173  {file_stg=}")
+        print(f"ZLLFT$188  {file_stg=}")
         assert file_stg is not None, file_stg
         assert "OPENED NEW LOG" in file_stg, file_stg
 
@@ -180,7 +195,7 @@ def test_logging_after_closing() -> None:
         assert names[0].startswith("mws_log."), names
 
     try:
-        saved_llft.log_one_line(f"ZLLFT$183 SHOULD NOT BE ABLE TO LOG THIS LINE")
+        saved_llft.log_one_line(f"ZLLFT$198 SHOULD NOT BE ABLE TO LOG THIS LINE")
         assert False, "Expected an exception"
     except RuntimeError as ex:
         assert MESG_CANNOT_CREATE_LOGS_SUBDIRECTORY in str(ex), str(ex)
@@ -193,7 +208,7 @@ def test_log_one_line_call_many_times() -> None:
         line_len = 0
         for i in range(num_lines_written):
             lno = i+1
-            line = f"ZLLFT$196 This is line {lno:3d}"
+            line = f"ZLLFT$211 This is line {lno:3d}"
             llft.log_one_line(line)
             if line_len <= 0:
                 line_len = len(line) 
@@ -203,7 +218,7 @@ def test_log_one_line_call_many_times() -> None:
 
         got_data = read_a_file_as_string(fpath)
         assert got_data is not None
-        print(f"ZLLFT$206 len of log file data is {len(got_data)}")
+        print(f"ZLLFT$221 len of log file data is {len(got_data)}")
 
         got_lines = got_data.split("\n")
         assert len(got_lines) == num_lines_written + 4
@@ -212,7 +227,7 @@ def test_log_one_line_call_many_times() -> None:
 
 
 def test_get_lines_from_log_file() -> None:
-    print(f"ZLLFT$215  === test_get_lines_from_log_file  ======")
+    print(f"ZLLFT$230  === test_get_lines_from_log_file  ======")
     with LemTestContext() as llft:
         # fill the log with recognizable pattern of lines
         for i in range(10):
@@ -220,7 +235,7 @@ def test_get_lines_from_log_file() -> None:
         relative_line_number = 4
         number_of_lines = 2
         got_lines = llft.get_lines_from_log_file(relative_line_number, number_of_lines)
-        print(f"ZLLFT$223 lines:...")
+        print(f"ZLLFT$238 lines:...")
         print(got_lines)
         exp_lines = ("THIS is line 7", "THIS is line 8")
         assert len(got_lines) == len(exp_lines)
@@ -231,22 +246,22 @@ def test_get_lines_from_log_file() -> None:
 
 
 def test_rotating_the_files() -> None:
-    print(f"ZLLFT$234  === test_rotating_the_files  ======")
+    print(f"ZLLFT$249  === test_rotating_the_files  ======")
     with LemTestContext() as llft:
         
         # save the logs_dir b/c we close logging 'manually' below
         logs_dir = llft.get_logs_directory()
         assert logs_dir is not None
-        print(f"ZLLFT$240  {logs_dir=!r}")
+        print(f"ZLLFT$255  {logs_dir=!r}")
 
         new_max_logfile_size = 1200
-        print(f"ZLLFT$243 SET MAX LOG FILE SIZE to {new_max_logfile_size}")
+        print(f"ZLLFT$258 SET MAX LOG FILE SIZE to {new_max_logfile_size}")
         llft.Z_set_max_log_file_size(new_max_logfile_size)
         
         num_lines_written = 127
         for i in range(num_lines_written):
             lno = i+1
-            line = f"ZLLFT$249 This is line {lno:3d}"         
+            line = f"ZLLFT$264 This is line {lno:3d}"         
             llft.log_one_line(line)
 
         llft.flush_current_log()
@@ -266,21 +281,41 @@ def test_rotating_the_files() -> None:
             )
         for fpath, exp_fsize, exp_num_lines in exp_info:
             full_fpath = logs_dir + "/" + fpath
-            print(f"ZLLFT$269 {full_fpath=!r}")
+            print(f"ZLLFT$284 {full_fpath=!r}")
             got_data = read_a_file_as_string(full_fpath)
             assert got_data is not None
-            print(f"ZLLFT$272 len of log file '{fpath}' is {len(got_data)}")
-            assert len(got_data) == exp_fsize, f"fpath={fpath}"
-            ###print(f"ZLLFT$274  Log file contains: '{got_data}'")
+
+            # The log files differ on Pico vs local Cpython3 tests:
+            # the logged info includes the path of the log file,
+            # which is longer for local logs: /tmp/MWS_tmp_abcdefgg/
+            # vs /_scratch_dir on PICO. 
+            # file size must be (approximately) as expected
+            # These are the allowed differences between the table above
+            # and the actual. The table has info for local tests;
+            # the allowances are for PICO variation.
+            # NOTE they current get applied to BOTH platforms.
+            # See the notes at the top of this file.
+            allowed_fsize_diff = 200
+            allowed_num_lines_diff = 4
+
+            print(f"ZLLFT$301 len of log file '{fpath}' is {len(got_data)}")
+            got_len = len(got_data)
+            fsize_diff = abs(got_len - exp_fsize)
+            assert fsize_diff <= allowed_fsize_diff, \
+                f"fpath={fpath} {got_len=} {exp_fsize=}  {fsize_diff=} {allowed_fsize_diff=}"
+            ###print(f"ZLLFT$306  Log file contains: '{got_data}'")
             # MICROPYTHON DOES NOT SUPPORT: got_lines = got_data.split("\n", keepends=True)
             got_lines = read_a_file_as_lines(full_fpath)
             assert got_lines is not None
-            print(f"ZLLFT$278 number of lines is {len(got_lines)}")
-            assert len(got_lines) == exp_num_lines, f"fpath={fpath}"
+            print(f"ZLLFT$310 number of lines is {len(got_lines)}")
+            got_num_lines = len(got_lines)
+            num_lines_diff = abs(got_num_lines - exp_num_lines)
+            assert num_lines_diff <= allowed_num_lines_diff, \
+                f"fpath={fpath} {got_num_lines=} {exp_num_lines=}  {num_lines_diff=} {allowed_num_lines_diff=}"
 
 
 def test_determine_new_starting_extension_value() -> None:
-    print(f"ZLLFT$283  === test_determine_new_starting_extension_value  ======")
+    print(f"ZLLFT$318  === test_determine_new_starting_extension_value  ======")
 
     tests = (
         ( 9, 10),
@@ -300,13 +335,13 @@ def test_determine_new_starting_extension_value() -> None:
     for biggest_existing, exp_new_value in tests:
         got_new_value = _determine_new_starting_extension_value(biggest_existing)
 
-        print(f"ZLLFT$303  {biggest_existing=}  {got_new_value=}  {exp_new_value=}")
+        print(f"ZLLFT$338  {biggest_existing=}  {got_new_value=}  {exp_new_value=}")
 
         assert got_new_value == exp_new_value
 
 
 def test_determine_biggest_existing_log_fname_extension_value() -> None:
-    print(f"ZLLFT$309  === test_determine_biggest_existing_log_fname_extension_value  ======")
+    print(f"ZLLFT$344  === test_determine_biggest_existing_log_fname_extension_value  ======")
 
     # Replace the production logs/ dir with a test dir
     logs_dir = get_scratch_path("logs")
@@ -315,7 +350,7 @@ def test_determine_biggest_existing_log_fname_extension_value() -> None:
     try:
 
         remove_subdir(logs_dir)
-        print(f"ZLLFT$318   removed {logs_dir=!r}")
+        print(f"ZLLFT$353   removed {logs_dir=!r}")
 
         fnames = [
             "mws_log.210", 
@@ -331,7 +366,7 @@ def test_determine_biggest_existing_log_fname_extension_value() -> None:
 
         biggest = _determine_biggest_existing_log_fname_extension_value(logs_dir)
 
-        print(f"ZLLFT$334 {biggest=}")
+        print(f"ZLLFT$369 {biggest=}")
 
         assert biggest == 216
 
@@ -342,7 +377,7 @@ def test_determine_biggest_existing_log_fname_extension_value() -> None:
 
 
 def test_determine_starting_fname_extension_value() -> None:
-    print(f"ZLLFT$345  === test_determine_starting_fname_extension_value  ======")
+    print(f"ZLLFT$380  === test_determine_starting_fname_extension_value  ======")
 
     # Replace the production logs/ dir with a test dir
     logs_dir = get_scratch_path("logs")
@@ -350,7 +385,7 @@ def test_determine_starting_fname_extension_value() -> None:
     try:
 
         remove_subdir(logs_dir)
-        print(f"ZLLFT$353   removed {logs_dir=!r}")
+        print(f"ZLLFT$388   removed {logs_dir=!r}")
 
         fnames = [
             "mws_log.310", 
@@ -367,7 +402,7 @@ def test_determine_starting_fname_extension_value() -> None:
 
         sfn = _determine_starting_fname_extension_value(logs_dir)
 
-        print(f"ZLLFT$370  {sfn}")
+        print(f"ZLLFT$405  {sfn}")
 
         assert sfn == 350
 
@@ -376,7 +411,7 @@ def test_determine_starting_fname_extension_value() -> None:
 
 
 def test_find_the_oldest_extant_logfile() -> None:
-    print(f"ZLLFT$379  === test_find_the_oldest_extant_logfile  ======")
+    print(f"ZLLFT$414  === test_find_the_oldest_extant_logfile  ======")
     with LemTestContext() as llft:
         # Test 'table is empty'
         oldest_idx = llft._find_the_oldest_extant_logfile()
@@ -514,7 +549,7 @@ def test_find_the_oldest_extant_logfile() -> None:
 
 
 def test_remove_the_oldest_extant_logfile() -> None:
-    print(f"ZLLFT$517  === test_remove_the_oldest_extant_logfile  ======")
+    print(f"ZLLFT$552  === test_remove_the_oldest_extant_logfile  ======")
     with LemTestContext() as llft:
         logs_dir = llft.get_logs_directory()
         assert logs_dir is not None
@@ -531,7 +566,7 @@ def test_remove_the_oldest_extant_logfile() -> None:
         file_items = create_subdir_with_files(logs_dir, fnames)
 
         if 1:
-            print(f"ZLLFT$534 FILE ITEMS for the files created:")
+            print(f"ZLLFT$569 FILE ITEMS for the files created:")
             for fitem in file_items:
                 print(f"   {fitem}")
             print()
@@ -547,7 +582,7 @@ def test_remove_the_oldest_extant_logfile() -> None:
             llft._append_to_log_file_table(fitem[0], fitem[1])
 
         if 1:
-            llft.dump_file_table(comment="ZLLFT$550", to_log=False)
+            llft.dump_file_table(comment="ZLLFT$585", to_log=False)
 
         # Verify file table has no 'removed' files yet
         assert llft.get_number_of_removed_logfiles() == 0
@@ -574,7 +609,7 @@ def test_remove_the_oldest_extant_logfile() -> None:
 
 
 def test_reduce_file_usage_to_below_low_watermark() -> None:
-    print(f"ZLLFT$577  === test_reduce_file_usage_to_below_low_watermark  ======")
+    print(f"ZLLFT$612  === test_reduce_file_usage_to_below_low_watermark  ======")
 
     with LemTestContext() as llft:
         logs_dir = llft.get_logs_directory()
@@ -592,10 +627,10 @@ def test_reduce_file_usage_to_below_low_watermark() -> None:
             "mws_log.428",
             "mws_log.429",
         ]
-        file_items = create_subdir_with_files(logs_dir, fnames, 20000)
+        file_items = create_subdir_with_files(logs_dir, fnames, 20_000)
 
         if 1:
-            print(f"ZLLFT$598 FILE ITEMS for the files created:")
+            print(f"ZLLFT$633 FILE ITEMS for the files created:")
             for fitem in file_items:
                 print(f"   {fitem}")
             print()
@@ -612,16 +647,27 @@ def test_reduce_file_usage_to_below_low_watermark() -> None:
             llft._append_to_log_file_table(fitem[0], fitem[1])
 
         if 1:
-            llft.dump_file_table(comment="ZLLFT$615", to_log=False)
+            llft.dump_file_table(comment="ZLLFT$650", to_log=False)
 
         # Verify file table has no 'removed' files yet
-        print(f"ZLLFT$618 BEFORE REMOVING OLD LOG FILES:")
+        print(f"ZLLFT$653 BEFORE REMOVING OLD LOG FILES:")
         assert llft.get_number_of_removed_logfiles() == 0
         assert llft.get_number_of_extant_logfiles() == len(file_items)
-        print(f"ZLLFT$621 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
-        print(f"ZLLFT$622 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
+        print(f"ZLLFT$656 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
+        print(f"ZLLFT$657 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
         assert llft.get_fsize_of_removed_logfiles() == 0
-        assert llft.get_fsize_of_extant_logfiles() == 200_332
+
+        # The sizes vary on platforms PICO vs local CPython3
+        # due to length of the log file paths, which are logged
+        # in the log files.
+        # See the notes at the top of this file.
+        got_extant_fsize = llft.get_fsize_of_extant_logfiles()
+        exp_extant_fsize = 200_332  # Cpython3 value
+        extant_fsize_diff = abs(got_extant_fsize - exp_extant_fsize)
+        allowed_extant_fsize_diff = 25
+        assert extant_fsize_diff <= allowed_extant_fsize_diff,\
+            f"{got_extant_fsize=} {exp_extant_fsize=}  {extant_fsize_diff=} {allowed_extant_fsize_diff=} "
+        #assert llft.get_fsize_of_extant_logfiles() == 200_332
 
         # Set the low watermark
         llft.Z_set_watermarks(101_000, -1)
@@ -630,18 +676,32 @@ def test_reduce_file_usage_to_below_low_watermark() -> None:
 
         # After removing:
         print()
-        print(f"ZLLFT$633 AFTER REMOVING OLD LOG FILES:")
+        print(f"ZLLFT$679 AFTER REMOVING OLD LOG FILES:")
         assert llft.get_number_of_removed_logfiles() == 5
         assert llft.get_number_of_extant_logfiles() == len(file_items)-5
-        print(f"ZLLFT$636 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
-        print(f"ZLLFT$637 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
-        assert llft.get_fsize_of_removed_logfiles() == 100_165
-        assert llft.get_fsize_of_extant_logfiles() == 100_167
-
+        print(f"ZLLFT$682 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
+        print(f"ZLLFT$683 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
+        # check size of removed files
+        got_removed_fsize = llft.get_fsize_of_removed_logfiles()
+        exp_removed_fsize = 100_165
+        removed_fsize_diff = abs(got_removed_fsize - exp_removed_fsize)
+        allowed_fsize_diff = 25
+        assert removed_fsize_diff <= allowed_fsize_diff,\
+            f"{got_removed_fsize=} {exp_removed_fsize=}  {removed_fsize_diff=} {allowed_fsize_diff=} "
+        ###assert llft.get_fsize_of_removed_logfiles() == 100_165
+        
+        # check size of extant (remaining) files
+        got_remains_fsize = llft.get_fsize_of_extant_logfiles() 
+        exp_remains_fsize =100_167
+        remains_fsize_diff = abs(got_remains_fsize - exp_remains_fsize)
+        allowed_remains_fsize_diff = 3 
+        assert remains_fsize_diff <= allowed_remains_fsize_diff,\
+            f"{got_remains_fsize=} {exp_remains_fsize=}  {remains_fsize_diff=} {allowed_remains_fsize_diff=} "
+        ###assert llft.get_fsize_of_extant_logfiles() == 100_167
 
 
 def test_remove_logs_if_fspace_needed() -> None:
-    print(f"ZLLFT$644  === test_remove_logs_if_fspace_needed  ======")
+    print(f"ZLLFT$704  === test_remove_logs_if_fspace_needed  ======")
     with LemTestContext() as llft:
         logs_dir = llft.get_logs_directory()
         assert logs_dir is not None
@@ -661,7 +721,7 @@ def test_remove_logs_if_fspace_needed() -> None:
         file_items = create_subdir_with_files(logs_dir, fnames, 20000)
 
         if 1:
-            print(f"ZLLFT$664 FILE ITEMS for the files created:")
+            print(f"ZLLFT$724 FILE ITEMS for the files created:")
             for fitem in file_items:
                 print(f"   {fitem}")
             print()
@@ -679,35 +739,56 @@ def test_remove_logs_if_fspace_needed() -> None:
             llft._append_to_log_file_table(fitem[0], fitem[1])
 
         if 1:
-            llft.dump_file_table(comment="ZLLFT$682", to_log=False)
+            llft.dump_file_table(comment="ZLLFT$742", to_log=False)
 
         # Verify file table has no 'removed' files yet
-        print(f"ZLLFT$685 BEFORE REMOVING OLD LOG FILES:")
+        print(f"ZLLFT$745 BEFORE REMOVING OLD LOG FILES:")
         assert llft.get_number_of_removed_logfiles() == 0
         assert llft.get_number_of_extant_logfiles() == len(file_items)
-        print(f"ZLLFT$688 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
-        print(f"ZLLFT$689 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
+        print(f"ZLLFT$748 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
+        print(f"ZLLFT$749 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
+
+        # check 'before' sizes
         assert llft.get_fsize_of_removed_logfiles() == 0
-        assert llft.get_fsize_of_extant_logfiles() == 200_332
+        # The sizes vary on platforms PICO vs local CPython3
+        # due to length of the log file paths, which are logged
+        # in the log files.
+        # See the notes at the top of this file.
+        got_extant_fsize = llft.get_fsize_of_extant_logfiles()
+        exp_extant_fsize = 200_332  # Cpython3 value
+        extant_fsize_diff = abs(got_extant_fsize - exp_extant_fsize)
+        allowed_extant_fsize_diff = 25
+        assert extant_fsize_diff <= allowed_extant_fsize_diff,\
+            f"{got_extant_fsize=} {exp_extant_fsize=}  {extant_fsize_diff=} {allowed_extant_fsize_diff=} "
+        ###assert llft.get_fsize_of_extant_logfiles() == 200_332
 
         # Set new watermarks to force action
-        #@@@@@@@@Z__set_log_fspace_low_watermark(101_000)
-        #@@@@@@@Z__set_log_fspace_high_watermark(195_000)
         llft.Z_set_watermarks(101_000, 195_000)
 
         llft._remove_logs_if_fspace_needed()
 
-        # After removing:
+        # Check 'after' removing:
         print()
-        print(f"ZLLFT$702 AFTER REMOVING OLD LOG FILES:")
+        print(f"ZLLFT$772 AFTER REMOVING OLD LOG FILES:")
         assert llft.get_number_of_removed_logfiles() == 5
         assert llft.get_number_of_extant_logfiles() == len(file_items)-5
-        print(f"ZLLFT$705 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
-        print(f"ZLLFT$706 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
-        assert llft.get_fsize_of_removed_logfiles() == 100_165
-        assert llft.get_fsize_of_extant_logfiles() == 100_167
-
-
+        print(f"ZLLFT$775 Total size of removed files: {llft.get_fsize_of_removed_logfiles()}")
+        print(f"ZLLFT$776 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
+        # check size of removed files
+        got_removed_fsize = llft.get_fsize_of_removed_logfiles()
+        exp_removed_fsize = 100_165
+        removed_fsize_diff = abs(got_removed_fsize - exp_removed_fsize)
+        allowed_fsize_diff = 25
+        assert removed_fsize_diff <= allowed_fsize_diff,\
+            f"{got_removed_fsize=} {exp_removed_fsize=}  {removed_fsize_diff=} {allowed_fsize_diff=} "
+        ###assert llft.get_fsize_of_removed_logfiles() == 100_165
+        # check size of extant (remaining) files
+        got_remains_fsize = llft.get_fsize_of_extant_logfiles() 
+        exp_remains_fsize =100_167
+        remains_fsize_diff = abs(got_remains_fsize - exp_remains_fsize)
+        allowed_remains_fsize_diff = 3 
+        assert remains_fsize_diff <= allowed_remains_fsize_diff,\
+            f"{got_remains_fsize=} {exp_remains_fsize=}  {remains_fsize_diff=} {allowed_remains_fsize_diff=} "
 
 
 
@@ -722,7 +803,7 @@ def check_production_log_dir_unchanged(old_logs_dir: str, old_logs_dir_items_bef
     after = list_dir_names(old_logs_dir)
     if after == old_logs_dir_items_before:
         return True
-    print(f"ZLLFT$725: production log dir CHANGED: {old_logs_dir}, before: {old_logs_dir_items_before}, after: {after}")
+    print(f"ZLLFT$806: production log dir CHANGED: {old_logs_dir}, before: {old_logs_dir_items_before}, after: {after}")
     return False
 
 
