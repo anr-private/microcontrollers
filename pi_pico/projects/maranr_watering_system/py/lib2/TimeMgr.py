@@ -54,16 +54,16 @@ logi:  Any = None
 
 class TimeMgr(ElemLoggerABC):
     
-    _instance = None
+    _instance: "TimeMgr | None" = None
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> "TimeMgr":
         if cls._instance is not None: return cls._instance
         cls._instance = TimeMgr(VALIDATE)
         return cls._instance
 
     @classmethod
-    def _nullify_instance(cls):
+    def _nullify_instance(cls) -> None:
         # UNIT TEST ONLY
         TimeMgr._instance = None
 
@@ -76,7 +76,7 @@ class TimeMgr(ElemLoggerABC):
         self._databoard = None
         super().__init__()
 
-    def _set_logger(self, logger):
+    def _set_logger(self, logger) -> None:
         global log, logrt, logi
         log = logger.log
         logrt = logger.logrt
@@ -84,12 +84,12 @@ class TimeMgr(ElemLoggerABC):
 
 
     @staticmethod
-    def get_time_unix_seconds(secs=None):
+    def get_time_unix_seconds(secs=None) -> int:
         if secs is None: secs = time.time()
         return secs + UNIX_EPOCH_OFFSET
 
     @staticmethod
-    def get_local_time():  # for our TZ
+    def get_local_time() -> tuple[int,...]:  # for our TZ
         # Get UTC time from clock
         #### THIS RETURNS UTC  utc_time = time.localtime()
         # Example: Apply offset for Central TZ: UTC-6 hrs
@@ -102,21 +102,21 @@ class TimeMgr(ElemLoggerABC):
         return local_time
 
     @staticmethod
-    def get_formatted_local_YYYYMMDD():
+    def get_formatted_local_YYYYMMDD() -> str:
         now = TimeMgr.get_local_time()
         # Format the date as "YYYY-MM-DD" 
         date_str = "{}-{}-{}".format(now[0], now[1], now[2])
         return date_str
 
     @staticmethod
-    def get_formatted_local_HHMMSS():
+    def get_formatted_local_HHMMSS() -> str:
         now = TimeMgr.get_local_time()
         # Format the time as "HH:MM:SS"
         time_str = "{:02d}:{:02d}:{:02d}".format(now[3], now[4], now[5])
         return time_str
 
     @staticmethod
-    def get_formatted_local_time():
+    def get_formatted_local_time() -> tuple[str, str]:
         now = TimeMgr.get_local_time()
         # Format the date as "YYYY-MM-DD" and time as "HH:MM:SS"
         date_str = "{}-{}-{}".format(now[0], now[1], now[2])
@@ -124,12 +124,12 @@ class TimeMgr(ElemLoggerABC):
         return (date_str, time_str)
 
     @staticmethod
-    def get_formatted_date_time_string():
+    def get_formatted_date_time_string() -> str:
         date_stg,time_stg = TimeMgr.get_formatted_local_time()
         return f"{date_stg} {time_stg}"
 
 
-    def set_time_clock_from_ntp(self):
+    def set_time_clock_from_ntp(self) -> None:
     
         # Time to call NTP website and update?
         now = time.time()
@@ -150,27 +150,26 @@ class TimeMgr(ElemLoggerABC):
             NTP_TIME_SET_TIME()
         except Exception as ex:
             logi(f"TIMEMGR$152 **ERROR** ntptime.settime() FAILED. ex={repr(ex)}  ex.str={str(ex)}")
-            return False
     
         now = time.time()
-        logi(f"TIMEMGR$156 set_time_clock_from_ntp  Micropython epoch: {now} secs.  unix: {TimeMgr.get_time_unix_seconds(now)}")
+        logi(f"TIMEMGR$155 set_time_clock_from_ntp  Micropython epoch: {now} secs.  unix: {TimeMgr.get_time_unix_seconds(now)}")
         #print("Seconds since MicroPython epoch (2000):", micropython_timestamp)
         #print("Seconds since Unix epoch (1970):", unix_timestamp)
     
         self.latest_ntp_update_secs = now
         self.number_of_ntp_updates += 1
     
-        ###log(f"TIMEMGR$163  after update, elapsed is {now-self.latest_ntp_update_secs} ")
+        ###log(f"TIMEMGR$162  after update, elapsed is {now-self.latest_ntp_update_secs} ")
     
         # Did time jump by very much?
         jumped_secs = now - now_was
-        logi(f"TIMEMGR$167  TIME-JUMP-DELTA secs {jumped_secs}   prior-num-jumps: {self.number_of_time_jumps}  prior-max-jmp-secs: {self.maximum_time_jump_secs}")
+        logi(f"TIMEMGR$166  TIME-JUMP-DELTA secs {jumped_secs}   prior-num-jumps: {self.number_of_time_jumps}  prior-max-jmp-secs: {self.maximum_time_jump_secs}")
         if abs(jumped_secs) > 10 and jumped_secs < 1700:  # at startup the jump is big - ignore it
             self.number_of_time_jumps += 1
             self.maximum_time_jump_secs = max(jumped_secs, self.maximum_time_jump_secs)
-            logi(f"TIMEMGR$171  ***************** TIME JUMPED!   {jumped_secs} secs  *************************")
-            logi(f"TIMEMGR$172  ***************** TIME JUMPED!   Number of jumps: {self.number_of_time_jumps}  *************************")
-            logi(f"TIMEMGR$173  ***************** TIME JUMPED:   Max jump: {self.maximum_time_jump_secs} secs")
+            logi(f"TIMEMGR$170  ***************** TIME JUMPED!   {jumped_secs} secs  *************************")
+            logi(f"TIMEMGR$171  ***************** TIME JUMPED!   Number of jumps: {self.number_of_time_jumps}  *************************")
+            logi(f"TIMEMGR$172  ***************** TIME JUMPED:   Max jump: {self.maximum_time_jump_secs} secs")
     
         # Report our status
         if self._databoard is None: self._databoard = DataBoard.get_instance()
@@ -187,10 +186,10 @@ class TimeMgr(ElemLoggerABC):
         # Example output: (2024, 2, 16, 11, 4, 30, 3, 47) 
         # (year, month, mday, hour, minute, second, weekday, yearday)
         # weekday is 0=Sun, etc
-        logi(f"TIMEMGR$190 TIME FROM NTP: {current_time} ") # as tuple
+        logi(f"TIMEMGR$189 TIME FROM NTP: {current_time} ") # as tuple
         year, month, date, hour, minute, second, weekday, yearday = current_time  # unpack
         weekday_stg = [ "sun", "mon", "tue", "wed", "thu", "fri", "sat"] [weekday]
-        logi(f"TIMEMGR$193 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  {weekday=} {weekday_stg=}  {yearday=}")
+        logi(f"TIMEMGR$192 date/time: {year}/{month}/{date}  {hour:02d}:{minute:02d}:{second:02d}  {weekday=} {weekday_stg=}  {yearday=}")
     
 
 def main():

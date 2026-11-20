@@ -18,7 +18,6 @@ from .RequestHandler import RequestHandler
 try: from typing import Callable, Any
 except ImportError: pass
 
-# Logging functions; our parent class sets using _set_logger()
 log:   Any = None
 logrt: Any = None
 logi:  Any = None
@@ -38,7 +37,7 @@ class MwsWebServer(ElemLoggerABC):
         return cls._instance
 
     @classmethod
-    def _nullify_instance(cls):
+    def _nullify_instance(cls) -> None:
         # UNIT TEST ONLY
         MwsWebServer._instance = None
 
@@ -61,7 +60,7 @@ class MwsWebServer(ElemLoggerABC):
     #@@@@@@@@@@ TODO better annotation for the result
     def start_the_task(self) -> Any:
         """ creates,starts the coro. Returns task."""
-        log("WEBSVR$64.startup!")
+        log("WEBSVR$63.startup!")
 
         task = asyncio.create_task(self.webserver_coro())
         return task
@@ -76,7 +75,7 @@ class MwsWebServer(ElemLoggerABC):
             # and it's annotations are too broad
             ipaddr:str = self._databoard.ipaddr
             port:int   = self._databoard.port
-            log(f"WEBSVR$79 webserver_coro MONITOR CONNECTION STATUS: IP:PORT  {ipaddr!r}:{port!r}")
+            log(f"WEBSVR$78 webserver_coro MONITOR CONNECTION STATUS: IP:PORT  {ipaddr!r}:{port!r}")
 
             # default sleep time - assuming nothing has changed...
             sleep_secs = 15 #@@@$$$$$$$$$$$$
@@ -86,18 +85,18 @@ class MwsWebServer(ElemLoggerABC):
             #@@@@@@@@@@@@@@@@@if ip addr is None and server is not None:
             if not ipaddr and server is not None:
                 need_to_stop = True
-                logi(f"WEBSVR$89  NEED TO STOP SERVER:  we do not have an IPADDR (any longer)")
+                logi(f"WEBSVR$88  NEED TO STOP SERVER:  we do not have an IPADDR (any longer)")
             #@@@@@@@@@@if ip addr is not None and self._ipaddr != ipaddr:
             if ipaddr and self._ipaddr != ipaddr:
                 need_to_stop = True
-                logi(f"WEBSVR$93  NEED TO STOP SERVER:  IPADDR changed: ours: {self._ipaddr!r}  NEW: {ipaddr!r}")
+                logi(f"WEBSVR$92  NEED TO STOP SERVER:  IPADDR changed: ours: {self._ipaddr!r}  NEW: {ipaddr!r}")
             if port != 0 and self._port != port:
                 need_to_stop = True
-                logi(f"WEBSVR$96  NEED TO STOP SERVER:  PORT changed: ours: {self._port}  NEW: {port}")
+                logi(f"WEBSVR$95  NEED TO STOP SERVER:  PORT changed: ours: {self._port}  NEW: {port}")
 
             if need_to_stop:
                 if server is not None:
-                    logi(f"WEBSVR$100 STOPPING THE SERVER ")
+                    logi(f"WEBSVR$99 STOPPING THE SERVER ")
                     await self._close_the_server(server)
                     server = None
                     self._ipaddr = ""
@@ -105,7 +104,7 @@ class MwsWebServer(ElemLoggerABC):
                     self._databoard.webserver_active = False
                     sleep_secs = 10 #@@@$$$$$ TODO
                 else:
-                    logi(f"WEBSVR$108 STOP THE SERVER - except there is no server running")
+                    logi(f"WEBSVR$107 STOP THE SERVER - except there is no server running")
 
             need_to_start = False
             if server is None:
@@ -115,13 +114,13 @@ class MwsWebServer(ElemLoggerABC):
                     need_to_start = True
 
             if need_to_start:
-                logi(f"WEBSVR$118 (RE)STARTING THE SERVER")
+                logi(f"WEBSVR$117 (RE)STARTING THE SERVER")
                 #  s/w defect if occurs:
                 if (not ipaddr):
-                    logi(f"WEBSVR$121 INTERNAL ERROR: ipaddr is null: {ipaddr!r}. Cannot start_server")
+                    logi(f"WEBSVR$120 INTERNAL ERROR: ipaddr is null: {ipaddr!r}. Cannot start_server")
                     continue
                 if (not port):
-                    logi(f"WEBSVR$124 INTERNAL ERROR: port is zero(?): {port!r} is null. Cannot start_server")
+                    logi(f"WEBSVR$123 INTERNAL ERROR: port is zero(?): {port!r} is null. Cannot start_server")
                     continue
 
                 callbk = self.handle_new_client
@@ -131,42 +130,42 @@ class MwsWebServer(ElemLoggerABC):
                 self._port = port
                 self._databoard.webserver_active = True
                 sleep_secs = 10
-                logi(f"WEBSVR$134 (RE)STARTED THE SERVER  {self._ipaddr} {self._port}")
+                logi(f"WEBSVR$133 (RE)STARTED THE SERVER  {self._ipaddr} {self._port}")
 
             if sleep_secs is not None:
                 await asyncio.sleep(sleep_secs)
 
 
     async def _close_the_server(self, server):
-        logi(f"WEBSVR$141 CLOSE THE SERVER")
+        logi(f"WEBSVR$140 CLOSE THE SERVER")
         try:
             server.close()
-            logi(f"WEBSVR$144 AWAITING for the SERVER to CLOSE")
+            logi(f"WEBSVR$143 AWAITING for the SERVER to CLOSE")
             await server.wait_closed()
         except Exception as ex:
-            m = f"WEBSVR$147 *ERROR* Closing the server:  {repr(ex)}"
+            m = f"WEBSVR$146 *ERROR* Closing the server:  {repr(ex)}"
             logi(m)
 
         ###result = "NO RESULT YET from webserver_coro"
-        ###log(f"WEBSVR$151 webserver_coro COMPLETED.  {result=}")
+        ###log(f"WEBSVR$150 webserver_coro COMPLETED.  {result=}")
         ###return result
 
     async def handle_new_client(self, reader, writer):
-        print(f"WEBSVR$155 ______________________________________ handle_new_client CALLED _____________")
+        print(f"WEBSVR$154 ______________________________________ handle_new_client CALLED _____________")
         LL=log
 
-        #m = f"WEBSVR$158 -----=====-----=====-----===== NEW CLIENT =====-----====="
+        #m = f"WEBSVR$157 -----=====-----=====-----===== NEW CLIENT =====-----====="
         #logi(m)
-        m = f"WEBSVR$160 =====___ NEW CLIENT  ___+++++___  {TimeMgr.get_formatted_date_time_string()}  ___+++++====="
+        m = f"WEBSVR$159 =====___ NEW CLIENT  ___+++++___  {TimeMgr.get_formatted_date_time_string()}  ___+++++====="
         LL(m)
-        #m = f"WEBSVR$162 handle_new_client  reader={repr(reader)} writer={repr(writer)}  "
+        #m = f"WEBSVR$161 handle_new_client  reader={repr(reader)} writer={repr(writer)}  "
         #LL(m)
 
         try:
             request_stg = await self._read_the_request(reader)
 
             if not request_stg:
-                m = f"WEBSVR$169 FAILED TO READ THE REQUEST!"
+                m = f"WEBSVR$168 FAILED TO READ THE REQUEST!"
                 logi(m)
                 return
 
@@ -174,13 +173,13 @@ class MwsWebServer(ElemLoggerABC):
             del request_stg
             
             if httpReply is None:
-                mesg = f"WEBSVR$177  FAILED TO HANDLE REQUEST!"
+                mesg = f"WEBSVR$176  FAILED TO HANDLE REQUEST!"
                 log(mesg)
                 return
 
-            m = f"WEBSVR$181 HTTP-REPY is ... "
+            m = f"WEBSVR$180 HTTP-REPY is ... "
             LL(m)
-            mlines = httpReply.get_loggable_lines(prefix="WEBSVR$183")
+            mlines = httpReply.get_loggable_lines(prefix="WEBSVR$182")
             for m in mlines:
                 LL(m)
             del m, mlines
@@ -192,29 +191,29 @@ class MwsWebServer(ElemLoggerABC):
             await writer.drain()
 
         except Exception as ex:
-            print("WEBSVR$195 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            m = f"WEBSVR$196 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print("WEBSVR$194 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"WEBSVR$195 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
             print(m)
             logi(m)
             raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         finally:
-            log("WEBSVR$201 handle_new_client Closing client writer connection")
+            log("WEBSVR$200 handle_new_client Closing client writer connection")
             writer.close()
             await writer.wait_closed() # Wait until the stream is fully closed
-            log("WEBSVR$204 handle_new_client CLIENT WRITER is CLOSED")
+            log("WEBSVR$203 handle_new_client CLIENT WRITER is CLOSED")
             
-            log(f"WEBSVR$206 handle_new_client CLOSING THE CLIENT reader")
+            log(f"WEBSVR$205 handle_new_client CLOSING THE CLIENT reader")
             reader.close()
             await reader.wait_closed()
-            log("WEBSVR$209 handle_new_client CLIENT READER is CLOSED")
+            log("WEBSVR$208 handle_new_client CLIENT READER is CLOSED")
 
-        m = f"WEBSVR$211 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        m = f"WEBSVR$210 DONE WITH THIS CLIENT -- RUN THE GC COLLECTOR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         LL(m)
         gc_collect()
         mf = gc.mem_free()
-        m = f"WEBSVR$215 AFTER GC  FREE MEMORY is {mf}"
+        m = f"WEBSVR$214 AFTER GC  FREE MEMORY is {mf}"
         LL(m)
-        LL(f"WEBSVR$217 handle_new_client done with this client!")
+        LL(f"WEBSVR$216 handle_new_client done with this client!")
 
 
     async def _read_the_request(self, reader):
@@ -226,12 +225,12 @@ class MwsWebServer(ElemLoggerABC):
         header = None
         try:
             while 1:
-                #log(f"WEBSVR$229 read_the_request  ======  READ A LINE  =================================")
+                #log(f"WEBSVR$228 read_the_request  ======  READ A LINE  =================================")
                 new_bytes = await reader.readline()
 
                 if not new_bytes:
                     # Client disconnected
-                    log(f"WEBSVR$234 handle_client_by_lines GOT NO MORE BYTES, client disconnected")
+                    log(f"WEBSVR$233 handle_client_by_lines GOT NO MORE BYTES, client disconnected")
                     break
                 line_num += 1
     
@@ -239,21 +238,21 @@ class MwsWebServer(ElemLoggerABC):
 
                 hdrAccum.accum_header_line(line)
                 if hdrAccum.found_end_of_header():
-                    log(f"WEBSVR$242 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
+                    log(f"WEBSVR$241 >>>--->>>  found EOHdr   hdrlen={len(hdrAccum.get_header())}")
                     header = hdrAccum.get_header()
                     mesg_tail = hdrAccum.get_tail()
-                    log(f"WEBSVR$245 {header if header else 'NULL'}")
-                    log(f"WEBSVR$246 {mesg_tail if mesg_tail else 'NULL'}")
+                    log(f"WEBSVR$244 {header if header else 'NULL'}")
+                    log(f"WEBSVR$245 {mesg_tail if mesg_tail else 'NULL'}")
                     if mesg_tail:
-                        ###raise RuntimeError("WEBSVR$248  WE HAVE A mesg_tail: '{mesg_tail}'")
-                        logi(f"WEBSVR$249 __WARNING__ we have a mesg_tail {type(mesg_tail)}")
+                        ###raise RuntimeError("WEBSVR$247  WE HAVE A mesg_tail: '{mesg_tail}'")
+                        logi(f"WEBSVR$248 __WARNING__ we have a mesg_tail {type(mesg_tail)}")
                     #@@TODO@@  Need to handle a leftover tail string - in case of packet breakup by network
                     break
             return header
 
         except Exception as ex:
-            print("WEBSVR$255 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            m = f"WEBSVR$256 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print("WEBSVR$254 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"WEBSVR$255 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
             print(m)
             logi(m)
             raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -263,12 +262,12 @@ class MwsWebServer(ElemLoggerABC):
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         LL=log
 
-        log(f"WEBSVR$266 handle_the_request  {len(request_stg)=}")
+        log(f"WEBSVR$265 handle_the_request  {len(request_stg)=}")
 
         reqHandler = RequestHandler()
         httpReply = reqHandler.handle_client_request(request_stg)
 
-        m = f"WEBSVR$271 httpReply: {str(httpReply)}"
+        m = f"WEBSVR$270 httpReply: {str(httpReply)}"
         LL(m)
 
         return httpReply
@@ -285,8 +284,8 @@ class MwsWebServer(ElemLoggerABC):
             ###await writer.wait_closed()
 
         except Exception as ex:
-            print("WEBSVR$288 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
-            m = f"WEBSVR$289 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
+            print("WEBSVR$287 {'$*$'*35}");print("$*$"*35);print("$*$"*35);print("$*$"*35);
+            m = f"WEBSVR$288 handle_new_client **FAILED**  ex={repr(ex)}  ex='{str(ex)}' "
             print(m)
             logi(m)
             raise #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ TODO fix all the try/except

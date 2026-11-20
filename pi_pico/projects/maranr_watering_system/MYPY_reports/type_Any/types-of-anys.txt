@@ -10,14 +10,14 @@ displays.lib_lcd1602_2004_with_i2c             0          1            0        
                         lib1.utils             0         17            0                  4       0              0                         0
                     lib2.DataBoard             0         19            0                184       0              0                         0
                  lib2.FileObtainer             0         54            0                  0       0              0                         0
-                      lib2.MwsWifi             5         22            8                  0       0              0                         0
-                      lib2.TimeMgr             2          3            8                  0       0              0                         0
+                      lib2.MwsWifi             2         22            8                  0       0              0                         0
+                      lib2.TimeMgr            26         30           10                 23       0              0                         0
         logger_elem.ElemLogControl             0          9            0                 13       0              0                         0
       logger_elem.ElemLogFileTable             0         44            0                 47       0              0                         0
             logger_elem.ElemLogger             0         12            0                  0       0              0                         0
          logger_elem.ElemLoggerABC             0          1            0                  0       0              0                         0
-       maranr_watering_system_main            10          6            0                  7       0              0                         0
-          mws.MaranrWateringSystem            53         61            0                  2       0              0                         0
+       maranr_watering_system_main             8          6            0                  7       0              0                         0
+          mws.MaranrWateringSystem            49         61            0                  2       0              0                         0
                         primitives             4          2            0                  0       0              0                         0
                primitives.delay_ms             2          0            0                  0       0              0                         0
              primitives.pushbutton             0          0            0                  0       0              0                         0
@@ -34,6 +34,6 @@ displays.lib_lcd1602_2004_with_i2c             0          1            0        
              weblib.RequestHandler             0          3            0                  0       0              0                         0
          weblib.RequestHandlerData             0          3            0                  0       0              0                         0
           weblib.RequestHandlerLog             0          3            0                  0       0              0                         0
-            weblib.TemplateGrinder             2         63            0                  2       0              0                         0
+            weblib.TemplateGrinder             1         63            0                  2       0              0                         0
 --------------------------------------------------------------------------------------------------------------------------------------------
-                             Total            94        371           16                285      33              0                         0
+                             Total           108        398           18                308      33              0                         0

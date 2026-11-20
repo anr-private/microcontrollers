@@ -67,7 +67,7 @@ class MwsWifi(ElemLoggerABC):
             cls._instance = cls(1234567)
         return cls._instance
     @classmethod
-    def _nullify_instance(cls):
+    def _nullify_instance(cls) -> None:
         # UNIT TEST ONLY
         XXXXXXXXXXXX_XXXXX_XXXXX._instance = None
 

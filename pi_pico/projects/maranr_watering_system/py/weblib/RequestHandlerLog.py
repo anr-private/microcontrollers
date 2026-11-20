@@ -176,14 +176,14 @@ class RequestHandlerLog(ElemLoggerABC):
 
         # Assemble the response
 
-        data_dict = {"datetime": TimeMgr.get_formatted_date_time_string() }
+        data_dict: "dict[str,Any]" = {"datetime": TimeMgr.get_formatted_date_time_string() }
             
         # classes_dict = dict()
         # for class_name, logger in self._elc.regisXXXtry.items():
             # classes_dict[class_name] = 1 if logger.is_enabled() else 0
         # data_dict["classes"] = classes_dict
         #@@@@@@@@@@@@ REMOVE THE ABOVE
-        classes_dict = dict()
+        classes_dict: "dict[str,int]" = dict()
         ###for class_name, logger in self._elc.regisXXXtry.items():
         for class_name in self._elc.get_registered_classes():
             logger = self._elc.get_logger_for_class(class_name)
