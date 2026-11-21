@@ -105,6 +105,8 @@ def test_log_one_line() -> None:
 
         elft.log_one_line("TELF$106 test_log_one_line Writing just one line to log")
     
+        elft.flush_log_file()
+
         curr_log_path = elft.get_current_log_fpath()
         print(f"TELF$109 {curr_log_path=}")
         assert curr_log_path.startswith(logs_dir + "/"), (curr_log_path, logs_dir)

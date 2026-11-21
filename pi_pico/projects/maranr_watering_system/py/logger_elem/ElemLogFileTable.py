@@ -35,6 +35,10 @@ KEEP_LINES_HINT_ADDED_SIZE = 1000
 # the total space is less than the low water mark.
 LOG_FSPACE_HIGH_WATERMARK = 1_000_000
 LOG_FSPACE_LOW_WATERMARK =    750_000
+# Do not allow filesystem free space to go lower than this: (bytes)
+FREESPACE_MIN_BYTES = 100_000
+TYPICAL_LINUX_FREESPACE = 2_000_000_000_000  # ex: 1_805_703_294_976
+FREESPACE_MIN_BYTES = TYPICAL_LINUX_FREESPACE
 
 # One of the values in the info tuple; tuples found in _log_file_table
 LOGFILE_IS_EXTANT = 1
@@ -77,12 +81,19 @@ class ElemLogFileTable:
         # And if None, the _log_file_table will be empty.
         self._fname_next_ctr: int = -1
 
+        self._flush_ctr: int = 0
+        self._flush_MAX: int = 20
+
 
     def get_current_log_fpath(self) -> str:
         return self._current_log_fpath
 
     def get_current_log_fsize(self) -> int:
         return self._current_log_fsize
+
+    def flush_log_file(self) -> None:
+        if self._logf is not None:
+            self._logf.flush()
 
 
     def get_logs_totals(self, include_currently_open_file: bool) -> tuple[int, int, int]:
@@ -169,6 +180,8 @@ class ElemLogFileTable:
 
     def get_lines_from_log_file(self, relative_line_number: int, 
                                       number_of_lines: int) -> list[str]:
+        if self._logf is not None:
+            self._logf.flush()
         # get lines from the log file
         # relative_line_number is the line number of the first line
         # being requested, relative to the end of the file.
@@ -235,7 +248,12 @@ class ElemLogFileTable:
         try:
             self._logf.write(line)
             self._logf.write("\n")
-            self._logf.flush()
+            self._flush_ctr += 1
+            # Flush if it's time 
+            if self._flush_ctr >= self._flush_MAX:
+                self._flush_ctr = 0
+                self._logf.flush()
+            # track file size
             self._current_log_fsize += len(line)+1
     
         except OSError as ex:
@@ -395,12 +413,43 @@ class ElemLogFileTable:
 
     def _remove_logs_if_fspace_needed(self) -> None:
         # See if filespace is running low. If so, remove some old logs.
+        needed = False
+
+        # Check our total logfile size, computed as we create log files
         total_fsize = self.get_fsize_of_extant_logfiles()
-        if total_fsize < LOG_FSPACE_HIGH_WATERMARK:
-            m = f"ELFT$400 NO NEED TO REMOVE LOGFILES yet.  total_log_size={total_fsize}  {LOG_FSPACE_HIGH_WATERMARK=}"
+        needed = total_fsize >= LOG_FSPACE_HIGH_WATERMARK
+        s = "NEED TO REMOVE LOG-FILES" if needed else "No need to remove log files"
+        m = f"ELFT$400 {s} based on total-log-files-size:  total_log_size={total_fsize}  {LOG_FSPACE_HIGH_WATERMARK=}"
+        print(m)
+        self._log_a_line(m)
+
+        # Check the overall filesystem space available
+        if not needed:
+            # Get filesystem stats for the root directory
+            stats = os.statvfs("/")
+            block_size = stats[0]     # f_bsize: File system block size (in bytes)
+            total_blocks = stats[2]   # f_blocks: Total number of blocks
+            free_blocks = stats[3]    # f_bfree: Number of free blocks
+            # Calculate sizes in bytes
+            total_bytes = block_size * total_blocks
+            free_bytes = block_size * free_blocks
+            used_bytes = total_bytes - free_bytes
+
+            needed = free_bytes <= FREESPACE_MIN_BYTES
+            s = "NEED TO REMOVE LOG-FILES" if needed else "No need to remove log files"
+            m = f"ELFT$400 {s} based on FREE_SPACE too small: {free_bytes=}  {FREESPACE_MIN_BYTES=}.  {total_bytes=}"
+            print(m)
+            self._log_a_line(m)
+            ###else:
+            ###    print(f"ELFT$999 @@@@@@@@@@ SHOULD HAVE STOPPED @@   {free_bytes=} < {FREESPACE_MIN_BYTES=}  @@@@@@@@@@@@@@@@@@@")
+
+        if not needed:
+            m = f"ELFT$400 NO NEED TO REMOVE LOGFILES yet."
             print(m)
             self._log_a_line(m)
             return
+
+        # make some space for logging
         self._reduce_file_usage_to_below_low_watermark()
 
 
@@ -507,6 +556,7 @@ class ElemLogFileTable:
             self._log_a_line(m)
 
             try:
+                self._logf.flush()
                 self._logf.close()
             except Exception as ex:
                 m = f"ELFT$512 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"

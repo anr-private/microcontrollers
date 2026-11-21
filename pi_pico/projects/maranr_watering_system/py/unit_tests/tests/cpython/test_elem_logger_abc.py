@@ -73,8 +73,10 @@ class TestElemLoggerABC:
         mm = "This log line is from ZTELABC$73"
         aa.to_log(mm)
 
+
         #@@@@@@@@ LOGGING IS ENABLED by default in ElemLogger at the moment
         # by default logging is disabled
+        elc.flush_current_log_file()
         got = _read_log_file(elc)
         #@@@@@@@@@@@@@@@assert got is None
         assert isinstance(got, str)
@@ -88,9 +90,11 @@ class TestElemLoggerABC:
         logmesg_1 = "This log line is from ZTELABC$88"
         aa.to_log(logmesg_1)
 
+        elc.flush_current_log_file()
         got = _read_log_file(elc)
         assert got is not None
-        print(f"ZTELABC$93 log file contents len={len(got)}")
+        print(f"ZTELABC$95 log file contents len={len(got)}")
+        print(f"ZTELABC$96 log file contents {got!r}")
         ###assert len(got) == 100
         assert logmesg_1 in got
 

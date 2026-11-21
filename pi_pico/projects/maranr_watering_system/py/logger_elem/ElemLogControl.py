@@ -14,7 +14,6 @@ from lib1.read_last_n_lines import read_last_n_lines
 from .ElemLogger import ElemLogger
 from .ElemLogFileTable import ElemLogFileTable
 
-
 VALIDATE = 13524687
 
 
@@ -111,6 +110,9 @@ class ElemLogControl:
         # self._log_enabled = not not enabled
     # def is_enabled(self) -> bool:
         # return self._log_enabled
+
+    def flush_current_log_file(self) -> None:
+        self._log_file_table.flush_log_file()
 
     def close_all_logging(self) -> None:
         # close logging - program is terminating
