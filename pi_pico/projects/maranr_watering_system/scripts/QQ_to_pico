@@ -402,7 +402,7 @@ class ToPico:
         environment.
         """
         val = os.getenv(EXPECTED_VENV_VARIABLE)
-        print(f"QQ$405  {EXPECTED_VENV_VARIABLE=} value='{val}'")
+        if V: print(f"QQ$405  {EXPECTED_VENV_VARIABLE=} value='{val}'")
         if val is None:
             return False
         # Should contain the path to our virtual env subdir
