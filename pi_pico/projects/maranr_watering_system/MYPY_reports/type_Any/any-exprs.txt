@@ -13,7 +13,7 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
                       lib2.MwsWifi     31     215     85.58%
                       lib2.TimeMgr     54     393     86.26%
         logger_elem.ElemLogControl      5     378     98.68%
-      logger_elem.ElemLogFileTable      4    1305     99.69%
+      logger_elem.ElemLogFileTable      4    1383     99.71%
             logger_elem.ElemLogger     12     114     89.47%
          logger_elem.ElemLoggerABC      0      89    100.00%
        maranr_watering_system_main      8      98     91.84%
@@ -36,4 +36,4 @@ displays.lib_lcd1602_2004_with_i2c      1       2     50.00%
           weblib.RequestHandlerLog      3       4     25.00%
             weblib.TemplateGrinder      3      43     93.02%
 ------------------------------------------------------------
-                             Total    378    4801     92.13%
+                             Total    378    4879     92.25%

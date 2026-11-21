@@ -529,6 +529,45 @@ class ElemLogFileTable:
         return oldest_extant_idx
 
 
+    def _check_for_low_filespace(self) -> tuple[str,str]:
+        # See if filespace is running low. 
+        # Returns a tuple (why, mesg)
+        # 'why' is:
+        #    empty string if filespace is not low;
+        #   "logfile_sizes_too_high" if the total size of the extant logfiles is
+        #       above an allowed limit (highwater mark)
+        #   "freespace_low" if the total freespace reported by the
+        #       file system is below a minimum value FREESPACE_MIN_BYTES
+        # mesg is a message suitable for logging/printing, giving the
+        #   related details
+
+        # Check our total logfile size, computed as we create log files
+        total_log_size = self.get_fsize_of_extant_logfiles()
+        if total_log_size >= LOG_FSPACE_HIGH_WATERMARK:
+            # sum of extant files' sizes is too big - remove some
+            mesg = f"ELFT$400 EXTANT LOGFILES's SIZES too big: {total_log_size=} >= {LOG_FSPACE_HIGH_WATERMARK=}"
+            return ("logfile_sizes_too_high", mesg)
+
+        # Check the overall filesystem space available
+        # Get filesystem stats for the root directory
+        stats = os.statvfs("/")
+        block_size = stats[0]     # f_bsize: File system block size (in bytes)
+        total_blocks = stats[2]   # f_blocks: Total number of blocks
+        free_blocks = stats[3]    # f_bfree: Number of free blocks
+        # Calculate sizes in bytes
+        total_bytes = block_size * total_blocks
+        free_bytes = block_size * free_blocks
+        used_bytes = total_bytes - free_bytes
+        # Check for too little free space
+        if free_bytes <= FREESPACE_MIN_BYTES:
+            mesg = f"ELFT$400 AVAILABLE FREE_SPACE too small: {free_bytes=} <= {FREESPACE_MIN_BYTES=}.  {total_bytes=} {used_bytes=}"
+            return ("freespace_low", mesg)
+
+        # OK - no limits exceeded yet
+        mesg = f"ELFT$400 FILESPACE OK: {total_log_size=} >= {LOG_FSPACE_HIGH_WATERMARK=} and {free_bytes=} <= {FREESPACE_MIN_BYTES=}."
+        return ("", mesg)
+
+
     def close_logging(self) -> None:
         # close the logger
         # Save the file status info
