@@ -30,9 +30,6 @@ from logger_embed_module.LemLogControl import LemLogControl, Z_replace_log_file_
 HELP_INFO="""NO HELP YET
 """
 
-
-#=== OPTIONS PARSER  ============================================
-
 class _Options:
     """ """
     def __init__(self):
@@ -57,6 +54,18 @@ class _Options:
             s.append(f"{name}={val}")
         return f"{self.__class__.__name__}[{','.join(s)}]"
     __repr__ = __str__
+
+
+
+def perform_test(opts: _Options) -> None:
+    print(f"ZLOGSROT$1 PERFORM TEST   {opts=}")
+
+
+
+
+
+
+#=== OPTIONS PARSER  ============================================
 
 
 def parse_options(args):
@@ -161,11 +170,15 @@ def run_options_tests():
 
 def main(args):
     print(f"ZLOGSROT$28 MAIN: {args=}")
+    opts = parse_options(args)
+    perform_test(opts)
+
 
 if __name__ == "__main__":
-    #main(sys.argv[1:])
+    if 0:
+        run_options_tests()
+        sys.exit(1)
 
-    run_options_tests()
-
+    main(sys.argv[1:])
 
 ###
