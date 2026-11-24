@@ -34,6 +34,12 @@ class _Options:
     """ """
     def __init__(self):
         """ """
+        # Items that are not options (do not start with '-' or '--')
+        self.other_items = []
+        self.verbose = False
+        self.veryverbose = False
+        self.debug = False
+        self.debugOptions = False
 
     @property
     def optionNames(self):
@@ -59,9 +65,6 @@ class _Options:
 
 def perform_test(opts: _Options) -> None:
     print(f"ZLOGSROT$1 PERFORM TEST   {opts=}")
-
-
-
 
 
 
@@ -110,7 +113,7 @@ def parse_options(args):
         print(f"ZLOGSROT$1  {optLc=!r}")
 
         if optLc in ("help","h"):
-            print(HELP)
+            print(HELP_INFO)
             sys.exit(1)
 
         elif opt in ("v", "verbose"):

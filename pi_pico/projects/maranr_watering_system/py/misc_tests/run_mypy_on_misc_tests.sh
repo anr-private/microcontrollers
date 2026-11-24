@@ -2,13 +2,13 @@
 #
 # run_mypy_on_misc_tests.sh 
 #
-# Run this script in the directory that holds py/misc_tests
+# Run this script in py/misc_tests
 #
 # Usage:
-#  Check all production code (same as before)
+#  Check all code
 #   ./run_mypy_on_misc_tests.sh                          
 #  Check only the file(s)/dir(s) given
-#   ./run_mypy_on_misc_tests.sh  py/weblib/MwsWebServer.py  
+#   ./run_mypy_on_misc_tests.sh  ./some_test.py
 #
 # -v   show verbose output including which files are found/checked ('Found')
 #      It generates a lot of output, so pipe it into: ' | grep Found'
@@ -22,14 +22,25 @@
 # mypy still follows imports. Errors can show up in modules the 
 # file imports, unless those modules are still marked ignore_errors
 
+# Ensure this script runs in py/misc-tests/
+cd "$(dirname "$0")"
+for required_path in ../../typings .. ./logs_rotation_test.py ../lib1 ../lib2 ../logger_embed_module ; do
+    if [ ! -e "${required_path}" ] ; then
+        echo "*ERROR* missing path: ${required_path}  (cwd: $(pwd))"
+        exit 2
+    fi
+done
+
+
 INI_FILE="mypy_for_misc_tests.ini"
 
 default_targets=(
     ./logs_rotation_test.py
-    ../py/lib1
-    ../py/lib2
-    ../py/logger_embed_module
+    ../lib1
+    ../lib2
+    ../logger_embed_module
 )
+
 
 if [ "$#" -gt 0 ]; then
     targets=("$@")
