@@ -5,9 +5,9 @@
 import os
 
 # OUTPUT when file system is full:
-#   SHOW_FS_STATUS$22 Total space: 2,621,440 bytes (2560.00 KB)
-#   SHOW_FS_STATUS$23 Used space:  2,752,512 bytes (2688.00 KB)
-#   SHOW_FS_STATUS$24 Free space:  -131,072 bytes (-128.00 KB)
+#   SHOW_FS_STATUS$8 Total space: 2,621,440 bytes (2560.00 KB)
+#   SHOW_FS_STATUS$9 Used space:  2,752,512 bytes (2688.00 KB)
+#   SHOW_FS_STATUS$10 Free space:  -131,072 bytes (-128.00 KB)
 
 
 
@@ -23,9 +23,9 @@ total_bytes = block_size * total_blocks
 free_bytes = block_size * free_blocks
 used_bytes = total_bytes - free_bytes
 
-print(f"SHOW_FS_STATUS$22 Total space: {total_bytes:,} bytes ({total_bytes / 1024:.2f} KB)")
-print(f"SHOW_FS_STATUS$23 Used space:  {used_bytes:,} bytes ({used_bytes / 1024:.2f} KB)")
-print(f"SHOW_FS_STATUS$24 Free space:  {free_bytes:,} bytes ({free_bytes / 1024:.2f} KB)")
+print(f"SHOW_FS_STATUS$26 Total space: {total_bytes:,} bytes ({total_bytes / 1024:.2f} KB)")
+print(f"SHOW_FS_STATUS$27 Used space:  {used_bytes:,} bytes ({used_bytes / 1024:.2f} KB)")
+print(f"SHOW_FS_STATUS$28 Free space:  {free_bytes:,} bytes ({free_bytes / 1024:.2f} KB)")
 
 ###
 

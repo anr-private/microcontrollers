@@ -75,6 +75,35 @@ LCD POWER
 MISC FILES
   misc/favicon* files 
 
+
+=== PLATFORM  ==============================================
+
+See 
+  ~/git/microcontrollers/pi_pico/projects/\
+      maranr_watering_system/py/misc_tests/show_platform_info.py
+  ~/git/microcontrollers/pi_pico/projects/\
+      maranr_watering_system/py/lib1/platform_info.py
+           Defines USING_MICROPYTHON, USING_CPYTHON
+           Also    USING_PICO_HARDWARE, USING_PICO2_HARDWARE, 
+                   USING_LINUX_HARDWARE
+
+LINUX / CPYTHON 
+  implementation.name = 'cpython'
+  implementation._machine = '<missing>'   Attribute is not available.
+  sys.platform = 'linux'
+  sys.version = '3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]'
+  os.uname() = posix.uname_result(sysname='Linux', nodename='shadow', release='7.2.15-76070215-generic', version='#202611011338~1793722468~24.04~d8e9a1a~dev SMP PREEMPT_DYNAMIC T', machine='x86_64')
+  gc.mem_free() unavailable: AttributeError("module 'gc' has no attribute 'mem_free'")
+ 
+PICO 2 W / Micropython 1.29.0
+  implementation.name = 'micropython'
+  implementation._machine = 'Raspberry Pi Pico 2 W with RP2350'
+  sys.platform = 'rp2'
+  sys.version = '3.4.0; MicroPython v1.29.0 on 2026-08-24'
+  os.uname() = (sysname='rp2', nodename='rp2', release='1.29.0', version='v1.29.0 on 2026-08-24 (GNU 16.1.0 MinSizeRel)', machine='Raspberry Pi Pico 2 W with RP2350')
+  gc.mem_free() = 440128
+
+
 === HISTORY  =================================================
 
 2026-02-15  
