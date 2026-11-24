@@ -443,74 +443,30 @@ class ElemLogFileTable:
         self._reduce_file_usage_to_below_low_watermark()
 
 
-
-    # def OLD___(self):  #@@@@@@@@@@@@@@@@@@@@@ REMOVE
-# 
-        # # See if filespace is running low. If so, remove some old logs.
-        # needed = False
-# 
-        # # Check our total logfile size, computed as we create log files
-        # total_fsize = self.get_fsize_of_extant_logfiles()
-        # needed = total_fsize >= LOG_FSPACE _HIGH_WATERMARK
-        # s = "NEED TO REMOVE LOG-FILES" if needed else "No need to remove log files"
-        # m = f"ELFT$456 {s} based on total-log-files-size:  total_log_size={total_fsize}  {LOG_FSPACE _HIGH_WATERMARK=}"
-        # print(m)
-        # self._log_a_line(m)
-# 
-        # # Check the overall filesystem space available
-        # if not needed:
-            # # Get filesystem stats for the root directory
-            # stats = os.statvfs("/")
-            # block_size = stats[0]     # f_bsize: File system block size (in bytes)
-            # total_blocks = stats[2]   # f_blocks: Total number of blocks
-            # free_blocks = stats[3]    # f_bfree: Number of free blocks
-            # # Calculate sizes in bytes
-            # total_bytes = block_size * total_blocks
-            # free_bytes = block_size * free_blocks
-            # used_bytes = total_bytes - free_bytes
-# 
-            # needed = free_bytes <= self._freespace_min_bytes
-            # s = "NEED TO REMOVE LOG-FILES" if needed else "No need to remove log files"
-            # m = f"ELFT$474 {s} based on FREE_SPACE too small: {free_bytes=}  {self._freespace_min_bytes=}.  {total_bytes=}"
-            # print(m)
-            # self._log_a_line(m)
-            # ###else:
-            # ###    print(f"ELFT$478 @@@@@@@@@@ SHOULD HAVE STOPPED @@   {free_bytes=} < {self._freespace_min_bytes=}  @@@@@@@@@@@@@@@@@@@")
-# 
-        # if not needed:
-            # m = f"ELFT$481 NO NEED TO REMOVE LOGFILES yet."
-            # print(m)
-            # self._log_a_line(m)
-            # return
-# 
-        # # make some space for logging
-        # self._reduce_file_usage_to_below_low_watermark()
-
-
     def _reduce_file_usage_to_below_low_watermark(self) -> None:
-        m = f"ELFT$491 _reduce_file_usage_to_below_low_watermark extant-fsize={self.get_fsize_of_extant_logfiles()}"
+        m = f"ELFT$447 _reduce_file_usage_to_below_low_watermark extant-fsize={self.get_fsize_of_extant_logfiles()}"
         print(m)
         self._log_a_line(m)
         num_files_removed = 0
         while 1:
             extant_fsize = self.get_fsize_of_extant_logfiles()
             if extant_fsize < self._log_fspace_low_watermark:
-                #print("ELFT$498 *********************_____________________________________________________________________")
+                #print("ELFT$454 *********************_____________________________________________________________________")
                 break
             ok = self._remove_the_oldest_extant_logfile()
             if not ok:
-                m = f"ELFT$502 FAILED to remove oldest extant logfile. {extant_fsize=}  {self._log_fspace_low_watermark=} num_files_removed{num_files_removed=}"
+                m = f"ELFT$458 FAILED to remove oldest extant logfile. {extant_fsize=}  {self._log_fspace_low_watermark=} num_files_removed{num_files_removed=}"
                 print(m)
                 self._log_a_line(m)
                 break
             num_files_removed += 1
-        m = f"ELFT$507 Removed old logs. Extant-filespace now below low mark. {extant_fsize=}  {self._log_fspace_low_watermark=} num_files_removed{num_files_removed=}"
+        m = f"ELFT$463 Removed old logs. Extant-filespace now below low mark. {extant_fsize=}  {self._log_fspace_low_watermark=} num_files_removed{num_files_removed=}"
         print(m)
         self._log_a_line(m)
 
 
     def _remove_the_oldest_extant_logfile(self) -> bool:
-        m = f"ELFT$513 _remove_the_oldest_extant_logfile extant-fsize={self.get_fsize_of_extant_logfiles()}"
+        m = f"ELFT$469 _remove_the_oldest_extant_logfile extant-fsize={self.get_fsize_of_extant_logfiles()}"
         print(m)
         self._log_a_line(m)
 
@@ -520,13 +476,13 @@ class ElemLogFileTable:
         # If failed, probably shouldn't try again.
         oldest_extant_idx = self._find_the_oldest_extant_logfile()
         if oldest_extant_idx is None:
-            m = f"ELFT$523 Cannot find the oldest-extant-logfile. table-size={len(self._log_file_table)}"
+            m = f"ELFT$479 Cannot find the oldest-extant-logfile. table-size={len(self._log_file_table)}"
             print(m)
             self._log_a_line(m)
             return False
         fitem = self.get_log_table_item(oldest_extant_idx)
         if  fitem is None:
-            m = f"ELFT$529 _remove_the_oldest_extant_logfile Bad {oldest_extant_idx} table-size={len(self._log_file_table)}"
+            m = f"ELFT$485 _remove_the_oldest_extant_logfile Bad {oldest_extant_idx} table-size={len(self._log_file_table)}"
             print(m)
             self._log_a_line(m)
             return False
@@ -535,14 +491,14 @@ class ElemLogFileTable:
         ok = remove_file(fpath)
 
         if not ok:
-            m = f"ELFT$538 _remove_the_oldest_extant_logfile FAILED to remove logfile '{fpath}'"
+            m = f"ELFT$494 _remove_the_oldest_extant_logfile FAILED to remove logfile '{fpath}'"
             print(m)
             self._log_a_line(m)
             return False
 
         self._mark_file_was_removed(oldest_extant_idx)
  
-        m = f"ELFT$545 _remove_the_oldest_extant_logfile REMOVED OLD LOGFILE '{fpath}'"
+        m = f"ELFT$501 _remove_the_oldest_extant_logfile REMOVED OLD LOGFILE '{fpath}'"
         print(m)
         self._log_a_line(m)
 
@@ -555,10 +511,10 @@ class ElemLogFileTable:
 
         oldest_extant_idx = None
         for j, fitem in enumerate(self._log_file_table):
-            print(f"ELFT$558 LOOP: {j=}  {fitem=}")
+            print(f"ELFT$514 LOOP: {j=}  {fitem=}")
             if fitem[2]:
                 oldest_extant_idx = j
-                print(f"ELFT$561 Found oldest extant logfile item: {oldest_extant_idx=} {fitem=}")
+                print(f"ELFT$517 Found oldest extant logfile item: {oldest_extant_idx=} {fitem=}")
                 break
         return oldest_extant_idx
 
@@ -579,7 +535,7 @@ class ElemLogFileTable:
         # total_log_size = self.get_fsize_of_extant_logfiles()
         # if total_log_size >= LOG_FSPACE _HIGH_WATERMARK:
             # # sum of extant files' sizes is too big - remove some
-            # mesg = f"ELFT$582 EXTANT LOGFILES's SIZES too big: {total_log_size=} >= {LOG_FSPACE _HIGH_WATERMARK=}"
+            # mesg = f"ELFT$538 EXTANT LOGFILES's SIZES too big: {total_log_size=} >= {LOG_FSPACE _HIGH_WATERMARK=}"
             # return ("logfile_sizes_too_high", mesg)
 # 
         # # Check the overall filesystem space available
@@ -594,18 +550,18 @@ class ElemLogFileTable:
         # used_bytes = total_bytes - free_bytes
         # # Check for too little free space
         # if free_bytes <= FREE SPACE_MIN_BYTES:
-            # mesg = f"ELFT$597 AVAILABLE FREE_SPACE too small: {free_bytes=} <= {FREE SPACE_MIN_BYTES=}.  {total_bytes=} {used_bytes=}"
+            # mesg = f"ELFT$553 AVAILABLE FREE_SPACE too small: {free_bytes=} <= {FREE SPACE_MIN_BYTES=}.  {total_bytes=} {used_bytes=}"
             # return ("freespace_low", mesg)
 # 
         # # OK - no limits exceeded yet
-        # mesg = f"ELFT$601 FILESPACE OK: {total_log_size=} >= {LOG_FSPACE _HIGH_WATERMARK=} and {free_bytes=} <= {FREE SPACE_MIN_BYTES=}."
+        # mesg = f"ELFT$557 FILESPACE OK: {total_log_size=} >= {LOG_FSPACE _HIGH_WATERMARK=} and {free_bytes=} <= {FREE SPACE_MIN_BYTES=}."
         # return ("", mesg)
 # @@@@@@@@@@@ REMOVE
 
     def close_logging(self) -> None:
         # close the logger
         # Save the file status info
-        self.dump_file_table("from-ELFT$608")
+        self.dump_file_table("from-ELFT$564")
         # Then close the log
         self._close_current_log_file("close_logging")
 
@@ -617,14 +573,14 @@ class ElemLogFileTable:
         except OSError as ex:
             if ex.errno == 17: # already exists
                 pass
-                #print(f"ELFT$620  Subdir '{LOG_FILES_SUBDIR}' already exists")
+                #print(f"ELFT$576  Subdir '{LOG_FILES_SUBDIR}' already exists")
             else:
-                print(f"ELFT$622 *ERROR* {LOG_FILES_SUBDIR} errno={ex.errno} dir  cannot be created")
+                print(f"ELFT$578 *ERROR* {LOG_FILES_SUBDIR} errno={ex.errno} dir  cannot be created")
 
 
     def _close_current_log_file(self, who:str) -> None:
         if self._logf is not None:
-            m = f"ELFT$627 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}' size={self._current_log_fsize}"
+            m = f"ELFT$583 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}' size={self._current_log_fsize}"
             print(m)
             self._log_a_line(m)
 
@@ -632,14 +588,14 @@ class ElemLogFileTable:
                 self._logf.flush()
                 self._logf.close()
             except Exception as ex:
-                m = f"ELFT$635 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
+                m = f"ELFT$591 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
                 print(m)
 
             # Keep track of every log file as it is closed.
             fname = self._current_log_fpath
             fsize = self._current_log_fsize
             self._append_to_log_file_table(fname, fsize)
-            print(f"ELFT$642 Closed current log. LOG TABLE: {self._log_file_table}")
+            print(f"ELFT$598 Closed current log. LOG TABLE: {self._log_file_table}")
         # We have no open logfile.
         self._logf = None
         self._current_log_fpath = EMPTY_LOG_FPATH_MARKER_STG
@@ -649,12 +605,12 @@ class ElemLogFileTable:
     def dump_file_table(self, comment:str, to_log:bool=True) -> None:
         # write the file table into the log
         if len(self._log_file_table) <= 0:
-            m = f"ELFT$652 DUMP LOG-FILE-TABLE:  the table is empty  {comment}"
+            m = f"ELFT$608 DUMP LOG-FILE-TABLE:  the table is empty  {comment}"
             print(m)
             if to_log: self._log_a_line(m)
             return
 
-        m = f"+++  LOG FILE TABLE  Dump  +++++++++++  {comment}  ++++++++++++++++++++++++++  ELFT$657"
+        m = f"+++  LOG FILE TABLE  Dump  +++++++++++  {comment}  ++++++++++++++++++++++++++  ELFT$613"
         print(m)
         if to_log: self._log_a_line(m)
         for finfo in self._log_file_table:
@@ -667,16 +623,16 @@ class ElemLogFileTable:
                 else:
                     extant_flag = "REMOVED"
 
-                m = f"ELFT$670   {fname:<16}  {fsize} {extant_flag}"
+                m = f"ELFT$626   {fname:<16}  {fsize} {extant_flag}"
                 print(m)
                 if to_log: self._log_a_line(m)
 
             except Exception as ex:
-                m = f"ELFT$675 Error dumping log file table: ex={ex} str={str(ex)}"
+                m = f"ELFT$631 Error dumping log file table: ex={ex} str={str(ex)}"
                 print(m)
                 if to_log: self._log_a_line(m)
 
-        m = "+++  end of LOG FILE TABLE  +++++++++++++++++++++++++++++++++++++ ELFT$679"
+        m = "+++  end of LOG FILE TABLE  +++++++++++++++++++++++++++++++++++++ ELFT$635"
         print(m)
         if to_log: self._log_a_line(m)
         m = ""
@@ -705,7 +661,7 @@ def _check_for_low_filespace(fsize_of_extant_logfiles:int,
     # Check our total logfile size, computed as we create log files
     if fsize_of_extant_logfiles >= log_fspace_high_watermark:
         # sum of extant files' sizes is too big - remove some
-        mesg = f"ELFT$708 EXTANT LOGFILES's SIZES too big: {fsize_of_extant_logfiles=} >= {log_fspace_high_watermark=}"
+        mesg = f"ELFT$664 EXTANT LOGFILES's SIZES too big: {fsize_of_extant_logfiles=} >= {log_fspace_high_watermark=}"
         return ("logfile_sizes_too_high", mesg)
 
     # Check the overall filesystem space available
@@ -720,18 +676,18 @@ def _check_for_low_filespace(fsize_of_extant_logfiles:int,
     used_bytes = total_bytes - free_bytes
     # Check for too little free space
     if free_bytes <= freespace_min_bytes:
-        mesg = f"ELFT$723 AVAILABLE FREE_SPACE too small: {free_bytes=} <= {freespace_min_bytes=}.  {total_bytes=} {used_bytes=}"
+        mesg = f"ELFT$679 AVAILABLE FREE_SPACE too small: {free_bytes=} <= {freespace_min_bytes=}.  {total_bytes=} {used_bytes=}"
         return ("freespace_low", mesg)
 
     # OK - no limits exceeded yet
-    mesg = f"ELFT$727 FILESPACE OK: {fsize_of_extant_logfiles=} >= {log_fspace_high_watermark=} and {free_bytes=} <= {freespace_min_bytes=}."
+    mesg = f"ELFT$683 FILESPACE OK: {fsize_of_extant_logfiles=} >= {log_fspace_high_watermark=} and {free_bytes=} <= {freespace_min_bytes=}."
     return ("", mesg)
 
 
 def _log_file_filter(fname:str, ftype: str, fsize: int) -> int | None:
     # Returns None if the file is not chosen.
     # Returns the filename extension value (an int) if chosen
-    print(f"ELFT$734 _log_file_filter  fname='{fname}'  {fsize=}")
+    print(f"ELFT$690 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None
     #
@@ -743,7 +699,7 @@ def _log_file_filter(fname:str, ftype: str, fsize: int) -> int | None:
     #
     if fpart != "mws_log": return None
     ext_val = is_3_digit_int(ext_part)
-    print(f"ELFT$746   extension is_3_digit_int('{ext_part}') is {ext_val}")
+    print(f"ELFT$702   extension is_3_digit_int('{ext_part}') is {ext_val}")
     if ext_val is None: return None
     return ext_val
 
@@ -779,7 +735,7 @@ def Z__set_max_log_file_size(new_max_size: int) -> int:
     during its cleanup to restore the production value.
     UNIT TEST ONLY
     """
-    #print(f"ELFT$782  Z__set_max_log_file_size to {new_max_size} =======================================")
+    #print(f"ELFT$738  Z__set_max_log_file_size to {new_max_size} =======================================")
     global MAX_LOG_FILE_SIZE
     old = MAX_LOG_FILE_SIZE
     MAX_LOG_FILE_SIZE = new_max_size
@@ -793,7 +749,7 @@ def Z__set_log_fspace_high_watermark(new_high_watermark: int) -> int:
     """
     raise RuntimeError("Z__set_log_fspace_high_watermark IS NOT IMPL")
 
-    #print(f"ELFT$796  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
+    #print(f"ELFT$752  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
     # global LOG_FSPACE _HIGH_WATERMARK
     # old = LOG_FSPACE _HIGH_WATERMARK
     # LOG_FSPACE _HIGH_WATERMARK = new_high_watermark
@@ -807,7 +763,7 @@ def Z__set_log_fspace_low_watermark(new_low_watermark: int) -> int:
     """
     raise RuntimeError("Z__set_log_fspace_low_watermark IS NOT IMPL")
 
-    # #print(f"ELFT$810  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
+    # #print(f"ELFT$766  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
     # global LOG_FSPACE _LOW_WATERMARK
     # old = LOG_FSPACE _LOW_WATERMARK
     # LOG_FSPACE _LOW_WATERMARK = new_low_watermark
