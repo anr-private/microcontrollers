@@ -8,19 +8,20 @@ import os
 from lib1.utils import format_number_with_commas
 
 
-def calculate_flash_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
-    """ Given the 10-tuple returned by os.statvfs().
-    Returns two values: total_space and free_space (in bytes)
-    On Linux, both block_size and fragment_size are almost always 4096.
-    On a Raspberry Pi Pico (MicroPython), both are almost always either
-    512 or 4096 (depending on how the LittleFS/FAT partition was formatted).
-    On Pico 2 W 2026-11-01:
-        import os
-        print(os.statvfs("/"))
-        (4096, 4096, 640, 603, 603, 0, 0, 0, 0, 255)
-    So this PICO reports 640 x 4096 = 2,621,440 bytes total and
-    603 x 4096 = 2,469,888 bytes free.
-    """
+def calculate_filesystem_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
+    # WAS calculate_flash_space
+    # Given the 10-tuple returned by os.statvfs().
+    # Returns two values: total_space and free_space (in bytes)
+    # On Linux, both block_size and fragment_size are almost always 4096.
+    # On a Raspberry Pi Pico (MicroPython), both are almost always either
+    # 512 or 4096 (depending on how the LittleFS/FAT partition was formatted).
+    # On Pico 2 W 2026-11-01:
+    #     import os
+    #     print(os.statvfs("/"))
+    #     (4096, 4096, 640, 603, 603, 0, 0, 0, 0, 255)
+    # So this PICO reports 640 x 4096 = 2,621,440 bytes total and
+    # 603 x 4096 = 2,469,888 bytes free.
+
     # Block size
     ###block_size = statvfs_values[0]
     # Fragment size
@@ -38,11 +39,11 @@ def calculate_flash_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
     return total_space, free_space
 
 
-def get_flash_space() -> tuple[int,int]:
+def get_filesystem_space() -> tuple[int,int]:
     # Get filesystem statistics for the root directory ("/")
     # This works on both Pico and CPython/linux, mac.
     # (Does not work on Windoze but so what).
-    #print(f"FSUT$45 Using 'real' filespace info")
+    #print(f"FSUT$46 Using 'real' filespace info")
     # os.statvfs(...) returns a tuple:
     #  [0] f_bsize: File system block size Linux: 4096  Pico: 4096 (or 512)
     #  [1] f_frsize: Fragment size  Usu same as f_bsize
@@ -58,7 +59,7 @@ def get_flash_space() -> tuple[int,int]:
 
     statvfs_values = os.statvfs("/")
 
-    total_space, free_space = calculate_flash_space(statvfs_values)
+    total_space, free_space = calculate_filesystem_space(statvfs_values)
 
     return total_space, free_space
 
@@ -77,7 +78,7 @@ def convert_fs_space_to_string(fs_space: int) -> str:
     return f"{bytes_stg} bytes, {kb_stg} KB, {mb_stg} MB"
 
 def get_fs_space_string(sep:str="") -> str:
-    total_space, free_space = get_flash_space()
+    total_space, free_space = get_filesystem_space()
     total_space_stg = convert_fs_space_to_string(total_space)
     free_space_stg = convert_fs_space_to_string(free_space)
     return f"TOTAL SPACE {total_space_stg}   {sep}FREE SPACE {free_space_stg}"

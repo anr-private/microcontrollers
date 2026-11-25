@@ -53,12 +53,12 @@ class CpythonTestSupport:
         self.fake_total_FS_space = 1000
         self.fake_free_FS_space = 1000
 
-    def fake_get_flash_space(self):
-        # Fake version of get_flash_space() function in lib/utils.py.
-        # Get the total filespace in use and available/free
-        # fake the filespace (FS) info
-        #@@@@ TODO be able to fake FS space stats based on the 'dir_path' arg
-        return (self.fake_total_FS_space, self.fake_free_FS_space)
+    # def fake_get_ flash_space(self):
+        # # Fake version of get_ flash_space() function in lib/utils.py.
+        # # Get the total filespace in use and available/free
+        # # fake the filespace (FS) info
+        # #@@@@ TODO be able to fake FS space stats based on the 'dir_path' arg
+        # return (self.fake_total_FS_space, self.fake_free_FS_space)
 
 
     def fake_ntp_set_time(self):

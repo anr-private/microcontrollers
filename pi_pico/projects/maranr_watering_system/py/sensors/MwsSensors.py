@@ -146,7 +146,7 @@ def celsius_to_fahrenheit(celsius):
 
 
 #    def make_space_stg(self):
-#        ts, fs = get_flash_space()
+#        ts, fs = get_filesystem_space()
 #
 #        tss = convert_fs_space_to_string(ts)
 #        fss = convert_fs_space_to_string(fs)

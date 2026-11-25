@@ -23,7 +23,7 @@ except ImportError: pass
 
 from lib1.utils import MWS_CONFIG
 from lib1.utils import seconds_to_hhmmss_string
-from lib1.file_system_utils import get_flash_space
+from lib1.file_system_utils import get_filesystem_space
 from logger_elem.ElemLoggerABC import ElemLoggerABC
 from logger_elem.ElemLogControl import ElemLogControl
 from lib2.DataBoard import DataBoard
@@ -531,7 +531,7 @@ class MwsDisplays(ElemLoggerABC):
             line2 = ""
         else:
             # file space
-            total_space, free_space = get_flash_space()
+            total_space, free_space = get_filesystem_space()
             line1 = f"{free_space} FreeFS"
             line2 = f"{total_space} TotalFS"
         self._show_lcd_lines(line1,line2)

@@ -11,19 +11,8 @@ import pytest
 # mimics the micropython inclusion of ':/lib' on its path
 sys.path.append("./lib")
 
-"""
-from lib1.utils import determine_py_platform
-print(f"ZTELABC$16 platform is {determine_py_platform()}")
-if determine_py_platform() == "cpython":   # Py3
-    from cpython_test_support import CpythonTestSupport, FileHelper
-    PLATFORM="cpython"
-else:
-    PLATFORM = "micropython"
-    from utils import get_flash_space
-"""
-#@@@@@@@@@@@@@@@@@@ FIX
 PLATFORM="cpython"
-print(f"ZTELABC$26  platform is {PLATFORM}")
+print(f"ZTELABC$15  platform is {PLATFORM}")
 
 from cpython_test_support import CpythonTestSupport, FileHelper
 
@@ -41,7 +30,7 @@ except ImportError: pass
 class TestElemLoggerABC:
 
     def setup_method(self, method:Any) -> None:
-        print("ZTELABC$44 setup method call")
+        print("ZTELABC$33 setup method call")
         # Remove any previous instance
         ElemLogControl._nullify_instance()
 
@@ -52,7 +41,7 @@ class TestElemLoggerABC:
 
     #@pytest.mark.skip(reason="@$@$@$@$@$@$@$@$@$@$@$@@")
     def test_1(self) -> None:
-        print(f"ZTELABC$55  === test_1  =================")
+        print(f"ZTELABC$44  === test_1  =================")
 
         fhelper = FileHelper.get_instance()
 
@@ -63,14 +52,14 @@ class TestElemLoggerABC:
         aa = ClassA(111)
 
         elc = ElemLogControl.get_instance()
-        print(f"ZTELABC$66  elc is {elc}")
+        print(f"ZTELABC$55  elc is {elc}")
 
         if 1:
             clses = elc.get_registered_classes()
-            print(f"ZTELABC$70 registered classes: {clses}")
-            print(f"ZTELABC$71 registered classes type: {type(clses)}")
+            print(f"ZTELABC$59 registered classes: {clses}")
+            print(f"ZTELABC$60 registered classes type: {type(clses)}")
 
-        mm = "This log line is from ZTELABC$73"
+        mm = "This log line is from ZTELABC$62"
         aa.to_log(mm)
 
 
@@ -82,19 +71,19 @@ class TestElemLoggerABC:
         assert isinstance(got, str)
 
         exp_name = aa.__class__.__name__
-        print(f"ZTELABC$85  {exp_name=}")
+        print(f"ZTELABC$74  {exp_name=}")
         assert aa.__class__.__name__ in clses
 
         elc.enable_logging(aa.__class__.__name__, True)
 
-        logmesg_1 = "This log line is from ZTELABC$90"
+        logmesg_1 = "This log line is from ZTELABC$79"
         aa.to_log(logmesg_1)
 
         elc.flush_current_log_file()
         got = _read_log_file(elc)
         assert got is not None
-        print(f"ZTELABC$96 log file contents len={len(got)}")
-        print(f"ZTELABC$97 log file contents {got!r}")
+        print(f"ZTELABC$85 log file contents len={len(got)}")
+        print(f"ZTELABC$86 log file contents {got!r}")
         ###assert len(got) == 100
         assert logmesg_1 in got
 
@@ -105,19 +94,19 @@ def _read_log_file(elc: ElemLogControl) -> str | None:
         with open(elft._current_log_fpath, "r") as inf:
             return inf.read()
     except Exception as ex:
-        print(f"ZTELABC$108 Reading log file got ex={ex}")
+        print(f"ZTELABC$97 Reading log file got ex={ex}")
     return None
 
 def _remove_old_log_file(log_fpath: str) -> None:
-    print(f"ZTELABC$112 Remove old log file, if any: path='{log_fpath}'")
+    print(f"ZTELABC$101 Remove old log file, if any: path='{log_fpath}'")
     # remove old log if any
     try:
         os.remove(log_fpath)
-        print(f"ZTELABC$116 Removed old log file '{log_fpath}'")
+        print(f"ZTELABC$105 Removed old log file '{log_fpath}'")
     except OSError as ex:
         if 0:
-            print(f"ZTELABC$119 FAILED to delete log '{log_fpath}': {repr(ex)}")
-            print(f"ZTELABC$120 ex='{str(ex)}' ")
+            print(f"ZTELABC$108 FAILED to delete log '{log_fpath}': {repr(ex)}")
+            print(f"ZTELABC$109 ex='{str(ex)}' ")
 
 
 

@@ -5,7 +5,7 @@
 import sys
 import os
 
-def get_flash_space():
+def get_filesystem_space():
     # Get filesystem statistics for the root directory ("/")
     stat = os.statvfs("/")
     
@@ -35,7 +35,7 @@ def convert_fs_space_to_string(fs_space):
 
 def main():
 
-    ts, fs = get_flash_space()
+    ts, fs = get_filesystem_space()
 
     tss = convert_fs_space_to_string(ts)
     fss = convert_fs_space_to_string(fs)

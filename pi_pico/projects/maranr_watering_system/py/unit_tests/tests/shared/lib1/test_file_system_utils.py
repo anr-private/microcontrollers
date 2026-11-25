@@ -2,7 +2,7 @@
 #
 # LINEMARKER=ZFSUT
 
-from lib1.file_system_utils import get_flash_space, calculate_flash_space, convert_fs_space_to_string
+from lib1.file_system_utils import get_filesystem_space, calculate_filesystem_space, convert_fs_space_to_string
 
 # CPython only
 ###try: from cpython_test_support import CpythonTestSupport
@@ -20,7 +20,7 @@ from lib1.file_system_utils import get_flash_space, calculate_flash_space, conve
 #  [8] f_flag: Mount flags
 #  [9] f_namemax: Maximum filename length
 
-def test_calculate_flash_space() -> None:
+def test_calculate_filesystem_space() -> None:
     fragment_size = 4096
     # Total number of blocks
     total_blocks = 100
@@ -29,7 +29,7 @@ def test_calculate_flash_space() -> None:
 
     # fake the 10-tuple result of os.statvfs()
     # The 4 digit numbers should never be used - if they are
-    # we'll pick it up as a bad result from calculate_flash_space()
+    # we'll pick it up as a bad result from calculate_filesystem_space()
     fake_statvfs_result = (
         9988,fragment_size,
         total_blocks, 9246, avail_blocks,
@@ -39,12 +39,12 @@ def test_calculate_flash_space() -> None:
 
     exp_total_space = fragment_size * total_blocks 
     exp_free_space = fragment_size * avail_blocks
-    got_total_space,got_free_space = calculate_flash_space(fake_statvfs_result)
+    got_total_space,got_free_space = calculate_filesystem_space(fake_statvfs_result)
     assert exp_total_space == got_total_space, got_total_space
     assert exp_free_space == got_free_space, got_free_space
 
 
-def test_get_flash_space() -> None:
+def test_get_filesystem_space() -> None:
     # on shadow Ubunt 24.04, the actual is:
     #   exp_total_space = 1_966_736_678_912
     #print(f"ZFSUT$ DIR cpython_test_support is {dir(cpython_test_support)}")
@@ -73,7 +73,7 @@ def test_get_flash_space() -> None:
     # stat[4]  f_bavail the space a program can actually use as a normal user
     #                   (the number shown by 'df')
 
-    got_total_space, got_free_space = get_flash_space()
+    got_total_space, got_free_space = get_filesystem_space()
 
     print(f"ZFSUT$78  {got_total_space=}  {got_free_space=}")
     
