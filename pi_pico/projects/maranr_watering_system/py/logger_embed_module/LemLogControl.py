@@ -235,11 +235,11 @@ class LemLogControl:
         """
 
         logger = self._registry.get(class_name)
-        m = f"LEMLC$240 enable_logging: logger is {logger}  {enabled=} {class_name=}"
+        m = f"LEMLC$238 enable_logging: logger is {logger}  {enabled=} {class_name=}"
         print(m)
         self.log_one_line(m)
         if logger is None:
-            m = f"LEMLC$244 logger is NONE for {class_name=}  {enabled=}"
+            m = f"LEMLC$242 logger is NONE for {class_name=}  {enabled=}"
             print(m)
             self.log_one_line(m)
             return False
@@ -261,7 +261,7 @@ class LemLogControl:
 
 
     def dump_registered_loggers(self) -> None:
-        m = "LEMLC$266  Classes registered in ElemLogControl:"
+        m = "LEMLC$264  Classes registered in ElemLogControl:"
         print(m)
         self.log_one_line(m)
         for k,v in self._registry.items():
@@ -286,15 +286,15 @@ def Z_replace_log_file_table(new_log_file_table: Any) -> None:
     # UNIT TEST ONLY: replace the LemLogFileTable with a fake
     # Raises if we already have an active LemLogFileTable obj
     if LemLogControl._instance is None:
-        raise RuntimeError(f"LEMLC$278 Z_replace_log_file_table LemLogControl._instance is None")
+        raise RuntimeError(f"LEMLC$289 Z_replace_log_file_table LemLogControl._instance is None")
     lemc = LemLogControl.get_instance()
     lft = lemc._log_file_table
     # Not allowed if 'real' logging has been done
     if isinstance(lft, LemLogFileTable):
         if lft.get_current_log_fpath() != EMPTY_LOG_FPATH_MARKER_STG:
-            raise RuntimeError(f"LEMLC$284 Z_replace_log_file_table LemLogControl already active: fpath={lft.get_current_log_fpath()}") 
+            raise RuntimeError(f"LEMLC$295 Z_replace_log_file_table LemLogControl already active: fpath={lft.get_current_log_fpath()}") 
         if lft.get_current_log_fsize() != 0:
-            raise RuntimeError(f"LEMLC$286 Z_replace_log_file_table LemLogControl already active: log-size={lft.get_current_log_fsize()}") 
+            raise RuntimeError(f"LEMLC$297 Z_replace_log_file_table LemLogControl already active: log-size={lft.get_current_log_fsize()}") 
     lemc._log_file_table = new_log_file_table
 
 
