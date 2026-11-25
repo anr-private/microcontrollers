@@ -157,7 +157,7 @@ class LemLogFileTable:
         #    been removed to reclaim file space)
         # 2. The total size (bytes) of all extant log files
         #    (obviously excluding logfiles that have been removed)
-        # #. The size of the log file table (ie the total number
+        # 3. The size of the log file table (ie the total number
         #    of files that have been created during this session so far)
         # NOTE if include_currently_open_file is True, 
         #  items 1 and 2 include the currently-open file.

@@ -25,7 +25,14 @@ sys.path.append('..')
 # for p in sys.path:
     # print(p)
 
+
+from lib1.file_utils import remove_subdir
+from lib1.platform_info import USING_PICO_HARDWARE, USING_LINUX_HARDWARE
+
 from logger_embed_module.LemLogControl import LemLogControl, Z_replace_log_file_table
+
+V = False
+VV = False
 
 HELP_INFO="""NO HELP YET
 """
@@ -64,8 +71,39 @@ class _Options:
 
 
 def perform_test(opts: _Options) -> None:
-    print(f"ZLOGSROT$1 PERFORM TEST   {opts=}")
+    print(f"ZLOGSROT$72 PERFORM TEST   {opts=}")
 
+    logs_dir = "LOGS_ROTATION_TEST"
+    remove_subdir(logs_dir)
+
+    log_parameters_selector = "Z_tests"
+
+    llc = LemLogControl.configure_logger(logs_dir, log_parameters_selector)
+
+    print(f"ZLOGSROT$81 LemLogControl: {llc}")
+
+    r = llc.get_logs_totals(include_currently_open_file=True)
+    print(f"ZLOGSROT$84 Initial values: {r=}")
+    num_extant_files, extant_logfile_fsize, log_file_table_size = r
+    print(f"ZLOGSROT$86 Initial values: {num_extant_files=}  {extant_logfile_fsize=}  {log_file_table_size=}")
+    prev_num_extant_files = num_extant_files
+    n = 0
+    while 1:
+
+        r = llc.get_logs_totals(include_currently_open_file=True)
+        print(f"ZLOGSROT$92 {r=}")
+        num_extant_files, extant_logfile_fsize, log_file_table_size = r
+        print(f"ZLOGSROT$94 {num_extant_files=} prev={prev_num_extant_files}   {extant_logfile_fsize=}  {log_file_table_size=}")
+
+        if prev_num_extant_files < num_extant_files:
+            print(f"ZLOGSROT$97 FIRST LOG FILE CLOSED")
+            break
+
+        llc.log_one_line(f"ZLOGSROT$100 Line 1")
+
+        n += 1
+        if n >= 3000:
+            break
 
 
 #=== OPTIONS PARSER  ============================================
@@ -89,7 +127,7 @@ def parse_options(args):
         arg = args[argidx]; argidx += 1
         if arg in ("--Zoptions", "--zoptions", "--debugOptions"):
             opts.debugOptions = True
-            print(f"ZLOGSROT$1 DEBUG-OPTIONS ENABLED  {args=}")
+            print(f"ZLOGSROT$128 DEBUG-OPTIONS ENABLED  {args=}")
             break
 
     argidx = 0
@@ -97,20 +135,20 @@ def parse_options(args):
 
         arg = args[argidx]; argidx += 1
 
-        print(f"ZLOGSROT$1  {arg=!r}")
+        print(f"ZLOGSROT$136  {arg=!r}")
 
         if arg.startswith("--"):
             opt = arg[2:]
         elif arg.startswith("-"):
             opt = arg[1:]
         else:
-            print(f"ZLOGSROT$1 NOT AN OPT {arg=!r} - add to 'other_items")
+            print(f"ZLOGSROT$143 NOT AN OPT {arg=!r} - add to 'other_items")
             opts.other_items.append(arg)
             continue
 
         optLc = opt.lower()
         del arg
-        print(f"ZLOGSROT$1  {optLc=!r}")
+        print(f"ZLOGSROT$149  {optLc=!r}")
 
         if optLc in ("help","h"):
             print(HELP_INFO)
@@ -119,7 +157,7 @@ def parse_options(args):
         elif opt in ("v", "verbose"):
             opts.verbose = True
 
-        elif opt in ("V", "veryverbose"):
+        elif opt in ("V", "vv", "veryverbose"):
             opts.verbose = True
             opts.veryverbose = True
             print("VERY VERBOSE MODE")
@@ -138,7 +176,7 @@ def parse_options(args):
             # opts.dataSets.append(ival)
 
         else:
-            s = f"ZLOGSROT$1 *ERROR* Unknown option '{opt}'"
+            s = f"ZLOGSROT$177 *ERROR* Unknown option '{opt}'"
             raise RuntimeError(s)
 
     return opts
@@ -172,8 +210,15 @@ def run_options_tests():
 ###  MAIN  ####################################################
 
 def main(args):
-    print(f"ZLOGSROT$28 MAIN: {args=}")
+    print(f"ZLOGSROT$211 MAIN: {args=}")
     opts = parse_options(args)
+
+    global V, VV, DEBUG
+    V = opts.verbose or opts.veryverbose
+    VV = opts.veryverbose
+    DEBUG = opts.debug
+    if V: print(f"ZLOGSROT$219  {V=} VeryV={VV}  {DEBUG=}")
+
     perform_test(opts)
 
 

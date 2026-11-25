@@ -195,8 +195,6 @@ class LemLogControl:
         #LOGLOG(f"LEMLC$195  MODULE={obj_module!r}")
         #LOGLOG(f"LEMLC$196  DIR={dir(obj_module)}")
         return obj_module
-        
-
 
 
     def get_registered_classes(self) -> tuple[str,...]:
@@ -270,6 +268,19 @@ class LemLogControl:
             m = f"  {k}  {v}"
             print(m)
             self.log_one_line(m)
+
+    def __str__(self):
+        s = []
+        s.append(f"default_logging={self._default_logging_enabled}")
+        s.append(f"registry.len={len(self._registry)}")
+        s.append(f"logging_overrides.len={len(self._logging_enabled_overrides)}")
+        return ("%s[%s]" % 
+            (self.__class__.__name__, ",".join(s)))
+
+
+
+#=== UNIT TEST SUPPORT FUNCTIONS  ===================================
+
 
 def Z_replace_log_file_table(new_log_file_table: Any) -> None:
     # UNIT TEST ONLY: replace the LemLogFileTable with a fake
