@@ -5,6 +5,23 @@
 import sys
 import os
 
+# PICO OUTPUT:
+# With filesystem 'empty':
+#   $ mpremote run show_file_space.py 
+#    TOTAL SPACE 2,621,440 bytes, 2560.00 KB, 2.50 MB   
+#    FREE SPACE 2,605,056 bytes, 2544.00 KB, 2.48 MB
+#
+# With MWS py files loaded:
+#  $ mpremote run show_file_space.py 
+#   TOTAL SPACE 2,621,440 bytes, 2560.00 KB, 2.50 MB   
+#   FREE SPACE 1,798,144 bytes, 1756.00 KB, 1.71 MB
+#
+# LINUX OUTPUT:
+#  $ py show_file_space.py 
+#   TOTAL SPACE 1,966,736,678,912 bytes, 1,920,641,288.00 KB, 1875626.26 MB   
+#   FREE SPACE 1,805,665,325,056 bytes, 1,763,345,044.00 KB, 1722016.64 MB
+
+
 def get_filesystem_space():
     # Get filesystem statistics for the root directory ("/")
     stat = os.statvfs("/")
