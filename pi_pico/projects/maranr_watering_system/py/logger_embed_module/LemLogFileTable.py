@@ -6,8 +6,8 @@ import os
 #import sys
 
 from lib1.read_last_n_lines import read_last_n_lines
-from lib1.file_utils import remove_file
-from lib1.file_utils import filter_dir_contents
+from lib1.file_utils import remove_file, filter_dir_contents
+from lib1.file_system_utils import get_filesystem_space
 
 try: from typing import IO, Any
 except ImportError: pass
@@ -18,12 +18,14 @@ BASE_LOG_FNAME = "mws_log"
 # Starting point for creating the extensions for log files
 DEFAULT_FNAME_STARTING_EXTENSION_VALUE = 10
 
+############################ OLD ##############################
 LOG_PARAMETERS_PROFILES = {
     "pico":    (25_000, 1_000_000, 750_000),
     "cpython": (25_000, 1_000_000, 750_000),
     "Z_tests": (25_000, 1_000_000, 750_000),
 }
 
+############################ OLD ##############################
 # # nominal max size of a log file  in bytes
 # # it may be slightly larger due to 'hint keep-lines'
 # MAX_ LOG_ FILE_ SIZE = 25_000
@@ -34,6 +36,19 @@ LOG_PARAMETERS_PROFILES = {
 # # the total space is less than the low water mark.
 # self._log_usage_high_watermark = 1_000_000
 # self._log_usage_low_watermark =    750_000
+
+
+# Parameters for controlling how filespace is used by logging.
+# 1. maximum log filesize (bytes)
+# 2. minimum freespace that must be available at all times
+# 3. Minimum freespace that must be available when removing old logfiles;
+#      we keep removing files until this level is reached.
+NEW_LOG_PARAMETERS_PROFILES = {
+    "pico":    (25_000, 2*25_000, 4*25_000),
+    "cpython": (25_000, 1_000_000, 750_000),
+    "Z_tests": (25_000, 1_000_000, 750_000),
+}
+
 
 # One of the values in the info tuple; tuples found in _log_file_table
 LOGFILE_IS_EXTANT = 1
@@ -51,6 +66,7 @@ class LemLogFileTable:
 
     def __init__(self, log_dir: str|None, log_parameters_selector:str) -> None:
 
+        ############################ OLD ##############################
         # Determine the limits to be used during this execution.
         # Max amount of filespace that log files are allowed to occupy.
         #   _max_log_file_size:
@@ -61,7 +77,7 @@ class LemLogFileTable:
         #  _log_usage_low_watermark
         limit_vals = LOG_PARAMETERS_PROFILES.get(log_parameters_selector, None)
         if limit_vals is None:
-            m = f"LEMLFT$64 UNKNOWN/BAD log parameters selector: {log_parameters_selector!r}"
+            m = f"LEMLFT$80 UNKNOWN/BAD log parameters selector: {log_parameters_selector!r}"
             print(m)
             raise RuntimeError(m)
         self._max_log_file_size: int = limit_vals[0]
@@ -69,9 +85,29 @@ class LemLogFileTable:
         self._log_usage_low_watermark: int  = limit_vals[2]
         # Some consistency checks
         if self._log_usage_high_watermark < self._log_usage_low_watermark:
-            m = f"LEMLFT$72 Inconsistent watermark values (high < low): {self._log_usage_high_watermark} < {self._log_usage_low_watermark}"
+            m = f"LEMLFT$88 Inconsistent watermark values (high < low): {self._log_usage_high_watermark} < {self._log_usage_low_watermark}"
             print(m)
             raise RuntimeError(m)
+
+        # Get the parameters that control logging
+        limit_vals = NEW_LOG_PARAMETERS_PROFILES.get(log_parameters_selector, None)
+        if limit_vals is None:
+            m = f"LEMLFT$95 UNKNOWN/BAD log parameters selector: {log_parameters_selector!r}"
+            print(m)
+            raise RuntimeError(m)
+        # Determine the parameters for deciding when available filespace
+        # has become too low. At this point, we remove old log file(s)
+        # until the filespace has become low enough to write
+        # some more log files.
+        #
+        # Max size of a log file (bytes)
+        self._max_log_file_size: int = limit_vals[0]
+        # Minimum level of freespace that must be maintained.
+        self._min_filesystem_free_space_limit = limit_vals[1]
+        # The minimum filespace that must be available after
+        # removing old log files. We keep removing files until
+        # free space reaches at least this value.
+        self._min_free_space_after_removals = limit_vals[2]
 
 
         # Table of all logfiles (except currently-open logfile)
@@ -121,9 +157,14 @@ class LemLogFileTable:
 
     def _nullify_logging(self):
         # Nullify this object so it cannot be used/reused
-        self._max_log_file_size = 0
+        self._max_log_file_size = 0   ############# OLD
         self._log_usage_high_watermark = 0
         self._log_usage_low_watermark = 0
+        ############# OLD above
+        self._max_log_file_size = 0
+        self._min_filesystem_free_space_limit = 0
+        self._min_free_space_after_removals = 0
+        #
         self._log_file_table.clear()
         self._logs_directory = None
         self._current_log_fpath = EMPTY_LOG_FPATH_MARKER_STG
@@ -134,6 +175,7 @@ class LemLogFileTable:
     def Z_set_max_log_file_size(self, new_max: int):
         self._max_log_file_size = new_max
 
+    #@@@@@@@@@@@@@@@@@@@@ OLD
     def Z_set_watermarks(self, new_low_watermark: int, new_high_watermark: int) -> None:
         # UNIT TEST ONLY
         # the tests are just to catch any bad requests
@@ -172,13 +214,6 @@ class LemLogFileTable:
             num_extant_files += 1
             extant_logfile_fsize += self._current_log_fsize
         return (num_extant_files, extant_logfile_fsize, table_size)
-
-    # def get_total_logs_fspace(self):
-        # # Get the total size (bytes) of all logfiles, whether
-        # currently extant or already-been-deleted
-        # if len(self._log_file_table) == 0:
-            # return 0
-        # total_size = sum(fitem[1] for fitem in self._log_file_table)
 
 
     def get_number_of_removed_logfiles(self) -> int:
@@ -252,7 +287,7 @@ class LemLogFileTable:
         # So the item is always marked LOGFILE_IS_EXTANT
         log_file_info = (fname, fsize, LOGFILE_IS_EXTANT)
         self._log_file_table.append(log_file_info)
-        print(f"LEMLFT$255 _append_to_log_file_table  Append: {log_file_info} TableSize now={len(self._log_file_table)}")
+        print(f"LEMLFT$290 _append_to_log_file_table  Append: {log_file_info} TableSize now={len(self._log_file_table)}")
 
     def _mark_file_was_removed(self, fitem_index: int) -> bool:
         # mark the specified item as 'LOGFILE_WAS_REMOVED'
@@ -260,13 +295,13 @@ class LemLogFileTable:
         # Returns True if ok, else False
         fitem = self.get_log_table_item(fitem_index)
         if fitem is None:
-            m = f"LEMLFT$263 *ERROR* No such {fitem_index=} in _log_file_table. Table size is {len(self._log_file_table)}"
+            m = f"LEMLFT$298 *ERROR* No such {fitem_index=} in _log_file_table. Table size is {len(self._log_file_table)}"
             print(m)
             self._log_a_line(m)
             return False
 
         if not fitem[2]:
-            m = f"LEMLFT$269 *ERROR* Already marked 'removed': {fitem_index=} {fitem=}."
+            m = f"LEMLFT$304 *ERROR* Already marked 'removed': {fitem_index=} {fitem=}."
             print(m)
             self._log_a_line(m)
             return False
@@ -279,7 +314,7 @@ class LemLogFileTable:
     def flush_current_log(self) -> None:
         if self._logf:
             self._logf.flush()
-            print(f"LEMLFT$282 CURRENT LOG HAS BEEN FLUSHED")
+            print(f"LEMLFT$317 CURRENT LOG HAS BEEN FLUSHED")
 
     def log_one_line(self, line:str) -> None:
 
@@ -289,7 +324,7 @@ class LemLogFileTable:
         self._log_a_line(line)
 
         if self._current_log_fsize > self._max_log_file_size:
-            print(f"LEMLFT$292  curr log size > MAX curr={self._current_log_fsize} max={self._max_log_file_size}")
+            print(f"LEMLFT$327  curr log size > MAX curr={self._current_log_fsize} max={self._max_log_file_size}")
             self._close_current_log_file("log_one_line")
 
     def _log_a_line(self, line: str) -> None:
@@ -297,7 +332,7 @@ class LemLogFileTable:
         if line is None: line = ""
 
         if self._logf is None:
-            m = f"LEMLFT$300 !!! _log_a_line NO LOGFILE OPEN!!!!  {line=}"
+            m = f"LEMLFT$335 !!! _log_a_line NO LOGFILE OPEN!!!!  {line=}"
             print(m)
             return
 
@@ -309,16 +344,16 @@ class LemLogFileTable:
     
         except OSError as ex:
             # see examples/file_and_dirs_io/errno_show_all.py to see all errno values
-            print(f"LEMLFT$312  Error writing '{self._current_log_fpath}' EX={repr(ex)}  EX='{str(ex)}' ")
+            print(f"LEMLFT$347  Error writing '{self._current_log_fpath}' EX={repr(ex)}  EX='{str(ex)}' ")
             # 28 is 'out of space'
-            print(f"LEMLFT$314 {ex.errno=}")
-            print(f"LEMLFT$315 {line=}")
+            print(f"LEMLFT$349 {ex.errno=}")
+            print(f"LEMLFT$350 {line=}")
             
         except Exception as ex:
-            print(f"LEMLFT$318: Error writing to file '{self._current_log_fpath}': ex={ex}")
-            print(f"LEMLFT$319: Error writing to file '{self._current_log_fpath}': repr(ex)={repr(ex)}")
-            print(f"LEMLFT$320: Error writing to file '{self._current_log_fpath}': str(ex)={str(ex)}")
-            print(f"LEMLFT$321 {line=}")
+            print(f"LEMLFT$353: Error writing to file '{self._current_log_fpath}': ex={ex}")
+            print(f"LEMLFT$354: Error writing to file '{self._current_log_fpath}': repr(ex)={repr(ex)}")
+            print(f"LEMLFT$355: Error writing to file '{self._current_log_fpath}': str(ex)={str(ex)}")
+            print(f"LEMLFT$356 {line=}")
 
 
     def _start_a_new_logfile(self) -> None:
@@ -337,7 +372,7 @@ class LemLogFileTable:
 
         # This should never happen!
         if self._logf is not None:
-            m = f"LEMLFT$340 _start_a_new_logfile OLD LOG FILE IS NOT CLOSED!"
+            m = f"LEMLFT$375 _start_a_new_logfile OLD LOG FILE IS NOT CLOSED!"
             print(m)
             raise RuntimeError(m)
 
@@ -348,16 +383,16 @@ class LemLogFileTable:
         try:
             logf = open(new_log_fpath, "w")
         except Exception as ex:
-            print(f"LEMLFT$351 CANNOT OPEN LOGFILE '{new_log_fpath}'  ex={ex}  {str(ex)}")
+            print(f"LEMLFT$386 CANNOT OPEN LOGFILE '{new_log_fpath}'  ex={ex}  {str(ex)}")
             return
         self._logf = logf
         self._current_log_fpath = new_log_fpath
         self._current_log_fsize = 0
-        m = f"LEMLFT$356  OPENED NEW LOG {self._current_log_fpath}"
+        m = f"LEMLFT$391  OPENED NEW LOG {_rightjust(self._current_log_fpath)}"
         print(m)
         self._log_a_line(m)
 
-        self.dump_file_table("from-LEMLFT$360")
+        self.dump_file_table("from-LEMLFT$395")
         
         self._remove_logs_if_fspace_needed()
 
@@ -367,7 +402,7 @@ class LemLogFileTable:
         dir_is_ok = ( isinstance(self._logs_directory, str) and 
                       len(self._logs_directory) > 0)
         if not dir_is_ok:
-            m = f"LEMLFT$370 CANNOT MAKE NEW LOG FPATH: _logs_directory is BAD {self._logs_directory}"
+            m = f"LEMLFT$405 CANNOT MAKE NEW LOG FPATH: _logs_directory is BAD {self._logs_directory}"
             print(m)
             raise RuntimeError(m)
         assert self._logs_directory is not None # for mypy typechecking
@@ -388,15 +423,30 @@ class LemLogFileTable:
 
         fpath = f"{self._logs_directory}/{BASE_LOG_FNAME}.{new_extension_value:03d}"
         #@@@@@@@@@ TODO what if > 999?
-        print(f"LEMLFT$391 new log-fpath='{fpath}'")
+        print(f"LEMLFT$426 new log-fpath='{fpath}'")
         return fpath
 
 
     def _remove_logs_if_fspace_needed(self) -> None:
         # See if filespace is running low. If so, remove some old logs.
+        total_space, current_freespace = get_filesystem_space()
+        if current_freespace < self._min_filesystem_free_space_limit:
+            m = f"LEMLFT$434 NO NEED TO REMOVE LOGFILES yet.  {current_freespace=} < {self._min_filesystem_free_space_limit=}"
+            print(m)
+            self._log_a_line(m)
+            return
+        self._reduce_file_usage_to_below_low_watermark()
+            
+
+
+
+    ######################## OLD below  ################
+
+    def OLD_remove_logs_if_fspace_needed(self) -> None:
+        # See if filespace is running low. If so, remove some old logs.
         total_fsize = self.get_fsize_of_extant_logfiles()
         if total_fsize < self._log_usage_high_watermark:
-            m = f"LEMLFT$399 NO NEED TO REMOVE LOGFILES yet.  total_log_size={total_fsize}  {self._log_usage_high_watermark=}"
+            m = f"LEMLFT$449 NO NEED TO REMOVE LOGFILES yet.  total_log_size={total_fsize}  {self._log_usage_high_watermark=}"
             print(m)
             self._log_a_line(m)
             return
@@ -404,29 +454,29 @@ class LemLogFileTable:
 
 
     def _reduce_file_usage_to_below_low_watermark(self) -> None:
-        m = f"LEMLFT$407 _reduce_file_usage_to_below_low_watermark extant-fsize={self.get_fsize_of_extant_logfiles()}"
+        m = f"LEMLFT$457 _reduce_file_usage_to_below_low_watermark extant-fsize={self.get_fsize_of_extant_logfiles()}"
         print(m)
         self._log_a_line(m)
         num_files_removed = 0
         while 1:
             extant_fsize = self.get_fsize_of_extant_logfiles()
             if extant_fsize < self._log_usage_low_watermark:
-                #print("LEMLFT$414 *********************_____________________________________________________________________")
+                #print("LEMLFT$464 *********************_____________________________________________________________________")
                 break
             ok = self._remove_the_oldest_extant_logfile()
             if not ok:
-                m = f"LEMLFT$418 FAILED to remove oldest extant logfile. {extant_fsize=}  {self._log_usage_low_watermark=} num_files_removed{num_files_removed=}"
+                m = f"LEMLFT$468 FAILED to remove oldest extant logfile. {extant_fsize=}  {self._log_usage_low_watermark=} num_files_removed{num_files_removed=}"
                 print(m)
                 self._log_a_line(m)
                 break
             num_files_removed += 1
-        m = f"LEMLFT$423 Removed old logs. Extant-filespace now below low mark. {extant_fsize=}  {self._log_usage_low_watermark=} num_files_removed{num_files_removed=}"
+        m = f"LEMLFT$473 Removed old logs. Extant-filespace now below low mark. {extant_fsize=}  {self._log_usage_low_watermark=} num_files_removed{num_files_removed=}"
         print(m)
         self._log_a_line(m)
 
 
     def _remove_the_oldest_extant_logfile(self) -> bool:
-        m = f"LEMLFT$429 _remove_the_oldest_extant_logfile extant-fsize={self.get_fsize_of_extant_logfiles()}"
+        m = f"LEMLFT$479 _remove_the_oldest_extant_logfile extant-fsize={self.get_fsize_of_extant_logfiles()}"
         print(m)
         self._log_a_line(m)
 
@@ -436,13 +486,13 @@ class LemLogFileTable:
         # If failed, probably shouldn't try again.
         oldest_extant_idx = self._find_the_oldest_extant_logfile()
         if oldest_extant_idx is None:
-            m = f"LEMLFT$439 Cannot find the oldest-extant-logfile. table-size={len(self._log_file_table)}"
+            m = f"LEMLFT$489 Cannot find the oldest-extant-logfile. table-size={len(self._log_file_table)}"
             print(m)
             self._log_a_line(m)
             return False
         fitem = self.get_log_table_item(oldest_extant_idx)
         if  fitem is None:
-            m = f"LEMLFT$445 _remove_the_oldest_extant_logfile Bad {oldest_extant_idx} table-size={len(self._log_file_table)}"
+            m = f"LEMLFT$495 _remove_the_oldest_extant_logfile Bad {oldest_extant_idx} table-size={len(self._log_file_table)}"
             print(m)
             self._log_a_line(m)
             return False
@@ -451,14 +501,14 @@ class LemLogFileTable:
         ok = remove_file(fpath)
 
         if not ok:
-            m = f"LEMLFT$454 _remove_the_oldest_extant_logfile FAILED to remove logfile '{fpath}'"
+            m = f"LEMLFT$504 _remove_the_oldest_extant_logfile FAILED to remove logfile '{fpath}'"
             print(m)
             self._log_a_line(m)
             return False
 
         self._mark_file_was_removed(oldest_extant_idx)
  
-        m = f"LEMLFT$461 _remove_the_oldest_extant_logfile REMOVED OLD LOGFILE '{fpath}'"
+        m = f"LEMLFT$511 _remove_the_oldest_extant_logfile REMOVED OLD LOGFILE '{fpath}'"
         print(m)
         self._log_a_line(m)
 
@@ -471,10 +521,10 @@ class LemLogFileTable:
 
         oldest_extant_idx = None
         for j, fitem in enumerate(self._log_file_table):
-            print(f"LEMLFT$474 LOOP: {j=}  {fitem=}")
+            print(f"LEMLFT$524 LOOP: {j=}  {fitem=}")
             if fitem[2]:
                 oldest_extant_idx = j
-                print(f"LEMLFT$477 Found oldest extant logfile item: {oldest_extant_idx=} {fitem=}")
+                print(f"LEMLFT$527 Found oldest extant logfile item: {oldest_extant_idx=} {fitem=}")
                 break
         return oldest_extant_idx
 
@@ -483,11 +533,11 @@ class LemLogFileTable:
         # close the logger
         # NOTE this tries to write to logfile, so gets an error if
         # no logfile has every been opened. That's ok.
-        m = f"LEMLFT$486 CLOSE LOGGING ^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        m = f"LEMLFT$536 CLOSE LOGGING ^^^^^^^^^^^^^^^^^^^^^^^^^^"
         print(m)
         self._log_a_line(m)
         # Save the file status info
-        self.dump_file_table("from-LEMLFT$490")
+        self.dump_file_table("from-LEMLFT$540")
         # Then close the log
         self._close_current_log_file("close_logging")
         # clear everything so that we cannot be used for additional logging
@@ -501,7 +551,7 @@ class LemLogFileTable:
         dir_is_ok = ( isinstance(self._logs_directory, str) and 
                       len(self._logs_directory) > 0)
         if not dir_is_ok:
-            m = f"LEMLFT$504 {MESG_CANNOT_CREATE_LOGS_SUBDIRECTORY}: _logs_directory is BAD {self._logs_directory}"
+            m = f"LEMLFT$554 {MESG_CANNOT_CREATE_LOGS_SUBDIRECTORY}: _logs_directory is BAD {self._logs_directory}"
             print(m)
             raise RuntimeError(m)
         assert self._logs_directory is not None  # for mypy type checking
@@ -511,21 +561,21 @@ class LemLogFileTable:
         except OSError as ex:
             if ex.errno == 17: # already exists
                 pass
-                #print(f"LEMLFT$514  Subdir '{self._logs_directory}' already exists")
+                #print(f"LEMLFT$564  Subdir '{self._logs_directory}' already exists")
             else:
-                print(f"LEMLFT$516 *ERROR* {self._logs_directory} errno={ex.errno} dir  cannot be created")
+                print(f"LEMLFT$566 *ERROR* {self._logs_directory} errno={ex.errno} dir  cannot be created")
 
 
     def _close_current_log_file(self, who:str) -> None:
         if self._logf is not None:
-            m = f"LEMLFT$521 CLOSING_close_current_log_file {who=}: close file '{self._current_log_fpath}' size={self._current_log_fsize}"
+            m = f"LEMLFT$571 CLOSING CURR-LOG {who=!r}: size={self._current_log_fsize} {_rightjust(self._current_log_fpath)}"
             print(m)
             self._log_a_line(m)
 
             try:
                 self._logf.close()
             except Exception as ex:
-                m = f"LEMLFT$528 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
+                m = f"LEMLFT$578 ERROR CLOSING log file '{self._current_log_fpath}'  ex={ex} {str(ex)}"
                 print(m)
 
             # Keep track of every log file as it is closed.
@@ -533,7 +583,7 @@ class LemLogFileTable:
             # Underestimates: (b/c filetable gets dumped to log): fsize = self._current_log_fsize
             fsize = _get_true_file_size(self._current_log_fpath)
             self._append_to_log_file_table(fname, fsize)
-            print(f"LEMLFT$536 Closed current log. LOG TABLE: {self._log_file_table}")
+            print(f"LEMLFT$586 Closed current log. LOG TABLE: {self._log_file_table}")
         # We have no open logfile.
         self._logf = None
         self._current_log_fpath = EMPTY_LOG_FPATH_MARKER_STG
@@ -543,17 +593,25 @@ class LemLogFileTable:
     def dump_file_table(self, comment:str, to_log:bool=True) -> None:
         # write the file table into the log
         if len(self._log_file_table) <= 0:
-            m = f"LEMLFT$546 DUMP LOG-FILE-TABLE:  the table is empty  {comment}"
+            m = f"LEMLFT$596 DUMP LOG-FILE-TABLE:  the table is empty  {comment}"
             print(m)
             if to_log: self._log_a_line(m)
             return
 
-        m = f"+++  LOG FILE TABLE  Dump  +++++++++++  {comment}  ++++++++++++++++++++++++++  LEMLFT$551"
+        m = f"+++  LOG FILE TABLE  Dump  +++++++++++  {comment}  ++++++++++++++++++++++++++  LEMLFT$601"
         print(m)
         if to_log: self._log_a_line(m)
+
+        m = f"{self._logs_directory:>45}"
+        print(m)
+        if to_log: self._log_a_line(m)
+
         for finfo in self._log_file_table:
             try:
-                fname = finfo[0]
+                fname = _get_base_filename(finfo[0])
+                # get leftmost filename part
+                #fname = fname.rsplit("/",1) if fname.find("/") >= 0 else fname
+
                 fsize  = finfo[1]
                 extant_val = finfo[2]
                 if extant_val:
@@ -561,16 +619,16 @@ class LemLogFileTable:
                 else:
                     extant_flag = "REMOVED"
 
-                m = f"LEMLFT$564   {fname:<16}  {fsize} {extant_flag}"
+                m = f"LEMLFT$622   {fname:<16}  {fsize} {extant_flag}"
                 print(m)
                 if to_log: self._log_a_line(m)
 
             except Exception as ex:
-                m = f"LEMLFT$569 Error dumping log file table: ex={ex} str={str(ex)}"
+                m = f"LEMLFT$627 Error dumping log file table: ex={ex} str={str(ex)}"
                 print(m)
                 if to_log: self._log_a_line(m)
 
-        m = "+++  end of LOG FILE TABLE  +++++++++++++++++++++++++++++++++++++ LEMLFT$573"
+        m = "+++  end of LOG FILE TABLE  +++++++++++++++++++++++++++++++++++++ LEMLFT$631"
         print(m)
         if to_log: self._log_a_line(m)
         m = ""
@@ -603,7 +661,7 @@ def is_3_digit_int(s:str) -> int | None:
 def _log_file_filter(fname:str, ftype: str, fsize: int) -> int | None:
     # Returns None if the file is not chosen.
     # Returns the filename extension value (an int) if chosen
-    print(f"LEMLFT$606 _log_file_filter  fname='{fname}'  {fsize=}")
+    print(f"LEMLFT$664 _log_file_filter  fname='{fname}'  {fsize=}")
 
     if ftype != "f": return None
     #
@@ -615,7 +673,7 @@ def _log_file_filter(fname:str, ftype: str, fsize: int) -> int | None:
     #
     if fpart != "mws_log": return None
     ext_val = is_3_digit_int(ext_part)
-    print(f"LEMLFT$618   extension is_3_digit_int('{ext_part}') is {ext_val}")
+    print(f"LEMLFT$676   extension is_3_digit_int('{ext_part}') is {ext_val}")
     if ext_val is None: return None
     return ext_val
 
@@ -646,17 +704,17 @@ def _determine_starting_fname_extension_value(log_files_subdir: str) -> int:
     if not biggest_existing_extension_value:
         return DEFAULT_FNAME_STARTING_EXTENSION_VALUE
 
-    print(f"LEMLFT$649 {biggest_existing_extension_value=}")
+    print(f"LEMLFT$707 {biggest_existing_extension_value=}")
 
     if biggest_existing_extension_value is None:
         # Use a fake biggest if there are no extant logfiles
         biggest_existing_extension_value = DEFAULT_FNAME_STARTING_EXTENSION_VALUE
-        print(f"LEMLFT$654 USED DEFAULT TO FAKE THIS: {biggest_existing_extension_value=}")
+        print(f"LEMLFT$712 USED DEFAULT TO FAKE THIS: {biggest_existing_extension_value=}")
 
     new_extension_value = \
       _determine_new_starting_extension_value(biggest_existing_extension_value)
 
-    print(f"LEMLFT$659 {new_extension_value=}")
+    print(f"LEMLFT$717 {new_extension_value=}")
 
     return new_extension_value
 
@@ -668,12 +726,12 @@ def _determine_biggest_existing_log_fname_extension_value(log_files_subdir: str)
     # Return the int value of that file extension.
     # Returns 
     # gets (fname, ftype, fsize, file-extension-int-value)
-    print(f"LEMLFT$671  {log_files_subdir=!r}")
+    print(f"LEMLFT$729  {log_files_subdir=!r}")
     try:
         existing_logs_info = filter_dir_contents(log_files_subdir, _log_file_filter)
-        print(f"LEMLFT$674 _determine_biggest_existing_log_fname_extension_value fname_ext_values={existing_logs_info}")
+        print(f"LEMLFT$732 _determine_biggest_existing_log_fname_extension_value fname_ext_values={existing_logs_info}")
     except RuntimeError as ex:
-        print(f"LEMLFT$676 _determine_biggest_existing_log_fname_extension_value FAILED: ex={ex} {str(ex)}")
+        print(f"LEMLFT$734 _determine_biggest_existing_log_fname_extension_value FAILED: ex={ex} {str(ex)}")
         return None
 
     if len(existing_logs_info) == 0: 
@@ -681,7 +739,7 @@ def _determine_biggest_existing_log_fname_extension_value(log_files_subdir: str)
 
     biggest: int = max([fitem[3] for fitem in existing_logs_info])
 
-    print(f"LEMLFT$684 max _determine_biggest_existing_log_fname_extension_value is {biggest=}")
+    print(f"LEMLFT$742 max _determine_biggest_existing_log_fname_extension_value is {biggest=}")
 
     return biggest
 
@@ -698,7 +756,7 @@ def _determine_new_starting_extension_value(
     
     ###units = biggest_existing_extension_value - ((biggest_existing_extension_value // 10) * 10)
     units = biggest_existing_extension_value % 10
-    print(f"LEMLFT$701  {biggest_existing_extension_value=}  {units=}")
+    print(f"LEMLFT$759  {biggest_existing_extension_value=}  {units=}")
     
     # Pick an increment based on the lowest-order digit of the 
     # biggest previous file extension.
@@ -707,6 +765,25 @@ def _determine_new_starting_extension_value(
     inc = [10, 9, 8, 7, 6, 5, 4, 13, 12, 11][units]
     new_value = inc + biggest_existing_extension_value
     return new_value
+
+def _get_base_filename(fname:str) -> str:
+    # 'a/b/c' -> 'c'
+    # 'abc'  ->  'abc'
+    if not fname: return ""
+    parts = fname.rsplit("/", 1)
+    if len(parts) >= 2:
+        fname = parts[1]
+    return fname
+
+def _rightjust(t):
+    # put str t into a longer string right-justified and quoted
+    #    "/tmp/MWS_tests_uoqhrm0y/logs/mws_log.010" ==>
+    # "  '/tmp/MWS_tests_uoqhrm0y/logs/mws_log.010'"
+    # "                          "/logs/mws_log.020" ==>
+    # "                          '/logs/mws_log.020'"
+    s = f"'{t}'"
+    s = f"{s:>45}"
+    return s
 
 
 ### UNIT TEST FUNCTIONS  #################################################
@@ -717,7 +794,7 @@ def _determine_new_starting_extension_value(
     # during its cleanup to restore the production value.
     # UNIT TEST ONLY
     # """
-    # #print(f"LEMLFT$720  Z__set_max_log_file_size to {new_max_size} =======================================")
+    # #print(f"LEMLFT$797  Z__set_max_log_file_size to {new_max_size} =======================================")
     # global se lf._max_log_file_size
     # old = s elf._max_log_file_size
     # se lf._max_log_file_size = new_max_size
@@ -729,7 +806,7 @@ def _determine_new_starting_extension_value(
     # during its cleanup to restore the production value.
     # UNIT TEST ONLY
     # """
-    # #print(f"LEMLFT$732  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
+    # #print(f"LEMLFT$809  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
     # global LOG_FSPACE_ HIGH_WATERMARK
     # old = LOG_FSPACE_ HIGH_WATERMARK
     # LOG_FSPACE_ HIGH_WATERMARK = new_high_watermark
@@ -741,7 +818,7 @@ def _determine_new_starting_extension_value(
     # during its cleanup to restore the production value.
     # UNIT TEST ONLY
     # """
-    # #print(f"LEMLFT$744  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
+    # #print(f"LEMLFT$821  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
     # global LOG_FSPACE_ LOW_WATERMARK
     # old = LOG_FSPACE_ LOW_WATERMARK
     # LOG_FSPACE_ LOW_WATERMARK = new_low_watermark

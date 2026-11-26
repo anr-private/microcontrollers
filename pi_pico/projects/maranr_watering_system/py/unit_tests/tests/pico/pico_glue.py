@@ -30,10 +30,30 @@ import sys
 
 from lib1.file_utils import remove_subdir
 
+SAVE_TEST_DIRS = True
+
 # Relative path: the Pico's current directory is the root, '/',
 # so the scratch dir is "/" + _SCRATCH_ROOT.
 _SCRATCH_ROOT = "_test_scratch"
 
+
+### SCRATCH ROOT HANDLING  ##########################
+
+def make_new_scratch_root():
+    # start a new test: make a new scratch root
+    _remove_a_path(_SCRATCH_ROOT)
+    os.mkdir(_SCRATCH_ROOT)
+
+
+def clean_up_scratch_root():
+    # Remove the scratch root at the end of testing
+    if SAVE_TEST_DIRS:
+        print(f"PICOGLUE$51 SAVE_TEST_DIRS: do not remove scratch root '{_SCRATCH_ROOT}'")
+        return
+    _remove_a_path(_SCRATCH_ROOT)
+
+
+### SUPPORT FUNCTIONS  #################################
 
 def get_scratch_path(name: str) -> str:
     """ Returns a path inside _SCRATCH_ROOT. Nothing is created. """
@@ -41,6 +61,14 @@ def get_scratch_path(name: str) -> str:
 
 
 def remove_scratch_path(path: str) -> None:
+    # Remove a dir created based on get_scratch_path()
+    if SAVE_TEST_DIRS:
+        print(f"PICOGLUE$66 SAVE_TEST_DIRS  keeping {path!r}")
+        return
+    _remove_a_path(path)
+
+
+def _remove_a_path(path: str) -> None:
     """ Remove a file or a directory tree with specified path.
     The path is typically a path returned from get_scratch_path().
     Does nothing if the path is not there. 
@@ -73,10 +101,13 @@ def run_all_tests() -> None:
     # find the tests
     names = sorted([n for n in globals() if n.startswith("test_")])
     failed = []
+
     # Remove any old / leftover scratch subdir and its contents.
     # Create a new one for the tests we are going to run.
-    remove_scratch_path(_SCRATCH_ROOT)
-    os.mkdir(_SCRATCH_ROOT)
+    make_new_scratch_root()
+    #@@@@@@@remove_scratch_path(_SCRATCH_ROOT)
+    #@@@@@@@@@os.mkdir(_SCRATCH_ROOT)
+
     # Run the tests
     try:
         for name in names:
@@ -84,15 +115,21 @@ def run_all_tests() -> None:
                 globals()[name]()
             except Exception as ex:  # AssertionError too
                 failed.append(name)
-                print("PICOGLUE$87 FAILED:", name)
+                print("PICOGLUE$118 FAILED:", name)
                 sys.print_exception(ex)
     finally:
-        remove_scratch_path(_SCRATCH_ROOT)
+        clean_up_scratch_root()
+        #@@@@@@@@@@@@
+        # if not SAVE_TEST_DIRS:
+            # remove_scratch_path(_SCRATCH_ROOT)
+        # else:
+            # print("PICOGLUE$126  DO NOT REMOVE SCRATCH ROOT: {_SCRATCH_ROOT}")
     result_stg = "FAILED" if failed else "PASSED"
-    print(f"PICOGLUE$92 {len(names)} tests.  {len(failed)} failed.")
-    print(f"PICOGLUE$93 RESULT: {result_stg}")
+    print(f"PICOGLUE$128 {len(names)} tests.  {len(failed)} failed.")
+    print(f"PICOGLUE$129 RESULT: {result_stg}")
 
 
 run_all_tests()
 
 ###
+

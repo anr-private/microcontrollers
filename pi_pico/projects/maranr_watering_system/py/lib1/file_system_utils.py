@@ -8,7 +8,7 @@ import os
 from lib1.utils import format_number_with_commas
 
 
-def calculate_filesystem_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
+def _calculate_filesystem_space(statvfs_values: tuple[int,...]) -> tuple[int, int]:
     # WAS calculate_flash_space
     # Given the 10-tuple returned by os.statvfs().
     # Returns two values: total_space and free_space (in bytes)
@@ -43,7 +43,9 @@ def get_filesystem_space() -> tuple[int,int]:
     # Get filesystem statistics for the root directory ("/")
     # This works on both Pico and CPython/linux, mac.
     # (Does not work on Windoze but so what).
-    #print(f"FSUT$46 Using 'real' filespace info")
+    # Returns tuple (number of bytes):
+    #   (total space on device, currently-available free space)
+    #print(f"FSUT$48 Using 'real' filespace info")
     # os.statvfs(...) returns a tuple:
     #  [0] f_bsize: File system block size Linux: 4096  Pico: 4096 (or 512)
     #  [1] f_frsize: Fragment size  Usu same as f_bsize
@@ -59,7 +61,7 @@ def get_filesystem_space() -> tuple[int,int]:
 
     statvfs_values = os.statvfs("/")
 
-    total_space, free_space = calculate_filesystem_space(statvfs_values)
+    total_space, free_space = _calculate_filesystem_space(statvfs_values)
 
     return total_space, free_space
 
