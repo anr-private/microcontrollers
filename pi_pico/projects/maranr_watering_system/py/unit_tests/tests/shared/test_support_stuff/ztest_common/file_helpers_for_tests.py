@@ -87,7 +87,7 @@ def create_subdir_with_files(subdir, fnames: list[str], min_file_size=0) \
         fpath: str = subdir + "/" + log_fname
         fsize: int = 0
         with open(fpath, "w") as outf:
-            line = f"This is file {fpath} {added_tail[:j]}\n"
+            line = f"This is file {fpath:>45} {added_tail[:j]}\n"
             outf.write(line)
             fsize += len(line)
             j += 1

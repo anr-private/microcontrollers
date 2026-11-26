@@ -86,7 +86,7 @@ class LemTestContext():
         return False # raise any exception(s)
 
 
-def Z__test_log_parameters_selector() -> None:
+def test_log_parameters_selector() -> None:
     # NOTE this test will cause LemLogFileTable to print an error
     # because we never 
     with LemTestContext() as llft:
@@ -94,7 +94,7 @@ def Z__test_log_parameters_selector() -> None:
         print(f"ZLLFT$94 context: str='{str(llft)}'")
 
 
-def Z__test_SKELETON_for_tests() -> None:
+def test_SKELETON_for_tests() -> None:
     # This is the old way - use the LemTestContext instead!
     # Replace the production logs/ dir with a test dir
     logs_dir = get_scratch_path("logs")
@@ -109,7 +109,7 @@ def Z__test_SKELETON_for_tests() -> None:
         remove_scratch_path(logs_dir)
 
 
-def Z__test_get_current_log_fpath_no_files_open() -> None:
+def test_get_current_log_fpath_no_files_open() -> None:
     """ Trivial case: no files open yet """
 
     with LemTestContext() as llft:
@@ -122,7 +122,7 @@ def Z__test_get_current_log_fpath_no_files_open() -> None:
         assert got_fsize == 0, got_fsize
 
 
-def Z__test_get_log_table_info_when_empty() -> None:
+def test_get_log_table_info_when_empty() -> None:
     """ trivial table content: no items """
 
     with LemTestContext() as llft:
@@ -144,7 +144,7 @@ def Z__test_get_log_table_info_when_empty() -> None:
         assert extant_fsize == 0, extant_fsize
 
 
-def Z__test_log_one_line() -> None:
+def test_log_one_line() -> None:
     # basic test for log_one_line() 
     # Also a simple test for close_logging()
     with LemTestContext() as llft:
@@ -166,11 +166,11 @@ def Z__test_log_one_line() -> None:
 
         # verify there is only 1 log file and has an expected name (prefix)
         names = os.listdir(logs_dir)
-        assert len(names) == 1, names
+        assert len(names) == 1, f"ZLLFT$169 names.len={len(names)} names={names}"
         assert names[0].startswith("mws_log."), names
 
 
-def Z__test_logging_after_closing() -> None:
+def test_logging_after_closing() -> None:
     # Once close_logging() has been called, no further logging
     # is allowed/possible
     saved_llft = None
@@ -205,7 +205,7 @@ def Z__test_logging_after_closing() -> None:
         assert MESG_CANNOT_CREATE_LOGS_SUBDIRECTORY in str(ex), str(ex)
 
 
-def Z__test_log_one_line_call_many_times() -> None:
+def test_log_one_line_call_many_times() -> None:
     # log many lines
     with LemTestContext() as llft:
         num_lines_written = 100
@@ -229,7 +229,7 @@ def Z__test_log_one_line_call_many_times() -> None:
         # (Ignore noise lines from the logger itself...)
         got_lines = got_data.split("\n")
         #
-        if 1:
+        if 0:
             for lno, line in enumerate(got_lines, 1):
                 print(f"ZLLFT$234  {lno}. {line!r}")
         #
@@ -241,7 +241,7 @@ def Z__test_log_one_line_call_many_times() -> None:
             f"{num_lines_written} {got_marked_lines_ctr}"
 
 
-def Z__test_get_lines_from_log_file() -> None:
+def test_get_lines_from_log_file() -> None:
     print(f"ZLLFT$245  === test_get_lines_from_log_file  ======")
     with LemTestContext() as llft:
         # fill the log with recognizable pattern of lines
@@ -334,7 +334,7 @@ def test_rotating_the_files() -> None:
                 f"fpath={fpath} {got_num_lines=} {exp_num_lines=}  {num_lines_diff=} {allowed_num_lines_diff=}"
 
 
-def Z__test_determine_new_starting_extension_value() -> None:
+def test_determine_new_starting_extension_value() -> None:
     print(f"ZLLFT$338  === test_determine_new_starting_extension_value  ======")
 
     tests = (
@@ -360,7 +360,7 @@ def Z__test_determine_new_starting_extension_value() -> None:
         assert got_new_value == exp_new_value
 
 
-def Z__test_determine_biggest_existing_log_fname_extension_value() -> None:
+def test_determine_biggest_existing_log_fname_extension_value() -> None:
     print(f"ZLLFT$364  === test_determine_biggest_existing_log_fname_extension_value  ======")
 
     # Replace the production logs/ dir with a test dir
@@ -396,7 +396,7 @@ def Z__test_determine_biggest_existing_log_fname_extension_value() -> None:
         remove_scratch_path(logs_dir)
 
 
-def Z__test_determine_starting_fname_extension_value() -> None:
+def test_determine_starting_fname_extension_value() -> None:
     print(f"ZLLFT$400  === test_determine_starting_fname_extension_value  ======")
 
     # Replace the production logs/ dir with a test dir
@@ -430,7 +430,7 @@ def Z__test_determine_starting_fname_extension_value() -> None:
         remove_scratch_path(logs_dir)
 
 
-def Z__test_find_the_oldest_extant_logfile() -> None:
+def test_find_the_oldest_extant_logfile() -> None:
     print(f"ZLLFT$434  === test_find_the_oldest_extant_logfile  ======")
     with LemTestContext() as llft:
         # Test 'table is empty'
@@ -568,7 +568,7 @@ def Z__test_find_the_oldest_extant_logfile() -> None:
         assert oldest_extant == 3
 
 
-def Z__test_remove_the_oldest_extant_logfile() -> None:
+def test_remove_the_oldest_extant_logfile() -> None:
     print(f"ZLLFT$572  === test_remove_the_oldest_extant_logfile  ======")
     with LemTestContext() as llft:
         logs_dir = llft.get_logs_directory()
@@ -628,7 +628,7 @@ def Z__test_remove_the_oldest_extant_logfile() -> None:
         del dir_contents
 
 
-def Z__test_reduce_file_usage_to_below_low_watermark() -> None:
+def test_reduce_file_usage_to_below_low_watermark() -> None:
     print(f"ZLLFT$632  === test_reduce_file_usage_to_below_low_watermark  ======")
 
     with LemTestContext() as llft:
@@ -682,9 +682,9 @@ def Z__test_reduce_file_usage_to_below_low_watermark() -> None:
         # in the log files.
         # See the notes at the top of this file.
         got_extant_fsize = llft.get_fsize_of_extant_logfiles()
-        exp_extant_fsize = 200_332  # Cpython3 value
+        exp_extant_fsize = 200_447  # Cpython3 value
         extant_fsize_diff = abs(got_extant_fsize - exp_extant_fsize)
-        allowed_extant_fsize_diff = 25
+        allowed_extant_fsize_diff = 0 #@@@@@@@@@@@25
         assert extant_fsize_diff <= allowed_extant_fsize_diff,\
             f"{got_extant_fsize=} {exp_extant_fsize=}  {extant_fsize_diff=} {allowed_extant_fsize_diff=} "
         #assert llft.get_fsize_of_extant_logfiles() == 200_332
@@ -703,24 +703,24 @@ def Z__test_reduce_file_usage_to_below_low_watermark() -> None:
         print(f"ZLLFT$703 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
         # check size of removed files
         got_removed_fsize = llft.get_fsize_of_removed_logfiles()
-        exp_removed_fsize = 100_165
+        exp_removed_fsize = 100_167
         removed_fsize_diff = abs(got_removed_fsize - exp_removed_fsize)
-        allowed_fsize_diff = 25
+        allowed_fsize_diff = 0  #@@@@@@@@@@@@@@@@@@25
         assert removed_fsize_diff <= allowed_fsize_diff,\
             f"{got_removed_fsize=} {exp_removed_fsize=}  {removed_fsize_diff=} {allowed_fsize_diff=} "
         ###assert llft.get_fsize_of_removed_logfiles() == 100_165
         
         # check size of extant (remaining) files
         got_remains_fsize = llft.get_fsize_of_extant_logfiles() 
-        exp_remains_fsize =100_167
+        exp_remains_fsize =100_280
         remains_fsize_diff = abs(got_remains_fsize - exp_remains_fsize)
-        allowed_remains_fsize_diff = 3 
+        allowed_remains_fsize_diff = 0 #@@@@@@@@@@@@@@@ 
         assert remains_fsize_diff <= allowed_remains_fsize_diff,\
             f"{got_remains_fsize=} {exp_remains_fsize=}  {remains_fsize_diff=} {allowed_remains_fsize_diff=} "
         ###assert llft.get_fsize_of_extant_logfiles() == 100_167
 
 
-def Z__test_remove_logs_if_fspace_needed() -> None:
+def test_remove_logs_if_fspace_needed() -> None:
     print(f"ZLLFT$724  === test_remove_logs_if_fspace_needed  ======")
     with LemTestContext() as llft:
         logs_dir = llft.get_logs_directory()
@@ -775,9 +775,9 @@ def Z__test_remove_logs_if_fspace_needed() -> None:
         # in the log files.
         # See the notes at the top of this file.
         got_extant_fsize = llft.get_fsize_of_extant_logfiles()
-        exp_extant_fsize = 200_332  # Cpython3 value
+        exp_extant_fsize = 200_447  # Cpython3 value
         extant_fsize_diff = abs(got_extant_fsize - exp_extant_fsize)
-        allowed_extant_fsize_diff = 25
+        allowed_extant_fsize_diff = 0 #@@@@@@@@@@@@@@@@@@25
         assert extant_fsize_diff <= allowed_extant_fsize_diff,\
             f"{got_extant_fsize=} {exp_extant_fsize=}  {extant_fsize_diff=} {allowed_extant_fsize_diff=} "
         ###assert llft.get_fsize_of_extant_logfiles() == 200_332
@@ -796,17 +796,17 @@ def Z__test_remove_logs_if_fspace_needed() -> None:
         print(f"ZLLFT$796 Total size of extant  files: {llft.get_fsize_of_extant_logfiles()}")
         # check size of removed files
         got_removed_fsize = llft.get_fsize_of_removed_logfiles()
-        exp_removed_fsize = 100_165
+        exp_removed_fsize = 100_167
         removed_fsize_diff = abs(got_removed_fsize - exp_removed_fsize)
-        allowed_fsize_diff = 25
+        allowed_fsize_diff = 0 #@@@@@@@@@@@@@@@@@@@25
         assert removed_fsize_diff <= allowed_fsize_diff,\
             f"{got_removed_fsize=} {exp_removed_fsize=}  {removed_fsize_diff=} {allowed_fsize_diff=} "
         ###assert llft.get_fsize_of_removed_logfiles() == 100_165
         # check size of extant (remaining) files
         got_remains_fsize = llft.get_fsize_of_extant_logfiles() 
-        exp_remains_fsize =100_167
+        exp_remains_fsize =100_280
         remains_fsize_diff = abs(got_remains_fsize - exp_remains_fsize)
-        allowed_remains_fsize_diff = 3 
+        allowed_remains_fsize_diff = 0 #@@@@@@@@@@@@@@@@@@@3 
         assert remains_fsize_diff <= allowed_remains_fsize_diff,\
             f"{got_remains_fsize=} {exp_remains_fsize=}  {remains_fsize_diff=} {allowed_remains_fsize_diff=} "
 
@@ -825,6 +825,18 @@ def check_production_log_dir_unchanged(old_logs_dir: str, old_logs_dir_items_bef
         return True
     print(f"ZLLFT$826: production log dir CHANGED: {old_logs_dir}, before: {old_logs_dir_items_before}, after: {after}")
     return False
+
+
+def _rightjust(t:str) -> str:
+    # put str t into a longer string right-justified and quoted
+    #    "/tmp/MWS_tests_uoqhrm0y/logs/mws_log.010" ==>
+    # "  '/tmp/MWS_tests_uoqhrm0y/logs/mws_log.010'"
+    # "                          "/logs/mws_log.020" ==>
+    # "                          '/logs/mws_log.020'"
+    s = f"'{t}'"
+    s = f"{s:>45}"
+    return s
+
 
 
 

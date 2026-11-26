@@ -3,7 +3,9 @@
 # LINEMARKER=ZFSUT
 
 from lib1.platform_info import USING_LINUX_HARDWARE, USING_PICO_HARDWARE
-from lib1.file_system_utils import get_filesystem_space, calculate_filesystem_space, convert_fs_space_to_string
+from lib1.file_system_utils import get_filesystem_space
+from lib1.file_system_utils import _calculate_filesystem_space
+from lib1.file_system_utils import convert_fs_space_to_string
 
 # NOTE  
 # To create file(s) with random data at specified size(s):
@@ -42,7 +44,7 @@ def test_calculate_filesystem_space() -> None:
 
     exp_total_space = fragment_size * total_blocks 
     exp_free_space = fragment_size * avail_blocks
-    got_total_space,got_free_space = calculate_filesystem_space(fake_statvfs_result)
+    got_total_space,got_free_space = _calculate_filesystem_space(fake_statvfs_result)
     assert exp_total_space == got_total_space, got_total_space
     assert exp_free_space == got_free_space, got_free_space
 
@@ -78,31 +80,31 @@ def test_get_filesystem_space() -> None:
 
     if USING_LINUX_HARDWARE:
         got_total_space, got_free_space = get_filesystem_space()
-        print(f"ZFSUT$81  {got_total_space=}  {got_free_space=}")
+        print(f"ZFSUT$83  {got_total_space=}  {got_free_space=}")
         # Linux: 1,966,736,678,912 bytes total (2Tb)
         #        1,806,526,021,632 bytes free
         exp_min_total_space = 1_966_736_678_912
         assert got_total_space >= exp_min_total_space, f"{got_total_space} not >= {exp_min_total_space}"
         tot_diff = got_total_space - exp_min_total_space
-        print(f"ZFSUT$87 {tot_diff=}")
+        print(f"ZFSUT$89 {tot_diff=}")
         assert tot_diff == 0
         # Linux: 1,806,526,676,992 approx 1441800192
         assert got_free_space >= 100_000, got_free_space
         # The free space should not exceed total space
         free_diff = got_total_space - got_free_space
-        print(f"ZFSUT$93 {free_diff=}")
+        print(f"ZFSUT$95 {free_diff=}")
         assert free_diff >= 0, free_diff
 
     elif USING_PICO_HARDWARE:
         got_total_space, got_free_space = get_filesystem_space()
-        print(f"ZFSUT$98  {got_total_space=}  {got_free_space=}")
+        print(f"ZFSUT$100  {got_total_space=}  {got_free_space=}")
         # Pico: 256Mb(?)
         ###exp_min_total_space = 2_500_000
         exp_min_total_space = 2_621_440  # Pico 2 W
         #####exp_min_total_space=190_000   # typical available after loading MWS py files
         assert got_total_space >= exp_min_total_space, f"{got_total_space} not >= {exp_min_total_space}"
         tot_diff = got_total_space - exp_min_total_space
-        print(f"ZFSUT$105 {tot_diff=}")
+        print(f"ZFSUT$107 {tot_diff=}")
         assert tot_diff == 0, f"{tot_diff=}"
         #
         exp_min_free_space = 970_000  # MWS py files loaded
@@ -112,7 +114,7 @@ def test_get_filesystem_space() -> None:
            f"{free_diff=} got={got_free_space} min-expected={exp_min_free_space}"
         # The free space should not exceed total space
         free_diff = got_total_space - got_free_space
-        print(f"ZFSUT$115 {free_diff=}")
+        print(f"ZFSUT$117 {free_diff=}")
         assert free_diff >= 0, f"{free_diff=}"
 
     else:
@@ -122,13 +124,13 @@ def test_get_filesystem_space() -> None:
 def test_convert_fs_space_to_string() -> None:
     total_space = 12345678
     total_stg = convert_fs_space_to_string(total_space)
-    print(f"ZFSUT$125  {total_stg=}")
+    print(f"ZFSUT$127  {total_stg=}")
     exp_total_stg = '12,345,678 bytes, 12,056.33 KB, 11.77 MB'
     assert total_stg == exp_total_stg, f"'{exp_total_stg}', '{total_stg}'"
 
     free_space = 987654
     free_stg = convert_fs_space_to_string(free_space)
-    print(f"ZFSUT$131  {free_stg=}")
+    print(f"ZFSUT$133  {free_stg=}")
     exp_free_stg = '987,654 bytes, 964.51 KB, 0.94 MB'
     assert free_stg == exp_free_stg, free_stg
 

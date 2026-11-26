@@ -30,7 +30,7 @@ import sys
 
 from lib1.file_utils import remove_subdir
 
-SAVE_TEST_DIRS = True
+SAVE_TEST_DIRS = False
 
 # Relative path: the Pico's current directory is the root, '/',
 # so the scratch dir is "/" + _SCRATCH_ROOT.
