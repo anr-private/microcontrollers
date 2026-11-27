@@ -5,8 +5,10 @@ Nov 17, 2026 (updated Nov 25, 2026) · Zilot
 All 21 LEM unit tests pass under CPython in a copy of the sideline tree. This review of the tests completes the review of the four LEM files, `lib1/`, and the tests. Short throwaway probes checked the main suspicions; items marked **(confirmed)** were seen to happen. None of the original files were changed.
 
 ## Problems in the tests (confirmed)
+OK N/A
 
 **P1. The `Z__` setters are never restored, so results depend on test order.**
+OK N/A
 
 - In `test_lem_log_file_table.py`:
     - `test_rotating_the_files()` sets `MAX_LOG_FILE_SIZE` to 1200.
@@ -17,6 +19,8 @@ All 21 LEM unit tests pass under CPython in a copy of the sideline tree. This re
 - pytest runs every file in one process, so the changed values also carry into later test files.
 
 **P2. `test_logging_after_closing()` passes even if logging after close is allowed.** The `try`/`except RuntimeError` has no `else: assert False`, so if `log_one_line()` doesn't raise, the test still passes.
+OK as is
+
 
 **P3. `test_rotating_the_files()` would fail on the Pico. FIXED 2026-11-25.**
 
@@ -25,28 +29,41 @@ All 21 LEM unit tests pass under CPython in a copy of the sideline tree. This re
 - Editing any of that message text also breaks the test. `test_log_one_line_call_many_times()` has the same dependency with its `+ 4` lines of chatter.
 
 **Fix:** confirmed on the Pico. `LemLogFileTable`'s log messages now always right-justify paths, in production and in tests alike, so line lengths match on both platforms. Some tests now check only the base filename (e.g. `mws_log.010`). `test_lem_log_file_table.py` gives the same file count and sizes on both platforms (content differs and isn't checked).
+OK
 
 **P4. `assert oldest_idx is 0` in `test_find_the_oldest_extant_logfile()`.** **(confirmed)** CPython warns about `is` with an int literal; with warnings turned into errors, the file doesn't compile. `== 0` is what's meant.
+OK fixed
 
 **P5. The same test checks less than its comments say. FIXED 2026-11-18.** Under "Add new item[2]" it calls `_append_to_log_file_table(fname2, fsize2)`, so the table holds `file.2` twice, not `file.3`.
+OK
 
 **Correction and fix:** the code was wrong, not the comment: `fname3`/`fsize3` were set but never used. The test is now fixed. Not yet confirmed: whether the off-by-one names further down (`fname3 = "file.4"`, `fname4 = "file.5"`, `fname5 = "file.6"`) were also renamed.
+
 
 **K1. A failure inside `__enter__` breaks every later test.**
 
 - In the `LemTestContext` class in `test_lem_log_control.py` and `test_lem_log_ABC.py`, `__enter__` first calls `configure_logger(None)`, then `Z_replace_log_file_table()`.
 - If anything after `configure_logger()` raises, `__exit__` never runs, so the class attribute `LemLogControl._instance` stays set.
 - **(confirmed)** Every later test then fails with `LEMLC$25 LOGGER IS ALREADY CONFIGURED!`, and one real failure turns into many.
+OK as is
+
+
 
 **K2. `LemLogABC._enable_prt(True)` is never turned off.** `test_class_gets_registered()` turns on the module-level variable `PRT` in `LemLogABC.py` and leaves it on, so every later test in the process gets the extra print lines.
+OK PRT=False turns off prt() - not used unless for a specific test
+
 
 ## Problems in the support code (confirmed)
 
 **Z1. `ClassA.try_all_loggers()` never reaches `logi()`.** The method `try_all_loggers()` in `ClassA.py` (and `ClassB.py`) calls `logrt()`, which raises, before `logi()`. **(confirmed)** Only the `log` and `logrt` lines reach the fake.
+OK reordered the calls
+
 
 **Z2. The `verbose` argument of `ZLemLogFileTable` does nothing.** In `ZLemLogFileTable.__init__`, `global V` is followed by `v = verbose`, which sets a local `v`, so `V` never changes.
+OK fixed typo 'V = verbose'
 
 **Z3. The fake's `get_lines_from_log_file()` doesn't match the real method.** **(confirmed)** With 10 lines, asking for more lines than exist gives different answers:
+OK for now - fix as needed
 
 | Call | Fake | Real (`read_last_n_lines()`) |
 | --- | --- | --- |
@@ -56,7 +73,10 @@ All 21 LEM unit tests pass under CPython in a copy of the sideline tree. This re
 - The fake's negative start index wraps around. (R2 from the `lib1/` review asks which answer is right.)
 - The fake also counts blank lines; the real function skips them by default.
 
+
 **Z4. The fake lacks methods that `LemLogControl` passes through.** `get_current_log_fpath`, `get_current_log_fsize`, `get_logs_totals`, `get_log_table_item` and `get_status_lines` are missing, so calling any of those `LemLogControl` methods while the fake is installed raises `AttributeError`. No current test does that.
+OK as is - add methods when/as needed
+
 
 ## C4 and C1 from the first review
 
@@ -75,6 +95,8 @@ The line goes to the *old* fake, which raises `ZLLFT$21 LOGGING IS CLOSED…`. W
 ## What the tests don't cover
 
 These matter because they're the main promise of LEM:
+
+TODO - review after current round of updates to logger_embed_module
 
 - **Logged lines reaching the fake:** no test checks that a class's `log()` line actually lands in the fake. `test_get_lines_from_log_file()` calls `llc.log_one_line()` directly.
 - **Effect of `enable_log(False)`:** no test checks that it stops `log()` lines while `logi()`/`logrt()` still log, or that `logrt()` raises.
@@ -101,3 +123,5 @@ These matter because they're the main promise of LEM:
     - Three old `logger_elem` copies in `tests/cpython/logger_elem/`.
     - Unused imports (`os`) in the test files and in `ZLemLogFileTable.py`.
 - **M4. `unit_tests/logs/` is empty and read-only.** Probably deliberate, so any test that wrote to a relative `logs/` would fail loudly. Open question: is it?
+
+:wrap=soft:
