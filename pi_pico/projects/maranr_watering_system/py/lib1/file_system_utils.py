@@ -65,6 +65,11 @@ def get_filesystem_space() -> tuple[int,int]:
 
     return total_space, free_space
 
+def get_actual_current_freespace() -> int:
+    # Returns the true file freespace. 2M on Pico, 1.x Tb on Linux
+    _total_space, current_freespace = get_filesystem_space()
+    return current_freespace
+
 
 def convert_fs_space_to_string(fs_space: int) -> str:
     # Convert to KB and MB for easier reading

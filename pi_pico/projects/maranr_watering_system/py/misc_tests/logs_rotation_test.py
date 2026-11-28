@@ -27,6 +27,7 @@ sys.path.append('..')
 
 
 from lib1.file_utils import remove_subdir
+from lib1.file_system_utils import get_filesystem_space, get_actual_current_freespace
 from lib1.platform_info import USING_PICO_HARDWARE, USING_LINUX_HARDWARE
 
 from logger_embed_module.LemLogControl import LemLogControl, Z_replace_log_file_table
@@ -71,7 +72,7 @@ class _Options:
 
 
 def perform_test(opts: _Options) -> None:
-    print(f"ZLOGSROT$74 PERFORM TEST   {opts=}")
+    print(f"ZLOGSROT$75 PERFORM TEST   {opts=}")
 
     logs_dir = "LOGS_ROTATION_TEST"
     remove_subdir(logs_dir)
@@ -80,36 +81,46 @@ def perform_test(opts: _Options) -> None:
 
     llc = LemLogControl.configure_logger(logs_dir, log_parameters_selector)
 
-    print(f"ZLOGSROT$83 LemLogControl: {llc}")
+    print(f"ZLOGSROT$84 LemLogControl: {llc}")
 
     llft = llc.ZgetLemLogFileTable()
 
     r = llc.get_logs_totals(include_currently_open_file=True)
-    print(f"ZLOGSROT$88 Initial values: {r=}")
+    print(f"ZLOGSROT$89 Initial values: {r=}")
     num_extant_files, extant_logfile_fsize, log_file_table_size = r
-    print(f"ZLOGSROT$90 Initial values: {num_extant_files=}  {extant_logfile_fsize=}  {log_file_table_size=}")
+    print(f"ZLOGSROT$91 Initial values: {num_extant_files=}  {extant_logfile_fsize=}  {log_file_table_size=}")
     prev_num_extant_files = num_extant_files
     n = 0
     num_files_created = 0
+    prev_biased_freespace = 0
     while 1:
 
-        r = llc.get_logs_totals(include_currently_open_file=True)
-        ###print(f"ZLOGSROT$97 {r=}")
-        num_extant_files, extant_logfile_fsize, log_file_table_size = r
-        print(f"ZLOGSROT$99 {num_extant_files=} prev={prev_num_extant_files} "+\
-              f"extantLogFsize={extant_logfile_fsize}         {log_file_table_size=}")
+        biased_freespace = llft._get_biased_filesystem_freespace()
 
-        print(f"ZLOGSROT$102 {num_extant_files=} prev={prev_num_extant_files}  "+
-            f"      biased_freesp={llft._get_biased_filesystem_freespace()}")
+        r = llc.get_logs_totals(include_currently_open_file=True)
+        ###print(f"ZLOGSROT$101 {r=}")
+        num_extant_files, extant_logfile_fsize, log_file_table_size = r
+
+        if biased_freespace != prev_biased_freespace:
+            print(f"ZLOGSROT$105 {num_extant_files=:3d} prev={prev_num_extant_files:3d} "+\
+                  f"extantLogFsize={extant_logfile_fsize:6d}         "+\
+                  f"{log_file_table_size=:7d}  {llft._get_biased_filesystem_freespace()=:6d}")
+            prev_biased_freespace = biased_freespace
+
+        #print(f"ZLOGSROT$110 {num_extant_files=} prev={prev_num_extant_files} "+\
+        #      f"extantLogFsize={extant_logfile_fsize}         {log_file_table_size=}")
+
+        #print(f"ZLOGSROT$113 {num_extant_files=} prev={prev_num_extant_files}  "+
+        #    f"      biased_freesp={llft._get_biased_filesystem_freespace()}")
 
         if prev_num_extant_files < num_extant_files:
             num_files_created += 1
             prev_num_extant_files = num_extant_files
-            print(f"ZLOGSROT$108 {num_files_created=}")
+            print(f"ZLOGSROT$119 {num_files_created=}")
             if num_files_created >= 10:
                 break
 
-        llc.log_one_line(f"ZLOGSROT$112 Line 1")
+        llc.log_one_line(f"ZLOGSROT$123 Line 1")
 
         n += 1
         if n >= 3000000:
@@ -137,7 +148,7 @@ def parse_options(args):
         arg = args[argidx]; argidx += 1
         if arg in ("--Zoptions", "--zoptions", "--debugOptions"):
             opts.debugOptions = True
-            print(f"ZLOGSROT$140 DEBUG-OPTIONS ENABLED  {args=}")
+            print(f"ZLOGSROT$151 DEBUG-OPTIONS ENABLED  {args=}")
             break
 
     argidx = 0
@@ -145,20 +156,20 @@ def parse_options(args):
 
         arg = args[argidx]; argidx += 1
 
-        print(f"ZLOGSROT$148  {arg=!r}")
+        print(f"ZLOGSROT$159  {arg=!r}")
 
         if arg.startswith("--"):
             opt = arg[2:]
         elif arg.startswith("-"):
             opt = arg[1:]
         else:
-            print(f"ZLOGSROT$155 NOT AN OPT {arg=!r} - add to 'other_items")
+            print(f"ZLOGSROT$166 NOT AN OPT {arg=!r} - add to 'other_items")
             opts.other_items.append(arg)
             continue
 
         optLc = opt.lower()
         del arg
-        print(f"ZLOGSROT$161  {optLc=!r}")
+        print(f"ZLOGSROT$172  {optLc=!r}")
 
         if optLc in ("help","h"):
             print(HELP_INFO)
@@ -186,7 +197,7 @@ def parse_options(args):
             # opts.dataSets.append(ival)
 
         else:
-            s = f"ZLOGSROT$189 *ERROR* Unknown option '{opt}'"
+            s = f"ZLOGSROT$200 *ERROR* Unknown option '{opt}'"
             raise RuntimeError(s)
 
     return opts
@@ -220,14 +231,14 @@ def run_options_tests():
 ###  MAIN  ####################################################
 
 def main(args):
-    print(f"ZLOGSROT$223 MAIN: {args=}")
+    print(f"ZLOGSROT$234 MAIN: {args=}")
     opts = parse_options(args)
 
     global V, VV, DEBUG
     V = opts.verbose or opts.veryverbose
     VV = opts.veryverbose
     DEBUG = opts.debug
-    if V: print(f"ZLOGSROT$230  {V=} VeryV={VV}  {DEBUG=}")
+    if V: print(f"ZLOGSROT$241  {V=} VeryV={VV}  {DEBUG=}")
 
     perform_test(opts)
 

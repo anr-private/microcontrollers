@@ -7,7 +7,7 @@ import sys
 
 from lib1.read_last_n_lines import read_last_n_lines
 from lib1.file_utils import remove_file, filter_dir_contents
-from lib1.file_system_utils import get_filesystem_space
+from lib1.file_system_utils import get_filesystem_space, get_actual_current_freespace
 
 try: from typing import IO, Any
 except ImportError: pass
@@ -76,7 +76,7 @@ LOG_PARAMETERS_PROFILES = {
 NEW_LOG_PARAMETERS_PROFILES = {
     "pico":    (25_000, 2*25_000, 4*25_000),
     "cpython": (25_000, 1_000_000, 750_000),
-    "Z_tests": (25_000, 20_000, 10_000, -35_000),
+    "Z_tests": (25_000, 36_000, 10_000, -50_000),
 
     "__Z_tests": (25_000, 100_000, 75_000, 1_706_316_693_504+29052928-1_190_552),
 }
@@ -426,7 +426,7 @@ class LemLogFileTable:
         # self._fname_next_ctr which tells us that we have already
         # opened (at least one) logfile.
 
-        _BEFORE = _get_actual_current_freespace()
+        _BEFORE = get_actual_current_freespace()
         print(f"LLFT$430 ___________________ BEFORE OPENING FILE: {_BEFORE}")
 
         # This should never happen!
@@ -454,7 +454,7 @@ class LemLogFileTable:
         self.dump_file_table("from-LLFT$454")
         
 
-        _AFTER = _get_actual_current_freespace()
+        _AFTER = get_actual_current_freespace()
         _DIFF = _AFTER - _BEFORE
         print(f"LLFT$459 ___________________ AFTER OPENING FILE: {_DIFF=}:  {_AFTER} - {_BEFORE}")
 
@@ -686,10 +686,10 @@ class LemLogFileTable:
     def _get_biased_filesystem_freespace(self):
         # Returns a biased version of the actual filespace freespace.
         #@@@@@@@@@@@@@@@@@@_total_space, current_freespace = get_filesystem_space()
-        actual_freespace = _get_actual_current_freespace()
+        actual_freespace = get_actual_current_freespace()
         biased_freespace = actual_freespace - self._free_space_reduction_bias
-        print(f"LLFT$691 =============================================== "+\
-                f">> {biased_freespace} <<<--BIASED-FREESPACE {actual_freespace} - {self._free_space_reduction_bias}")
+        #print(f"LLFT$691 =============================================== "+\
+        #        f">> {biased_freespace} <<<--BIASED-FREESPACE {actual_freespace} - {self._free_space_reduction_bias}")
         return biased_freespace
 
     def dump_file_table(self, comment:str, to_log:bool=True) -> None:
@@ -786,12 +786,6 @@ def _get_true_file_size(fpath: str) -> int:
     """
     return os.stat(fpath)[6]
 
-def _get_actual_current_freespace() -> int:
-    # Returns the true file freespace. 2M on Pico, 1.x Tb on Linux
-    _total_space, current_freespace = get_filesystem_space()
-    return current_freespace
-
-
 def _determine_starting_fname_extension_value(log_files_subdir: str) -> int:
     # Look for old log files. 
     # Pick the one with the highest value 000-900 as its extension.
@@ -811,17 +805,17 @@ def _determine_starting_fname_extension_value(log_files_subdir: str) -> int:
     if not biggest_existing_extension_value:
         return DEFAULT_FNAME_STARTING_EXTENSION_VALUE
 
-    print(f"LLFT$814 {biggest_existing_extension_value=}")
+    print(f"LLFT$808 {biggest_existing_extension_value=}")
 
     if biggest_existing_extension_value is None:
         # Use a fake biggest if there are no extant logfiles
         biggest_existing_extension_value = DEFAULT_FNAME_STARTING_EXTENSION_VALUE
-        print(f"LLFT$819 USED DEFAULT TO FAKE THIS: {biggest_existing_extension_value=}")
+        print(f"LLFT$813 USED DEFAULT TO FAKE THIS: {biggest_existing_extension_value=}")
 
     new_extension_value = \
       _determine_new_starting_extension_value(biggest_existing_extension_value)
 
-    print(f"LLFT$824 {new_extension_value=}")
+    print(f"LLFT$818 {new_extension_value=}")
 
     return new_extension_value
 
@@ -833,12 +827,12 @@ def _determine_biggest_existing_log_fname_extension_value(log_files_subdir: str)
     # Return the int value of that file extension.
     # Returns 
     # gets (fname, ftype, fsize, file-extension-int-value)
-    print(f"LLFT$836  {log_files_subdir=!r}")
+    print(f"LLFT$830  {log_files_subdir=!r}")
     try:
         existing_logs_info = filter_dir_contents(log_files_subdir, _log_file_filter)
-        print(f"LLFT$839 _determine_biggest_existing_log_fname_extension_value fname_ext_values={existing_logs_info}")
+        print(f"LLFT$833 _determine_biggest_existing_log_fname_extension_value fname_ext_values={existing_logs_info}")
     except RuntimeError as ex:
-        print(f"LLFT$841 _determine_biggest_existing_log_fname_extension_value FAILED: ex={ex} {str(ex)}")
+        print(f"LLFT$835 _determine_biggest_existing_log_fname_extension_value FAILED: ex={ex} {str(ex)}")
         return None
 
     if len(existing_logs_info) == 0: 
@@ -846,7 +840,7 @@ def _determine_biggest_existing_log_fname_extension_value(log_files_subdir: str)
 
     biggest: int = max([fitem[3] for fitem in existing_logs_info])
 
-    print(f"LLFT$849 max _determine_biggest_existing_log_fname_extension_value is {biggest=}")
+    print(f"LLFT$843 max _determine_biggest_existing_log_fname_extension_value is {biggest=}")
 
     return biggest
 
@@ -863,7 +857,7 @@ def _determine_new_starting_extension_value(
     
     ###units = biggest_existing_extension_value - ((biggest_existing_extension_value // 10) * 10)
     units = biggest_existing_extension_value % 10
-    print(f"LLFT$866  {biggest_existing_extension_value=}  {units=}")
+    print(f"LLFT$860  {biggest_existing_extension_value=}  {units=}")
     
     # Pick an increment based on the lowest-order digit of the 
     # biggest previous file extension.
@@ -901,7 +895,7 @@ def _rightjust(t):
     # during its cleanup to restore the production value.
     # UNIT TEST ONLY
     # """
-    # #print(f"LLFT$904  Z__set_max_log_file_size to {new_max_size} =======================================")
+    # #print(f"LLFT$898  Z__set_max_log_file_size to {new_max_size} =======================================")
     # global se lf._max_log_file_size
     # old = s elf._max_log_file_size
     # se lf._max_log_file_size = new_max_size
@@ -913,7 +907,7 @@ def _rightjust(t):
     # during its cleanup to restore the production value.
     # UNIT TEST ONLY
     # """
-    # #print(f"LLFT$916  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
+    # #print(f"LLFT$910  Z__set_log_fspace_high_watermark to {new_high_watermark} =======================================")
     # global LOG_FSPACE_ HIGH_WATERMARK
     # old = LOG_FSPACE_ HIGH_WATERMARK
     # LOG_FSPACE_ HIGH_WATERMARK = new_high_watermark
@@ -925,7 +919,7 @@ def _rightjust(t):
     # during its cleanup to restore the production value.
     # UNIT TEST ONLY
     # """
-    # #print(f"LLFT$928  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
+    # #print(f"LLFT$922  Z__set_log_fspace_low_watermark to {new_low_watermark} =======================================")
     # global LOG_FSPACE_ LOW_WATERMARK
     # old = LOG_FSPACE_ LOW_WATERMARK
     # LOG_FSPACE_ LOW_WATERMARK = new_low_watermark
