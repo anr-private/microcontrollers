@@ -34,6 +34,8 @@ from logger_embed_module.LemLogControl import LemLogControl, Z_replace_log_file_
 
 V = False
 VV = False
+DEBUG = False
+
 
 HELP_INFO="""NO HELP YET
 """
@@ -90,9 +92,9 @@ def perform_test(opts: _Options) -> None:
     num_extant_files, extant_logfile_fsize, log_file_table_size = r
     print(f"ZLOGSROT$91 Initial values: {num_extant_files=}  {extant_logfile_fsize=}  {log_file_table_size=}")
     prev_num_extant_files = num_extant_files
-    n = 0
     num_files_created = 0
     prev_biased_freespace = 0
+    line_ctr = 0
     while 1:
 
         biased_freespace = llft._get_biased_filesystem_freespace()
@@ -120,10 +122,10 @@ def perform_test(opts: _Options) -> None:
             if num_files_created >= 10:
                 break
 
-        llc.log_one_line(f"ZLOGSROT$123 Line 1")
+        line_ctr += 1
+        llc.log_one_line(f"ZLOGSROT$124 Line {line_ctr:7d} ABCDEFHIJKLMNOPQRSTUVWXYZ abcdefhijklmnopqrstuvwxyz")
 
-        n += 1
-        if n >= 3000000:
+        if line_ctr >= 3000000:
             break
 
 

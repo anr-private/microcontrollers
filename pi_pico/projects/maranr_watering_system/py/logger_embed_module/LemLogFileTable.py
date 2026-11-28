@@ -106,14 +106,14 @@ class LemLogFileTable:
         # removed until the total space is not greater than the low water mark.
         #  _log_usage_high_watermark
         #  _log_usage_low_watermark
-        limit_vals = LOG_PARAMETERS_PROFILES.get(log_parameters_selector, None)
-        if limit_vals is None:
+        limit_vals__OLD = LOG_PARAMETERS_PROFILES.get(log_parameters_selector, None)
+        if limit_vals__OLD is None:
             m = f"LLFT$111 UNKNOWN/BAD log parameters selector: {log_parameters_selector!r}"
             print(m)
             raise RuntimeError(m)
-        self._max_log_file_size____OLD: int = limit_vals[0]
-        self._log_usage_high_watermark: int = limit_vals[1]
-        self._log_usage_low_watermark: int  = limit_vals[2]
+        self._max_log_file_size____OLD: int = limit_vals__OLD[0]
+        self._log_usage_high_watermark: int = limit_vals__OLD[1]
+        self._log_usage_low_watermark: int  = limit_vals__OLD[2]
         # Some consistency checks
         if self._log_usage_high_watermark < self._log_usage_low_watermark:
             m = f"LLFT$119 Inconsistent watermark values (high < low): {self._log_usage_high_watermark} < {self._log_usage_low_watermark}"
